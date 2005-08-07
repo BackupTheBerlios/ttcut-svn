@@ -72,7 +72,7 @@ TTMPEG2Window::TTMPEG2Window( QWidget *parent, const char *name )
 void TTMPEG2Window::initializeGL()
 {
    // background color: black
-   glClearColor(0.0, 0.0, 0.0, 0.0);
+   glClearColor(1.0, 1.0, 1.0, 0.0);
 
    // shade model
    glShadeModel(GL_FLAT);

@@ -49,8 +49,10 @@
 
 #include "ttavstream.h"
 #include "ttmpeg2videoheader.h"
+#include "ttaviwriter.h"
 
 #include "../avcut/ttavcutposition.h"
+#include "../extern/tttranscode.h"
 
 #include <qstring.h>
 #include <qfileinfo.h>

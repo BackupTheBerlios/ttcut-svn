@@ -51,6 +51,7 @@
 
 #include "ttmpeg2videostream.h"
 
+#include <QDir>
 
 const char c_name[] = "MPEG2STREAM   : ";
 
@@ -651,7 +652,9 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
 	break;
       }
 
+#ifdef __TTMPEG2
       //qDebug("Header type: %02x",header_type);
+#endif
       // insert the new header object into the header list
       if ( new_header != NULL )
       {
@@ -941,6 +944,12 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* fs, uint start, uint end, TTCutParam
   uint              temp_end;
   uint8_t           seq_end[4];
 
+  //qDebug( "%s-----------------------------------------------",c_name );
+  //qDebug( "%s>>> cut video stream",c_name );
+  //qDebug( "%s-----------------------------------------------",c_name );
+  //qDebug( "%starget stream      : %s",c_name,fs->fileName() );
+  //qDebug( "%sstart: %ld | end: %ld | count: %ld",c_name,start,end,index_list->count() );
+
   // open source mpeg2-stream for reading
   openStream();
     
@@ -970,7 +979,7 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* fs, uint start, uint end, TTCutParam
     }
     
     // encoden lassen
-    encodePart( start, temp_end-1, cr, fs);
+    encodePart( start, temp_end, cr, fs);
     
     // auf das nächste Picture in der Indexliste positionieren, 
     // damit der Rest kopiert werden kann.
@@ -1056,7 +1065,7 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* fs, uint start, uint end, TTCutParam
   // end object for copy sequence
   // ---------------------------------------------------------------------------
   end_object = header_list->headerAt( current_header_list_pos );
-    
+
   // transfer the copy sequence to destination stream
   //qDebug( "%s>>> transfer objects: %d - %d",c_name,header_list->headerIndex(start_object),header_list->headerIndex(end_object) );
   transferMpegObjects( fs, start_object, end_object, cr );
@@ -1106,6 +1115,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
   uint8_t* buffer = new uint8_t[65536];
   // total number of bytes to copy
   off64_t count = end_object->headerOffset()-start_object->headerOffset();
+
   // actually copied bytes
   off64_t bytes_processed;
 
@@ -1152,6 +1162,11 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
     else
       bytes_processed = stream_buffer->readCount2( buffer, 0, 65536 );
     
+    //qDebug( "%sbytes processed: %d",c_name,bytes_processed );
+
+    if ( bytes_processed == 0 )
+      count = -1;
+
     do
     {
       object_processed = false;
@@ -1404,7 +1419,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
     } while ( object_processed );
 
     // Jetzt können wir den Pufferinhalt schreiben, ggf. nicht komplett
-    //qDebug( "%swrite data: ",c_name );
+    //qDebug( "%swrite data: processed: %d",c_name,bytes_processed );
     fs->directWrite( buffer, bytes_processed );
 
     if ( ttAssigned(progress_bar) )
@@ -1413,8 +1428,12 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
       progress_bar->setProgress( process );
     }
 
+
     count   -= bytes_processed;
     abs_pos += bytes_processed;
+
+    if ( bytes_processed == 0 )
+      count = -1;
   } // while ( count > 0 )
 
   // noch was zu encoden ?
@@ -1430,8 +1449,72 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
 void TTMpeg2VideoStream::encodePart( uint start, uint end, TTCutParameter* cr, TTFileBuffer* cut_stream )
 {
-  qDebug( "%sencode part not implemented (!)",c_name );
-  qDebug( "%s-------------------------------",c_name );
+  //qDebug( "%s---------------------------------------------",c_name );
+  //qDebug( "%sencode part: start: %d -- end: %d",c_name,start,end );
+  //qDebug( "%s---------------------------------------------",c_name );
 
-  qDebug( "%sencode part: start: %d -- end: %d",c_name,start,end );
+  QFileInfo new_file_info;
+
+  TTAVIWriter* avi_writer = new TTAVIWriter( NULL );
+
+  // save current cut parameter
+  bool save_last_call         = cr->last_call;
+  bool save_write_max_bitrate = cr->write_max_bitrate;
+
+  // never write sequence end code (!)
+  cr->last_call = false;
+  cr->write_max_bitrate = false;
+
+  avi_writer->initAVIWriter( (TTVideoStream*)this );
+
+  avi_writer->writeAVI( start, end );
+
+  avi_writer->closeAVI();
+ 
+  // transcode object
+  TTSequenceHeader* seq_head  = header_list->sequenceHeaderAt( 0 );
+  TTEncodeParameter enc_par;
+  QDir temp_dir( TTCut::tempDirPath );
+  QString avi_out_file = "encode.avi";
+  QString mpeg2_out_file = "encode";
+
+  enc_par.avi_input_finfo.setFile( temp_dir, avi_out_file );
+  enc_par.mpeg2_output_finfo.setFile( temp_dir, mpeg2_out_file );
+  enc_par.video_width        = seq_head->horizontal_size_value;
+  enc_par.video_height       = seq_head->vertical_size_value;
+  enc_par.video_aspect_code  = seq_head->aspect_ratio_information;
+  enc_par.video_bitrate      = seq_head->bitRateKbit();
+
+  TTTranscodeProvider* transcode_prov = new TTTranscodeProvider();
+  
+  transcode_prov->setParameter( enc_par );
+
+  transcode_prov->encodePart();
+
+  new_file_info.setFile( temp_dir, "encode.m2v" );
+  TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream( new_file_info );
+
+  new_mpeg_stream->createHeaderList(); 
+  new_mpeg_stream->createIndexList();
+  new_mpeg_stream->indexList()->sortDisplayOrder();
+
+  new_mpeg_stream->cut( cut_stream, 0, end-start, cr );
+
+  //qDebug( "%s---------------------------------------------",c_name );
+
+  // remove temporary file
+  QString rm_cmd  = "rm ";
+  rm_cmd         += new_file_info.absolutePath();
+  rm_cmd         += "/encode.*";
+
+  system( rm_cmd.ascii() );
+
+  // free memory
+  delete new_mpeg_stream;
+  delete transcode_prov;
+
+  // set cut parameter back
+  cr->last_call         = save_last_call;
+  cr->write_max_bitrate = save_write_max_bitrate;
+
 }

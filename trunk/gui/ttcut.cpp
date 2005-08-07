@@ -83,7 +83,7 @@ QPixmap* TTCut::imgBFrame     = NULL;
 
 // Options
 bool    TTCut::fastSlider  = false;
-QString TTCut::tempDirPath = "./temp";
+QString TTCut::tempDirPath = QDir::tempPath();
 QString TTCut::lastDirPath = QDir::homePath();
 
 // Preview

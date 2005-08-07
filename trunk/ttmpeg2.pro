@@ -51,6 +51,9 @@ SOURCES           = \
 		    avstream/ttpcmaudiostream.cpp \	
 		    avstream/ttvideoheaderlist.cpp \	
 		    avstream/ttvideoindexlist.cpp \
+	            avstream/ttaviwriter.cpp \
+#
+	            avilib/avilib.c \
 #
                     avcut/ttavcutposition.cpp \
 #                   ------------------------------------------------------------
@@ -98,6 +101,7 @@ HEADERS           = \
 		    avstream/ttpcmaudiostream.h \	
 		    avstream/ttvideoheaderlist.h \	
 		    avstream/ttvideoindexlist.h \
+	            avstream/ttaviwriter.h \
 #
                     avcut/ttavcutposition.h \
 #                   ------------------------------------------------------------

@@ -1096,7 +1096,7 @@ try
   mpeg2_window->moveToVideoFrame( f_index );
  }
  catch(TTStreamEOFException)
- {
+ { 
    qDebug("stream EOF exception...");
  }
  catch(TTListIndexException)

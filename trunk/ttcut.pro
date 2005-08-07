@@ -61,6 +61,7 @@ SOURCES           = \
                     avstream/ttpcmaudiostream.cpp \     
                     avstream/ttvideoheaderlist.cpp \    
                     avstream/ttvideoindexlist.cpp \
+	            avstream/ttaviwriter.cpp \
 #
 #                   -------------------------------------------------------------
 #                   GUI
@@ -76,6 +77,7 @@ SOURCES           = \
                     gui/ttcutlistview.cpp \
                     gui/ttcutccrwnd.cpp \
                     gui/ttaudiolistview.cpp \
+                    gui/ttprocessform.cpp \
                     gui/ttcut.cpp \
                     gui/main.cpp \
 #
@@ -93,7 +95,17 @@ SOURCES           = \
 #                   AVCUT
 #                   -------------------------------------------------------------
 #                   avcut/tschnittsuche.cpp \
-                    avcut/ttavcutposition.cpp 
+                    avcut/ttavcutposition.cpp \
+#
+#                   -------------------------------------------------------------
+#                   AVILIB
+#                   -------------------------------------------------------------
+	            avilib/avilib.c \
+#
+#                   -------------------------------------------------------------
+#                   EXTERN
+#                   -------------------------------------------------------------
+	            extern/tttranscode.cpp
 #
 HEADERS           = \
 #                   -------------------------------------------------------------
@@ -125,6 +137,7 @@ HEADERS           = \
                     avstream/ttpcmaudiostream.h \       
                     avstream/ttvideoheaderlist.h \      
                     avstream/ttvideoindexlist.h \
+                    avstream/ttaviwriter.h \
 #
 #                   -------------------------------------------------------------
 #                   GUI
@@ -140,6 +153,7 @@ HEADERS           = \
                     gui/ttcutlistview.h \
                     gui/ttcutccrwnd.h \
                     gui/ttaudiolistview.h \
+                    gui/ttprocessform.h \
                     gui/ttcut.h \
 #
 #                   -------------------------------------------------------------
@@ -156,7 +170,17 @@ HEADERS           = \
 #                   AVCUT
 #                   -------------------------------------------------------------
 #                   avcut/tschnittsuche.h \
-                    avcut/ttavcutposition.h
+                    avcut/ttavcutposition.h \
+#
+#                   -------------------------------------------------------------
+#                   AVILIB
+#                   -------------------------------------------------------------
+	            avilib/avilib.h \
+#
+#                   -------------------------------------------------------------
+#                   EXTERN
+#                   -------------------------------------------------------------
+	            extern/tttranscode.h
 
 # -------------------------------------------------------------------------------
 # TTCUT.PRO ENDE

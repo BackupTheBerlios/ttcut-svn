@@ -65,6 +65,7 @@ TTVideoIndex* TTVideoIndexList::videoIndexAt( uint index )
 {
   try
   {
+    //qDebug( "%svideo index at: %ld",c_name,index );
     checkIndexRange( index );
     return (TTVideoIndex*)at( index );
   }
@@ -168,12 +169,16 @@ uint TTVideoIndexList::displayOrder( uint index )
 // return the index in the header list of picture at index
 uint TTVideoIndexList::headerListIndex( uint index )
 {
+  //qDebug( "%sheader list index: %ld",c_name,index );
+
   try
   {
+    //qDebug( "%sheader index: %ld",c_name,videoIndexAt(index)->header_list_index );
     return videoIndexAt(index)->header_list_index;
   }
   catch ( TTListIndexException )
   {
+    qDebug( "%sexception (!): %ld",c_name,index );
     return (uint)0;
   }
 }
