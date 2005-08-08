@@ -239,3 +239,34 @@ void TTProgressBar::slotCancel()
 {
   userCancel = true;
 }
+
+
+void TTProgressBar::hideBar()
+{
+  if ( isVisible() )
+  {
+    hide();
+    setModal( true );
+  }
+  else
+  {
+    show();
+    setModal( false );
+  }
+  qApp->processEvents();
+}
+
+void TTProgressBar::showBar()
+{
+  if ( !isVisible() )
+  {
+    setModal( false );
+    show();
+  }
+  else
+  {
+    hide();
+    setModal( true );
+  }
+  qApp->processEvents();
+}

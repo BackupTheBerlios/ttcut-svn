@@ -63,7 +63,7 @@ TTMpeg2Decoder::TTMpeg2Decoder()
   t_frame_info       = NULL;
 
   // initialize mpeg-2 decoder objekt
-  initDecoder();
+  initDecoder(0);
 }
 
 
@@ -129,7 +129,6 @@ TTMpeg2Decoder::~TTMpeg2Decoder()
   if ( ttAssigned(streamBuffer) )
      delete streamBuffer;
 }
-
 
 // -----------------------------------------------------------------------------
 // Initialize libmpeg2 and create a decoder object
@@ -281,6 +280,7 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
   convType = pixelFormat;
 
   t_frame_info = NULL;
+  isDecodedFrame = false;
 
   do
   {
@@ -321,7 +321,7 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
       mpeg2_buffer (mpeg2Decoder, streamBuffer, streamBuffer + streamBufferSize);
       break;
     case STATE_SEQUENCE:
-      switch ( pixelFormat )
+      switch ( convType )
       {
       case formatRGB24:
 	mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb24, NULL);
@@ -336,6 +336,8 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
     case STATE_INVALID_END:
       if ( mpeg2Info->display_fbuf )
 	iSkip--;
+
+      isDecodedFrame = true;
       break;
     }
   } while ( iSkip > 0 );
@@ -343,7 +345,7 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
   // reset skip frames parameter
   iSkipFrames = 1;
 
-  if ( mpeg2Info->display_fbuf )
+  if ( mpeg2Info->display_fbuf && isDecodedFrame )
   {
     t_frame_info            = &frameInfo;
     frameInfo.Y             = mpeg2Info->display_fbuf->buf[0];
@@ -377,10 +379,12 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
   }
   else
   {
+    qDebug( "%sno frame...",c_name );
     t_frame_info = NULL;
   }
   return t_frame_info;
 }
+
 
 // -----------------------------------------------------------------------------
 // Seek to position 0 and decode the first slice

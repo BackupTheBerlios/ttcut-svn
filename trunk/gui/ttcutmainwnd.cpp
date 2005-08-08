@@ -241,12 +241,13 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, const char* name, Qt::WFlags fl )
   sizePolicy.setHeightForWidth(this->sizePolicy().hasHeightForWidth());
   setSizePolicy(sizePolicy);
   setMinimumSize(QSize(900, 800));
-  setBaseSize(QSize(1024, 768));
+  setBaseSize(QSize(924, 724));
 
   centralWidget = new QWidget(this);
   centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
 
   setCentralWidget( centralWidget );
+  TTCut::mainWindow = centralWidget;
 
   // ???-----------------------------------------------------------------------
   widget = new QWidget(centralWidget);
@@ -1851,7 +1852,11 @@ void TTCutMainWnd::lastFramePrevious()
   if ( !cutListView->isItemSelected() )
     return;
 
-  cut_out_index = cut_out_stream->moveToPrevPIFrame();
+  if ( !TTCut::encoderMode )
+    cut_out_index = cut_out_stream->moveToPrevPIFrame();
+  else
+    cut_out_index = cut_out_stream->moveToPrevFrame();
+    
 
   emit cutOutIndexChanged( cut_out_index, cut_out_stream->currentFrameTime() );
   refreshCutOutPosition();
@@ -1869,7 +1874,11 @@ void TTCutMainWnd::lastFrameNext()
   if ( !cutListView->isItemSelected() )
     return;
 
-  cut_out_index = cut_out_stream->moveToNextPIFrame();
+  if ( !TTCut::encoderMode )
+    cut_out_index = cut_out_stream->moveToNextPIFrame();
+  else
+    cut_out_index = cut_out_stream->moveToNextFrame();
+
 
   emit cutOutIndexChanged( cut_out_index, cut_out_stream->currentFrameTime() );
   refreshCutOutPosition();
@@ -2622,6 +2631,8 @@ void TTCutMainWnd::refreshCurrentPosition()
   tlBitRate->setText( szTemp1 );
 
   tlBitRate->update();
+
+  qApp->processEvents();
 }
 
 // refresh the text label for current marker position

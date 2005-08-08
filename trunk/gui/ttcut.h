@@ -187,6 +187,7 @@ class TTCut
    // Global properties
    // --------------------------------------------------------------
    static float        frameRate;
+   static QWidget*     mainWindow;
 };
 
 

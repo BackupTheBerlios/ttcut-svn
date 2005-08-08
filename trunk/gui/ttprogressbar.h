@@ -73,6 +73,9 @@ public:
     void setComplete();
     void resetProgress();
 
+    void showBar();
+    void hideBar();
+
     public slots:
     void slotCancel();
 

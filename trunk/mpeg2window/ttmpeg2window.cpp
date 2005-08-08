@@ -72,7 +72,7 @@ TTMPEG2Window::TTMPEG2Window( QWidget *parent, const char *name )
 void TTMPEG2Window::initializeGL()
 {
    // background color: black
-   glClearColor(1.0, 1.0, 1.0, 0.0);
+   glClearColor(0.0, 0.0, 0.0, 0.0);
 
    // shade model
    glShadeModel(GL_FLAT);
@@ -271,7 +271,6 @@ void TTMPEG2Window::openVideoFile( QString fName, TTVideoIndexList* viIndex, TTV
  
     // create the decoder object
     mpeg2_decoder  = new TTMpeg2Decoder( fName.ascii(), video_index, video_header );
-
     frameInfo     = mpeg2_decoder->getFrameInfo();
 
     iVideoWidth  = frameInfo->width;

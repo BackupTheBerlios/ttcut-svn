@@ -164,7 +164,7 @@ bool    TTCut::readCutIDD         = false;
 // Global properties
 // --------------------------------------------------------------
 float TTCut::frameRate = 25.0;
-
+QWidget* TTCut::mainWindow = NULL;
 
 TTCut::TTCut()
 {

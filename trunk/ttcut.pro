@@ -20,7 +20,7 @@
 #
 #REQUIRES         = opengl
 PROJECT           = TTCUT
-CONFIG            += qt-mt opengl warn_on release
+CONFIG            += qt-mt opengl warn_on debug
 QT                += qt3support	opengl
 DEFINES           += _FILE_OFFSET_BITS=64
 DIST              = TTCut

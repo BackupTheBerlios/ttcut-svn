@@ -51,16 +51,17 @@ class TTTranscodeProvider : public QProcess
   bool encodePart( );
 
   public slots:
-  void readStandardOut();
-  void readStandardErr();
+  void transcodeReadOut();
+  void transcodeReadErr();
   void transcodeStarted();
   void transcodeError();
+  void transcodeFinish(int exit_code );
 
  private:
   TTProcessForm* proc_view;
   QString        str_command;
   QStringList    strl_command_line;
-
+  int            exit_code;
 };
 
 
@@ -81,3 +82,4 @@ class TTEncodeParameter
 };
 
 #endif
+   

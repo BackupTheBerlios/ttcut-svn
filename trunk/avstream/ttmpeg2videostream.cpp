@@ -1485,33 +1485,40 @@ void TTMpeg2VideoStream::encodePart( uint start, uint end, TTCutParameter* cr, T
   enc_par.video_aspect_code  = seq_head->aspect_ratio_information;
   enc_par.video_bitrate      = seq_head->bitRateKbit();
 
-  TTTranscodeProvider* transcode_prov = new TTTranscodeProvider();
+  if ( ttAssigned( progress_bar ) )
+    progress_bar->hideBar();
+
+  TTTranscodeProvider* transcode_prov = new TTTranscodeProvider( );
   
   transcode_prov->setParameter( enc_par );
 
-  transcode_prov->encodePart();
+  if ( transcode_prov->encodePart() )
+  {
+    new_file_info.setFile( temp_dir, "encode.m2v" );
+    TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream( new_file_info );
+    
+    new_mpeg_stream->createHeaderList(); 
+    new_mpeg_stream->createIndexList();
+    new_mpeg_stream->indexList()->sortDisplayOrder();
+    
+    new_mpeg_stream->cut( cut_stream, 0, end-start, cr );
 
-  new_file_info.setFile( temp_dir, "encode.m2v" );
-  TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream( new_file_info );
+    //qDebug( "%s---------------------------------------------",c_name );
 
-  new_mpeg_stream->createHeaderList(); 
-  new_mpeg_stream->createIndexList();
-  new_mpeg_stream->indexList()->sortDisplayOrder();
+    // remove temporary file
+    QString rm_cmd  = "rm ";
+    rm_cmd         += new_file_info.absolutePath();
+    rm_cmd         += "/encode.*";
+    
+    system( rm_cmd.ascii() );
+    
+    delete new_mpeg_stream;
+  }
 
-  new_mpeg_stream->cut( cut_stream, 0, end-start, cr );
-
-  //qDebug( "%s---------------------------------------------",c_name );
-
-  // remove temporary file
-  QString rm_cmd  = "rm ";
-  rm_cmd         += new_file_info.absolutePath();
-  rm_cmd         += "/encode.*";
-
-  system( rm_cmd.ascii() );
-
-  // free memory
-  delete new_mpeg_stream;
   delete transcode_prov;
+
+  if ( ttAssigned( progress_bar ) )
+    progress_bar->showBar();
 
   // set cut parameter back
   cr->last_call         = save_last_call;

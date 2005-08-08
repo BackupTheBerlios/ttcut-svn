@@ -140,7 +140,7 @@ const int initialDecoderBufferSize = 5129;
 class TTMpeg2Decoder
 {
  public:
-  TTMpeg2Decoder();
+  TTMpeg2Decoder( );
   TTMpeg2Decoder( QString cFName, TTVideoIndexList* viIndex=NULL, 
 		  TTVideoHeaderList* viHeader=NULL,long lOffset=0, long lSize=-1);
   ~TTMpeg2Decoder();
@@ -206,6 +206,8 @@ class TTMpeg2Decoder
   TTVideoIndexList*       videoIndexList; 
   TPixelFormat            convType;
   TFrameInfo*             t_frame_info;
+
+  bool                    isDecodedFrame;
 };
 
 #endif //TTMPEG2DECODER_H

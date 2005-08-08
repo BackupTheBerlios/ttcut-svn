@@ -77,8 +77,7 @@ void TTProcessForm::addLine( QString& str_line )
 {
   QListWidgetItem *item = new QListWidgetItem( procOutputList );
   item->setText( str_line );
-
-  qDebug( "add  line: %s",str_line.ascii() );
+  procOutputList->scrollToItem( item, QAbstractItemView::EnsureVisible );
 
   qApp->processEvents();
 }

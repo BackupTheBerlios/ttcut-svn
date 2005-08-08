@@ -66,6 +66,8 @@ SOURCES           = \
 #                   ------------------------------------------------------------
 	            gui/ttcut.cpp \
                     gui/ttprogressbar.cpp \
+                    gui/ttprocessform.cpp \
+#
 #                   ------------------------------------------------------------
 #                   GUI (TTMpeg2)
 #                   ------------------------------------------------------------
@@ -74,7 +76,12 @@ SOURCES           = \
 	            ttmpeg2_src/slidemain.cpp \
 	            ttmpeg2_src/ttmpeg2infoview.cpp \
 	            ttmpeg2_src/ttframechart.cpp \
-	            ttmpeg2_src/ttmpeg2mainwnd.cpp 
+	            ttmpeg2_src/ttmpeg2mainwnd.cpp \
+#
+#                   -------------------------------------------------------------
+#                   EXTERN
+#                   -------------------------------------------------------------
+	            extern/tttranscode.cpp
 #
 HEADERS           = \
 #                   ------------------------------------------------------------
@@ -114,6 +121,8 @@ HEADERS           = \
 #                   ------------------------------------------------------------
 	            gui/ttcut.h \
                     gui/ttprogressbar.h \
+                    gui/ttprocessform.h \
+#
 #                   ------------------------------------------------------------
 #                   GUI (TTMpeg2)
 #                   ------------------------------------------------------------
@@ -121,5 +130,9 @@ HEADERS           = \
 #	            ttmpeg2_src/ttslidetest.h \
 	            ttmpeg2_src/ttmpeg2infoview.h \
 	            ttmpeg2_src/ttframechart.h \
-	            ttmpeg2_src/ttmpeg2mainwnd.h
-
+	            ttmpeg2_src/ttmpeg2mainwnd.h \
+#
+#                   -------------------------------------------------------------
+#                   EXTERN
+#                   -------------------------------------------------------------
+	            extern/tttranscode.h

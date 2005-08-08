@@ -281,7 +281,7 @@ void TTCutPreview::createPreview( int c_index )
       progress_bar = new TTProgressBar( this, "ProgressBar", true);
       progress_bar->show();
       qApp->processEvents();
-      
+
       video_stream->setProgressBar( progress_bar );
       video_cut_stream = new TTFileBuffer( preview_video_name.ascii(), fm_open_write );
 

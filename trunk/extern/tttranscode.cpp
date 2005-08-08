@@ -33,30 +33,34 @@
 
 const char c_name[] = "TTTRANSCODE   : ";
 
-TTTranscodeProvider::TTTranscodeProvider()
-  :QProcess( )
+TTTranscodeProvider::TTTranscodeProvider( )
+  :QProcess()
 {
-  QString str_head = "starting encoder transcode";
+  QString str_head = "starting encoder >>>transcode<<<";
 
   str_command = "transcode";
+  
+  setReadChannel( QProcess::StandardOutput );
+  setReadChannelMode( QProcess::SeparateChannels );
 
-  //proc_view = new TTProcessForm( 0 );
+  proc_view = new TTProcessForm( TTCut::mainWindow );
+  proc_view->setModal( true );
+  proc_view->addLine( str_head );
+  proc_view->show();  
 
-  //proc_view->addLine( str_head );
-  //proc_view->show();
-  //qApp->processEvents();
-
-  connect( this, SIGNAL(readyReadStandardOut()),this,SLOT(readStandardOut()) );
-  connect( this, SIGNAL(readyReadStandardError()),this,SLOT(readStandardErr()) );
+  connect( this, SIGNAL(readyReadStandardOut()),this,SLOT(transcodeReadOut()) );
+  connect( this, SIGNAL(readyRead()),this,SLOT(transcodeReadOut()) );
+  connect( this, SIGNAL(readyReadStandardErr()),this,SLOT(transcodeReadErr()) );
   connect( this, SIGNAL(started()),this,SLOT(transcodeStarted()) );
   connect( this, SIGNAL(error()),this,SLOT(transcodeError()) );
+  connect( this, SIGNAL(finished(int)),this,SLOT(transcodeFinish(int)) );
 }
 
 
 TTTranscodeProvider::~TTTranscodeProvider()
 {
-  //proc_view->close();
-  //delete proc_view;
+  proc_view->close();
+  delete proc_view;
 }
 
 void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
@@ -90,58 +94,134 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 
 bool TTTranscodeProvider::encodePart( )    
 {
-  int stat;
-
-  //qDebug( "%sstart transcode...%s %s",c_name,str_command.ascii(),strl_command_line[0].ascii() );
-
-  execute( str_command, strl_command_line );
-
-  //if ( !waitForStarted() )
-  //{
-  //qDebug( "%serror starting transcode (!)",c_name );
-
-  //return false;
-  //}
+  start( str_command, strl_command_line );
 
   if ( !waitForFinished(-1) )
   {
-    //qDebug( "%stranscode terminate with error (!)",c_name );
+    qDebug( "%serror executing transcode",c_name );
     return false;
   }
 
-  //qDebug( "%stranscode finished",c_name );
   return true;
 }
 
 
-void TTTranscodeProvider::readStandardOut()
+void TTTranscodeProvider::transcodeReadOut()
 {
-  char data[80];
-  readLine(data, 80);
-  QString line( data );
+  char       temp_str[101];
+  int        i, i_pos;
+  QString    line;
+  QByteArray ba;
 
-  //proc_view->addLine( line );
-    
-  qDebug( "%sread std out: ",c_name );
+  ba = readAll();
+
+  i_pos = 0;
+
+  for ( i = 0; i < ba.size(); ++i) 
+  {
+    if ( ba.at(i) != '\n' && i_pos < 100)
+    {
+      temp_str[i_pos] = ba.at(i);
+      i_pos++;
+    }
+    else
+    {
+      temp_str[i_pos] = '\0';
+      line = temp_str;
+      proc_view->addLine( line );
+      i_pos = 0;
+    }
+  }
 }
 
-void TTTranscodeProvider::readStandardErr()
+void TTTranscodeProvider::transcodeReadErr()
 {
-  char data[80];
-  readLine(data, 80);
-  QString line( data );
+  char       temp_str[101];
+  int        i, i_pos;
+  QString    line;
+  QByteArray ba;
 
-  //proc_view->addLine( line );
+  ba = readAll();
 
-  qDebug( "%sread std err: %s",c_name,data );
+  i_pos = 0;
+
+  for ( i = 0; i < ba.size(); ++i) 
+  {
+    if ( ba.at(i) != '\n' && i_pos < 100)
+    {
+      temp_str[i_pos] = ba.at(i);
+      i_pos++;
+    }
+    else
+    {
+      temp_str[i_pos] = '\0';
+      line = temp_str;
+      proc_view->addLine( line );
+      i_pos = 0;
+    }
+  }
 }
 
 void TTTranscodeProvider::transcodeStarted()
 {
-  qDebug( "%sstarted: ",c_name );
+  char       temp_str[101];
+  int        i, i_pos;
+  QString    line;
+  QByteArray ba;
+
+  ba = readAll();
+
+  i_pos = 0;
+
+  for ( i = 0; i < ba.size(); ++i) 
+  {
+    if ( ba.at(i) != '\n' && i_pos < 100)
+    {
+      temp_str[i_pos] = ba.at(i);
+      i_pos++;
+    }
+    else
+    {
+      temp_str[i_pos] = '\0';
+      line = temp_str;
+      proc_view->addLine( line );
+      i_pos = 0;
+    }
+  }
 }
 
 void TTTranscodeProvider::transcodeError()
 {
   qDebug( "%serror: ",c_name );
+}
+
+
+void TTTranscodeProvider::transcodeFinish( int e_code )
+{
+  char       temp_str[101];
+  int        i, i_pos;
+  QString    line;
+  QByteArray ba;
+
+  ba = readAll();
+
+  i_pos = 0;
+
+  for ( i = 0; i < ba.size(); ++i) 
+  {
+    if ( ba.at(i) != '\n' && i_pos < 100)
+    {
+      temp_str[i_pos] = ba.at(i);
+      i_pos++;
+    }
+    else
+    {
+      temp_str[i_pos] = '\0';
+      line = temp_str;
+      proc_view->addLine( line );
+      i_pos = 0;
+    }
+  }
+
+  exit_code = e_code;
 }

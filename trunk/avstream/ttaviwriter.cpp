@@ -83,7 +83,7 @@ bool TTAVIWriter::initAVIWriter( TTVideoStream* v_stream )
    decoder = new TTMpeg2Decoder( video_file_name.ascii(), index_list, header_list );
 
    // must set the format for conversion here
-   decoder->decodeFirstMPEG2Frame( formatYV12 );
+   decoder->decodeFirstMPEG2Frame( formatYV12 ); 
 
    b_result = true;
 
