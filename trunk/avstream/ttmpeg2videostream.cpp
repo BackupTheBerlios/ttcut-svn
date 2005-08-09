@@ -1465,6 +1465,12 @@ void TTMpeg2VideoStream::encodePart( uint start, uint end, TTCutParameter* cr, T
   bool save_last_call         = cr->last_call;
   bool save_write_max_bitrate = cr->write_max_bitrate;
 
+  // remove temporary file
+  QString rm_cmd  = "rm ";
+  rm_cmd         += new_file_info.absolutePath();
+  rm_cmd         += "/encode.*";
+  system( rm_cmd.ascii() );
+
   // never write sequence end code (!)
   cr->last_call = false;
   cr->write_max_bitrate = false;

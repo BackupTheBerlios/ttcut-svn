@@ -94,7 +94,15 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 
 bool TTTranscodeProvider::encodePart( )    
 {
+  qDebug( "%sstarting transcode...",c_name );
+
   start( str_command, strl_command_line );
+
+  if ( !waitForStarted() )
+  {
+    qDebug( "%serror starting transcode",c_name );
+    return false;
+  }
 
   if ( !waitForFinished(-1) )
   {
