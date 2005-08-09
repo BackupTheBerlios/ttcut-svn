@@ -44,6 +44,7 @@
 #include "ttcut.h"
 #include "ttcutsettings.h"
 
+class QProcess;
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
@@ -109,8 +110,9 @@ public:
     void getTabData();
 
     protected slots:
+    virtual void selectCutDirAction();
     virtual void readFromStdout();
-    virtual void exitProcess();
+    virtual void exitProcess( int e_code );
 
  protected:
     QGridLayout* TTCutAVCutCommonTabLayout;
@@ -131,7 +133,7 @@ public:
     Q3Frame*      Frame4;
 
  private:
-    Q3Process*    dfProc;
+    QProcess*    dfProc;
     QString      dfOutput1;
     QString      dfOutput2;
 };

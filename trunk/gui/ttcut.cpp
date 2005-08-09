@@ -117,7 +117,7 @@ bool TTCut::readPrevIDD    = false;
 // encoder settings
 // --------------------------------------------------------------
 // Version
-QString TTCut::versionString = "TTCut - 0.10.1-alpha (Qt-4.0)";
+QString TTCut::versionString = "TTCut - 0.10.2-alpha (Qt-4.0)";
 // Options
 bool TTCut::encoderMode = false;
 
@@ -151,7 +151,7 @@ bool TTCut::isWorking         = false;
 // Cut settings
 // --------------------------------------------------------------
 // cut option
-QString TTCut::cutDirPath         = "./temp";
+QString TTCut::cutDirPath         = QDir::currentPath();
 QString TTCut::cutVideoName       = "_cut.m2v";
 bool    TTCut::cutWriteMaxBitrate = false;
 bool    TTCut::cutWriteSeqEnd     = false;
@@ -163,8 +163,8 @@ bool    TTCut::readCutIDD         = false;
 // --------------------------------------------------------------
 // Global properties
 // --------------------------------------------------------------
-float TTCut::frameRate = 25.0;
-QWidget* TTCut::mainWindow = NULL;
+float TTCut::frameRate            = 25.0;
+QWidget* TTCut::mainWindow        = NULL;
 
 TTCut::TTCut()
 {

@@ -7,6 +7,7 @@
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/13/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 07/16/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/09/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -33,15 +34,6 @@
 #ifndef TTCUTPREVIEW_H
 #define TTCUTPREVIEW_H
 
-#include <qvariant.h>
-#include <qdialog.h>
-#include <q3process.h>
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <Q3Frame>
-#include <QHBoxLayout>
-#include <QGridLayout>
-
 #include "ttcut.h"
 #include "ttprogressbar.h"
 #include "ttcutlistview.h"
@@ -51,13 +43,14 @@
 
 #include "../avcut/ttavcutposition.h"
 
+class QProcess;
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
 class QSpacerItem;
 class QComboBox;
 class QPushButton;
-class Q3Frame;
+class QFrame;
 
 
 // -----------------------------------------------------------------------------
@@ -97,7 +90,7 @@ protected slots:
     // mplayer process has information ready for us
     virtual void readFromStdout();
     // mplayer process exited
-    virtual void exitMPlayer();
+    virtual void exitMPlayer( int e_code );
 
 protected:
     // gui elements
@@ -106,7 +99,7 @@ protected:
     QPushButton*   pbPlay;
     QPushButton*   pbStop;
     QPushButton*   pbExit;
-    Q3Frame*        videoFrame;
+    QFrame*        videoFrame;
     QGridLayout*   TTCutPreviewLayout;
     QHBoxLayout*   layout1;
     QSpacerItem*   spacer1;
@@ -122,14 +115,14 @@ protected:
     int                cut_index;
     TTFileBuffer*      video_cut_stream;
     TTFileBuffer*      audio_cut_stream;
-    Q3Process*          mplayerProc;      
-    Q3Process*          mplexProc;        
+    QProcess*          mplayerProc;      
+    QProcess*          mplexProc;        
     int                previewWidth;        
     int                previewHeight;       
     int                num_cut_list;        
     int                num_preview;         
-    QString            currentVideoFile;    
-    QString            currentAudioFile;    
+    QString            current_video_file;    
+    QString            current_audio_file;    
     bool               isPlaying;           
 };
 

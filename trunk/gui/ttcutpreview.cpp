@@ -7,6 +7,7 @@
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/13/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 07/16/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/09/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -32,17 +33,14 @@
 
 #include "ttcutpreview.h"
 
-#include <qapplication.h>
-#include <qvariant.h>
-#include <qcombobox.h>
-#include <qpushbutton.h>
-#include <q3frame.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
-//Added by qt3to4:
+#include <QApplication>
+#include <QProcess>
+#include <QComboBox>
+#include <QPushButton>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QGridLayout>
+#include <QDir>
 
 const char c_name[] = "TTCUTPREVIEW  : ";
 
@@ -70,9 +68,9 @@ TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
   TTCutPreviewLayout = new QGridLayout( this, 1, 1, 11, 6, "TTCutPreviewLayout");
 
   // the video preview window
-  videoFrame = new Q3Frame( this, "videoFrame" );
-  videoFrame->setFrameShape( Q3Frame::StyledPanel );
-  videoFrame->setFrameShadow( Q3Frame::Sunken );
+  videoFrame = new QFrame( this, "videoFrame" );
+  videoFrame->setFrameShape( QFrame::StyledPanel );
+  videoFrame->setFrameShadow( QFrame::Sunken );
 
   // set the frame size according the video size
   videoFrame->setMinimumSize( QSize( previewWidth, previewHeight ) );
@@ -114,10 +112,7 @@ TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
   // set button and label text
   languageChange();
 
-  //QT4: clearWState( WState_Polished );
-
   // resize widget to minimum size
-  // TODO: disable resizing by user
   setMinimumSize(640,480);
   resize( QSize(640, 480).expandedTo(minimumSizeHint()) );
   setMaximumSize( QSize(640, 480).expandedTo(minimumSizeHint()) );
@@ -170,8 +165,12 @@ void TTCutPreview::createPreview( int c_index )
   int            i, iPos;
   QString        preview_video_name;
   QString        preview_audio_name;
+  QString        preview_mplex_name;
+  QFileInfo      preview_video_info;
+  QFileInfo      preview_audio_info;
+  QFileInfo      preview_mplex_info;
   QString        selectionString;
-  QString        mplexCommand;
+  QString        mplex_command;
   QTime          preview_time;
   uint           preview_frames;
   uint           start_index;
@@ -218,6 +217,13 @@ void TTCutPreview::createPreview( int c_index )
       preview_video_name.sprintf("preview_%03d.m2v",i+1);
       preview_audio_name.sprintf("preview_%03d.mpa",i+1);
     }
+
+    // add temporary path information
+    preview_video_info.setFile( QDir(TTCut::tempDirPath), preview_video_name );
+    preview_audio_info.setFile( QDir(TTCut::tempDirPath), preview_audio_name );
+
+    preview_video_name = preview_video_info.absoluteFilePath();
+    preview_audio_name = preview_audio_info.absoluteFilePath();
 
     // first cut-in
     if ( i == 0 )
@@ -317,18 +323,43 @@ void TTCutPreview::createPreview( int c_index )
 
   for ( i = 0; i < num_preview; i++ )
   {
+    preview_video_name.sprintf("preview_%03d.m2v",i+1);
+    preview_audio_name.sprintf("preview_%03d.mpa",i+1);
+    preview_mplex_name.sprintf("preview_%03d.mpg",i+1);
+    
+    // add temporary path information
+    preview_video_info.setFile( QDir(TTCut::tempDirPath), preview_video_name );
+    preview_audio_info.setFile( QDir(TTCut::tempDirPath), preview_audio_name );
+    preview_mplex_info.setFile( QDir(TTCut::tempDirPath), preview_mplex_name );
+
+    preview_video_name = preview_video_info.absoluteFilePath();
+    preview_audio_name = preview_audio_info.absoluteFilePath();
+    preview_mplex_name = preview_mplex_info.absoluteFilePath();
 
     // have we audio tracks
     if ( TTCut::numAudioTracks > 0 )
     {
-      // TODO: multiple mplex commands
-      mplexCommand.sprintf("mplex -f 8 -o preview_%03d.mpg preview_%03d.m2v preview_%03d.mpa 2>/dev/null",i+1,i+1,i+1);
-      system( mplexCommand.ascii() );
+      mplex_command  = "mplex -f 8 -o ";
+      mplex_command += preview_mplex_name;
+      mplex_command += " ";
+      mplex_command += preview_video_name;
+      mplex_command += " ";
+      mplex_command += preview_audio_name;
+      mplex_command += " ";
+      mplex_command += "2>/dev/null";
+
+      system( mplex_command.ascii() );
     }
     else
     {
-      mplexCommand.sprintf("mv preview_%03d.m2v preview_%03d.mpg 2>/dev/null",i+1,i+1);
-      system( mplexCommand.ascii() );
+      mplex_command  = "mv ";
+      mplex_command += preview_video_name;
+      mplex_command += " ";
+      mplex_command += preview_mplex_name;
+      mplex_command += " ";
+      mplex_command += "2>/dev/null";
+
+      system( mplex_command.ascii() );
     }
     progress_bar->setProgress( i+1 );
   }
@@ -337,8 +368,10 @@ void TTCutPreview::createPreview( int c_index )
   //qDebug( "%s-----------------------------------------------",c_name );
 
   // set the current cut preview to the first cut clip
-  currentVideoFile.sprintf( "preview_001.mpg" );
-  currentAudioFile.sprintf( "preview_001.mp2" );
+  preview_video_name.sprintf("preview_001.mpg");
+  preview_video_info.setFile( QDir(TTCut::tempDirPath), preview_video_name );
+  
+  current_video_file = preview_video_info.absoluteFilePath();
 }
 
 
@@ -427,11 +460,12 @@ void TTCutPreview::createCutPreviewList( )
 // -----------------------------------------------------------------------------
 void TTCutPreview::selectCut( int iCut )
 {
-  currentVideoFile.sprintf( "preview_%03d.mpg",iCut+1 );
-  currentAudioFile.sprintf( "preview_%03d.mp2",iCut+1 );
+  QString   preview_video_name;
+  QFileInfo preview_video_info;
 
-  //qDebug( "Current video file: %s",currentVideoFile.ascii() );
-  //qDebug( "Current audio file: %s",currentAudioFile.ascii() );
+  preview_video_name.sprintf("preview_%03d.mpg",iCut+1);
+  preview_video_info.setFile( QDir(TTCut::tempDirPath), preview_video_name );
+  current_video_file = preview_video_info.absoluteFilePath();
 }
 
 
@@ -442,13 +476,13 @@ void TTCutPreview::playPreview()
 {
   if ( !isPlaying )
   {
-    //qDebug( "Start playing preview: %s",currentVideoFile.ascii() );
+    //qDebug( "Start playing preview: %s",current_video_file.ascii() );
 
     // create mplayer process
-    mplayerProc = new Q3Process( );
+    mplayerProc = new QProcess( );
 
     // play the current preview clip
-    playMPlayer( currentVideoFile, currentAudioFile );
+    playMPlayer( current_video_file, current_audio_file );
   }
 }
 
@@ -468,10 +502,18 @@ void TTCutPreview::stopPreview()
 // -----------------------------------------------------------------------------
 void TTCutPreview::exitPreview()
 {
+  QString   rm_command = "rm ";
+  QString   file_name  = "preview*";
+  QFileInfo file_info;
+  
   if ( !isPlaying )
   {
     // clean up preview* files in temp directory
-    system( "rm preview* 2>/dev/null" );
+    file_info.setFile( QDir(TTCut::tempDirPath), file_name );
+    rm_command += file_info.absoluteFilePath();
+    rm_command += " 2>/dev/null";
+
+    system( rm_command.ascii() );
 
     done( 0 );
   }
@@ -479,9 +521,6 @@ void TTCutPreview::exitPreview()
   {
     if ( stopMPlayer() )
     {
-      // clean up preview* files in temp directory
-      //system( "rm preview* 2>/dev/null" );
-
       done( 0 );
     }
     else
@@ -506,13 +545,14 @@ void TTCutPreview::readFromStdout()
 // -----------------------------------------------------------------------------
 bool TTCutPreview::playMPlayer( QString videoFile, QString audioFile )
 {
-  QString mplayerCmd;
+  QString     str_cmd;
+  QStringList mplayer_cmd;
 
   if ( ttAssigned( mplayerProc ) &&
        !isPlaying                   )
   {
     // Setup interface with MPlayer
-    mplayerProc->clearArguments();
+    mplayer_cmd.clear();
 
     // ----------------------------------------------------------------------
     // slave-mode
@@ -525,40 +565,29 @@ bool TTCutPreview::playMPlayer( QString videoFile, QString audioFile )
     // ----------------------------------------------------------------------
 
     // Every argument must have it's own addArgument
-    mplayerProc->addArgument( "mplayer"   );
-    mplayerProc->addArgument( "-slave"    );
-    mplayerProc->addArgument( "-identify" );
-    mplayerProc->addArgument( "-quiet"    );
-    mplayerProc->addArgument( "-wid"      );
-    mplayerCmd.sprintf( "%ld",(long)videoFrame->winId() );
-    mplayerProc->addArgument( mplayerCmd  );
-    mplayerProc->addArgument( "-geometry" );
-    mplayerCmd.sprintf( "%dx%d+0+0", previewWidth, previewHeight );
-    mplayerProc->addArgument( mplayerCmd  );
+    mplayer_cmd << "-slave"
+		<< "-identify"
+		<< "-quiet"
+		<< "-wid";
 
-    // add fileName to mplayer argument list and start playing
-    mplayerProc->addArgument( videoFile  );
+    str_cmd.sprintf( "%ld",(long)videoFrame->winId() );
+    mplayer_cmd << str_cmd
+		<< "-geometry";
 
-    // currently no separate audio file, mplexed files are better
-    // synchronized
-    //mplayerProc->addArgument( "-audiofile" );
-    //mplayerProc->addArgument( audioFile );
+    str_cmd.sprintf( "%dx%d+0+0", previewWidth, previewHeight );
+    mplayer_cmd << str_cmd
+		<< videoFile;
 
-    // print out mplayer command line for debug purpose
-    //cout<<"MPlayer command-line: "<<mplayerProc->arguments().join(" ")<<endl;
 
     // start the mplayer process
-    if ( !mplayerProc->isRunning() && !mplayerProc->start() )
+    if ( mplayerProc->state() != QProcess::Running )
     {
-      qDebug( "Error starting mplayer process" );
-      return false;
-    }
-    else
-    {
+      mplayerProc->start( "mplayer", mplayer_cmd );
+
       // signal and slot connection for the mplayer process
       // detect when mplayer has information ready for us
-      connect(mplayerProc, SIGNAL( readyReadStdout() ),SLOT( readFromStdout() ) );
-      connect(mplayerProc, SIGNAL( processExited() ),  SLOT( exitMPlayer() ) );
+      connect(mplayerProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
+      connect(mplayerProc, SIGNAL( finished(int) ),  SLOT( exitMPlayer(int) ) );
 
       isPlaying = true;
 
@@ -576,7 +605,7 @@ bool TTCutPreview::stopMPlayer()
 
   if ( isPlaying )
   {
-    mplayerProc->writeToStdin( strQuit );
+    mplayerProc->write( "quit\n" );
 
     isPlaying = false;
 
@@ -588,8 +617,10 @@ bool TTCutPreview::stopMPlayer()
 
 // exit mplayer process
 // -----------------------------------------------------------------------------
-void TTCutPreview::exitMPlayer()
+void TTCutPreview::exitMPlayer( int e_code)
 {
+  qDebug( "%sexit mplayer: exit code: %d",c_name,e_code );
+
   // delete the mplayer process
   delete mplayerProc;
 

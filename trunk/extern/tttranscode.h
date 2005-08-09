@@ -52,9 +52,7 @@ class TTTranscodeProvider : public QProcess
 
   public slots:
   void transcodeReadOut();
-  void transcodeReadErr();
   void transcodeStarted();
-  void transcodeError();
   void transcodeFinish(int exit_code );
 
  private:

@@ -598,6 +598,7 @@ bool TTMpeg2VideoStream::createHeaderListFromIdd()
 bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
 {
   bool                b_result = true;
+  bool                b_cancel = false;
   uint8_t             header_type;
   TTMpeg2VideoHeader* new_header;
 
@@ -614,7 +615,7 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
   try
   {
     // go through the mpeg2 stream until EOF was reached
-    while( !mpeg2_stream->streamEOF() )
+    while( !mpeg2_stream->streamEOF() && !b_cancel )
     {
       header_type = 0xFF;
     
@@ -663,9 +664,10 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
       }
 
       if ( ttAssigned(progress_bar) )
-	progress_bar->setProgress( mpeg2_stream->currentOffset() );
+	b_cancel = progress_bar->setProgress( mpeg2_stream->currentOffset() );
     }
-    progress_bar->setComplete();
+    if ( ttAssigned(progress_bar) )
+      progress_bar->setComplete();
   }
   catch (...)
   {
@@ -677,6 +679,8 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
   }
 
   //qDebug( "%sheader list count: %d",c_name,header_list->count() );
+  if ( b_cancel )
+    b_result = false;
 
   return b_result;
 }

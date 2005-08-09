@@ -46,10 +46,16 @@
 #include <qcombobox.h>
 #include <qradiobutton.h>
 #include <q3buttongroup.h>
+
 //Added by qt3to4:
+#include <QApplication>
+#include <QProcess>
+#include <QFileDialog>
 #include <Q3Frame>
 #include <QHBoxLayout>
 #include <QGridLayout>
+
+const char c_name[] = "TTAVCUTDIALOG : ";
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -265,6 +271,8 @@ TTCutAVCutCommonTab::TTCutAVCutCommonTab( QWidget* parent,  const char* name, Qt
     Frame4->setMargin( 2 );
 
     TTCutAVCutCommonTabLayout->addWidget( Frame4, 2, 0 );
+
+    connect( pbSelectPath, SIGNAL( clicked() ), this, SLOT( selectCutDirAction() ) );
 }
 
 // destruct object
@@ -274,12 +282,50 @@ TTCutAVCutCommonTab::~TTCutAVCutCommonTab()
     // no need to delete child widgets, Qt does it all for us
 }
 
+// select a directory for the cut result
+void TTCutAVCutCommonTab::selectCutDirAction()
+{
+  QStringList df_cmd_list;
+
+  QString str_dir = QFileDialog::getExistingDirectory( this,
+						       "Select cut-result directory",
+						       TTCut::cutDirPath,
+						       (QFileDialog::DontResolveSymlinks |
+							QFileDialog::ShowDirsOnly) );
+
+  if ( !str_dir.isEmpty() )
+  {
+    TTCut::cutDirPath = str_dir;
+
+    leOutputPath->setText( TTCut::cutDirPath );
+
+    qApp->processEvents();
+  }
+
+  // get free disk space
+  dfOutput2 = "No information available";
+  dfProc = new QProcess( );
+
+  df_cmd_list.clear();
+
+  df_cmd_list << "-h"
+	      << TTCut::cutDirPath;
+
+  dfProc->start( "df", df_cmd_list );
+
+  connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
+  connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
+}
+
 
 // set the tab data from global parameter
 // -----------------------------------------------------------------------------
 void TTCutAVCutCommonTab::setTabData()
 {
-  QString dfCmd;
+  QStringList df_cmd_list;
+
+  if ( !QDir(TTCut::cutDirPath).exists() )
+    TTCut::cutDirPath = QDir::currentPath();
 
   // cut output filename and output path
   leOutputFile->setText( TTCut::cutVideoName );
@@ -300,19 +346,17 @@ void TTCutAVCutCommonTab::setTabData()
 
   // get free disk space
   dfOutput2 = "No information available";
-  dfProc = new Q3Process( this );
+  dfProc = new QProcess( );
 
-  dfProc->clearArguments();
+  df_cmd_list.clear();
 
-  dfProc->addArgument( "df" );
-  dfProc->addArgument( "-h" );
-  dfProc->addArgument( "./" );
+  df_cmd_list << "-h"
+	      << TTCut::cutDirPath;
 
-  if ( dfProc->start() )
-  {
-    connect(dfProc, SIGNAL( readyReadStdout() ),SLOT( readFromStdout() ) );
-    connect(dfProc, SIGNAL( processExited() ),  SLOT( exitProcess() ) );
-  }
+  dfProc->start( "df", df_cmd_list );
+
+  connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
+  connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
 }
 
 // get tab data and set global parameter
@@ -322,6 +366,9 @@ void TTCutAVCutCommonTab::getTabData()
   // cut output filename and output path
   TTCut::cutVideoName = leOutputFile->text();
   TTCut::cutDirPath   = leOutputPath->text();
+
+  if ( !QDir(TTCut::cutDirPath).exists() )
+    TTCut::cutDirPath = QDir::currentPath();
 
   // cut options
   // write max bittrate tp first sequence
@@ -340,14 +387,43 @@ void TTCutAVCutCommonTab::getTabData()
 
 void TTCutAVCutCommonTab::readFromStdout()
 {
-  dfOutput1 = dfProc->readLineStdout();
+  char       temp_str[101];
+  int        i, i_pos, i_line;
+  QString    line;
+  QByteArray ba;
 
-  textFreeDriveSpace1->setText( dfOutput1 );
+  ba = dfProc->readAll();
+
+  i_pos  = 0;
+  i_line = 0;
+
+  for ( i = 0; i < ba.size(); ++i) 
+  {
+    if ( ba.at(i) != '\n' && i_pos < 100)
+    {
+      temp_str[i_pos] = ba.at(i);
+      i_pos++;
+    }
+    else
+    {
+      temp_str[i_pos] = '\0';
+      line = QString::fromLocal8Bit( temp_str );;
+
+      if ( i_line == 0 )
+	textFreeDriveSpace1->setText( line );
+      else
+	textFreeDriveSpace2->setText( line );
+
+      i_pos = 0;
+      i_line++;
+    }
+  }
+  qApp->processEvents();
 }
 
-void TTCutAVCutCommonTab::exitProcess()
+void TTCutAVCutCommonTab::exitProcess( int e_code )
 {
-  dfOutput2 = dfProc->readLineStdout();
-
-  textFreeDriveSpace2->setText( dfOutput2 );
+  dfProc->kill();
+  delete dfProc;
+  qApp->processEvents();
 }

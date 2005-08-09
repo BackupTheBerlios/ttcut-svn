@@ -237,7 +237,9 @@ void TTProgressBar::resetProgress()
 
 void TTProgressBar::slotCancel()
 {
+  qDebug( "%scancel button pressed: %d",c_name,userCancel );
   userCancel = true;
+  qApp->processEvents();
 }
 
 

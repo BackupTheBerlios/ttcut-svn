@@ -7,11 +7,12 @@
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/01/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 03/23/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 04/05/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/09/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// TTCUTSETTINGS
+// *** TTCUTSETTINGS
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -47,7 +48,9 @@
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <q3buttongroup.h>
+
 //Added by qt3to4:
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -159,6 +162,16 @@ void TTCutSettings::readSettings()
   endGroup();
 
   endGroup();
+
+  // check temporary path; we must ensure we have a temporary directory
+  // the temporary directory is used for the preview clips and for
+  // the temporary avi-clips
+  if ( !QDir( TTCut::tempDirPath ).exists() )
+    TTCut::tempDirPath = QDir::tempPath();
+
+  // check the cut directory path
+  if ( !QDir( TTCut::cutDirPath ).exists() )
+    TTCut::cutDirPath = QDir::currentPath();
 }
 
 
@@ -630,6 +643,8 @@ TTCutCommonSettings::TTCutCommonSettings( QWidget* parent,  const char* name, Qt
     TTCutCommonSettingsLayout->addMultiCellWidget( gbFilesDirs, 3, 3, 0, 1 );
     QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
     TTCutCommonSettingsLayout->addItem( spacer_2, 2, 0 );
+
+    connect( btnDirOpen, SIGNAL( clicked() ), this, SLOT( selectTempDirAction() ) );
 }
 
 // destructor
@@ -638,6 +653,22 @@ TTCutCommonSettings::~TTCutCommonSettings()
     // no need to delete child widgets, Qt does it all for us
 }
 
+// select a temp directory path
+void TTCutCommonSettings::selectTempDirAction()
+{
+  QString str_dir = QFileDialog::getExistingDirectory( this,
+						       "Select temporary directory",
+						       TTCut::tempDirPath,
+						       (QFileDialog::DontResolveSymlinks |
+							QFileDialog::ShowDirsOnly) );
+
+  if ( !str_dir.isEmpty() )
+  {
+    TTCut::tempDirPath = str_dir;
+
+    leTempDirectory->setText( TTCut::tempDirPath );
+  }
+}
 
 // set the tab data from the global parameter
 void TTCutCommonSettings::setTabData()
@@ -698,6 +729,9 @@ void TTCutCommonSettings::getTabData()
     TTCut::fastSlider = false;
 
   TTCut::tempDirPath = leTempDirectory->text( );
+
+  if ( !QDir(TTCut::tempDirPath).exists() )
+    TTCut::tempDirPath = QDir::tempPath();
 }
 
 

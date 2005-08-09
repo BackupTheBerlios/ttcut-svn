@@ -140,6 +140,9 @@ public:
     // get the tab data and fill the global parameter
     void getTabData();
 
+    protected slots:
+    void selectTempDirAction();
+
 protected:
     Q3GroupBox*   gbNavigation;
     QCheckBox*   cbQuickSearch;

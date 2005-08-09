@@ -1549,6 +1549,7 @@ void TTCutMainWnd::createAVStreams( )
     else
     {
       qDebug( "%swrong video type",c_name );
+      delete video_type;
       return;
     }
  
@@ -1585,10 +1586,11 @@ void TTCutMainWnd::createAVStreams( )
 
       mpeg2_stream->setProgressBar( (TTProgressBar*)NULL );
       delete progress_bar;
-      delete video_type;
 
       video_type   = (TTVideoType*)NULL;
       mpeg2_stream = (TTMpeg2VideoStream*)NULL;
+
+      closeProject();
 
       return;
     }
@@ -1668,6 +1670,9 @@ void TTCutMainWnd::createAVStreams( )
 
       current_audio_stream = (TTAudioStream*)NULL;
       audio_type           = (TTAudioType*)NULL;
+
+      // force user to give an audio file
+      openAudioFile();
     }
   }
 
@@ -2367,6 +2372,7 @@ void TTCutMainWnd::videoAudioCut()
    QString        videoCutName;
    QString        audio_cut_name;
    QString        audio_number;
+   QFileInfo      video_cut_file_info;
    QFileInfo      audio_cut_file_info;
    uint len1, len2, len;
    //int i;
@@ -2421,9 +2427,11 @@ void TTCutMainWnd::videoAudioCut()
        
    // dialog exit with start
    // --------------------------------------------------------------------------
-   // TODO: use cut output path
    // set new video cut name
    videoCutName = TTCut::cutVideoName;
+
+   video_cut_file_info.setFile ( QDir(TTCut::cutDirPath), videoCutName );
+   videoCutName = video_cut_file_info.absoluteFilePath();
 
    avcut_list = cutListView->cutList();
    avcut_list->sort();
@@ -2477,13 +2485,18 @@ void TTCutMainWnd::videoAudioCut()
 
      //qDebug( "%scurrent audio stream: %s",c_name,current_audio_stream->fileName().ascii() );
 
-     audio_cut_file_info.setFile( videoCutName );
+     // Quick and ugly: make it better ;-)
+     // ------------------------------------------------------------------------
+     audio_cut_file_info = video_cut_file_info;
 
      audio_cut_name = audio_cut_file_info.completeBaseName();
      audio_number.sprintf( "_%03d.",list_pos+1 );
      audio_cut_name += audio_number;
      audio_cut_file_info.setFile( current_audio_stream->fileName() );
      audio_cut_name += audio_cut_file_info.suffix();
+     audio_cut_file_info.setFile( QDir(TTCut::cutDirPath), audio_cut_name );
+     audio_cut_name = audio_cut_file_info.absoluteFilePath();
+     // ------------------------------------------------------------------------
 
      //qDebug( "%saudio cut file: %s",c_name,audio_cut_name.ascii() );
      

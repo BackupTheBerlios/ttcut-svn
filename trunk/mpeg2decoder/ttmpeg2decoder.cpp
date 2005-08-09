@@ -63,7 +63,7 @@ TTMpeg2Decoder::TTMpeg2Decoder()
   t_frame_info       = NULL;
 
   // initialize mpeg-2 decoder objekt
-  initDecoder(0);
+  initDecoder();
 }
 
 

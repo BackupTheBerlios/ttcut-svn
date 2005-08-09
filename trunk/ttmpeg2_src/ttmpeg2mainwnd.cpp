@@ -1291,8 +1291,8 @@ TTCurrentFrameInfo::TTCurrentFrameInfo( QWidget* parent,  const char* name, Qt::
   gbNavigationLayout->addLayout( Layout1, 0, 0 );
 
   bgFrameOrder = new Q3ButtonGroup( gbNavigation, "bgFrameOrder" );
-  bgFrameOrder->setFrameShape( QFrame::NoFrame );
-  bgFrameOrder->setFrameShadow( QFrame::Plain );
+  //QT4: bgFrameOrder->setFrameShape( QFrame::NoFrame );
+  //QT4: bgFrameOrder->setFrameShadow( QFrame::Plain );
   bgFrameOrder->setTitle( tr( "" ) );
   bgFrameOrder->setColumnLayout(0, Qt::Vertical );
   bgFrameOrder->layout()->setSpacing( 0 );
