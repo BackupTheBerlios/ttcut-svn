@@ -79,7 +79,7 @@ void TTHeaderList::checkIndexRange( uint index )
 {
   //qDebug("check index: %d / %d",index,count() );
   if ( (int)index < 0 || index >= count() )
-    throw TTListIndexException();
+    throw TTListIndexException(index);
 }
 
 

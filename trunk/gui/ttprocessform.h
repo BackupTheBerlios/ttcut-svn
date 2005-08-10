@@ -49,7 +49,7 @@ class TTProcessForm : public QDialog
 {
  public:
   TTProcessForm( QWidget* parent );
-  ~TTProcessForm();
+  virtual ~TTProcessForm();
 
   void addLine( QString& str_line );
 

@@ -39,7 +39,7 @@
 
 class TTEncodeParameter;
 
-class TTTranscodeProvider : public QProcess
+class TTTranscodeProvider : public TTProcessForm
 {
   Q_OBJECT
 
@@ -54,9 +54,11 @@ class TTTranscodeProvider : public QProcess
   void transcodeReadOut();
   void transcodeStarted();
   void transcodeFinish(int exit_code );
+  void transcodeError(QProcess::ProcessError proc_error);
+  void transcodeState(QProcess::ProcessState proc_state);
 
  private:
-  TTProcessForm* proc_view;
+  QProcess*      transcode_proc;
   QString        str_command;
   QStringList    strl_command_line;
   int            exit_code;

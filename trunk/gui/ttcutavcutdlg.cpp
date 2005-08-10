@@ -315,6 +315,10 @@ void TTCutAVCutCommonTab::selectCutDirAction()
 
   connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
   connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
+
+  dfProc->waitForFinished();
+
+  delete dfProc;
 }
 
 
@@ -357,6 +361,10 @@ void TTCutAVCutCommonTab::setTabData()
 
   connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
   connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
+
+  dfProc->waitForFinished();
+
+  delete dfProc;
 }
 
 // get tab data and set global parameter
@@ -423,7 +431,5 @@ void TTCutAVCutCommonTab::readFromStdout()
 
 void TTCutAVCutCommonTab::exitProcess( int e_code )
 {
-  dfProc->kill();
-  delete dfProc;
   qApp->processEvents();
 }

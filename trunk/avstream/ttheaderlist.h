@@ -83,6 +83,12 @@ class TTHeaderList : public Q3PtrVector<TTAVHeader>
 // -----------------------------------------------------------------------------
 // Exceptions
 // -----------------------------------------------------------------------------
-class TTListIndexException{};
+class TTListIndexException
+{
+ public:
+  TTListIndexException( long i ) : index(i){}
+ long index;
+
+};
 
 #endif //TTHEADERLIST

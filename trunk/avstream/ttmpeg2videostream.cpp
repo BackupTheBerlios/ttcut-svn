@@ -45,9 +45,7 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#pragma warning(disable:981) // operands are evaluated in unspecified order
-#pragma warning(disable:177) // variable "..." was declared but never referenced
-#pragma warning(disable:869) // parameter "..." was never referenced
+//#define TTMPEG2VIDEOSTREAM_DEBUG
 
 #include "ttmpeg2videostream.h"
 
@@ -904,11 +902,13 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
   uint end_pos;
   QString action_string;
 
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%s>>> cut video stream",c_name );
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%sentries in cut list: %d",c_name,cut_list->count() );
-  //qDebug( "%starget stream      : %s",c_name,cut_stream->fileName() );
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+  qDebug( "%s-----------------------------------------------",c_name );
+  qDebug( "%s>>> cut video stream",c_name );
+  qDebug( "%s-----------------------------------------------",c_name );
+  qDebug( "%sentries in cut list: %d",c_name,cut_list->count() );
+  qDebug( "%starget stream      : %s",c_name,cut_stream->fileName() );
+#endif
 
   for ( i = 0; i < cut_list->count(); i++ )
   {
@@ -929,11 +929,17 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
       progress_bar->setActionText( action_string );
     }
 
-    //qDebug( "%sstart - end        : %d | %d - %d",c_name,i+1,start_pos,end_pos );
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    qDebug( "%sstart - end        : %d | %d - %d",c_name,i+1,start_pos,end_pos );
+#endif
 
     cut( cut_stream, start_pos, end_pos, cut_param );
   }
-  //qDebug( "%s-----------------------------------------------",c_name );
+
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+  qDebug( "%s-----------------------------------------------",c_name );
+#endif
+
   delete cut_param;
 }
 
@@ -948,11 +954,13 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* fs, uint start, uint end, TTCutParam
   uint              temp_end;
   uint8_t           seq_end[4];
 
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%s>>> cut video stream",c_name );
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%starget stream      : %s",c_name,fs->fileName() );
-  //qDebug( "%sstart: %ld | end: %ld | count: %ld",c_name,start,end,index_list->count() );
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+  qDebug( "%s-----------------------------------------------",c_name );
+  qDebug( "%s>>> cut video stream",c_name );
+  qDebug( "%s-----------------------------------------------",c_name );
+  qDebug( "%starget stream      : %s",c_name,fs->fileName() );
+  qDebug( "%sstart: %ld | end: %ld | count: %ld",c_name,start,end,index_list->count() );
+#endif
 
   // open source mpeg2-stream for reading
   openStream();
@@ -1071,7 +1079,9 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* fs, uint start, uint end, TTCutParam
   end_object = header_list->headerAt( current_header_list_pos );
 
   // transfer the copy sequence to destination stream
-  //qDebug( "%s>>> transfer objects: %d - %d",c_name,header_list->headerIndex(start_object),header_list->headerIndex(end_object) );
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+  qDebug( "%s>>> transfer objects: %d - %d",c_name,header_list->headerIndex(start_object),header_list->headerIndex(end_object) );
+#endif
   transferMpegObjects( fs, start_object, end_object, cr );
     
   // liegt das gewünschte Ende auf einem B-Frame so muss dieser
@@ -1436,9 +1446,12 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
     count   -= bytes_processed;
     abs_pos += bytes_processed;
 
-    if ( bytes_processed == 0 )
+    if ( bytes_processed <= 0 )
+    {
+      qDebug( "%s>>> error in bytes_processed: %lld",c_name,bytes_processed );
       count = -1;
-  } // while ( count > 0 )
+    }
+  }
 
   // noch was zu encoden ?
   if ( break_objects->count() > 0 )
@@ -1453,9 +1466,11 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
 void TTMpeg2VideoStream::encodePart( uint start, uint end, TTCutParameter* cr, TTFileBuffer* cut_stream )
 {
-  //qDebug( "%s---------------------------------------------",c_name );
-  //qDebug( "%sencode part: start: %d -- end: %d",c_name,start,end );
-  //qDebug( "%s---------------------------------------------",c_name );
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+  qDebug( "%s---------------------------------------------",c_name );
+  qDebug( "%sencode part: start: %d -- end: %d",c_name,start,end );
+  qDebug( "%s---------------------------------------------",c_name );
+#endif
 
   QFileInfo new_file_info;
 
@@ -1464,12 +1479,6 @@ void TTMpeg2VideoStream::encodePart( uint start, uint end, TTCutParameter* cr, T
   // save current cut parameter
   bool save_last_call         = cr->last_call;
   bool save_write_max_bitrate = cr->write_max_bitrate;
-
-  // remove temporary file
-  QString rm_cmd  = "rm ";
-  rm_cmd         += new_file_info.absolutePath();
-  rm_cmd         += "/encode.*";
-  system( rm_cmd.ascii() );
 
   // never write sequence end code (!)
   cr->last_call = false;
@@ -1511,9 +1520,15 @@ void TTMpeg2VideoStream::encodePart( uint start, uint end, TTCutParameter* cr, T
     new_mpeg_stream->createIndexList();
     new_mpeg_stream->indexList()->sortDisplayOrder();
     
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    qDebug( "%scut: 0 - %d",c_name,end-start );
+#endif
+
     new_mpeg_stream->cut( cut_stream, 0, end-start, cr );
 
-    //qDebug( "%s---------------------------------------------",c_name );
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    qDebug( "%s---------------------------------------------",c_name );
+#endif
 
     // remove temporary file
     QString rm_cmd  = "rm ";
