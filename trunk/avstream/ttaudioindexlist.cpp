@@ -45,7 +45,7 @@
 #include "ttaudioindexlist.h"
 
 
-TTAudioIndexList::TTAudioIndexList( uint size )
+TTAudioIndexList::TTAudioIndexList( int size )
   : TTHeaderList( size )
 {
 

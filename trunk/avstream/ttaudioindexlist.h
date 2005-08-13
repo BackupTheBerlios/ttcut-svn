@@ -52,7 +52,7 @@
 class TTAudioIndexList : public TTHeaderList
 {
  public:
-  TTAudioIndexList( uint size );
+  TTAudioIndexList( int size );
 
 };
 

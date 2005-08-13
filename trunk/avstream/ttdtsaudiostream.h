@@ -5,6 +5,7 @@
 /* FILE     : ttdtsaudiostream.h                                              */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -62,7 +63,7 @@ class TTDTSAudioStream : public TTAudioStream
   TTDTSAudioStream( const QFileInfo &f_info, int s_pos );
 
   QString  streamExtension();
-  uint     createHeaderList( );
+  int      createHeaderList( );
   void     assignValues( TTDTSAudioHeader* audio_header, uint8_t* source, int start_pos );
   uint8_t* fourteenToSixteen( uint8_t* org, int start, int word_count);
 

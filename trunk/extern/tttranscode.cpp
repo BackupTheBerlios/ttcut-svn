@@ -95,6 +95,8 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 
 bool TTTranscodeProvider::encodePart( )    
 {
+  int update = 100;
+
   // create the process object for transcode
   transcode_proc = new QProcess();
 
@@ -126,18 +128,14 @@ bool TTTranscodeProvider::encodePart( )
   }
 
   while ( transcode_proc->state() == QProcess::Running )
-    qApp->processEvents();
-
-  //  if ( !transcode_proc->waitForFinished() )
-  //{
-  //#if defined (TTTRANSCODE_DEBUG)
-    //qDebug( "%serror in waitForFinished: %d",c_name,transcode_proc->state());
-  //#endif
-
-    //delete transcode_proc;
-
-    //return false;
-  //}
+  {
+    update--;
+    if ( update == 0 )
+    {
+      qApp->processEvents();
+      update = 100;
+    }
+  }
 
   if ( transcode_proc->state() == QProcess::Running )
   {

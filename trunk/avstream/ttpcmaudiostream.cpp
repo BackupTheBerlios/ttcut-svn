@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/10/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -118,7 +119,7 @@ int TTPCMAudioStream::findChunk( uint32_t chunk_name, uint8_t* buffer, int buf_s
 
 // create header list
 // -----------------------------------------------------------------------------
-uint TTPCMAudioStream::createHeaderList()
+int TTPCMAudioStream::createHeaderList()
 {
   int len = 0;
   int pos;
@@ -155,7 +156,7 @@ uint TTPCMAudioStream::createHeaderList()
   // search interesting stream points
   // base.CreateIndex(FileName);
 
-  return (uint)0;;
+  return (int)0;;
 }
 
 void TTPCMAudioStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
@@ -166,7 +167,7 @@ void TTPCMAudioStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
 
 // cut method
 // -----------------------------------------------------------------------------
-void TTPCMAudioStream::cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp )
+void TTPCMAudioStream::cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp )
 {
   int32_t length;
 
@@ -223,7 +224,7 @@ QString TTPCMAudioStream::streamExtension()
 
 // return sample at index position
 // -----------------------------------------------------------------------------
-TTPCMAudioHeader* TTPCMAudioStream::getSample( uint index )
+TTPCMAudioHeader* TTPCMAudioStream::getSample( int index )
 {
   if ( (long)index < (long)0 )
     index = (long)0;

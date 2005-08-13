@@ -5,6 +5,7 @@
 /* FILE     : ttvideoheaderlist.cpp                                           */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -45,8 +46,10 @@
 #include "ttvideoheaderlist.h"
 
 
+bool videoHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 );
+
 // construct object
-TTVideoHeaderList::TTVideoHeaderList( uint size )
+TTVideoHeaderList::TTVideoHeaderList( int size )
   :TTHeaderList( size )
 {
   num_sequence_header     = 0;
@@ -55,7 +58,7 @@ TTVideoHeaderList::TTVideoHeaderList( uint size )
   num_sequence_end_header = 0;
 }
 
-uint8_t TTVideoHeaderList::headerTypeAt( uint index )
+uint8_t TTVideoHeaderList::headerTypeAt( int index )
 {
   try
   {
@@ -69,7 +72,7 @@ uint8_t TTVideoHeaderList::headerTypeAt( uint index )
   }
 }
 
-TTVideoHeader* TTVideoHeaderList::headerAt( uint index )
+TTVideoHeader* TTVideoHeaderList::headerAt( int index )
 {
   try
   {
@@ -81,7 +84,7 @@ TTVideoHeader* TTVideoHeaderList::headerAt( uint index )
   {
     qDebug("headerAt: index exception (!)");
 
-    if ( (long)index < 0 )
+    if ( index < 0 )
       return (TTVideoHeader*)at( 0 );
 
     if ( index > count()-1 )
@@ -89,7 +92,7 @@ TTVideoHeader* TTVideoHeaderList::headerAt( uint index )
   }
 }
 
-TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( uint index )
+TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( int index )
 {
   int i;
 
@@ -126,7 +129,7 @@ TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( uint index )
 }
 
 
-TTPicturesHeader* TTVideoHeaderList::pictureHeaderAt( uint index )
+TTPicturesHeader* TTVideoHeaderList::pictureHeaderAt( int index )
 {
   try
   {
@@ -140,7 +143,7 @@ TTPicturesHeader* TTVideoHeaderList::pictureHeaderAt( uint index )
 }
 
 
-TTGOPHeader* TTVideoHeaderList::gopHeaderAt( uint index )
+TTGOPHeader* TTVideoHeaderList::gopHeaderAt( int index )
 {
   try
   {
@@ -155,7 +158,7 @@ TTGOPHeader* TTVideoHeaderList::gopHeaderAt( uint index )
 
 int TTVideoHeaderList::headerIndex( TTVideoHeader* current )
 {
-  return bsearch( (TTVideoHeader*)current );
+  return indexOf( (TTVideoHeader*)current );
 }
 
 // Create the header list from mpeg2 stream
@@ -194,14 +197,14 @@ long TTVideoHeaderList::createHeaderList( TTFileBuffer* mpeg2_stream )
 // Read an idd-index file from idd_stream and create a header list from it
 long TTVideoHeaderList::readIndexFile( TTFileBuffer* idd_stream )
 {
-return 0;
+  return 0;
 }
 
 
 // Write an idd-index file from current header list
 long TTVideoHeaderList::writeIndexFile( TTFileBuffer* idd_stream )
 {
-return 0;
+  return 0;
 }
 
 
@@ -209,7 +212,7 @@ return 0;
 bool TTVideoHeaderList::checkIndexFile( TTFileBuffer* idd_stream, 
 					TTFileBuffer* mpeg2_stream )
 {
-return false;
+  return false;
 }
 
 
@@ -260,30 +263,20 @@ long TTVideoHeaderList::numSequenceEndHeader()
   return num_sequence_end_header;
 }
 
-// compare routine for sort
-#ifdef __WIN32
-int TTVideoHeaderList::compareItems( QCollection::Item Item1, QCollection::Item Item2 )
-#else
-int TTVideoHeaderList::compareItems( Q3PtrCollection::Item Item1, Q3PtrCollection::Item Item2 )
-#endif
+void TTVideoHeaderList::sort()
 {
-  int result = 0;
-
-  TTMpeg2VideoHeader* index1;
-  TTMpeg2VideoHeader* index2;
-
-  index1 = (TTMpeg2VideoHeader*)Item1;
-  index2 = (TTMpeg2VideoHeader*)Item2;
-
-  // the values for header offset from two item are compared
-  if ( index1->headerOffset() < index2->headerOffset() )
-    result = -1;
-  if ( index1->headerOffset() == index2->headerOffset() )
-    result = 0;
-  if ( index1->headerOffset() > index2->headerOffset() )
-    result = 1;
-
-  return result;
+  qSort( begin(), end(), videoHeaderListCompareItems );
 }
+
+
+// compare routine for sort
+bool videoHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 )
+{
+  if ( head_1->headerOffset() < head_2->headerOffset() )
+    return true;
+  else
+    return false;
+}
+
 
 

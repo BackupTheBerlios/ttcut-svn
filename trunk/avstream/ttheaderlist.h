@@ -5,6 +5,7 @@
 /* FILE     : ttheaderlist.h                                                  */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -47,37 +48,28 @@
 
 #include "ttavheader.h"
 
-// Qt 2.x (Windows)
-#ifdef __WIN32
-#include <qvector.h>
-#include <qcollection.h>
-#else
-#include <q3ptrvector.h>
-#include <q3ptrcollection.h>
-#endif
+#include <QVector>
+
 
 // -----------------------------------------------------------------------------
 // TTHeaderList: Pointer list for TTAVHeader objects
 // -----------------------------------------------------------------------------
-#ifdef __WIN32
-class TTHeaderList : public QVector<TTAVHeader>
-#else
-class TTHeaderList : public Q3PtrVector<TTAVHeader>
-#endif
+class TTHeaderList : public QVector<TTAVHeader*>
 {
  public:
-  TTHeaderList( uint size );
+  TTHeaderList( int size );
+  virtual ~TTHeaderList();
 
   virtual void add( TTAVHeader* header );
   virtual void deleteAll();
+  virtual void sort();
 
  protected:
-  virtual void checkIndexRange( uint index );
+  virtual void checkIndexRange( int index );
 
  protected:
-  uint initial_size;
-  uint actual_size;
-  uint ins_pos;
+  int initial_size;
+  int actual_size;
 };
 
 // -----------------------------------------------------------------------------
@@ -86,7 +78,7 @@ class TTHeaderList : public Q3PtrVector<TTAVHeader>
 class TTListIndexException
 {
  public:
-  TTListIndexException( long i ) : index(i){}
+  TTListIndexException( long i ) : index(i){ qDebug("index: %ld",index);}
  long index;
 
 };

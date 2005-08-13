@@ -148,7 +148,8 @@ void TTMPEG2Window::resizeGL( int width, int height )
 // -----------------------------------------------------------------------------
 void TTMPEG2Window::paintGL()
 {
-   // no need do do something; Qt does it all
+  // no need do do something; Qt does it all
+  //qDebug( "%spaint event",c_name );
 }
 
 void TTMPEG2Window::updateFrame()
@@ -298,6 +299,22 @@ void TTMPEG2Window::openVideoStream( TTMpeg2VideoStream* v_stream )
   fAspect      = (double)iVideoWidth/(double)iVideoHeight;
 }
 
+void TTMPEG2Window::closeVideoStream()
+{
+  if ( ttAssigned(mpeg2_decoder) )
+  {
+    delete mpeg2_decoder;
+    mpeg2_decoder = NULL;
+  }
+
+  picBuffer        = NULL;
+  currentFrame     = 0;
+  iOldWidth        = 0;
+  iOldHeight       = 0;
+  isResizeAction   = false;
+
+  showVideoFrame();
+}
 // -----------------------------------------------------------------------------
 // Move to specified frame position and frame typr
 // -----------------------------------------------------------------------------

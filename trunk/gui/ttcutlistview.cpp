@@ -36,6 +36,7 @@
 #include <QMouseEvent>
 #include <Q3PopupMenu>
 
+#define TTCUTLISTVIEW_DEBUG
 
 const char c_name[] = "TTCUTLISTVIEW : ";
 
@@ -259,14 +260,30 @@ void TTCutListView::addItem( QString f_name,
 // -----------------------------------------------------------------------------
 void TTCutListView::clearList()
 {
+#if defined (TTCUTLISTVIEW_DEBUG)
+  qDebug( "%sclearList: %d",c_name,childCount() );
+#endif
+
   //list-view iterator
   Q3ListViewItemIterator cutIt( this );
 
   // iterate trough the list
   while ( cutIt.current() )
   {
+    // remove the corresponding entry in avcut list
+    TTCutListItem* list_item = (TTCutListItem*)cutIt.current();
+
+#if defined (TTCUTLISTVIEW_DEBUG)
+    qDebug( "%sremove entry: %d",c_name,list_item->cut_order );
+#endif
+
+    avcut_list->removeEntryAtOrder( list_item->cut_order );
+
      delete cutIt.current();
   }
+
+  delete avcut_list;
+  avcut_list = new TTAVCutList();
 
   //testListView();
 }

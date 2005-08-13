@@ -5,6 +5,7 @@
 /* FILE     : ttdtsaudiostream.cpp                                            */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -82,7 +83,7 @@ QString TTDTSAudioStream::streamExtension()
 
 // create header list
 // -----------------------------------------------------------------------------
-uint TTDTSAudioStream::createHeaderList( )
+int TTDTSAudioStream::createHeaderList( )
 {
   TTDTSAudioHeader* audio_header;
   TTDTSAudioHeader* prev_audio_header;

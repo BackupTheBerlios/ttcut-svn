@@ -7,6 +7,7 @@
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/02/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/10/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -328,21 +329,21 @@ void TTAVStream::createIndex()
 
 // create header list
 // -----------------------------------------------------------------------------
-uint TTAVStream::createHeaderList()
+int TTAVStream::createHeaderList()
 {
-  return (uint)0;
+  return (int)0;
 }
 
 // create index list
 // -----------------------------------------------------------------------------
-uint TTAVStream::createIndexList()
+int TTAVStream::createIndexList()
 {
-  return (uint)0;
+  return (int)0;
 }
 
 // cut method
 // -----------------------------------------------------------------------------
-void TTAVStream::cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp )
+void TTAVStream::cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp )
 {
 
 }
@@ -354,14 +355,14 @@ void TTAVStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
 
 // is cut-in possible
 // -----------------------------------------------------------------------------
-bool TTAVStream::isCutInPoint( uint pos )
+bool TTAVStream::isCutInPoint( int pos )
 {
   return false;
 }
 
 // is cut-out possible
 // -----------------------------------------------------------------------------
-bool TTAVStream::isCutOutPoint( uint pos )
+bool TTAVStream::isCutOutPoint( int pos )
 {
   return false;
 }
@@ -395,18 +396,32 @@ TTAudioStream::TTAudioStream( const QFileInfo &f_info, int s_pos )
   : TTAVStream( f_info )
 {
   start_pos = s_pos;
+
+  index_list  = NULL;
+  header_list = NULL;
+}
+
+TTAudioStream::~TTAudioStream()
+{
+  qDebug( "TTAUDIOSTREAM : destructor call" );
+
+  if ( ttAssigned( header_list ) )
+  delete header_list;
+
+  if( ttAssigned( index_list ) )
+  delete index_list;
 }
 
 // cut-in always possible; video 
 // -----------------------------------------------------------------------------
-bool TTAudioStream::isCutInPoint( uint pos )
+bool TTAudioStream::isCutInPoint( int pos )
 {
   return true;
 }
 
 // cut-out always possible; video
 // -----------------------------------------------------------------------------
-bool TTAudioStream::isCutOutPoint( uint pos )
+bool TTAudioStream::isCutOutPoint( int pos )
 {
   return true;
 }
@@ -440,14 +455,14 @@ void TTAudioStream::setIndexList( TTAudioIndexList* i_list )
   index_list = i_list;
 }
 
-TTAudioHeader* TTAudioStream::headerAt( uint index )
+TTAudioHeader* TTAudioStream::headerAt( int index )
 {
   return header_list->audioHeaderAt(index);
 }
 
 // return the total count of samples in current audio stream
 // -----------------------------------------------------------------------------
-uint TTAudioStream::sampleCount()
+int TTAudioStream::sampleCount()
 {
   return 0;
 }
@@ -496,6 +511,17 @@ TTVideoStream::TTVideoStream( const QFileInfo &f_info )
   prev_marker_index    = 0;
 }
 
+TTVideoStream::~TTVideoStream()
+{
+  qDebug( "TTVIDEOSTREAM : destructor call" );
+
+  if ( ttAssigned( header_list ) )
+    delete header_list;
+
+  if ( ttAssigned( index_list ) )
+    delete index_list;
+}
+
 // return pointer to current header list
 // -----------------------------------------------------------------------------
 TTVideoHeaderList* TTVideoStream::headerList()
@@ -528,17 +554,17 @@ void TTVideoStream::setIndexList( TTVideoIndexList* i_list )
 }
 
 
-uint TTVideoStream::frameCount()
+int TTVideoStream::frameCount()
 {
   if ( ttAssigned( index_list ) )
     return index_list->count();
   else
-    return (uint)0;
+    return (int)0;
 }
 
 float TTVideoStream::frameRate()
 {
-  uint sequence_index;
+  int sequence_index;
   TTSequenceHeader* current_sequence;
 
   sequence_index = index_list->sequenceIndex( current_index );
@@ -549,7 +575,7 @@ float TTVideoStream::frameRate()
 
 float TTVideoStream::bitRate()
 {
-  uint sequence_index;
+  int sequence_index;
   TTSequenceHeader* current_sequence;
 
   sequence_index = index_list->sequenceIndex( current_index );
@@ -573,7 +599,7 @@ QTime TTVideoStream::currentFrameTime()
 
 off64_t TTVideoStream::currentFrameOffset()
 {
-  uint    h_index;
+  int    h_index;
   off64_t offset;
   TTPicturesHeader* current_picture;
 
@@ -589,19 +615,19 @@ off64_t TTVideoStream::currentFrameOffset()
   return offset;
 }
 
-int TTVideoStream::frameType( uint i_pos )
+int TTVideoStream::frameType( int i_pos )
 {
   return index_list->pictureCodingType( i_pos );
 }
 
-QTime TTVideoStream::frameTime( uint i_pos )
+QTime TTVideoStream::frameTime( int i_pos )
 {
   return ttFramesToTime( i_pos, frameRate() );
 }
 
-off64_t TTVideoStream::frameOffset( uint i_pos )
+off64_t TTVideoStream::frameOffset( int i_pos )
 {
-  uint    h_index;
+  int    h_index;
   off64_t offset;
   TTPicturesHeader* current_picture;
 
@@ -623,14 +649,14 @@ off64_t TTVideoStream::frameOffset( uint i_pos )
 
 // return current selected index in index-list
 // -----------------------------------------------------------------------------
-uint TTVideoStream::currentIndex()
+int TTVideoStream::currentIndex()
 {
   return current_index;
 }
 
 // set the current index in index list
 // -----------------------------------------------------------------------------
-uint TTVideoStream::setCurrentIndex( uint index )
+int TTVideoStream::setCurrentIndex( int index )
 {
   previous_index = current_index;
   current_index  = index;
@@ -640,21 +666,21 @@ uint TTVideoStream::setCurrentIndex( uint index )
 
 // return the previous index
 // -----------------------------------------------------------------------------
-uint TTVideoStream::previousIndex()
+int TTVideoStream::previousIndex()
 {
   return previous_index;
 }
 
 // return marker index position
 // -----------------------------------------------------------------------------
-uint TTVideoStream::markerIndex()
+int TTVideoStream::markerIndex()
 {
   return current_marker_index;
 }
 
 // set marker index position
 // -----------------------------------------------------------------------------
-uint TTVideoStream::setMarkerIndex( uint index )
+int TTVideoStream::setMarkerIndex( int index )
 {
   prev_marker_index    = current_marker_index;
   current_marker_index = index;
@@ -664,7 +690,7 @@ uint TTVideoStream::setMarkerIndex( uint index )
 
 // move to specified index position (index and frame coding type)
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToIndexPos( uint index, int f_type )
+int TTVideoStream::moveToIndexPos( int index, int f_type )
 {
   int j;
 
@@ -726,11 +752,11 @@ uint TTVideoStream::moveToIndexPos( uint index, int f_type )
 
 // move to index pos "index" in stream order
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToIndexPosSO( uint index, int f_type )
+int TTVideoStream::moveToIndexPosSO( int index, int f_type )
 {
   int  j;
-  uint index_bak = index;
-  uint so_index;
+  int index_bak = index;
+  int so_index;
 
   //qDebug("move to index pos in stream order: %d / %d / %d",index,f_type,num_index);
 
@@ -788,10 +814,10 @@ uint TTVideoStream::moveToIndexPosSO( uint index, int f_type )
 
 // move to index by abs. time and frame coding type
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToIndexPos( const QTime& f_time, int f_type )
+int TTVideoStream::moveToIndexPos( const QTime& f_time, int f_type )
 {
   long  index;
-  uint  ret_index  = current_index;
+  int  ret_index  = current_index;
 
   index     = ttTimeToFrames( f_time, frameRate() );
   ret_index = moveToIndexPos( index, f_type );
@@ -805,10 +831,10 @@ uint TTVideoStream::moveToIndexPos( const QTime& f_time, int f_type )
 
 // goto next frame
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToNextFrame( int f_type )
+int TTVideoStream::moveToNextFrame( int f_type )
 {
-  uint ret_index = current_index;
-  uint index     = current_index+1;
+  int ret_index = current_index;
+  int index     = current_index+1;
 
   ret_index = moveToIndexPos( index, f_type );
 
@@ -817,10 +843,10 @@ uint TTVideoStream::moveToNextFrame( int f_type )
 
 // goto previous frame
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToPrevFrame( int f_type )
+int TTVideoStream::moveToPrevFrame( int f_type )
 {
-  uint ret_index = current_index;
-  uint index     = current_index;
+  int ret_index = current_index;
+  int index     = current_index;
 
   if ( index > (long)0 )
     {
@@ -833,9 +859,9 @@ uint TTVideoStream::moveToPrevFrame( int f_type )
 
 // goto next intra-frame (I)
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToNextIFrame()
+int TTVideoStream::moveToNextIFrame()
 {
-  uint ret_index = current_index;
+  int ret_index = current_index;
   long iPos;
   long iFound;
 
@@ -867,7 +893,7 @@ uint TTVideoStream::moveToNextIFrame()
 
 // goto previous intra-frame (I)
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToPrevIFrame()
+int TTVideoStream::moveToPrevIFrame()
 {
   long        iPos;
   long        iFound;
@@ -899,7 +925,7 @@ uint TTVideoStream::moveToPrevIFrame()
 
 // goto next predicted-frame (P)
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToNextPFrame()
+int TTVideoStream::moveToNextPFrame()
 {
   long        iPos;
   long        iFound;
@@ -932,7 +958,7 @@ uint TTVideoStream::moveToNextPFrame()
 
 // goto previous predicted-frame (P)
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToPrevPFrame()
+int TTVideoStream::moveToPrevPFrame()
 {
   long        iPos;
   long        iFound;
@@ -964,7 +990,7 @@ uint TTVideoStream::moveToPrevPFrame()
 
 // goto next P- or I-frame, whatever comes first
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToNextPIFrame()
+int TTVideoStream::moveToNextPIFrame()
 {
   long        iPos;
   long        iFound, iFoundP, iFoundI;
@@ -1020,7 +1046,7 @@ uint TTVideoStream::moveToNextPIFrame()
 
 // goto previous P- or I-frame
 // -----------------------------------------------------------------------------
-uint TTVideoStream::moveToPrevPIFrame()
+int TTVideoStream::moveToPrevPIFrame()
 {
   long        iPos;
   long        iFound, iFoundP, iFoundI;

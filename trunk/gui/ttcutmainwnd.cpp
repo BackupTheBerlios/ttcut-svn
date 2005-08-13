@@ -1719,12 +1719,18 @@ void TTCutMainWnd::closeProject()
 
    if ( TTCut::isVideoOpen )
    {
+     // clear the list views
      lvAudioFiles->clearList();
      cutListView->clearList();
 
      // disable navigation
      disableNavigation();
 
+     // clear the mpeg2 preview windows
+     cutOutFrameWnd->closeVideoStream();
+     currentFrameWnd->closeVideoStream();
+
+     // delete the mpeg2 stream
      delete mpeg2_stream;
    }
 }
@@ -2645,7 +2651,7 @@ void TTCutMainWnd::refreshCurrentPosition()
 
   tlBitRate->update();
 
-  qApp->processEvents();
+  //qApp->processEvents();
 }
 
 // refresh the text label for current marker position

@@ -365,6 +365,8 @@ void TTCutPreview::createPreview( int c_index )
   }
   progress_bar->setComplete();
   delete progress_bar;
+  delete preview_cut_list;
+
   //qDebug( "%s-----------------------------------------------",c_name );
 
   // set the current cut preview to the first cut clip
@@ -619,7 +621,7 @@ bool TTCutPreview::stopMPlayer()
 // -----------------------------------------------------------------------------
 void TTCutPreview::exitMPlayer( int e_code)
 {
-  qDebug( "%sexit mplayer: exit code: %d",c_name,e_code );
+  //qDebug( "%sexit mplayer: exit code: %d",c_name,e_code );
 
   // delete the mplayer process
   delete mplayerProc;

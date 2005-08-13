@@ -54,7 +54,7 @@ class TTAVIWriter
    ~TTAVIWriter();
 
    bool initAVIWriter( TTVideoStream* v_stream );
-   uint writeAVI( uint start_frame_pos, uint end_frame_pos );
+   int  writeAVI( int start_frame_pos, int end_frame_pos );
    bool closeAVI();
 
  protected:
@@ -67,7 +67,7 @@ class TTAVIWriter
    QString            video_file_name;
    TTVideoHeaderList* header_list; 
    TTVideoIndexList*  index_list; 
-   uint               current_frame;
+   int                current_frame;
    off64_t            file_size;
    off64_t            file_offset;
    uint8_t*           ref_data;

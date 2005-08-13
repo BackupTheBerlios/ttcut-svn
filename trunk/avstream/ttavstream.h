@@ -7,6 +7,7 @@
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/02/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/10/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -103,12 +104,12 @@ public:
   virtual void setProgressBar( TTProgressBar* p_bar );
 
   virtual void createIndex();
-  virtual uint createHeaderList();
-  virtual uint createIndexList();
-  virtual void cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp );
+  virtual int createHeaderList();
+  virtual int createIndexList();
+  virtual void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
   virtual void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
-  virtual bool isCutInPoint( uint pos );
-  virtual bool isCutOutPoint( uint pos );
+  virtual bool isCutInPoint( int pos );
+  virtual bool isCutOutPoint( int pos );
   virtual QString streamExtension();
   virtual void copySegment( TTFileBuffer* cut_stream, off64_t start_adr, off64_t end_adr );
 
@@ -137,6 +138,7 @@ class TTAudioStream : public TTAVStream
 public:
   TTAudioStream();
   TTAudioStream( const QFileInfo &f_info, int s_pos=0);
+  virtual ~TTAudioStream();
 
   // header an index list
   TTAudioHeaderList* headerList();
@@ -144,14 +146,14 @@ public:
   void setHeaderList( TTAudioHeaderList* h_list );
   void setIndexList( TTAudioIndexList* i_list );
 
-  TTAudioHeader* headerAt( uint index );
+  TTAudioHeader* headerAt( int index );
 
   // virtual cut methods
-  virtual bool isCutInPoint( uint pos );
-  virtual bool isCutOutPoint( uint pos );
+  virtual bool isCutInPoint( int pos );
+  virtual bool isCutOutPoint( int pos );
 
   // stream properties common for all audio stream types
-  uint sampleCount();
+  int sampleCount();
   double length();
 
 protected:
@@ -163,8 +165,8 @@ protected:
   // audio_delay < 0: audio starts after  video (in ms)
   int    audio_delay;
   int    start_pos;
-  uint   samples_count;
-  uint   frame_length;
+  int   samples_count;
+  int   frame_length;
   double frame_time;
 };
 
@@ -177,6 +179,7 @@ class TTVideoStream : public TTAVStream
  public:
   TTVideoStream();
   TTVideoStream( const QFileInfo &f_info );
+  virtual ~TTVideoStream();
 
   // header- and index-list
   TTVideoHeaderList* headerList();
@@ -184,49 +187,49 @@ class TTVideoStream : public TTAVStream
   void setHeaderList( TTVideoHeaderList* h_list );
   void setIndexList( TTVideoIndexList* i_list );
 
-  uint    frameCount();
+  int    frameCount();
   float   frameRate();
   float   bitRate();
   int     currentFrameType();
   QTime   currentFrameTime();
   off64_t currentFrameOffset();
-  int     frameType( uint i_pos );
-  QTime   frameTime( uint i_pos );
-  off64_t frameOffset( uint i_pos );
+  int     frameType( int i_pos );
+  QTime   frameTime( int i_pos );
+  off64_t frameOffset( int i_pos );
 
   // navigation in header-list
 
   // navigation in index-list
-  uint currentIndex();
-  uint setCurrentIndex( uint index );
-  uint previousIndex();
-  uint markerIndex();
-  uint setMarkerIndex( uint index );
-  uint moveToIndexPos( uint index, int f_type=0 );
-  uint moveToIndexPos( const QTime& f_time, int f_type=0 );
-  uint moveToIndexPosSO( uint index, int f_type=0 );
-  uint moveToNextFrame( int f_type=0 );
-  uint moveToPrevFrame( int f_type=0 );
-  uint moveToNextIFrame();
-  uint moveToPrevIFrame();
-  uint moveToNextPFrame();
-  uint moveToPrevPFrame();
-  uint moveToNextPIFrame();
-  uint moveToPrevPIFrame();
+  int currentIndex();
+  int setCurrentIndex( int index );
+  int previousIndex();
+  int markerIndex();
+  int setMarkerIndex( int index );
+  int moveToIndexPos( int index, int f_type=0 );
+  int moveToIndexPos( const QTime& f_time, int f_type=0 );
+  int moveToIndexPosSO( int index, int f_type=0 );
+  int moveToNextFrame( int f_type=0 );
+  int moveToPrevFrame( int f_type=0 );
+  int moveToNextIFrame();
+  int moveToPrevIFrame();
+  int moveToNextPFrame();
+  int moveToPrevPFrame();
+  int moveToNextPIFrame();
+  int moveToPrevPIFrame();
 
 protected:
   // List-objects
   TTVideoHeaderList* header_list;
   TTVideoIndexList*  index_list;
-  uint               num_header;
-  uint               num_index;
+  int               num_header;
+  int               num_index;
 
   // Navigation
   TTVideoIndex*      video_index;
-  uint               current_index;
-  uint               previous_index;
-  uint               current_marker_index;
-  uint               prev_marker_index;
+  int               current_index;
+  int               previous_index;
+  int               current_marker_index;
+  int               prev_marker_index;
 
   // intern
   float              frame_rate;

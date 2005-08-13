@@ -5,6 +5,7 @@
 /* FILE     : ttvideoheaderlist.h                                             */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -49,12 +50,8 @@
 
 #ifdef __WIN32
 #include "ttwfilebuffer.h"
-#include <qvector.h>
-#include <qcollection.h>
 #else
 #include "ttfilebuffer.h"
-#include <q3ptrvector.h>
-#include <q3ptrcollection.h>
 #endif
 
 #include "ttmpeg2videoheader.h"
@@ -71,13 +68,13 @@ class TTGOPHeader;
 class TTVideoHeaderList : public TTHeaderList
 {
  public:
-  TTVideoHeaderList( uint size );
+  TTVideoHeaderList( int size );
 
-  uint8_t           headerTypeAt( uint index );
-  TTVideoHeader*    headerAt( uint index );
-  TTSequenceHeader* sequenceHeaderAt( uint index );
-  TTPicturesHeader* pictureHeaderAt( uint index );
-  TTGOPHeader*      gopHeaderAt( uint index );
+  uint8_t           headerTypeAt( int index );
+  TTVideoHeader*    headerAt( int index );
+  TTSequenceHeader* sequenceHeaderAt( int index );
+  TTPicturesHeader* pictureHeaderAt( int index );
+  TTGOPHeader*      gopHeaderAt( int index );
 
   int headerIndex( TTVideoHeader* current );
 
@@ -97,11 +94,7 @@ class TTVideoHeaderList : public TTHeaderList
   long numSequenceEndHeader();
 
  protected:
-#ifdef __win32
-  int compareItems(QCollection::Item Item1, QCollection::Item Item2);
-#else
-  int compareItems(Q3PtrCollection::Item Item1, Q3PtrCollection::Item Item2);
-#endif
+  void sort();
 
  private:
   long num_sequence_header;
@@ -109,5 +102,4 @@ class TTVideoHeaderList : public TTHeaderList
   long num_gop_header;
   long num_sequence_end_header;
 };
-
 #endif //TTVIDEOHEADERLIST_H

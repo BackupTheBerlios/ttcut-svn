@@ -7,12 +7,14 @@
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/20/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
 // *** TTAVCUTPOSITION
 // *** TTAVCUTLIST
+// *** TTCUTPARAMETER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -44,10 +46,12 @@
 #define TTAVCUTPOSITION_H
 
 #include <qdatetime.h>
-#include <q3ptrvector.h>
+
+#include <QVector>
 
 #include "../avstream/ttcommon.h"
 #include "../avstream/ttvideoheaderlist.h"
+
 
 // -----------------------------------------------------------------------------
 // TTAVCutPosition
@@ -56,78 +60,82 @@ class TTAVCutPosition
 {
  public:
   TTAVCutPosition();
-  TTAVCutPosition( uint c_in, uint c_out, uint c_order );
-  TTAVCutPosition( uint c_in,  off64_t c_in_off,
-		   uint c_out, off64_t c_out_off, uint c_order );
+  TTAVCutPosition( int c_in, int c_out, int c_order );
+  TTAVCutPosition( int c_in,  off64_t c_in_off,
+		   int c_out, off64_t c_out_off, int c_order );
   ~TTAVCutPosition();
 
-  void    setCutIn( uint c_in );
-  void    setCutOut( uint c_out );
+  void    setCutIn( int c_in );
+  void    setCutOut( int c_out );
   void    setCutInOffset( off64_t c_in );
   void    setCutOutOffset( off64_t c_out );
-  void    setCutOrder( uint c_order );
-  uint    cutIn();
-  uint    cutOut();
+  void    setCutOrder( int c_order );
+  int     cutIn();
+  int     cutOut();
   off64_t cutInOffset();
   off64_t cutOutOffset();
-  uint    cutOrder();
+  int     cutOrder();
 
  private:
-  uint    cut_in_position;
-  uint    cut_out_position;
+  int     cut_in_position;
+  int     cut_out_position;
   off64_t cut_in_offset;
   off64_t cut_out_offset;
-  uint    cut_order;
+  int     cut_order;
 };
 
 
 // -----------------------------------------------------------------------------
 // TTAVCutList
 // -----------------------------------------------------------------------------
-class TTAVCutList : public Q3PtrVector<TTAVCutPosition>
+class TTAVCutList : public QVector<TTAVCutPosition*>
 {
  public:
-  TTAVCutList( uint size=10 );
+  TTAVCutList( int size=10 );
   ~TTAVCutList();
 
-  uint addCutPosition( uint c_in, uint c_out, uint c_order );
-  uint addCutPosition( uint c_in, off64_t c_in_off,
-		       uint c_out, off64_t c_out_off, uint c_order );
-  uint    addCutPosition( TTAVCutPosition* c_pos );
-  uint    cutInAt( uint i_pos );
-  uint    cutOutAt( uint i_pos );
-  off64_t cutInOffsetAt( uint i_pos );
-  off64_t cutOutOffsetAt( uint i_pos );
-  uint    cutOrderAt( uint i_pos );
-  uint    setCutOrderAt( uint i_pos, uint c_order );
-  TTAVCutPosition* entryAt( uint i_pos );
-  TTAVCutPosition* entryAtOrder( uint c_order );
+  int addCutPosition( int c_in, int c_out, int c_order );
+  int addCutPosition( int c_in, off64_t c_in_off,
+		       int c_out, off64_t c_out_off, int c_order );
+  int     addCutPosition( TTAVCutPosition* c_pos );
+  int     cutInAt( int i_pos );
+  int     cutOutAt( int i_pos );
+  off64_t cutInOffsetAt( int i_pos );
+  off64_t cutOutOffsetAt( int i_pos );
+  int     cutOrderAt( int i_pos );
+  int     setCutOrderAt( int i_pos, int c_order );
+  TTAVCutPosition* entryAt( int i_pos );
+  TTAVCutPosition* entryAtOrder( int c_order );
   void    deleteAll();
-  uint    removeEntryAt( uint i_pos );
-  uint    removeEntryAtOrder( uint c_order );
+  int     removeEntryAt( int i_pos );
+  int     removeEntryAtOrder( int c_order );
   void    sortCutOrder();
+  void    sort();
 
  protected:
-  int compareItems( Q3PtrCollection::Item Item1, Q3PtrCollection::Item Item2 );
 
  private:
   TTAVCutPosition* cut_position;
-  uint             actual_size;
-  uint             ins_position;
+  int             actual_size;
+  int             ins_position;
 };
 
 
+// -----------------------------------------------------------------------------
+// TTCutParameter
+// -----------------------------------------------------------------------------
 class TTCutParameter
 {
  public:
   TTCutParameter();
+  ~TTCutParameter();
 
   bool  writeSequenceEndCode();
   bool  writeMaxBitrate();
   bool  createDVDCompilantStream();
 
   int   max_bitrate;
-  uint  pictures_written;
+  int   pictures_written;
   bool  first_call;
   bool  last_call;
   TTVideoHeaderList* result_header_list;

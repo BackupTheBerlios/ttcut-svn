@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/10/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -60,19 +61,19 @@ class TTPCMAudioStream : public TTAudioStream
   TTPCMAudioStream();
   TTPCMAudioStream( const QFileInfo &f_info, int s_pos );
 
-  int  findChunk( uint32_t chunk_name, uint8_t* buffer, int buf_size);
-  uint createHeaderList();
-  void cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp );  
-  void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
+  int   findChunk( uint32_t chunk_name, uint8_t* buffer, int buf_size);
+  int   createHeaderList();
+  void  cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );  
+  void  cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
   QString streamExtension();
-  TTPCMAudioHeader* getSample( uint index );
-  int getLessOrSame( float time );
-  int samplesCount();
-  long calculateLength( int start, int end );
-  void parseForInterestingStreamPoints();
+  TTPCMAudioHeader* getSample( int index );
+  int   getLessOrSame( float time );
+  int   samplesCount();
+  long  calculateLength( int start, int end );
+  void  parseForInterestingStreamPoints();
   float length();
-  int startDelay();
-  int setStartDelay( int s_delay );
+  int   startDelay();
+  int   setStartDelay( int s_delay );
 
   static const uint32_t ChunkID;
   static const uint32_t Format;

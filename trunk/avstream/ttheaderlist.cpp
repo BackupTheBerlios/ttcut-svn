@@ -5,6 +5,7 @@
 /* FILE     : ttheaderlist.cpp                                                */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -30,55 +31,65 @@
 
 #include "ttheaderlist.h"
 
+//#define TTHEADERLIST_DEBUG
+
+const char c_name[] = "TTHEADERLIST  : ";
+
 // construct a header list object
-TTHeaderList::TTHeaderList( uint size )
+TTHeaderList::TTHeaderList( int size )
 {
   initial_size = size;
   actual_size  = size;
-  ins_pos      = 0;
+}
 
-  resize( size );
+TTHeaderList::~TTHeaderList()
+{
+  int i;
+
+#if defined(TTHEADERLIST_DEBUG)
+  qDebug( "%sdelete header list: %d",c_name,size() );
+#endif
+
+  for ( i = 0; i < size(); i++ )
+  {
+    TTAVHeader* av_header = at(i);
+    //qDebug("delete: %ld",at(i));
+    delete av_header;
+  }
+  clear();
 }
 
 // ad an header to the header list
 void TTHeaderList::add( TTAVHeader* header )
 {
-  if ( ins_pos >= actual_size )
-  {
-    actual_size += 1000;
-    if ( !resize( actual_size ) )
-    {
-      return;
-    }
-  }
-
-  insert(ins_pos, header);
-
-  ins_pos++;
+  //#if defined(TTHEADERLIST_DEBUG)
+  //qDebug("%sadd header: %ld",c_name,header);
+  //#endif
+  append( header );
 }
 
 // remove all items from the header list
 void TTHeaderList::deleteAll()
 {
-  uint i;
+  int i;
 
-  for ( i = 0; i < count(); i++ )
+  for ( i = 0; i < size(); i++ )
   {
-    if ( !remove( i ) )
-    {
-      qDebug( "TTHeaderList: cannot remove item: %ud",i );
-    }
+    TTAVHeader* av_header = at(i);
+    delete av_header;
   }
-
-  ins_pos = 0;
-
-  resize( initial_size );
+  clear();
 }
 
-void TTHeaderList::checkIndexRange( uint index )
+void TTHeaderList::sort()
+{
+  qSort( begin(), end() );
+}
+
+void TTHeaderList::checkIndexRange( int index )
 {
   //qDebug("check index: %d / %d",index,count() );
-  if ( (int)index < 0 || index >= count() )
+  if ( index < 0 || index >= size() )
     throw TTListIndexException(index);
 }
 

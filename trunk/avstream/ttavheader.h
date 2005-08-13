@@ -5,6 +5,7 @@
 /* FILE     : ttavheader.h                                                    */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -157,11 +158,11 @@ class TTVideoIndex : public TTAVHeader
  public:
   TTVideoIndex():TTAVHeader(){};
 
-  uint    stream_order;
-  uint    display_order;
-  uint    header_list_index;
+  int     stream_order;
+  int     display_order;
+  int     header_list_index;
   int     picture_coding_type;
-  uint    sequence_index;
+  int     sequence_index;
   long    gop_number;
   off64_t picture_size;
 };

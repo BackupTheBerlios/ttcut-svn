@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -94,12 +95,12 @@ void TTMpeg2VideoStream::makeSharedCopy( TTMpeg2VideoStream* v_stream )
 }
 
 // Create the mpeg2 header-list
-uint TTMpeg2VideoStream::createHeaderList()
+int TTMpeg2VideoStream::createHeaderList()
 {
   QString   idd_stream_name;
   QFileInfo idd_stream_info;
   bool      header_list_exists = false;
-  uint      u_result = 0;
+  int      u_result = 0;
 
   //qDebug("%screate header-list: %s",c_name,stream_info->filePath().ascii());
 
@@ -168,23 +169,23 @@ uint TTMpeg2VideoStream::createHeaderList()
 
 
 // Create the mpeg2 index-list
-uint TTMpeg2VideoStream::createIndexList()
+int TTMpeg2VideoStream::createIndexList()
 {
-  uint              u_result = 0;
+  int              u_result = 0;
   long              base_number = 0;
   long              current_picture_number = 0;
-  uint              index = 0;
+  int              index = 0;
   uint8_t           start_code = 0xFF;
-  uint              sequence_index = 0;
+  int              sequence_index = 0;
   long              gop_number = 0;
-  long              size_index = -1;
-  off64_t           frame_size = 0;
-  long              i;
+  //long              size_index = -1;
+  //off64_t           frame_size = 0;
+  //long              i;
   TTSequenceHeader* current_sequence;
   TTGOPHeader*      current_gop;
   TTPicturesHeader* current_picture;
-  TTVideoIndex*     prev_video_index;
-  TTVideoIndex*     cur_video_index;
+  //TTVideoIndex*     prev_video_index;
+  //TTVideoIndex*     cur_video_index;
 
   index_list  = new TTVideoIndexList( 2000 );
 
@@ -296,8 +297,9 @@ uint TTMpeg2VideoStream::createIndexList()
 
   num_index = index_list->count();
 
-  //qDebug("%sindex list created: %d",c_name,num_index);
+  qDebug("%sindex list created: %d/%d",c_name,num_index,index_list->size() );
 
+#ifdef __TTMPEG2
   index_list->stream_order_list = new int[num_index];
   index_list->setDisplayOrder();
 
@@ -308,6 +310,7 @@ uint TTMpeg2VideoStream::createIndexList()
     //qDebug("%sstream-index:%d",c_name,index_list->stream_order_list[i]);
   }
   index_list->setStreamOrder();
+#endif
 
   u_result = num_index;
   return u_result;
@@ -315,7 +318,7 @@ uint TTMpeg2VideoStream::createIndexList()
 
 TTSequenceHeader* TTMpeg2VideoStream::currentSequenceHeader()
 {
-  uint    header_index;
+  int    header_index;
   uint8_t header_type;
 
   header_index    = index_list->headerListIndex( currentIndex() );
@@ -344,7 +347,7 @@ TTSequenceHeader* TTMpeg2VideoStream::currentSequenceHeader()
 
 TTGOPHeader* TTMpeg2VideoStream::currentGOPHeader()
 {
-  uint    header_index;
+  int    header_index;
   uint8_t header_type;
 
   header_index    = index_list->headerListIndex( currentIndex() );
@@ -373,7 +376,7 @@ TTGOPHeader* TTMpeg2VideoStream::currentGOPHeader()
 
 TTPicturesHeader* TTMpeg2VideoStream::currentPictureHeader()
 {
-  uint    header_index;
+  int    header_index;
   uint8_t header_type;
 
   header_index    = index_list->headerListIndex( currentIndex() );
@@ -399,9 +402,9 @@ TTPicturesHeader* TTMpeg2VideoStream::currentPictureHeader()
   }
 }
 
-TTSequenceHeader* TTMpeg2VideoStream::sequenceHeaderAt( uint index )
+TTSequenceHeader* TTMpeg2VideoStream::sequenceHeaderAt( int index )
 {
-  uint    header_index;
+  int    header_index;
   uint8_t header_type;
 
   header_index    = index_list->headerListIndex( index );
@@ -426,9 +429,9 @@ TTSequenceHeader* TTMpeg2VideoStream::sequenceHeaderAt( uint index )
   }
 }
 
-TTGOPHeader* TTMpeg2VideoStream::GOPHeaderAt( uint index )
+TTGOPHeader* TTMpeg2VideoStream::GOPHeaderAt( int index )
 {
-  uint    header_index;
+  int    header_index;
   uint8_t header_type;
 
   header_index    = index_list->headerListIndex( index );
@@ -453,9 +456,9 @@ TTGOPHeader* TTMpeg2VideoStream::GOPHeaderAt( uint index )
   }
 }
 
-TTPicturesHeader* TTMpeg2VideoStream::pictureHeaderAt( uint index )
+TTPicturesHeader* TTMpeg2VideoStream::pictureHeaderAt( int index )
 {
-  uint    header_index;
+  int    header_index;
   uint8_t header_type;
 
   header_index    = index_list->headerListIndex( index );
@@ -484,24 +487,24 @@ TTVideoHeader* TTMpeg2VideoStream::getPrevMpeg2Object( TTVideoHeader* current )
 {
   int found_index;
 
-  found_index = header_list->bsearch( (TTAVHeader*)current );
+  found_index = header_list->indexOf( (TTAVHeader*)current );
 
   if ( found_index-1 < 0 )
     return (TTVideoHeader*)NULL;
   else
-    return (TTVideoHeader*)header_list->headerAt( (uint)found_index-1 );
+    return (TTVideoHeader*)header_list->headerAt( (int)found_index-1 );
 }
 
 TTVideoHeader* TTMpeg2VideoStream::getNextMpeg2Object( TTVideoHeader* current )
 {
   int found_index;
 
-  found_index = header_list->bsearch( (TTAVHeader*)current );
+  found_index = header_list->indexOf( (TTAVHeader*)current );
 
   if ( found_index < 0 || found_index+1 >= header_list->count() )
     return (TTVideoHeader*)NULL;
   else
-    return (TTVideoHeader*)header_list->headerAt( (uint)found_index+1 );
+    return (TTVideoHeader*)header_list->headerAt( (int)found_index+1 );
 }
 
 // Open the mpeg2 video stream
@@ -676,7 +679,7 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
     writeIDDFile();
   }
 
-  //qDebug( "%sheader list count: %d",c_name,header_list->count() );
+  qDebug( "%sheader list count: %d/%d",c_name,header_list->count(),header_list->size() );
   if ( b_cancel )
     b_result = false;
 
@@ -690,13 +693,13 @@ void TTMpeg2VideoStream::writeIDDFile( )
 {
   QString             idd_stream_name;
   QFileInfo           idd_stream_info;
-  TTMpeg2VideoHeader* mpeg2_header;
+  //TTMpeg2VideoHeader* mpeg2_header;
   TTPicturesHeader*   current_picture;
-  uint                index = 0;
-  int                 i;
+  int                index = 0;
+  //int                 i;
   uint8_t             header_type;
   off64_t             offset;
-  uint16_t            temp_ref;
+  int16_t            temp_ref;
   uint8_t             coding_type;
   uint8_t             buffer[8];
 
@@ -865,7 +868,7 @@ void TTMpeg2VideoStream::readIDDHeader( )
 }
 
 
-bool TTMpeg2VideoStream::isCutInPoint( uint pos )
+bool TTMpeg2VideoStream::isCutInPoint( int pos )
 {
   if ( TTCut::encoderMode )
     return true;
@@ -879,7 +882,7 @@ bool TTMpeg2VideoStream::isCutInPoint( uint pos )
 }
 
 
-bool TTMpeg2VideoStream::isCutOutPoint( uint pos )
+bool TTMpeg2VideoStream::isCutOutPoint( int pos )
 {
   if ( TTCut::encoderMode )
     return true;
@@ -898,8 +901,8 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
 {
   int i;
   TTCutParameter* cut_param = new TTCutParameter();
-  uint start_pos;
-  uint end_pos;
+  int start_pos;
+  int end_pos;
   QString action_string;
 
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
@@ -944,14 +947,14 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
 }
 
 
-void TTMpeg2VideoStream::cut( TTFileBuffer* fs, uint start, uint end, TTCutParameter* cr)
+void TTMpeg2VideoStream::cut( TTFileBuffer* fs, int start, int end, TTCutParameter* cr)
 {
-  uint              current_index_list_pos;
-  uint              current_header_list_pos;
+  int              current_index_list_pos;
+  int              current_header_list_pos;
   TTVideoHeader*    current_header;
   TTVideoHeader*    start_object;
   TTVideoHeader*    end_object;
-  uint              temp_end;
+  int              temp_end;
   uint8_t           seq_end[4];
 
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
@@ -1130,12 +1133,9 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
   // total number of bytes to copy
   off64_t count = end_object->headerOffset()-start_object->headerOffset();
 
-  // actually copied bytes
-  off64_t bytes_processed;
-
   off64_t abs_pos = start_object->headerOffset();
 
-  uint process = 0;
+  int process = 0;
 
   TTVideoHeader* current_object = start_object;
   TTPicturesHeader* current_picture = NULL;
@@ -1149,7 +1149,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
     bool object_processed;
 
   const int watermark=12;
-  uint current_header_list_pos;
+  int current_header_list_pos;
   TTVideoHeader* newMpeg2Object = (TTVideoHeader*)NULL;
 
   // source mpeg2-stream to start objects offset
@@ -1448,7 +1448,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
     if ( bytes_processed <= 0 )
     {
-      qDebug( "%s>>> error in bytes_processed: %lld",c_name,bytes_processed );
+      qDebug( "%s>>>warning: bytes_processed: %d",c_name,bytes_processed );
       count = -1;
     }
   }
@@ -1464,7 +1464,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 }
 
 
-void TTMpeg2VideoStream::encodePart( uint start, uint end, TTCutParameter* cr, TTFileBuffer* cut_stream )
+void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream )
 {
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
   qDebug( "%s---------------------------------------------",c_name );

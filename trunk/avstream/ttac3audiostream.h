@@ -5,6 +5,7 @@
 /* FILE     : ttac3audiostream.h                                              */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -62,10 +63,10 @@ class TTAC3AudioStream : public TTAudioStream
   void searchNextSyncByte();
   void readAudioHeader( TTAC3AudioHeader* audio_header );
 
-  void cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp );
+  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
   void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
 
-  uint createHeaderList();
+  int     createHeaderList();
   QString streamExtension();
   QString absStreamTime();
 };

@@ -5,6 +5,7 @@
 /* FILE     : ttmpeg2videostream.h                                            */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -69,29 +70,29 @@ class TTMpeg2VideoStream : public TTVideoStream
 
   void makeSharedCopy( TTMpeg2VideoStream* v_stream );
 
-  uint createHeaderList();
-  uint createIndexList();
+  int createHeaderList();
+  int createIndexList();
 
   TTSequenceHeader* currentSequenceHeader();
   TTGOPHeader*      currentGOPHeader();
   TTPicturesHeader* currentPictureHeader();
-  TTSequenceHeader* sequenceHeaderAt( uint index );
-  TTGOPHeader*      GOPHeaderAt( uint index );
-  TTPicturesHeader* pictureHeaderAt( uint index );
+  TTSequenceHeader* sequenceHeaderAt( int index );
+  TTGOPHeader*      GOPHeaderAt( int index );
+  TTPicturesHeader* pictureHeaderAt( int index );
   TTVideoHeader*    getPrevMpeg2Object( TTVideoHeader* current );
   TTVideoHeader*    getNextMpeg2Object( TTVideoHeader* current );
 
-  bool isCutInPoint( uint pos );
-  bool isCutOutPoint( uint pos );
+  bool isCutInPoint( int pos );
+  bool isCutOutPoint( int pos );
 
-  void cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp );
+  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
   void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
   void transferMpegObjects( TTFileBuffer* fs,
 			    TTVideoHeader* start_object,
 			    TTVideoHeader* end_object,
 			    TTCutParameter* cr );
 
-  void encodePart( uint start, uint end, TTCutParameter* cr, TTFileBuffer* cut_stream );
+  void encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream );
  protected:
   bool openStream();
   bool closeStream();

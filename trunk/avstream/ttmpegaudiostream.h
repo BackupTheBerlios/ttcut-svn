@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/11/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -63,15 +64,14 @@ class TTMPEGAudioStream : public TTAudioStream
   void searchNextSyncByte();
   void parseAudioHeader( uint8_t* data, int offset, TTMpegAudioHeader* audio_header );
 
-  void cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp );
+  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
   void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
 
   void    readAudioHeader( TTMpegAudioHeader* audio_header );
-  uint    createHeaderList( );
+  int     createHeaderList( );
   QString streamExtension();
   QString absStreamTime();
-
-  uint    searchIndex( double s_time );
+  int     searchIndex( double s_time );
 };
 
 #endif //TTMPEGAUDIOSTREAM_H

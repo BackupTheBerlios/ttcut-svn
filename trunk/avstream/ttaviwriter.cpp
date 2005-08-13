@@ -94,7 +94,7 @@ bool TTAVIWriter::initAVIWriter( TTVideoStream* v_stream )
 // -----------------------------------------------------------------------------
 // Write AVI file
 // -----------------------------------------------------------------------------
-uint TTAVIWriter::writeAVI( uint start_frame_pos, uint end_frame_pos )
+int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
 {
   long        foundPosition;
   long        i,j,iLength;
@@ -104,7 +104,7 @@ uint TTAVIWriter::writeAVI( uint start_frame_pos, uint end_frame_pos )
   ulong       delta;
   ulong       min_delta;
   long        resultPosition;
-  int frame_count = end_frame_pos - start_frame_pos;
+  int         frame_count = end_frame_pos - start_frame_pos;
 
 
   //qDebug( "%s------------------------------------------------",c_name );
@@ -147,6 +147,8 @@ uint TTAVIWriter::writeAVI( uint start_frame_pos, uint end_frame_pos )
   //qDebug( "%s------------------------------------------------",c_name );
   
   delete ref_data;
+
+  return frame_count;  
 }
 
 

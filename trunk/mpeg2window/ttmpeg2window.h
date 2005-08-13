@@ -64,7 +64,7 @@ class TTMPEG2Window : public QGLWidget
 
   void openVideoFile( QString fName, TTVideoIndexList* viIndex=NULL, TTVideoHeaderList* viHeader=NULL );
   void openVideoStream( TTMpeg2VideoStream* v_stream );
-
+  void closeVideoStream();
 
   // navigation
   void moveToFirstFrame( bool show = true );

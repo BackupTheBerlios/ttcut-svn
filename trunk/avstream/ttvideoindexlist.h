@@ -5,6 +5,7 @@
 /* FILE     : ttvideoindexlist.h                                              */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -54,9 +55,9 @@
 class TTVideoIndexList : public TTHeaderList
 {
  public:
-  TTVideoIndexList( uint size );
+  TTVideoIndexList( int size );
 
-  TTVideoIndex* videoIndexAt( uint index );
+  TTVideoIndex* videoIndexAt( int index );
 
   void sortStreamOrder();
   void sortDisplayOrder();
@@ -65,14 +66,14 @@ class TTVideoIndexList : public TTHeaderList
   bool streamOrder();
   bool displayOrder();
 
-  uint    streamOrder( uint index );
-  uint    displayOrder( uint index );
-  uint    headerListIndex( uint index );
-  int     pictureCodingType( uint index );
-  uint    sequenceIndex( uint index );
-  long    gopNumber( uint index );
-  off64_t frameSize( uint index );
-  //uint    streamOrderIndex( uint index );
+  int     streamOrder( int index );
+  int     displayOrder( int index );
+  int     headerListIndex( int index );
+  int     pictureCodingType( int index );
+  int     sequenceIndex( int index );
+  long    gopNumber( int index );
+  off64_t frameSize( int index );
+  //int   streamOrderIndex( int index );
 
   void numIFramesPlus();
   void numPFramesPlus();
@@ -84,12 +85,8 @@ class TTVideoIndexList : public TTHeaderList
   int* stream_order_list;
 
  protected:
-#ifdef __WIN32
-  int compareItems( QCollection::Item Item1, QCollection::Item Item2 );
-#else
-  int compareItems( Q3PtrCollection::Item Item1, Q3PtrCollection::Item Item2 );
-#endif
   void swapOrder();
+  void sort();
 
  protected:
   int  current_order;
@@ -97,7 +94,4 @@ class TTVideoIndexList : public TTHeaderList
   long num_p_frames;
   long num_b_frames;
 };
-
-
-
 #endif //TTVIDEOINDEXLIST_H

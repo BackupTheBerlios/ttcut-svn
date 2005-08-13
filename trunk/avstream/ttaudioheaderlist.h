@@ -5,6 +5,7 @@
 /* FILE     : ttaudioheaderlist.h                                             */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -51,18 +52,14 @@
 class TTAudioHeaderList : public TTHeaderList
 {
  public:
-  TTAudioHeaderList( uint size );
+  TTAudioHeaderList( int size );
 
-  TTAudioHeader* audioHeaderAt( uint index );
+  TTAudioHeader* audioHeaderAt( int index );
 
-  uint    searchTimeIndex( double s_time );
+  int    searchTimeIndex( double s_time );
 
  protected:
-#ifdef __WIN32
-  int compareItems( QCollection::Item Item1, QCollection::Item Item2 );
-#else
-  int compareItems( Q3PtrCollection::Item Item1, Q3PtrCollection::Item Item2 );
-#endif
+  void sort();
 };
 
 #endif //TTAUDIOHEADERLIST_H

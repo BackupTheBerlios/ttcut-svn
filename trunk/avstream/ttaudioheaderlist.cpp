@@ -44,13 +44,15 @@
 
 #include "ttaudioheaderlist.h"
 
-TTAudioHeaderList::TTAudioHeaderList( uint size )
+bool audioHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 );
+
+TTAudioHeaderList::TTAudioHeaderList( int size )
   : TTHeaderList( size )
 {
 
 }
 
-TTAudioHeader* TTAudioHeaderList::audioHeaderAt( uint index )
+TTAudioHeader* TTAudioHeaderList::audioHeaderAt( int index )
 {
   try
   {
@@ -65,11 +67,11 @@ TTAudioHeader* TTAudioHeaderList::audioHeaderAt( uint index )
 }
 
 
-uint TTAudioHeaderList::searchTimeIndex( double s_time )
+int TTAudioHeaderList::searchTimeIndex( double s_time )
 {
-  uint           index;
-  uint           abs_time = 0;
-  uint           search_time = (uint)s_time*1000;
+  int           index;
+  int           abs_time = 0;
+  int           search_time = (int)s_time*1000;
   TTAudioHeader* audio_header;
 
   index = 0;
@@ -77,7 +79,7 @@ uint TTAudioHeaderList::searchTimeIndex( double s_time )
   do
   {
     audio_header = (TTAudioHeader*)at(index);
-    abs_time = (uint)(audio_header->abs_frame_time*1000);
+    abs_time = (int)(audio_header->abs_frame_time*1000);
     qDebug( "abs time: %d / %d",abs_time, search_time );
     index++;
   }
@@ -88,29 +90,17 @@ uint TTAudioHeaderList::searchTimeIndex( double s_time )
   return index-2;
 }
 
-
-// needed by sort routine and bsearch
-#ifdef __WIN32
-int TTAudioHeaderList::compareItems( QCollection::Item Item1, QCollection::Item Item2 )
-#else
-int TTAudioHeaderList::compareItems( Q3PtrCollection::Item Item1, Q3PtrCollection::Item Item2 )
-#endif
+void TTAudioHeaderList::sort()
 {
-  int result = 0;
+  qSort( begin(), end(), audioHeaderListCompareItems );
+}
 
-  TTAudioHeader* index1;
-  TTAudioHeader* index2;
 
-  index1 = (TTAudioHeader*)Item1;
-  index2 = (TTAudioHeader*)Item2;
-
+bool audioHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 )
+{
   // the values for the display order of two items are compared
-  if ( (uint)index1->abs_frame_time*1000 < (uint)index2->abs_frame_time*1000 )
-    result = -1;
-  if ( (uint)index1->abs_frame_time*1000 == (uint)index2->abs_frame_time*1000 )
-    result = 0;
-  if ( (uint)index1->abs_frame_time*1000 > (uint)index2->abs_frame_time*1000 )
-    result = 1;
-
-  return result;
+  if ( (int)((TTAudioHeader*)head_1)->abs_frame_time*1000 < (int)((TTAudioHeader*)head_2)->abs_frame_time*1000 )
+    return true;
+  else
+    return false;
 }

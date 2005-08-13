@@ -5,6 +5,7 @@
 /* FILE     : ttac3audiostream.cpp                                            */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -137,7 +138,7 @@ void TTAC3AudioStream::readAudioHeader( TTAC3AudioHeader* audio_header)
 
 // create the header list
 // -----------------------------------------------------------------------------
-uint TTAC3AudioStream::createHeaderList()
+int TTAC3AudioStream::createHeaderList()
 {
   TTAC3AudioHeader* audio_header;
   TTAC3AudioHeader* prev_audio_header;
@@ -150,14 +151,14 @@ uint TTAC3AudioStream::createHeaderList()
     if ( ttAssigned( header_list ) )
       return header_list->count();
     else
-      return (uint)0;
+      return (int)0;
   }
 
   // open the audio stream
   if ( !openStream() )
   {
     qDebug( "%scannot open audio stream: %s",c_name,stream_info->filePath().ascii() );
-    return (uint)0;
+    return (int)0;
   }
 
   header_list = new TTAudioHeaderList( 1000 );
@@ -207,7 +208,7 @@ uint TTAC3AudioStream::createHeaderList()
   return header_list->count();
 }
 
-void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, uint start, uint end, TTCutParameter* cp )
+void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp )
 {
   off64_t start_offset;
   off64_t end_offset;
@@ -311,7 +312,7 @@ QString TTAC3AudioStream::absStreamTime()
 {
   if ( ttAssigned( header_list ) )
   {
-    if ( header_list->count() > (uint)0 )
+    if ( header_list->count() > (int)0 )
     {
       TTAC3AudioHeader* audio_header = (TTAC3AudioHeader*)header_list->audioHeaderAt( header_list->count()-1 );
 
