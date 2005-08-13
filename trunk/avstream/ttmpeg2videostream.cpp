@@ -178,14 +178,17 @@ int TTMpeg2VideoStream::createIndexList()
   uint8_t           start_code = 0xFF;
   int              sequence_index = 0;
   long              gop_number = 0;
-  //long              size_index = -1;
-  //off64_t           frame_size = 0;
-  //long              i;
   TTSequenceHeader* current_sequence;
   TTGOPHeader*      current_gop;
   TTPicturesHeader* current_picture;
-  //TTVideoIndex*     prev_video_index;
-  //TTVideoIndex*     cur_video_index;
+
+#if defined(__TTMPEG2)
+  TTVideoIndex*     prev_video_index;
+  TTVideoIndex*     cur_video_index;
+  long              size_index = -1;
+  off64_t           frame_size = 0;
+  long              i;
+#endif
 
   index_list  = new TTVideoIndexList( 2000 );
 

@@ -1049,7 +1049,8 @@ void TTMpeg2MainWnd::analyzeMpegStream( )
     mpeg2_window->openVideoFile( file_name, 
     				 index_list, 
     				 header_list );
-    mpeg2_window->moveToFirstFrame( );
+    mpeg2_window->resize( 400, 350 );
+    mpeg2_window->moveToFirstFrame( true );
     
   }
 }
