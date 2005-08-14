@@ -70,6 +70,7 @@
 #include "ttcutpreview.h"       /*..the cut preview window....................*/
 #include "ttsearchframe.h"      /*..frame search method.......................*/
 #include "ttcutaboutdlg.h"      /*..the everlasting about.....................*/
+#include "ttcutproject.h"       /*..project file..............................*/
 
 // mpeg2window
 // -----------------------------------------------------------------------------
@@ -325,6 +326,7 @@ private:
 
     QString             video_file_name; /*..video file name..................*/
     QString             audio_file_name; /*..first audio file name............*/
+    QString             project_file_name;
 
     // AV type
     // -------------------------------------------------------------------------

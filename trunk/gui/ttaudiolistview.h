@@ -44,6 +44,7 @@
 
 #include "ttcut.h"              /*..global parameter..........................*/
 #include "ttprogressbar.h"      /*..the progress dialog.......................*/
+#include "ttcutproject.h"
 
 #include "../avstream/ttavheader.h"
 #include "../avstream/ttavstream.h"
@@ -94,6 +95,8 @@ class TTAudioListView : public Q3ListView
   int     getAudioList( QList<TTAudioStream*>& a_list );
   void    clearList();
   int     count();
+
+  void    writeListToProject( TTCutProject* prj );
 
   public slots:
   void    deleteItem();

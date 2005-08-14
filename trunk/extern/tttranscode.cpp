@@ -30,18 +30,20 @@
 
 #include "tttranscode.h"
 
+#include <QTimer>
+
 //#define TTTRANSCODE_DEBUG
 
-#if defined (TTTRANSCODE_DEBUG)
 const char c_name[] = "TTTRANSCODE   : ";
-#endif
+
 
 TTTranscodeProvider::TTTranscodeProvider( )
   : TTProcessForm( TTCut::mainWindow )
 {
   QString str_head = "starting encoder >>>transcode -y ffmpeg<<<";
 
-  str_command = "transcode";
+  str_command       = "transcode";
+  transcode_success = false;
 
   setModal( true );
   addLine( str_head );
@@ -77,6 +79,9 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 #endif
 
   //transcode -i encode.avi --pre_clip 0 -y ffmpeg --export_prof dvd-pal --export_asr 2 -o encode
+  QString str_aspect;
+  str_aspect.sprintf("%d",enc_par.video_aspect_code );
+
   strl_command_line.clear();
 
   strl_command_line << "-i"
@@ -88,7 +93,7 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 		    << "--export_prof"
 		    << "dvd-pal"
 		    << "--export_asr"
-		    << "2"
+		    << str_aspect
 		    << "-o"
 		    << enc_par.mpeg2_output_finfo.absoluteFilePath();
 }
@@ -124,8 +129,14 @@ bool TTTranscodeProvider::encodePart( )
 
     delete transcode_proc;
 
-    return false;
+    return transcode_success;
   }
+
+  QTimer *timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(transcodeKill()));
+  timer->start(60000);
+  
+  transcode_success = true;
 
   while ( transcode_proc->state() == QProcess::Running )
   {
@@ -151,9 +162,9 @@ bool TTTranscodeProvider::encodePart( )
   delete transcode_proc;
 
 #if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%sexit encodePart",c_name );
+  qDebug( "%sexit encodePart: %d",c_name,transcode_success );
 #endif
-  return true;
+  return transcode_success;
 }
 
 
@@ -248,4 +259,17 @@ void TTTranscodeProvider::transcodeState( QProcess::ProcessState proc_state )
 #if defined (TTTRANSCODE_DEBUG)
   qDebug( "%sstate changed: %d",c_name, proc_state );
 #endif
+}
+
+
+void TTTranscodeProvider::transcodeKill( )
+{
+#if defined (TTTRANSCODE_DEBUG)
+  qDebug( "%stranscode kill",c_name );
+#endif
+
+  qDebug( "%stime-out-event forces transcode to terminate (!)",c_name );
+
+  transcode_success = false;
+  transcode_proc->kill();
 }

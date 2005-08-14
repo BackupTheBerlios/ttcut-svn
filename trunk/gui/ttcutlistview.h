@@ -42,6 +42,7 @@
 #include <QMouseEvent>
 
 #include "ttcut.h"
+#include "ttcutproject.h"
 
 // avcut
 // -----------------------------------------------------------------------------
@@ -96,6 +97,8 @@ class TTCutListView : public Q3ListView
   int  count();
   uint getResultFrames();
   bool isItemSelected();
+
+  void writeListToProject( TTCutProject* prj );
 
   TTAVCutList* cutList();
 

@@ -79,6 +79,7 @@ SOURCES           = \
                     gui/ttaudiolistview.cpp \
                     gui/ttprocessform.cpp \
                     gui/ttcut.cpp \
+	            gui/ttcutproject.cpp \
                     gui/main.cpp \
 #
 #                   -------------------------------------------------------------
@@ -154,6 +155,7 @@ HEADERS           = \
                     gui/ttcutccrwnd.h \
                     gui/ttaudiolistview.h \
                     gui/ttprocessform.h \
+	            gui/ttcutproject.h \
                     gui/ttcut.h \
 #
 #                   -------------------------------------------------------------
@@ -181,10 +183,9 @@ HEADERS           = \
 #                   EXTERN
 #                   -------------------------------------------------------------
 	            extern/tttranscode.h
-
+#
+#
+TRANSLATIONS   = ttcut_en.ts
 # -------------------------------------------------------------------------------
 # TTCUT.PRO ENDE
 # -------------------------------------------------------------------------------
-
-#The following line was inserted by qt3to4
-QT +=  opengl 

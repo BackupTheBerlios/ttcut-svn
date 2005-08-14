@@ -57,7 +57,7 @@ const char c_name[] = "MPEG2STREAM   : ";
 TTMpeg2VideoStream::TTMpeg2VideoStream()
   : TTVideoStream()
 {
-  qDebug("%sdefault constructor",c_name);
+  //qDebug("%sdefault constructor",c_name);
 
   stream_type   = TTAVTypes::mpeg2_demuxed_video;
   stream_open   = false;
@@ -300,7 +300,9 @@ int TTMpeg2VideoStream::createIndexList()
 
   num_index = index_list->count();
 
+#if defined(TTMPEG2VIDEOSTREAM_DEBUG)
   qDebug("%sindex list created: %d/%d",c_name,num_index,index_list->size() );
+#endif
 
 #ifdef __TTMPEG2
   index_list->stream_order_list = new int[num_index];
@@ -682,7 +684,10 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
     writeIDDFile();
   }
 
+#if defined(TTMPEG2VIDEOSTREAM_DEBUG)
   qDebug( "%sheader list count: %d/%d",c_name,header_list->count(),header_list->size() );
+#endif
+
   if ( b_cancel )
     b_result = false;
 
@@ -1131,47 +1136,45 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 					      TTVideoHeader* end_object,
 					      TTCutParameter* cr )
 {
-  // buffer for copy data
   uint8_t* buffer = new uint8_t[65536];
-  // total number of bytes to copy
-  off64_t count = end_object->headerOffset()-start_object->headerOffset();
-
-  off64_t abs_pos = start_object->headerOffset();
-
-  int process = 0;
-
+  off64_t  count   = end_object->headerOffset()-start_object->headerOffset();
+  off64_t  abs_pos = start_object->headerOffset();
+  int      process = 0;
+  int      bytes_processed;
   TTVideoHeader* current_object = start_object;
   TTPicturesHeader* current_picture = NULL;
-
-  // B-Frames entfernen
-  bool  close_next_GOP = true;
-  // Wird die GOP geschlossen, ist das das Delta für die Temprefs!
-  short temp_ref_delta = 0; 
+  bool  close_next_GOP = true;      // remove B-frames
+  short temp_ref_delta = 0;         // delta for temporal reference if closed GOP
+  const int watermark  = 12;        // size of header type-code (12 byte)
+  int current_header_list_pos;
 
   Q3PtrStack<TTBreakObject>* break_objects = new Q3PtrStack<TTBreakObject>; 
-    bool object_processed;
-
-  const int watermark=12;
-  int current_header_list_pos;
+  bool object_processed;
+  
   TTVideoHeader* newMpeg2Object = (TTVideoHeader*)NULL;
+  
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+  qDebug( "%s----------------------------------------------------",c_name );
+  qDebug( "%stransferMpegObjects",c_name );
+  qDebug( "%sstart: %lld / end: %lld / count: %lld",c_name,start_object->headerOffset(),end_object->headerOffset(),count );
+#endif
 
   // source mpeg2-stream to start objects offset
   stream_buffer->seekAbsolute( start_object->headerOffset() );
 
+  // initialize progress bar
   if ( ttAssigned( progress_bar ) )
   {
     progress_bar->resetProgress();
     progress_bar->setTotalSteps( count );
   }
-  
-  // do copying data while theire is data left
+
+  // ---------------------------------------------------------------------------
+  // copy count bytes of data
+  // ---------------------------------------------------------------------------
   while( count > 0 )
   {
-
-
-    //qDebug( "%s transfer count: %lld",c_name,count );
-
-    // ok, lets assume we can process all bytes
+    // lets assume we can process all bytes
     int bytes_processed = 0;
 
     if ( count < 65536 )
@@ -1179,11 +1182,23 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
     else
       bytes_processed = stream_buffer->readCount2( buffer, 0, 65536 );
     
-    //qDebug( "%sbytes processed: %d",c_name,bytes_processed );
+    //#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    //qDebug( "%sbytes read from stream: %d",c_name,bytes_processed );
+    //#endif
 
+    // 0 bytes read from stream, must be an error ???
     if ( bytes_processed == 0 )
+    {
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+      qDebug( "%swarning: 0 bytes read (!)",c_name );
+#endif
       count = -1;
+      break;
+    }
 
+    // -----------------------------------------------------------------------
+    // process all read bytes
+    // -----------------------------------------------------------------------
     do
     {
       object_processed = false;
@@ -1200,11 +1215,15 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 	  object_processed = true;
 
 	  newMpeg2Object = (TTVideoHeader*)NULL;
-	  
+
+	  // -------------------------------------------------------------------
+	  // removing unwanted objects
+	  // -------------------------------------------------------------------	  
 	  if ( break_objects->count() > 0 )
 	  {
-	    //qDebug( "%s>>> remove unwnated objects",c_name );
-
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+	    qDebug( "%s>>> remove unwanted objects: %d",c_name, break_objects->count() );
+#endif
 	    TTBreakObject* current_break = (TTBreakObject*)break_objects->top();
 
 	    if ( current_break->stop_object != NULL && 
@@ -1433,6 +1452,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 	  bytes_processed -= watermark; // natürlich haben wir watermark Bytes weniger!
 	}
       }
+      //qDebug( "%sobject processed: %d",c_name,object_processed );
     } while ( object_processed );
 
     // Jetzt können wir den Pufferinhalt schreiben, ggf. nicht komplett
@@ -1448,6 +1468,8 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
     count   -= bytes_processed;
     abs_pos += bytes_processed;
+
+    //qDebug( "%snew loop: processed: %d / count: %lld / abs pos: %lld",c_name,bytes_processed,count, abs_pos );
 
     if ( bytes_processed <= 0 )
     {
@@ -1499,6 +1521,7 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
   QDir temp_dir( TTCut::tempDirPath );
   QString avi_out_file = "encode.avi";
   QString mpeg2_out_file = "encode";
+  new_file_info.setFile( temp_dir, "encode.avi" );
 
   enc_par.avi_input_finfo.setFile( temp_dir, avi_out_file );
   enc_par.mpeg2_output_finfo.setFile( temp_dir, mpeg2_out_file );
@@ -1516,6 +1539,10 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
 
   if ( transcode_prov->encodePart() )
   {
+#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    qDebug( "%stranscode exit succesfully",c_name );
+#endif
+
     new_file_info.setFile( temp_dir, "encode.m2v" );
     TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream( new_file_info );
     
@@ -1532,17 +1559,21 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
     qDebug( "%s---------------------------------------------",c_name );
 #endif
-
-    // remove temporary file
-    QString rm_cmd  = "rm ";
-    rm_cmd         += new_file_info.absolutePath();
-    rm_cmd         += "/encode.*";
-    
-    system( rm_cmd.ascii() );
     
     delete new_mpeg_stream;
   }
+  else
+  {
+    qDebug( "%serror in transcode part (!)",c_name );
+  }
 
+  // remove temporary file
+  QString rm_cmd  = "rm ";
+  rm_cmd         += new_file_info.absolutePath();
+  rm_cmd         += "/encode.*";
+  
+  system( rm_cmd.ascii() );
+  
   delete transcode_prov;
 
   if ( ttAssigned( progress_bar ) )
@@ -1551,5 +1582,4 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
   // set cut parameter back
   cr->last_call         = save_last_call;
   cr->write_max_bitrate = save_write_max_bitrate;
-
 }

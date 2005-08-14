@@ -56,12 +56,14 @@ class TTTranscodeProvider : public TTProcessForm
   void transcodeFinish(int exit_code );
   void transcodeError(QProcess::ProcessError proc_error);
   void transcodeState(QProcess::ProcessState proc_state);
+  void transcodeKill();
 
  private:
   QProcess*      transcode_proc;
   QString        str_command;
   QStringList    strl_command_line;
   int            exit_code;
+  bool           transcode_success;
 };
 
 

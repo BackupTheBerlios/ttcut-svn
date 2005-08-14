@@ -56,6 +56,8 @@
 #include <qstring.h>
 #include <qfileinfo.h>
 
+//#define TTAVTYPES_DEBUG
+
 const char c_name [] = "TTAVTYPES     : ";
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -75,10 +77,12 @@ TTAVTypes::TTAVTypes( QString f_name )
   type_header_offset = 0;
   type_header_length = 0;
 
+#if defined(TTAVTYPES_DEBUG)
   if ( !av_stream_exists )
   {
     qDebug( "%saudio stream %s doesn't exist (!)",c_name,f_name.ascii() );
   }
+#endif
 }
 
 // destructor
@@ -158,22 +162,34 @@ TTAudioStream* TTAudioType::createAudioStream()
   switch ( av_stream_type )
   {
   case ac3_audio:
+#if defined(TTAVTYPES_DEBUG)
     qDebug( "%sAC3 audio stream",c_name );
+#endif
     return new TTAC3AudioStream( *av_stream_info, start_pos );
   case mpeg_audio:
+#if defined(TTAVTYPES_DEBUG)
     qDebug( "%sMPEG audio stream",c_name );
+#endif
     return new TTMPEGAudioStream( *av_stream_info, start_pos );
   case pcm_audio:
+#if defined(TTAVTYPES_DEBUG)
     qDebug( "%sPCM audio stream",c_name );
+#endif
     return new TTPCMAudioStream( *av_stream_info, start_pos );
   case dts14_audio:
+#if defined(TTAVTYPES_DEBUG)
     qDebug( "%sDTS14 audio stream",c_name );
+#endif
     return new TTDTS14AudioStream( *av_stream_info, start_pos );
   case dts16_audio:
+#if defined(TTAVTYPES_DEBUG)
     qDebug( "%sDTS16 audio stream",c_name );
+#endif
     return new TTDTS16AudioStream( *av_stream_info, start_pos );
   default:
+#if defined(TTAVTYPES_DEBUG)
     qDebug( "%sunknown audio stream",c_name );
+#endif
     return (TTAudioStream*)NULL;
   }
 }

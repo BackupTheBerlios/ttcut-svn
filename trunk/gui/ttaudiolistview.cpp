@@ -355,6 +355,24 @@ int TTAudioListView::fillAudioList()
   return audio_list.size()-audio_list.count(0);
 }
 
+void TTAudioListView::writeListToProject( TTCutProject* prj )
+{
+  TTAudioListItem* item;
+  Q3ListViewItemIterator audioIt( this );
+
+  prj->writeAudioSection( true );
+
+  while( audioIt.current() )
+  {
+    item = (TTAudioListItem*)audioIt.current();
+
+    prj->writeAudioFileName( (QString)item->audioFileInfo.absoluteFilePath() );
+
+    audioIt++;
+  }
+  prj->writeAudioSection( false );
+}
+
 
 
 

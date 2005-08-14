@@ -403,7 +403,7 @@ TTAudioStream::TTAudioStream( const QFileInfo &f_info, int s_pos )
 
 TTAudioStream::~TTAudioStream()
 {
-  qDebug( "TTAUDIOSTREAM : destructor call" );
+  //qDebug( "TTAUDIOSTREAM : destructor call" );
 
   if ( ttAssigned( header_list ) )
   delete header_list;
@@ -513,7 +513,7 @@ TTVideoStream::TTVideoStream( const QFileInfo &f_info )
 
 TTVideoStream::~TTVideoStream()
 {
-  qDebug( "TTVIDEOSTREAM : destructor call" );
+  //qDebug( "TTVIDEOSTREAM : destructor call" );
 
   if ( ttAssigned( header_list ) )
     delete header_list;

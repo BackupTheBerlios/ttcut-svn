@@ -36,7 +36,7 @@
 #include <QMouseEvent>
 #include <Q3PopupMenu>
 
-#define TTCUTLISTVIEW_DEBUG
+//#define TTCUTLISTVIEW_DEBUG
 
 const char c_name[] = "TTCUTLISTVIEW : ";
 
@@ -646,4 +646,25 @@ void TTCutListView::testListView()
     list_order++;
     cutIt++;
   }
+}
+
+void TTCutListView::writeListToProject( TTCutProject* prj )
+{
+  int    i;
+  int    start_pos;
+  int    end_pos;
+  
+  prj->writeCutSection( true );
+
+  avcut_list->sortCutOrder();
+
+  // walk through the av cut list
+  for ( i = (uint)0; i < (uint)avcut_list->count(); (uint)i++ )
+  {
+    start_pos = avcut_list->cutInAt( (uint)i );
+    end_pos   = avcut_list->cutOutAt( (uint)i );
+
+    prj->writeCutEntry( start_pos, end_pos );
+  }
+  prj->writeCutSection( false );
 }

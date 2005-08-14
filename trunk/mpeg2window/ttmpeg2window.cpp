@@ -148,7 +148,6 @@ void TTMPEG2Window::resizeGL( int width, int height )
 // -----------------------------------------------------------------------------
 void TTMPEG2Window::paintGL()
 {
-  // no need do do something; Qt does it all
   //qDebug( "%spaint event",c_name );
 }
 
@@ -174,6 +173,45 @@ void TTMPEG2Window::updateFrame()
 void TTMPEG2Window::showVideoFrame()
 {
   makeCurrent();
+
+  GLdouble zoomFactor;
+  GLdouble rasterPosX, rasterPosY;
+
+  // set the new GL viewport according to the new window size
+  iSceneWidth  = width();
+  iSceneHeight = height();
+  
+  // select PROJECTION matrix and load identity
+  glMatrixMode( GL_PROJECTION );
+  glLoadIdentity();
+  
+  // openGL viewport
+  glViewport( 0, 0, width(), height() );
+  
+  // viewing volume
+  gluOrtho2D(0.0, (GLdouble)width(), 0.0, (GLdouble)height());
+  
+  // window height is authoritative
+  if ( (long)(iSceneHeight*1000.0*fAspect) <= (long)(iSceneWidth*1000.0) )
+  {
+    zoomFactor = (GLdouble)iSceneHeight / (GLdouble)iVideoHeight;
+  }
+  else
+    zoomFactor = (GLdouble)iSceneWidth  / (GLdouble)iVideoWidth;
+  
+  glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+  glClear( GL_COLOR_BUFFER_BIT );
+  glClear( GL_DEPTH_BUFFER_BIT );
+  
+  rasterPosX = (GLdouble)0.50*((GLdouble)iSceneWidth - (GLdouble)iVideoWidth*zoomFactor);
+  rasterPosY = (GLdouble)iVideoHeight*(GLdouble)zoomFactor +
+    (GLdouble)0.50*((GLdouble)iSceneHeight-(GLdouble)iVideoHeight*zoomFactor);
+  
+  //qDebug( "%srX: %8.4lf rY: %8.4lf zoom: %8.4lf",c_name,rasterPosX,rasterPosY,zoomFactor );
+  
+  glRasterPos2d( rasterPosX, rasterPosY );
+  
+  glPixelZoom( zoomFactor,-zoomFactor );
 
   if ( ttAssigned(picBuffer) )
   {
@@ -212,15 +250,15 @@ void TTMPEG2Window::moveToFirstFrame( bool show )
 
   if ( show && ttAssigned(frameInfo->Y) )
   {
-     iVideoWidth  = frameInfo->width;
-     iVideoHeight = frameInfo->height;
-     fAspect      = (float)iVideoWidth/(float)iVideoHeight;
-
-     picBuffer    = frameInfo->Y;
-
-     showVideoFrame();
-
-     swapBuffers();
+    iVideoWidth  = frameInfo->width;
+    iVideoHeight = frameInfo->height;
+    fAspect      = (float)iVideoWidth/(float)iVideoHeight;
+    
+    picBuffer    = frameInfo->Y;
+    
+    showVideoFrame();
+    
+    swapBuffers();
   }
 }
 
