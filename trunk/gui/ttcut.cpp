@@ -117,7 +117,7 @@ bool TTCut::readPrevIDD    = false;
 // encoder settings
 // --------------------------------------------------------------
 // Version
-QString TTCut::versionString = "TTCut - 0.10.2-alpha (Qt-4.0)";
+QString TTCut::versionString = "TTCut - 0.10.3-alpha (Qt-4.0)";
 // Options
 bool TTCut::encoderMode = false;
 
@@ -130,7 +130,7 @@ int     TTCut::mpeg2Target   = 2;
 QString TTCut::muxProg       = "mplex";
 QString TTCut::muxProgPath   = "/usr/local/bin/";
 QString TTCut::muxProgCmd    = "-f 8";
-QString TTCut::muxOutputPath = "/mnt/media/video/cut";
+QString TTCut::muxOutputPath = "/var/tmp";
 
 // --------------------------------------------------------------
 // chapter settings

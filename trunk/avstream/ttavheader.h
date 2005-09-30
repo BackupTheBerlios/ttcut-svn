@@ -175,11 +175,26 @@ class TTBreakObject
 {
  public:
   TTBreakObject();
+  ~TTBreakObject();
 
+  void setStopObject( TTVideoHeader* stop, long index=-1 );
+  void setRestartObject( TTVideoHeader* restart, long index=-1 );
+  TTVideoHeader* stopObject();
+  TTVideoHeader* restartObject();
+  long stopObjectIndex();
+  long restartObjectIndex();
+  void setCopyStart( long start );
+  void setCopyStop( long stop );
+  long copyStart();
+  long copyStop();
+
+ private:
   TTVideoHeader* stop_object;
   TTVideoHeader* restart_object;
+  long stop_object_index;
+  long restart_object_index;
   long copy_start;
-  long copy_stopp;
+  long copy_stop;
 };
 
 #endif //TTAVHEADER_H

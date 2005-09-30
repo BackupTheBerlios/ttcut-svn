@@ -302,23 +302,24 @@ void TTCutAVCutCommonTab::selectCutDirAction()
     qApp->processEvents();
   }
 
+  // TODO: Straingth interaction with QSettings ???? Something's wrong here
   // get free disk space
   dfOutput2 = "No information available";
-  dfProc = new QProcess( );
+  //dfProc = new QProcess( );
 
-  df_cmd_list.clear();
+  //df_cmd_list.clear();
 
-  df_cmd_list << "-h"
-	      << TTCut::cutDirPath;
+  //df_cmd_list << "-h"
+  //	      << TTCut::cutDirPath;
 
-  dfProc->start( "df", df_cmd_list );
+  //dfProc->start( "df", df_cmd_list );
 
-  connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
-  connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
+  //connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
+  //connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
 
-  dfProc->waitForFinished();
+  //dfProc->waitForFinished();
 
-  delete dfProc;
+  //delete dfProc;
 }
 
 
@@ -348,23 +349,24 @@ void TTCutAVCutCommonTab::setTabData()
   else
     cbWriteSeqEnd->setChecked( false );
 
+  // TODO: core dumb !!!
   // get free disk space
   dfOutput2 = "No information available";
-  dfProc = new QProcess( );
+  //dfProc = new QProcess( );
 
-  df_cmd_list.clear();
+  //df_cmd_list.clear();
 
-  df_cmd_list << "-h"
-	      << TTCut::cutDirPath;
+  //df_cmd_list << "-h"
+  //	      << TTCut::cutDirPath;
 
-  dfProc->start( "df", df_cmd_list );
+  //dfProc->start( "df", df_cmd_list );
 
-  connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
-  connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
+  //connect(dfProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
+  //connect(dfProc, SIGNAL( finished(int) ),  SLOT( exitProcess(int) ) );
 
-  dfProc->waitForFinished();
+  //dfProc->waitForFinished();
 
-  delete dfProc;
+  //delete dfProc;
 }
 
 // get tab data and set global parameter

@@ -1626,7 +1626,7 @@ void TTCutMainWnd::fileSave()
   {
     prj_file_name = ttChangeFileExt( video_file_name, "prj" );
 
-    QFileInfo prj_file_info( QDir(TTCut::lastDirPath), prj_file_name );
+    QFileInfo prj_file_info( (QDir)QDir(TTCut::lastDirPath), prj_file_name );
 
     project_file_name = QFileDialog::getSaveFileName( this,
 						      tr("Save project-file"),
@@ -1678,7 +1678,7 @@ void TTCutMainWnd::fileSaveAs()
 
   prj_file_name = ttChangeFileExt( video_file_name, "prj" );
 
-  QFileInfo prj_file_info( QDir(TTCut::lastDirPath), prj_file_name );
+  QFileInfo prj_file_info( (QDir)QDir(TTCut::lastDirPath), prj_file_name );
 
   project_file_name = QFileDialog::getSaveFileName( this,
 						    tr("Save project-file as"),

@@ -57,7 +57,6 @@
 
 #include <qstring.h>
 #include <qfileinfo.h>
-#include <q3ptrstack.h>
 
 // -----------------------------------------------------------------------------
 // TTMpeg2VideoStream
@@ -89,7 +88,9 @@ class TTMpeg2VideoStream : public TTVideoStream
   void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
   void transferMpegObjects( TTFileBuffer* fs,
 			    TTVideoHeader* start_object,
+			    int start_object_index,
 			    TTVideoHeader* end_object,
+			    int end_object_index,
 			    TTCutParameter* cr );
 
   void encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream );

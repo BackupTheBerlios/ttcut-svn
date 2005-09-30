@@ -91,7 +91,7 @@ public:
   off64_t directReadUInt16( uint16_t &byte2 );
   off64_t directReadUInt32( uint32_t &byte4 );
   off64_t directReadUInt64( uint64_t &byte8 );
-  off64_t directWrite( const uint8_t* write_buf, off64_t write_len );
+  off64_t directWrite( const uint8_t* write_buf, int write_len );
   off64_t directWriteUInt8( uint8_t byte1 );
   off64_t directWriteUInt16( uint16_t byte2 );
   off64_t directWriteUInt32( uint32_t byte4 );

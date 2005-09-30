@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// Overview
+// Overview  
 // -----------------------------------------------------------------------------
 //
 //                               +- TTAC3AudioStream
@@ -116,6 +116,13 @@ void TTMPEGAudioStream::parseAudioHeader( uint8_t* data, int offset, TTMpegAudio
   audio_header->original_home      = (data[offset+2] & 0x04) == 4;
   audio_header->emphasis           = (data[offset+2] & 0x03);
 
+  // TODO: check for valid audio header
+  if ( audio_header->sampling_frequency > 2 )
+  {
+    audio_header->version = 99;
+    return;
+  }
+
   switch (audio_header->version)
   {
   case 3: // Mpeg 1
@@ -126,10 +133,11 @@ void TTMPEGAudioStream::parseAudioHeader( uint8_t* data, int offset, TTMpegAudio
     break;
   case 0: // Mpeg 2.5
   case 2: // Mpeg 2
+    qDebug( "%ssampleRate: %d",c_name,audio_header->sampleRate() );
     if (audio_header->layer==3) // Layer I
-      frame_length = trunc((6*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit)*4);
+	frame_length = trunc((6*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit)*4);
     else // Layer II, Layer III
-      frame_length = trunc(72*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit);
+	frame_length = trunc(72*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit);
     break;
   default:
     qDebug( "%serror parsing audio header (!)",c_name );
@@ -222,7 +230,10 @@ int TTMPEGAudioStream::createHeaderList( )
       
       // read and parse current audio header
       readAudioHeader( audio_header );
-      
+
+      if ( audio_header->version == 99 )
+	continue;
+
       // claculate the absolute frame time
       // -----------------------------------------------------------------------
       // first audio header: abs_frame_time = 0.0 (msec)

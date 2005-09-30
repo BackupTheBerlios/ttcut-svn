@@ -111,7 +111,7 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   //qDebug( "%swrite AVI: start: %ld | end: %ld | count: %d",c_name,start_frame_pos,end_frame_pos,frame_count );
   //qDebug( "%s------------------------------------------------",c_name );
 
-  QFileInfo avi_finfo( QDir(TTCut::tempDirPath), "encode.avi" );
+  QFileInfo avi_finfo( (QDir)QDir(TTCut::tempDirPath), "encode.avi" );
   avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().ascii() );
 
   // Progressbar action text

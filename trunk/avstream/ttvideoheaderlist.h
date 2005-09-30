@@ -76,7 +76,7 @@ class TTVideoHeaderList : public TTHeaderList
   TTPicturesHeader* pictureHeaderAt( int index );
   TTGOPHeader*      gopHeaderAt( int index );
 
-  int headerIndex( TTVideoHeader* current );
+  int headerIndex( TTVideoHeader* current, int from=0);
 
   long createHeaderList( TTFileBuffer* mpeg2_stream );
 

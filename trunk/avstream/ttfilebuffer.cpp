@@ -439,7 +439,7 @@ bool TTFileBuffer::readArrayRev( uint8_t* read_buffer, int read_length )
     b_result = false;
 
   return b_result;
-}
+  }
 
 
 /* Unbuffered read
@@ -482,7 +482,7 @@ off64_t TTFileBuffer::directReadUInt64( uint64_t &byte8 )
 
 /* Unbuffered write*/
 /* -----------------------------------------------------------------------------*/
-off64_t TTFileBuffer::directWrite( const uint8_t* write_buf, off64_t write_len )
+off64_t TTFileBuffer::directWrite( const uint8_t* write_buf, int write_len )
 {
   off64_t o_result;
 
@@ -490,13 +490,16 @@ off64_t TTFileBuffer::directWrite( const uint8_t* write_buf, off64_t write_len )
        (file_handle > -1) )
   {
     stream_pos  = lseek64( file_handle,(off64_t)0,SEEK_CUR );
-    o_result    = write( file_handle, write_buf, (int)write_len );
+    o_result    = write( file_handle, write_buf, write_len );
     o_result   += stream_pos;
     stream_pos  = o_result;
+
+    //fsync( file_handle );
+
     if ( o_result > stream_length )
       stream_length = o_result;
-  }
-  else
+    }
+    else
     o_result = (off64_t)-1;
 
   //printf("directWrite: %lld, len: %lld\n",o_result,write_len);
