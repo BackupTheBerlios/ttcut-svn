@@ -117,7 +117,7 @@ bool TTCut::readPrevIDD    = false;
 // encoder settings
 // --------------------------------------------------------------
 // Version
-QString TTCut::versionString = "TTCut - 0.10.3-alpha (Qt-4.0)";
+QString TTCut::versionString = "TTCut - 0.11.0-alpha";
 // Options
 bool TTCut::encoderMode = false;
 

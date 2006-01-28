@@ -87,6 +87,7 @@
 //#include "../avcut/tvideoschnitt.h"    /*..video cut processing stuff..........*/
 //#include "../avcut/ttaudiocut.h"       /*..audio cut processing stuff..........*/
 
+
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
@@ -310,6 +311,7 @@ private:
     QAction*         actionSettingsAction;
     QAction*         helpAboutAction;
 
+    TTMessageLogger* log;
     // Progress bar
     TTProgressBar*  progress_bar;
 

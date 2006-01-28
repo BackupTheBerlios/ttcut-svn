@@ -118,6 +118,9 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, const char* name, Qt::WFlags fl )
   // --------------------------------------------------------------------------
   mainWnd = this;
 
+  log = TTMessageLogger::getInstance();
+  log->infoMsg(c_name, "Starting TTCut ...");
+
   // settings
   // ---------------------------------------------------------------------------
   settings = new TTCutSettings();
@@ -1124,7 +1127,7 @@ void TTCutMainWnd::languageChange()
 
 // Resize event
 // -----------------------------------------------------------------------------
-void TTCutMainWnd::resizeEvent (QResizeEvent* re)
+void TTCutMainWnd::resizeEvent (__attribute__ ((unused))QResizeEvent* re)
 {
    // resize the mpeg2 windows
   //cutOutFrameWnd->setGeometry(0,0,lastVideoFrame->width(),lastVideoFrame->height());
@@ -1133,7 +1136,7 @@ void TTCutMainWnd::resizeEvent (QResizeEvent* re)
 
 // Main window get the focus: grab the keybaord
 // -----------------------------------------------------------------------------
-void TTCutMainWnd::focusInEvent( QFocusEvent* e )
+void TTCutMainWnd::focusInEvent( __attribute__ ((unused))QFocusEvent* e )
 {
   //qDebug( "%sfocus in event: grab keyboard",c_name );
 
@@ -1142,7 +1145,7 @@ void TTCutMainWnd::focusInEvent( QFocusEvent* e )
 
 // Main window lost focus: release keyboard
 // -----------------------------------------------------------------------------
-void TTCutMainWnd::focusOutEvent( QFocusEvent* e )
+void TTCutMainWnd::focusOutEvent( __attribute__ ((unused))QFocusEvent* e )
 {
   //qDebug( "%sfocus out event: release keyboard",c_name );
 
@@ -1626,7 +1629,7 @@ void TTCutMainWnd::fileSave()
   {
     prj_file_name = ttChangeFileExt( video_file_name, "prj" );
 
-    QFileInfo prj_file_info( (QDir)QDir(TTCut::lastDirPath), prj_file_name );
+    QFileInfo prj_file_info( QDir(TTCut::lastDirPath), prj_file_name );
 
     project_file_name = QFileDialog::getSaveFileName( this,
 						      tr("Save project-file"),
@@ -1678,7 +1681,7 @@ void TTCutMainWnd::fileSaveAs()
 
   prj_file_name = ttChangeFileExt( video_file_name, "prj" );
 
-  QFileInfo prj_file_info( (QDir)QDir(TTCut::lastDirPath), prj_file_name );
+  QFileInfo prj_file_info( QDir(TTCut::lastDirPath), prj_file_name );
 
   project_file_name = QFileDialog::getSaveFileName( this,
 						    tr("Save project-file as"),
@@ -2717,7 +2720,7 @@ void TTCutMainWnd::videoAudioCut()
    // compose video cut name from video file name
    // --------------------------------------------------------------------------
    // get video file file-extension
-   QString sExt = mpeg2_stream->fileInfo()->extension( false );
+   QString sExt = mpeg2_stream->fileInfo()->suffix();
    
    // remove the extension
    len1 = sExt.length();

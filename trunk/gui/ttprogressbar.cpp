@@ -139,13 +139,13 @@ void TTProgressBar::setActionText( QString action )
 }
 
 
-void TTProgressBar::setElapsedTime( QTime time )
+void TTProgressBar::setElapsedTime( __attribute__ ((unused))QTime time )
 {
 
 }
 
 
-void TTProgressBar::setPercentages( float percent )
+void TTProgressBar::setPercentages( __attribute__ ((unused))float percent )
 {
 
 }
@@ -163,19 +163,19 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
   else
   {
     if ( (int64_t)t_steps*0.0000005 > 0 )
-      refresh_intervall = (int64_t)t_steps*0.0000005;
+      refresh_intervall = (int64_t)(t_steps*0.0000005);
     else if ( (int64_t)(t_steps*0.000001) > 0 )
-      refresh_intervall = (int64_t)t_steps*0.000001;
+      refresh_intervall = (int64_t)(t_steps*0.000001);
     else if ( (int64_t)(t_steps*0.00001) > 0 )
-      refresh_intervall = (int64_t)t_steps*0.00001;
+      refresh_intervall = (int64_t)(t_steps*0.00001);
     else if ( (int64_t)(t_steps*0.0001) > 0 )
-      refresh_intervall = (int64_t)t_steps*0.0001;
+      refresh_intervall = (int64_t)(t_steps*0.0001);
     else if ( (int64_t)(t_steps*0.001) > 0 )
-      refresh_intervall = (int64_t)t_steps*0.001;
+      refresh_intervall = (int64_t)(t_steps*0.001);
     else if ( (int64_t)(t_steps*0.01) > 0 )
-      refresh_intervall = (int64_t)t_steps*0.01;
+      refresh_intervall = (int64_t)(t_steps*0.01);
     else if ( (int64_t)(t_steps*0.1) > 0 )
-      refresh_intervall = (int64_t)t_steps*0.1;
+      refresh_intervall = (int64_t)(t_steps*0.1);
     else
       refresh_intervall = 100;
   }
@@ -199,7 +199,7 @@ bool TTProgressBar::setProgress( uint64_t progress )
     progressPercent = (double)progress / (double)totalSteps * 100.0;
 
     // TODO: Warning: Stoerendes letztes % in Format
-    strPercentage.sprintf( "%02.0lf%",progressPercent );
+    strPercentage.sprintf( "%02.0lf%%",progressPercent );
     percentageString->setText( strPercentage );
     //percentageString->update();
 
