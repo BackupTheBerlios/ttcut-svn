@@ -27,6 +27,9 @@ OBJECTS_DIR       = ttmpeg2_obj
 MOC_DIR           = ttmpeg2_moc
 #
 SOURCES           = \
+#
+                    common/ttmessagelogger.cpp\
+#
 #                   ------------------------------------------------------------
 #                   AVStream / AVHeader
 #                   ------------------------------------------------------------
@@ -84,6 +87,9 @@ SOURCES           = \
 	            extern/tttranscode.cpp
 #
 HEADERS           = \
+#
+                    common/ttmessagelogger.h \
+#                    
 #                   ------------------------------------------------------------
 #                   AVStream / AVHeader
 #                   ------------------------------------------------------------

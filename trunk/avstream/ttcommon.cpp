@@ -45,7 +45,7 @@ QString ttChangeFileExt( QString fName, const char* cExt )
   sNewFileName.truncate(len);
 
   if ( len1 == 0 )
-    sNewFileName += '.';
+    sNewFileName += ".";
 
   sNewFileName += cExt;
 
