@@ -699,7 +699,7 @@ void TTMpeg2Decoder::setMPEG2PixelFormat(__attribute__ ((unused))TPixelFormat pF
 // -----------------------------------------------------------------------------
 // Set the RGB scale flag
 // -----------------------------------------------------------------------------
-void TTMpeg2Decoder::setRGBScaleFlag(__attribute__ ((unsused))bool bDoScaling)
+void TTMpeg2Decoder::setRGBScaleFlag(__attribute__ ((unused))bool bDoScaling)
 {
 
 }

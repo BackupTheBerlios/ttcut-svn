@@ -2,8 +2,6 @@
 #include <QString>
 #include <QDateTime>
 
-#include "../common/ttmessagelogger.h"
-
 class QString;
 class QTime;
 class TTTimeCode;
