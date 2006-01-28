@@ -156,9 +156,9 @@ TTGOPHeader* TTVideoHeaderList::gopHeaderAt( int index )
   }
 }
 
-int TTVideoHeaderList::headerIndex( TTVideoHeader* current, int from )
+int TTVideoHeaderList::headerIndex( TTVideoHeader* current )
 {
-  return indexOf( (TTVideoHeader*)current, from );
+  return indexOf( (TTVideoHeader*)current );
 }
 
 // Create the header list from mpeg2 stream

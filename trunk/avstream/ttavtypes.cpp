@@ -53,7 +53,7 @@
 #include "ttdtsaudiostream.h"
 #include "ttmpeg2videostream.h"
 
-#include <qstring.h>
+#include <QString>
 #include <qfileinfo.h>
 
 //#define TTAVTYPES_DEBUG
@@ -214,7 +214,7 @@ void TTAudioType::getAudioStreamType()
   start_pos       = 0;
   
   // open audio-stream for reading
-  av_stream = new TTFileBuffer( av_stream_info->filePath(), fm_open_read );
+  av_stream = new TTFileBuffer( av_stream_info->filePath().toAscii(), fm_open_read );
 
   // read buffer from stream
   count = av_stream->readBuffer( buffer, 65536 );

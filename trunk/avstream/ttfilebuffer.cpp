@@ -439,7 +439,7 @@ bool TTFileBuffer::readArrayRev( uint8_t* read_buffer, int read_length )
     b_result = false;
 
   return b_result;
-  }
+}
 
 
 /* Unbuffered read
@@ -493,13 +493,10 @@ off64_t TTFileBuffer::directWrite( const uint8_t* write_buf, int write_len )
     o_result    = write( file_handle, write_buf, write_len );
     o_result   += stream_pos;
     stream_pos  = o_result;
-
-    //fsync( file_handle );
-
     if ( o_result > stream_length )
       stream_length = o_result;
-    }
-    else
+  }
+  else
     o_result = (off64_t)-1;
 
   //printf("directWrite: %lld, len: %lld\n",o_result,write_len);

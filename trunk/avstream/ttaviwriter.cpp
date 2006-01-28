@@ -80,7 +80,7 @@ bool TTAVIWriter::initAVIWriter( TTVideoStream* v_stream )
    file_size       = v_stream->streamLengthByte();
 
    //create the decoder object
-   decoder = new TTMpeg2Decoder( video_file_name.ascii(), index_list, header_list );
+   decoder = new TTMpeg2Decoder( video_file_name.toAscii(), index_list, header_list );
 
    // must set the format for conversion here
    decoder->decodeFirstMPEG2Frame( formatYV12 ); 
@@ -111,12 +111,14 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   //qDebug( "%swrite AVI: start: %ld | end: %ld | count: %d",c_name,start_frame_pos,end_frame_pos,frame_count );
   //qDebug( "%s------------------------------------------------",c_name );
 
-  QFileInfo avi_finfo( (QDir)QDir(TTCut::tempDirPath), "encode.avi" );
-  avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().ascii() );
+  QFileInfo avi_finfo( QDir(TTCut::tempDirPath), "encode.avi" );
+  avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().toAscii() );
 
-  // Progressbar action text
+  // Progressbar action text 
   if ( ttAssigned(progress_bar) )
     progress_bar->setActionText( "Search equal frame..." );
+  else
+    qDebug("ProgessBar not assigned (!)");
   
   // move decode position to "ref_frame_pos"
   current_frame = decoder->moveToFrameIndex( start_frame_pos );

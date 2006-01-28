@@ -31,6 +31,7 @@
 #ifndef TTTRANSCODE_H
 #define TTTRASNCODE_H
 
+#include "../common/ttmessagelogger.h"
 #include "../gui/ttcut.h"
 #include "../gui/ttprocessform.h"
 
@@ -59,11 +60,12 @@ class TTTranscodeProvider : public TTProcessForm
   void transcodeKill();
 
  private:
-  QProcess*      transcode_proc;
-  QString        str_command;
-  QStringList    strl_command_line;
-  int            exit_code;
-  bool           transcode_success;
+  TTMessageLogger* log;
+  QProcess*        transcode_proc;
+  QString          str_command;
+  QStringList      strl_command_line;
+  int              exit_code;
+  bool             transcode_success;
 };
 
 

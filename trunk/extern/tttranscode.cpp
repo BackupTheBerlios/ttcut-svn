@@ -34,12 +34,15 @@
 
 //#define TTTRANSCODE_DEBUG
 
-const char c_name[] = "TTTRANSCODE   : ";
+const char c_name[] = "TTTRANSCODE";
 
 
 TTTranscodeProvider::TTTranscodeProvider( )
   : TTProcessForm( TTCut::mainWindow )
 {
+  log = TTMessageLogger::getInstance();
+  log->infoMsg(c_name, "start transcode");
+  
   QString str_head = "starting encoder >>>transcode -y ffmpeg<<<";
 
   str_command       = "transcode";
@@ -96,6 +99,8 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 		    << str_aspect
 		    << "-o"
 		    << enc_par.mpeg2_output_finfo.absoluteFilePath();
+
+  log->infoMsg(c_name, strl_command_line.join(" "));
 }
 
 bool TTTranscodeProvider::encodePart( )    
@@ -193,6 +198,7 @@ void TTTranscodeProvider::transcodeReadOut()
 	temp_str[i_pos] = '\0';
 	line = temp_str;
 	addLine( line );
+  log->infoMsg(c_name, line);
 	i_pos = 0;
       }
     }
@@ -201,6 +207,7 @@ void TTTranscodeProvider::transcodeReadOut()
   {
     line = "transcode finished... done(0)";
     addLine( line );
+    log->infoMsg(c_name, line);
   }
 }
 
@@ -231,6 +238,7 @@ void TTTranscodeProvider::transcodeStarted()
       temp_str[i_pos] = '\0';
       line = temp_str;
       addLine( line );
+      log->infoMsg(c_name, line);
       i_pos = 0;
     }
   }
@@ -246,7 +254,7 @@ void TTTranscodeProvider::transcodeFinish( int e_code )
 }
 
 
-void TTTranscodeProvider::transcodeError( QProcess::ProcessError proc_error )
+void TTTranscodeProvider::transcodeError( __attribute__ ((unused))QProcess::ProcessError proc_error )
 {
 #if defined (TTTRANSCODE_DEBUG)
   qDebug( "%serror: %d",c_name, proc_error );
@@ -254,7 +262,7 @@ void TTTranscodeProvider::transcodeError( QProcess::ProcessError proc_error )
 }
 
 
-void TTTranscodeProvider::transcodeState( QProcess::ProcessState proc_state )
+void TTTranscodeProvider::transcodeState( __attribute__ ((unused))QProcess::ProcessState proc_state )
 {
 #if defined (TTTRANSCODE_DEBUG)
   qDebug( "%sstate changed: %d",c_name, proc_state );

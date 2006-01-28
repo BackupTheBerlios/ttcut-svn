@@ -52,7 +52,7 @@
 
 #include "ttpcmaudioheader.h"
 
-#include <qstring.h>
+#include <QString>
 
 TTPCMAudioHeader::TTPCMAudioHeader()
   : TTAudioHeader()

@@ -2,7 +2,7 @@
 #include "ttmemorybuffer.h"
 
 TTMemoryBuffer::TTMemoryBuffer( int size )
-  : QByteArray( size )
+  : QByteArray( size, ' ' )
 {
   byte_stream = new QDataStream( (QByteArray*)this, QIODevice::ReadWrite );
   buffer_size = byte_stream->device()->size();
@@ -15,7 +15,7 @@ TTMemoryBuffer::TTMemoryBuffer( uint8_t* buffer )
 {
   byte_buffer = buffer;
 
-  setRawData( (char*)byte_buffer, sizeof(byte_buffer) );
+  fromRawData( (char*)byte_buffer, sizeof(byte_buffer) );
   byte_stream = new QDataStream( (QByteArray*)this, QIODevice::ReadOnly );
   buffer_size = byte_stream->device()->size();
 
@@ -35,7 +35,7 @@ TTMemoryBuffer::TTMemoryBuffer( uint8_t* buffer, int start, int size )
       temp_buffer[i] = buffer[start+i];
   }
 
-  setRawData( (char*)temp_buffer, sizeof(temp_buffer) );
+  fromRawData( (char*)temp_buffer, sizeof(temp_buffer) );
   byte_stream = new QDataStream( (QByteArray*)this, QIODevice::ReadOnly );
   buffer_size = byte_stream->device()->size();
 }
@@ -44,11 +44,13 @@ TTMemoryBuffer::~TTMemoryBuffer()
 {
   if ( temp_buffer != NULL )
   {
-    resetRawData( (char*)temp_buffer, sizeof(temp_buffer) );
+    //resetRawData( (char*)temp_buffer, sizeof(temp_buffer) );
+    clear();
     delete [] temp_buffer;
   }
   else
-    resetRawData( (char*)byte_buffer, sizeof(byte_buffer) );
+    //resetRawData( (char*)byte_buffer, sizeof(byte_buffer) );
+    clear();
 }
 
 int TTMemoryBuffer::currentPosition()
@@ -59,15 +61,15 @@ int TTMemoryBuffer::currentPosition()
 bool TTMemoryBuffer::seek( int pos, SeekOrigin origin )
 {
   if ( origin == begin )
-    return byte_stream->device()->at( pos );
+    return byte_stream->device()->seek( pos );
   else
-    return byte_stream->device()->at( buffer_size-pos );
+    return byte_stream->device()->seek( buffer_size-pos );
 }
 
 
-Q_UINT8 TTMemoryBuffer::readUInt8()
+quint8 TTMemoryBuffer::readUInt8()
 {
-  Q_UINT8 byte1;
+  quint8 byte1;
 
   *byte_stream >> byte1;
 
@@ -75,9 +77,9 @@ Q_UINT8 TTMemoryBuffer::readUInt8()
 }
 
 
-Q_UINT16 TTMemoryBuffer::readUInt16()
+quint16 TTMemoryBuffer::readUInt16()
 {
-  Q_UINT16 byte16;
+  quint16 byte16;
 
   *byte_stream >> byte16;
 
@@ -85,19 +87,18 @@ Q_UINT16 TTMemoryBuffer::readUInt16()
 }
 
 
-Q_INT16 TTMemoryBuffer::readInt16()
+qint16 TTMemoryBuffer::readInt16()
 {
-  Q_INT16 byte16;
+  qint16 byte16;
 
   *byte_stream >> byte16;
 
   return byte16;
 }
 
-
-Q_UINT32 TTMemoryBuffer::readUInt32()
+quint32 TTMemoryBuffer::readUInt32()
 {
-  Q_UINT32 byte32;
+  quint32 byte32;
 
   *byte_stream >> byte32;
 
@@ -105,18 +106,18 @@ Q_UINT32 TTMemoryBuffer::readUInt32()
 }
 
 
-Q_INT32 TTMemoryBuffer::readInt32()
+qint32 TTMemoryBuffer::readInt32()
 {
-  Q_INT32 byte32;
+  qint32 byte32;
 
   *byte_stream >> byte32;
 
   return byte32;
 }
 
-Q_UINT64 TTMemoryBuffer::readUInt64()
+quint64 TTMemoryBuffer::readUInt64()
 {
-  Q_UINT64 byte64;
+  quint64 byte64;
 
   *byte_stream >> byte64;
 

@@ -33,7 +33,7 @@
 #define TTAVIWRITER_H
 
 
-#include <qstring.h>
+#include <QString>
 
 #include "../gui/ttprogressbar.h"
 

@@ -325,7 +325,7 @@ TTAVCutPosition* TTAVCutList::entryAt( int i_pos )
 // -----------------------------------------------------------------------------
 TTAVCutPosition* TTAVCutList::entryAtOrder( int c_order )
 {
-  const TTAVCutPosition* temp_pos = new TTAVCutPosition( 0, 0, c_order );
+  // UNUSED: const TTAVCutPosition* temp_pos = new TTAVCutPosition( 0, 0, c_order );
 
   sort();
 
@@ -361,7 +361,7 @@ void TTAVCutList::deleteAll()
 int TTAVCutList::removeEntryAt( int i_pos )
 {
   int  i;
-  int c_order;
+  // UNUSED: int c_order;
 
   if ( i_pos < count() )
   {
@@ -393,7 +393,7 @@ int TTAVCutList::removeEntryAt( int i_pos )
 int TTAVCutList::removeEntryAtOrder( int c_order )
 {
   int i;
-  int f_index; 
+  // UNUSED: int f_index; 
 
   // sort the list
   sort();

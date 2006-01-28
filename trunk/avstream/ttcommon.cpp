@@ -2,8 +2,8 @@
 #include "ttcommon.h"
 
 #include <math.h>
-#include <qstring.h>
-#include <qfileinfo.h>
+#include <QString>
+#include <QFileInfo>
 
 #ifdef __WIN32
 int trunc( double f )
@@ -34,7 +34,7 @@ QString ttChangeFileExt( QString fName, const char* cExt )
   QString   sNewFileName;
   uint len1, len2, len;
 
-  QString sExt = fInfo.extension( false );
+  QString sExt = fInfo.suffix();
 
   len1 = sExt.length();
   len2 = fName.length();
@@ -225,7 +225,7 @@ TTTimeCode::TTTimeCode()
 }
 
 
-QString TTTimeCode::toString()
-{
-
-}
+//QString TTTimeCode::toString()
+//{
+//
+//}

@@ -54,7 +54,7 @@
 
 #include "ttdtsaudioheader.h"
 
-#include <qstring.h>
+#include <QString>
 
 TTDTSAudioHeader::TTDTSAudioHeader()
   : TTAudioHeader()

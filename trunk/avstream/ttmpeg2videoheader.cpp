@@ -56,14 +56,6 @@
 /*----------------------------------------------------------------------------*/
 
 
-// Intel-compiler
-// -----------------------------------------------------------------------------
-#if defined(__INTEL_COMPILER)
-#pragma warning(disable:981) // operands are evaluated in unspecified order
-#pragma warning(disable:177) // variable "..." was declared but never referenced 
-#pragma warning(disable:869) // parameter "..." was never referenced
-#endif
-
 #include "ttmpeg2videoheader.h"
 
 // -----------------------------------------------------------------------------
@@ -74,23 +66,23 @@ TTMpeg2VideoHeader::TTMpeg2VideoHeader()
 
 }
 
-bool TTMpeg2VideoHeader::readHeader( TTFileBuffer* mpeg2_stream )
+bool TTMpeg2VideoHeader::readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream )
 {
 return false;
 }
 
-bool TTMpeg2VideoHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
+bool TTMpeg2VideoHeader::readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream, __attribute__ ((unused))off64_t offset )
 {
 return false;
 }
 
-void TTMpeg2VideoHeader::parseBasicData( uint8_t* data, int offset )
+void TTMpeg2VideoHeader::parseBasicData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
 
 
-void TTMpeg2VideoHeader::parseExtendedData( uint8_t* data, int offset )
+void TTMpeg2VideoHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
@@ -208,7 +200,7 @@ void TTSequenceHeader::parseBasicData( uint8_t* data, int offset )
   low_delay                    = false;
 }
 
-void TTSequenceHeader::parseExtendedData( uint8_t* data, int offset )
+void TTSequenceHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
@@ -258,7 +250,7 @@ QString TTSequenceHeader::frameRateText()
 
 float TTSequenceHeader::frameRateValue()
 {
-  float value;
+  float value = 25.0;
 
   if ( frame_rate_code == 2 ) value = 24.0;
   if ( frame_rate_code == 3 ) value = 25.0;
@@ -311,12 +303,12 @@ bool TTSequenceEndHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset
   return readHeader( mpeg2_stream );
 }
 
-void TTSequenceEndHeader::parseBasicData( uint8_t* data, int offset )
+void TTSequenceEndHeader::parseBasicData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
 
-void TTSequenceEndHeader::parseExtendedData( uint8_t* data, int offset )
+void TTSequenceEndHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
@@ -378,7 +370,7 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
   broken_link               = ((data[offset+3] & 0x20) >> 5) == 1;
 }
 
-void TTGOPHeader::parseExtendedData( uint8_t* data, int offset )
+void TTGOPHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
@@ -496,9 +488,8 @@ void TTPicturesHeader::parseBasicData( uint8_t* data, int offset )
   //qDebug("coding type: %d",picture_coding_type);
 }
 
-void TTPicturesHeader::parseExtendedData( uint8_t* data, int offset )
+void TTPicturesHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
-
 }
 
 void TTPicturesHeader::printHeader( )

@@ -46,7 +46,7 @@
 
 #include "ttmpegaudioheader.h"
 
-#include <qstring.h>
+#include <QString>
 
 TTMpegAudioHeader::TTMpegAudioHeader()
 : TTAudioHeader()

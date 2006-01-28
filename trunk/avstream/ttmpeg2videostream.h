@@ -52,11 +52,13 @@
 #include "ttmpeg2videoheader.h"
 #include "ttaviwriter.h"
 
+#include "../common/ttmessagelogger.h"
 #include "../avcut/ttavcutposition.h"
 #include "../extern/tttranscode.h"
 
-#include <qstring.h>
-#include <qfileinfo.h>
+#include <QString>
+#include <QFileInfo>
+#include <QStack>
 
 // -----------------------------------------------------------------------------
 // TTMpeg2VideoStream
@@ -88,9 +90,7 @@ class TTMpeg2VideoStream : public TTVideoStream
   void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
   void transferMpegObjects( TTFileBuffer* fs,
 			    TTVideoHeader* start_object,
-			    int start_object_index,
 			    TTVideoHeader* end_object,
-			    int end_object_index,
 			    TTCutParameter* cr );
 
   void encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream );
@@ -103,6 +103,7 @@ class TTMpeg2VideoStream : public TTVideoStream
   void readIDDHeader();
 
  protected:
+  TTMessageLogger* log;
   TTFileBuffer* mpeg2_stream;
   TTFileBuffer* idd_stream;
   long*         stream_order_list;

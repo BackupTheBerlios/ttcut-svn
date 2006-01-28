@@ -183,7 +183,7 @@ mpeg2dec_t* TTMpeg2Decoder::decoder()
 // -----------------------------------------------------------------------------
 // Open a mpeg2 file stream and init buffered file I/O
 // -----------------------------------------------------------------------------
-bool TTMpeg2Decoder::openMPEG2File(QString cFName, long lOffset, long lSize)
+bool TTMpeg2Decoder::openMPEG2File(QString cFName, __attribute__ ((unused))long lOffset, __attribute__ ((unused))long lSize)
 {
   //int iNameLen;
 
@@ -223,7 +223,7 @@ bool TTMpeg2Decoder::openMPEG2File(QString cFName, long lOffset, long lSize)
 // -----------------------------------------------------------------------------
 // Open a mpeg2 disk (DVD); not implemented
 // -----------------------------------------------------------------------------
-bool TTMpeg2Decoder::openMPEG2Disk(uint8_t Disk, long lOffset, long lSize)
+bool TTMpeg2Decoder::openMPEG2Disk(__attribute__ ((unused))uint8_t Disk,__attribute__ ((unused)) long lOffset,__attribute__ ((unused)) long lSize)
 {
   return false;
 }
@@ -501,7 +501,7 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
   if ( iFramePos >= (long)videoIndexList->count() ||
        iFramePos <  0                          )
   {
-    qDebug( "%swrong position: %d | %ld",c_name,iFramePos,videoIndexList->count() );
+    qDebug( "%swrong position: %ld | %d",c_name,iFramePos,videoIndexList->count() );
     return currentFrameIndex;
   }
 
@@ -690,7 +690,7 @@ void TTMpeg2Decoder::seekMPEG2Stream(off64_t lStreamPos)
 // -----------------------------------------------------------------------------
 // Set decoders pixel format
 // -----------------------------------------------------------------------------
-void TTMpeg2Decoder::setMPEG2PixelFormat(TPixelFormat pFormat)
+void TTMpeg2Decoder::setMPEG2PixelFormat(__attribute__ ((unused))TPixelFormat pFormat)
 {
 
 }
@@ -699,7 +699,7 @@ void TTMpeg2Decoder::setMPEG2PixelFormat(TPixelFormat pFormat)
 // -----------------------------------------------------------------------------
 // Set the RGB scale flag
 // -----------------------------------------------------------------------------
-void TTMpeg2Decoder::setRGBScaleFlag(bool bDoScaling)
+void TTMpeg2Decoder::setRGBScaleFlag(__attribute__ ((unsused))bool bDoScaling)
 {
 
 }
@@ -708,7 +708,7 @@ void TTMpeg2Decoder::setRGBScaleFlag(bool bDoScaling)
 // -----------------------------------------------------------------------------
 // Write current slice data to file ???
 // -----------------------------------------------------------------------------
-long TTMpeg2Decoder::writeDataToFile(QString cFName, long lSize)
+long TTMpeg2Decoder::writeDataToFile(__attribute__ ((unused))QString cFName,__attribute__ ((unused)) long lSize)
 {
   return (long)0;
 }

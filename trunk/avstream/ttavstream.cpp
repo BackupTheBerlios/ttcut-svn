@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+//*----------------------------------------------------------------------------*/
 /* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
@@ -16,6 +16,13 @@
 // TTAUDIOSTREAM
 // TTVIDEOSTREAM
 // ----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// TODO
+// -----------------------------------------------------------------------------
+// * Make TTAVStream abstract
+// -----------------------------------------------------------------------------
+
 
 // -----------------------------------------------------------------------------
 // Overview
@@ -58,7 +65,7 @@
 
 #include "ttavstream.h"
 
-#include <qstring.h>
+#include <QString>
 #include <qfileinfo.h>
 
 
@@ -134,7 +141,7 @@ bool TTAVStream::openStream()
   if ( ttAssigned(stream_info) )
   {
     // Create the file buffer read_only
-    stream_buffer = new TTFileBuffer( stream_info->filePath().ascii(), fm_open_read );
+    stream_buffer = new TTFileBuffer( stream_info->filePath().toAscii(), fm_open_read );
 
     if ( ttAssigned( stream_buffer ) )
     {
@@ -212,7 +219,7 @@ QString TTAVStream::filePath()
 // -----------------------------------------------------------------------------
 QString TTAVStream::streamExtension()
 {
-  return stream_info->extension( false );
+  return stream_info->suffix();
 }
 
 // set stream file info
@@ -273,7 +280,7 @@ void TTAVStream::copySegment( TTFileBuffer* cut_stream, off64_t start_adr, off64
   off64_t  progress;
   uint8_t* buffer      = new uint8_t[65536];
   off64_t  count       = end_adr-start_adr+1;
-  off64_t  total_steps = count;
+  // UNUSED: off64_t  total_steps = count;
 
   //qDebug( "%scopy segment: %lld/%lld - %lld",c_name,count,start_adr,end_adr );
   //qDebug( "%scopy segment: cut stream offset: %lld",c_name,cut_stream->currentOffset() );

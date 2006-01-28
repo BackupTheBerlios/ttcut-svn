@@ -46,7 +46,7 @@
 
 #include "ttac3audioheader.h"
 
-#include <qstring.h>
+#include <QString>
 
 const char c_name[] = "TTAC3HEADER   : ";
 

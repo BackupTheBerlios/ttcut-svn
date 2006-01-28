@@ -5,9 +5,8 @@
 
 #include "ttcommon.h"
 
-#include <qdatastream.h>
-
-#include <q3memarray.h>
+#include <QByteArray>
+#include <QDataStream>
 
 #ifdef __WIN32
 #include "ttwfilebuffer.h"
@@ -23,12 +22,12 @@ class TTMemoryBuffer : public QByteArray
   TTMemoryBuffer( uint8_t* buffer, int start, int size );
   ~TTMemoryBuffer();
 
-  Q_UINT8  readUInt8();
-  Q_UINT16 readUInt16();
-  Q_INT16  readInt16();
-  Q_UINT32 readUInt32();
-  Q_INT32  readInt32();
-  Q_UINT64 readUInt64();
+  quint8  readUInt8();
+  quint16 readUInt16();
+  qint16  readInt16();
+  quint32 readUInt32();
+  qint32  readInt32();
+  quint64 readUInt64();
 
   bool write( uint8_t byte1 );
   bool write( uint16_t byte2 );

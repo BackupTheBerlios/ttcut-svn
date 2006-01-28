@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 01/23/2006 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -15,6 +16,16 @@
 // TTVIDEOHEADER
 // TTVIDEOINDEX
 // ----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// TODO
+// -----------------------------------------------------------------------------
+// * Make TTAVHeader, TTVideoHeader and TTAudioheader virtual (abstract)
+//
+//
+//
+// -----------------------------------------------------------------------------
+
 
 // -----------------------------------------------------------------------------
 // Overview
@@ -131,11 +142,11 @@ class TTVideoHeader : public TTAVHeader
 public:
   TTVideoHeader();
 
-  virtual bool readHeader( TTFileBuffer* mpeg2_stream ){ return false; };
-  virtual bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset ){ return false; };
-  virtual void parseBasicData( uint8_t* data, int offset=0){};
-  virtual void parseExtendedData( uint8_t* data, int offset=0 ){};
-  virtual void printHeader( ){};
+  virtual bool readHeader( TTFileBuffer* mpeg2_stream );
+  virtual bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
+  virtual void parseBasicData( uint8_t* data, int offset=0);
+  virtual void parseExtendedData( uint8_t* data, int offset=0 );
+  virtual void printHeader( );
 
  protected:
   typedef struct
@@ -175,26 +186,11 @@ class TTBreakObject
 {
  public:
   TTBreakObject();
-  ~TTBreakObject();
 
-  void setStopObject( TTVideoHeader* stop, long index=-1 );
-  void setRestartObject( TTVideoHeader* restart, long index=-1 );
-  TTVideoHeader* stopObject();
-  TTVideoHeader* restartObject();
-  long stopObjectIndex();
-  long restartObjectIndex();
-  void setCopyStart( long start );
-  void setCopyStop( long stop );
-  long copyStart();
-  long copyStop();
-
- private:
   TTVideoHeader* stop_object;
   TTVideoHeader* restart_object;
-  long stop_object_index;
-  long restart_object_index;
   long copy_start;
-  long copy_stop;
+  long copy_stopp;
 };
 
 #endif //TTAVHEADER_H

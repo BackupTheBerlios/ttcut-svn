@@ -157,7 +157,7 @@ int TTAC3AudioStream::createHeaderList()
   // open the audio stream
   if ( !openStream() )
   {
-    qDebug( "%scannot open audio stream: %s",c_name,stream_info->filePath().ascii() );
+    qDebug( "%scannot open audio stream: %s",c_name,stream_info->filePath().toAscii() );
     return (int)0;
   }
 
@@ -258,7 +258,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
 
     if ( ttAssigned( progress_bar ) )
     {
-      action_string.sprintf( "Audio cut: %d/%d-%d",i+1,start_pos,end_pos );
+      action_string.sprintf( "Audio cut: %d/%ld-%ld",i+1,start_pos,end_pos );
       progress_bar->setActionText( action_string );
     }
 
