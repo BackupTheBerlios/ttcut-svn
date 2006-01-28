@@ -96,14 +96,9 @@ bool TTAVIWriter::initAVIWriter( TTVideoStream* v_stream )
 // -----------------------------------------------------------------------------
 int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
 {
-  long        foundPosition;
-  long        i,j,iLength;
+  long        i;
   QTime       searchTime;
-  bool        frameFound;
   TFrameInfo* frameInfo;
-  ulong       delta;
-  ulong       min_delta;
-  long        resultPosition;
   int         frame_count = end_frame_pos - start_frame_pos;
 
 

@@ -179,9 +179,9 @@ int TTMpeg2VideoStream::createIndexList()
   uint8_t           start_code = 0xFF;
   int              sequence_index = 0;
   long              gop_number = 0;
-  TTSequenceHeader* current_sequence;
-  TTGOPHeader*      current_gop;
-  TTPicturesHeader* current_picture;
+  TTSequenceHeader* current_sequence = NULL;
+  TTGOPHeader*      current_gop = NULL;
+  TTPicturesHeader* current_picture = NULL;
 
 #if defined(__TTMPEG2)
   TTVideoIndex*     prev_video_index;
@@ -793,7 +793,7 @@ void TTMpeg2VideoStream::readIDDHeader( )
   uint8_t             header_type;
   uint32_t            offset_32;
   uint64_t            offset;
-  TTMpeg2VideoHeader* new_header;
+  TTMpeg2VideoHeader* new_header = NULL;
 
   // TODO: check idd-file against current mpeg2-stream
 

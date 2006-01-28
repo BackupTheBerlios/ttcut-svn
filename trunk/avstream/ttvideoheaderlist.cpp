@@ -89,6 +89,8 @@ TTVideoHeader* TTVideoHeaderList::headerAt( int index )
 
     if ( index > count()-1 )
       return (TTVideoHeader*)at( count()-1 );
+
+    return NULL;
   }
 }
 
@@ -162,7 +164,7 @@ int TTVideoHeaderList::headerIndex( TTVideoHeader* current )
 }
 
 // Create the header list from mpeg2 stream
-long TTVideoHeaderList::createHeaderList( TTFileBuffer* mpeg2_stream )
+long TTVideoHeaderList::createHeaderList( __attribute__ ((unused))TTFileBuffer* mpeg2_stream )
 {
   return 0;
 }
@@ -195,22 +197,22 @@ long TTVideoHeaderList::createHeaderList( TTFileBuffer* mpeg2_stream )
 // -----------------------------------------------------------------------------
 
 // Read an idd-index file from idd_stream and create a header list from it
-long TTVideoHeaderList::readIndexFile( TTFileBuffer* idd_stream )
+long TTVideoHeaderList::readIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream )
 {
   return 0;
 }
 
 
 // Write an idd-index file from current header list
-long TTVideoHeaderList::writeIndexFile( TTFileBuffer* idd_stream )
+long TTVideoHeaderList::writeIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream )
 {
   return 0;
 }
 
 
 // Check an idd-index file against an mpeg2 stream
-bool TTVideoHeaderList::checkIndexFile( TTFileBuffer* idd_stream, 
-					TTFileBuffer* mpeg2_stream )
+bool TTVideoHeaderList::checkIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream, 
+					__attribute__ ((unused))TTFileBuffer* mpeg2_stream )
 {
   return false;
 }

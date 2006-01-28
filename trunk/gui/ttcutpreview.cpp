@@ -545,7 +545,7 @@ void TTCutPreview::readFromStdout()
 
 // start mplayer playing file <fileName>
 // -----------------------------------------------------------------------------
-bool TTCutPreview::playMPlayer( QString videoFile, QString audioFile )
+bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QString audioFile )
 {
   QString     str_cmd;
   QStringList mplayer_cmd;
@@ -619,7 +619,7 @@ bool TTCutPreview::stopMPlayer()
 
 // exit mplayer process
 // -----------------------------------------------------------------------------
-void TTCutPreview::exitMPlayer( int e_code)
+void TTCutPreview::exitMPlayer(__attribute__ ((unused)) int e_code)
 {
   //qDebug( "%sexit mplayer: exit code: %d",c_name,e_code );
 

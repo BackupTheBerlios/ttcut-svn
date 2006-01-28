@@ -115,7 +115,7 @@ TTFileBuffer::~TTFileBuffer()
 bool TTFileBuffer::openFile( const char* f_name, int f_mode)
 {
   bool     b_result;
-  uint64_t offset;
+  // UNUSED: uint64_t offset;
 
   buffer_read_size = 0;
   buffer_start     = 0;
@@ -294,13 +294,13 @@ bool TTFileBuffer::readArray( uint8_t* read_buffer, int read_length )
   return b_result;
 }
 
-bool TTFileBuffer::readArray( uint8_t* read_buffer, int start_pos, int read_length )
+bool TTFileBuffer::readArray( uint8_t* read_buffer, __attribute__ ((unused))int start_pos, int read_length )
 {
   // TODO: read array with start pos
   return readArray( read_buffer, read_length );
 }
 
-int TTFileBuffer::readCount2( uint8_t* read_buffer, int start_pos, int read_length )
+int TTFileBuffer::readCount2( uint8_t* read_buffer, __attribute__ ((unused))int start_pos, int read_length )
 {
   long current_read_count = read_count;
 
@@ -442,7 +442,7 @@ bool TTFileBuffer::readArrayRev( uint8_t* read_buffer, int read_length )
 }
 
 
-/* Unbuffered read
+/* Unbuffered read*/
 /* -----------------------------------------------------------------------------*/
 off64_t TTFileBuffer::directRead( uint8_t* read_buffer, off64_t read_length )
 {

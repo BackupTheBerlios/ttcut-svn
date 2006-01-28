@@ -159,7 +159,7 @@ int TTPCMAudioStream::createHeaderList()
   return (int)0;;
 }
 
-void TTPCMAudioStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
+void TTPCMAudioStream::cut(__attribute__ ((unused)) TTFileBuffer* cut_stream, __attribute__ ((unused))TTAVCutList* cut_list )
 {
 
 }
@@ -260,7 +260,7 @@ int TTPCMAudioStream::samplesCount()
 
 // calculate the stream length
 // -----------------------------------------------------------------------------
-long TTPCMAudioStream::calculateLength(int start, int end)
+long TTPCMAudioStream::calculateLength( __attribute__ ((unused))int start, __attribute__ ((unused))int end)
 {
   //return base.CalculateLength(start,end)+44; // 44 Bytes mehr fuer den WAV-Header
   return (long)0;

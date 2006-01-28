@@ -194,7 +194,7 @@ int TTMPEGAudioStream::createHeaderList( )
   // open the audio stream
   if ( !openStream() )  
   {
-    qDebug( "%scannot open audio stream: %s",c_name,stream_info->filePath().toAscii() );
+    //qDebug( "%scannot open audio stream: %s",c_name,stream_info->filePath().toAscii() );
     return (int)0;
   }
 
@@ -263,7 +263,7 @@ int TTMPEGAudioStream::createHeaderList( )
   return header_list->count();
 }
 
-void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp )
+void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, int start, int end,__attribute__ ((unused)) TTCutParameter* cp )
 {
   off64_t start_offset;
   off64_t end_offset;
@@ -384,4 +384,6 @@ int TTMPEGAudioStream::searchIndex( double s_time )
 {
   if ( ttAssigned( header_list ) )
     return header_list->searchTimeIndex( s_time );
+  else
+    return -1;
 }

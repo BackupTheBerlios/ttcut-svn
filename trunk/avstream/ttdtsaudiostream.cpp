@@ -177,7 +177,7 @@ uint8_t* TTDTSAudioStream::fourteenToSixteen( uint8_t* org, int start, int word_
 
 // read audio header (virtual)
 // -----------------------------------------------------------------------------
-void TTDTSAudioStream::readAudioHeader( TTDTSAudioHeader* audio_header )
+void TTDTSAudioStream::readAudioHeader( __attribute__ ((unused))TTDTSAudioHeader* audio_header )
 {
 
 }

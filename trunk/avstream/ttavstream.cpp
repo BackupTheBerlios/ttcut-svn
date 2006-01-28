@@ -179,7 +179,7 @@ bool TTAVStream::closeStream()
 
 // open source stream
 // -----------------------------------------------------------------------------
-void TTAVStream::openSource( QString f_name, bool use_buffer )
+void TTAVStream::openSource( __attribute__ ((unused))QString f_name, __attribute__ ((unused))bool use_buffer )
 {
 
 }
@@ -350,33 +350,33 @@ int TTAVStream::createIndexList()
 
 // cut method
 // -----------------------------------------------------------------------------
-void TTAVStream::cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp )
+void TTAVStream::cut( __attribute__ ((unused))TTFileBuffer* cut_stream, __attribute__ ((unused))int start, __attribute__ ((unused))int end, TTCutParameter* cp )
 {
 
 }
 
-void TTAVStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
+void TTAVStream::cut( __attribute__ ((unused))TTFileBuffer* cut_stream, __attribute__ ((unused))TTAVCutList* cut_list )
 {
 
 }
 
 // is cut-in possible
 // -----------------------------------------------------------------------------
-bool TTAVStream::isCutInPoint( int pos )
+bool TTAVStream::isCutInPoint( __attribute__ ((unused))int pos )
 {
   return false;
 }
 
 // is cut-out possible
 // -----------------------------------------------------------------------------
-bool TTAVStream::isCutOutPoint( int pos )
+bool TTAVStream::isCutOutPoint( __attribute__ ((unused))int pos )
 {
   return false;
 }
 
 // calculate stream length between start and end position
 // -----------------------------------------------------------------------------
-long TTAVStream::calculateLength( int start, int end )
+long TTAVStream::calculateLength( __attribute__ ((unused))int start, __attribute__ ((unused))int end )
 {
   return (long)0;
 }
@@ -421,14 +421,14 @@ TTAudioStream::~TTAudioStream()
 
 // cut-in always possible; video 
 // -----------------------------------------------------------------------------
-bool TTAudioStream::isCutInPoint( int pos )
+bool TTAudioStream::isCutInPoint(__attribute__ ((unused)) int pos )
 {
   return true;
 }
 
 // cut-out always possible; video
 // -----------------------------------------------------------------------------
-bool TTAudioStream::isCutOutPoint( int pos )
+bool TTAudioStream::isCutOutPoint(__attribute__ ((unused)) int pos )
 {
   return true;
 }
@@ -762,7 +762,7 @@ int TTVideoStream::moveToIndexPos( int index, int f_type )
 int TTVideoStream::moveToIndexPosSO( int index, int f_type )
 {
   int  j;
-  int index_bak = index;
+  // UNUSED: int index_bak = index;
   int so_index;
 
   //qDebug("move to index pos in stream order: %d / %d / %d",index,f_type,num_index);
@@ -868,7 +868,7 @@ int TTVideoStream::moveToPrevFrame( int f_type )
 // -----------------------------------------------------------------------------
 int TTVideoStream::moveToNextIFrame()
 {
-  int ret_index = current_index;
+  // UNUSED: int ret_index = current_index;
   long iPos;
   long iFound;
 
