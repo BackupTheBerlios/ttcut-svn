@@ -52,12 +52,17 @@ class TTMessageLogger
 
   public:
     static TTMessageLogger* getInstance(int mode = STD_LOG_MODE);
+    void setLogMode(int mode);
     void infoMsg(QString caller, QString msgString);
     void warningMsg(QString caller, QString msgString);
     void errorMsg(QString caller, QString msgString);
     void debugMsg(QString caller, QString msgString);;
 
-void testMsg(QString caller, const char* msg, ...);
+    void infoMsg(QString caller, const char* msg, ...);
+    void warningMsg(QString caller, const char* msg, ...);
+    void errorMsg(QString caller, const char* msg, ...);
+    void debugMsg(QString caller, const char* msg, ...);
+
 enum MsgType
 {
   INFO,

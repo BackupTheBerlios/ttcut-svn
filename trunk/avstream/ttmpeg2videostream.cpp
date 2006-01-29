@@ -72,7 +72,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
   TTMpeg2VideoStream::TTMpeg2VideoStream( const QFileInfo &f_info )
     : TTVideoStream( f_info )
   {
-   log = TTMessageLogger::getInstance();
+    log = TTMessageLogger::getInstance();
 
     stream_type   = TTAVTypes::mpeg2_demuxed_video;
     mpeg2_stream  = NULL;
@@ -1171,9 +1171,9 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
   proc_time.start();
 
   //#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
-  qDebug( "%s----------------------------------------------------",c_name );
-  qDebug( "%stransferMpegObjects",c_name );
-  qDebug( "%sstart: %lld / end: %lld / count: %lld",c_name,start_object->headerOffset(),end_object->headerOffset(),count );
+  log->infoMsg( c_name, "----------------------------------------------------" );
+  log->infoMsg( c_name, "transferMpegObjects" );
+  log->infoMsg( c_name, "start: %lld / end: %lld / count: %lld",start_object->headerOffset(),end_object->headerOffset(),count );
   //#endif
 
   // source mpeg2-stream to start objects offset
@@ -1202,9 +1202,9 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
     // 0 bytes read from stream, must be an error ???
     if ( bytes_processed == 0 )
     {
-#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
-      qDebug( "%swarning: 0 bytes read (!)",c_name );
-#endif
+//#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+      log->warningMsg( c_name, "0 bytes read (!)" );
+//#endif
       count = -1;
       break;
     }
@@ -1447,7 +1447,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
     if ( bytes_processed <= 0 )
     {
-    qDebug( "%s>>>warning: bytes_processed: %d",c_name,bytes_processed );
+    log->warningMsg( c_name, "bytes_processed: %d",bytes_processed );
     count = -1;
     }
   }
@@ -1467,8 +1467,8 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
   int proc_elapsed     = proc_time.elapsed();
   double transfer_rate = ((end_object->headerOffset()-start_object->headerOffset())/1024.0/1024.0)/((double)proc_elapsed/1000.0);
-  qDebug( "%selapsed time: %d ms / %lf Mb/s",c_name,proc_elapsed,transfer_rate );
-  qDebug( "outer loop: %ld / inner loop: %ld",outer_loop_count, inner_loop_count );
+  log->infoMsg( c_name, "elapsed time: %d ms / %lf Mb/s",proc_elapsed,transfer_rate );
+  log->infoMsg( c_name, "outer loop: %ld / inner loop: %ld",outer_loop_count, inner_loop_count );
 }
 
 

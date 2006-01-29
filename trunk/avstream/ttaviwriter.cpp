@@ -112,8 +112,8 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   // Progressbar action text 
   if ( ttAssigned(progress_bar) )
     progress_bar->setActionText( "Search equal frame..." );
-  else
-    qDebug("ProgessBar not assigned (!)");
+  //else
+    //qDebug("ProgessBar not assigned (!)");
   
   // move decode position to "ref_frame_pos"
   current_frame = decoder->moveToFrameIndex( start_frame_pos );

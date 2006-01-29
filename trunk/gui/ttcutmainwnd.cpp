@@ -119,7 +119,10 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, const char* name, Qt::WFlags fl )
   mainWnd = this;
 
   log = TTMessageLogger::getInstance();
+  int mode = TTMessageLogger::CONSOLE & TTMessageLogger::SUMMARIZE;
+  log->setLogMode(mode);
   log->infoMsg(c_name, "Starting TTCut ...");
+  log->infoMsg(c_name, "videoFrame: %d/%d", video_frame_width, video_frame_height);
 
   // settings
   // ---------------------------------------------------------------------------
@@ -2287,7 +2290,7 @@ void TTCutMainWnd::playVideo()
   mplayerProc->addArgument( "-identify" );
   mplayerProc->addArgument( "-quiet"    );
   mplayerProc->addArgument( "-wid"      );
-  mplayerCmd.sprintf( "%d",currentFrameWnd->winId() );
+  mplayerCmd.sprintf( "%d",(int)currentFrameWnd->winId() );
   mplayerProc->addArgument( mplayerCmd  );
   mplayerProc->addArgument( "-geometry" );
   mplayerCmd.sprintf( "%dx%d+0+0", currentFrameWnd->width(), currentFrameWnd->height() );

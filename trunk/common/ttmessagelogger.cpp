@@ -46,6 +46,8 @@
  */
 
 #include "ttmessagelogger.h"
+//#include <sys/stdarg.h>
+
 
 const int   TTMessageLogger::STD_LOG_MODE      = TTMessageLogger::SUMMARIZE;
 const char* TTMessageLogger::INFO_FILE_NAME    = "info.log";
@@ -100,6 +102,10 @@ TTMessageLogger* TTMessageLogger::getInstance(int mode)
   return loggerInstance;
 }
 
+void TTMessageLogger::setLogMode(int mode)
+{
+  logMode = mode;
+}
 
 /*!
  * Writes an logfile message from type INFO
@@ -133,9 +139,55 @@ void TTMessageLogger::debugMsg(QString caller, QString msgString)
 logMsg(DEBUG, caller, msgString); 
 }
 
-void testMsg(QString caller, const char* msg, ...)
+void TTMessageLogger::infoMsg(QString caller, const char* msg, ...)
 {
+  char buf[512];
+  va_list ap;
+
+  va_start( ap, msg );
+  vsprintf( buf, msg, ap );
+  va_end( ap );
+
+  logMsg(INFO, caller, buf);
 }
+
+void TTMessageLogger::warningMsg(QString caller, const char* msg, ...)
+{
+  char buf[512];
+  va_list ap;
+
+  va_start( ap, msg );
+  vsprintf( buf, msg, ap );
+  va_end( ap );
+
+  logMsg(WARNING, caller, buf);
+}
+
+void TTMessageLogger::errorMsg(QString caller, const char* msg, ...)
+{
+  char buf[512];
+  va_list ap;
+
+  va_start( ap, msg );
+  vsprintf( buf, msg, ap );
+  va_end( ap );
+
+  logMsg(ERROR, caller, buf);
+}
+
+void TTMessageLogger::debugMsg(QString caller, const char* msg, ...)
+{
+  char buf[512];
+  va_list ap;
+
+  va_start( ap, msg );
+  vsprintf( buf, msg, ap );
+  va_end( ap );
+
+  logMsg(DEBUG, caller, buf);
+}
+
+
 
 /*!
  * This method finally writes the message to the logfile.
