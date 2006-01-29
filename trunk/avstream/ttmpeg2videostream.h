@@ -58,7 +58,6 @@
 
 #include <QString>
 #include <QFileInfo>
-#include <QStack>
 
 // -----------------------------------------------------------------------------
 // TTMpeg2VideoStream
@@ -90,7 +89,9 @@ class TTMpeg2VideoStream : public TTVideoStream
   void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
   void transferMpegObjects( TTFileBuffer* fs,
 			    TTVideoHeader* start_object,
+			    int start_object_index,
 			    TTVideoHeader* end_object,
+			    int end_object_index,
 			    TTCutParameter* cr );
 
   void encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream );
@@ -104,10 +105,10 @@ class TTMpeg2VideoStream : public TTVideoStream
 
  protected:
   TTMessageLogger* log;
-  TTFileBuffer* mpeg2_stream;
-  TTFileBuffer* idd_stream;
-  long*         stream_order_list;
-  int           idd_file_version;
+  TTFileBuffer*    mpeg2_stream;
+  TTFileBuffer*    idd_stream;
+  long*            stream_order_list;
+  int              idd_file_version;
 };
 
 #endif //TTDTSAUDIOSTREAM_H

@@ -133,6 +133,9 @@ void TTMessageLogger::debugMsg(QString caller, QString msgString)
 logMsg(DEBUG, caller, msgString); 
 }
 
+void testMsg(QString caller, const char* msg, ...)
+{
+}
 
 /*!
  * This method finally writes the message to the logfile.

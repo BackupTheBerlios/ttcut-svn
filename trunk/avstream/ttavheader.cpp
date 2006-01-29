@@ -59,7 +59,7 @@
 
 #include "ttavheader.h"
 
-#include <QString>
+#include <qstring.h>
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -203,40 +203,6 @@ TTVideoHeader::TTVideoHeader()
 
 }
 
-
-bool TTVideoHeader::readHeader( TTFileBuffer* mpeg2_stream )
-{
- if(mpeg2_stream != NULL)
-   ;
- 
-    return false;
-}
-
-bool TTVideoHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
-{ 
- if(mpeg2_stream != NULL && offset > 0)
-   ;
-  return false; 
-}
-
-void TTVideoHeader::parseBasicData( uint8_t* data, int offset )
-{
-if(data != NULL && offset > 0)
-  ;
-}
-
-void TTVideoHeader::parseExtendedData( uint8_t* data, int offset )
-{
-  if(data != NULL && offset > 0)
-    ;
-}
-
-void TTVideoHeader::printHeader( )
-{
-}
-
-
-
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
 // *** TTVideoIndex
@@ -260,8 +226,74 @@ void TTVideoHeader::printHeader( )
 // /////////////////////////////////////////////////////////////////////////////
 TTBreakObject::TTBreakObject()
 {
-  stop_object    = (TTVideoHeader*)NULL;
-  restart_object = (TTVideoHeader*)NULL;
-  copy_start     = -1;
-  copy_stopp     = -1;
+  stop_object          = (TTVideoHeader*)NULL;
+  restart_object       = (TTVideoHeader*)NULL;
+  stop_object_index    = -1;
+  restart_object_index = -1;
+  copy_start           = -1;
+  copy_stop            = -1;
+}
+
+TTBreakObject::~TTBreakObject()
+{
+}
+
+void TTBreakObject::setStopObject( TTVideoHeader* stop, long index )
+{
+  stop_object = stop;
+  stop_object_index = index;
+}
+
+
+void TTBreakObject::setRestartObject( TTVideoHeader* restart, long index )
+{
+  restart_object = restart;
+  restart_object_index = index;
+}
+
+
+TTVideoHeader* TTBreakObject::stopObject()
+{
+  return stop_object;
+}
+
+
+TTVideoHeader* TTBreakObject::restartObject()
+{
+  return restart_object;
+}
+
+
+long TTBreakObject::stopObjectIndex()
+{
+  return stop_object_index;
+}
+
+
+long TTBreakObject::restartObjectIndex()
+{
+  return restart_object_index;
+}
+
+void TTBreakObject::setCopyStart( long start )
+{
+  copy_start = start;
+}
+
+
+void TTBreakObject::setCopyStop( long stop )
+{
+  copy_stop = stop;
+}
+
+
+long TTBreakObject::copyStart()
+{
+  return copy_start;
+}
+
+
+long TTBreakObject::copyStop()
+{
+  return copy_stop;
 }

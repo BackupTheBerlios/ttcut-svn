@@ -57,7 +57,7 @@ class TTMessageLogger
     void errorMsg(QString caller, QString msgString);
     void debugMsg(QString caller, QString msgString);;
 
-
+void testMsg(QString caller, const char* msg, ...);
 enum MsgType
 {
   INFO,
