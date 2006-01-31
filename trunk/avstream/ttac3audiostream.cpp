@@ -48,7 +48,7 @@
 
 #include "ttac3audiostream.h"
 
-const char c_name [] = "AC3STREAM     : ";
+const char c_name [] = "AC3STREAM";
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -61,7 +61,7 @@ const char c_name [] = "AC3STREAM     : ";
 TTAC3AudioStream::TTAC3AudioStream()
   : TTAudioStream()
 {
-
+log = TTMessageLogger::getInstance();
 }
 
 // constructor with file info and start position
@@ -69,7 +69,7 @@ TTAC3AudioStream::TTAC3AudioStream()
 TTAC3AudioStream::TTAC3AudioStream( const QFileInfo &f_info, int s_pos )
   : TTAudioStream( f_info, s_pos )
 {
-
+log = TTMessageLogger::getInstance();
 }
 
 // search the next sync byte in stream
@@ -157,7 +157,9 @@ int TTAC3AudioStream::createHeaderList()
   // open the audio stream
   if ( !openStream() )
   {
-    qDebug( "%scannot open audio stream: %s",c_name,stream_info->filePath().toAscii() );
+    // TODO: why result this in an compiler warning ???
+    // warning: cannot pass objects of non-POD type 'class QByteArray' through '...'; call will abort at runtime
+    //log->errorMsg(c_name, "cannot open audio stream: %s",stream_info->filePath().toAscii() );
     return (int)0;
   }
 
@@ -208,7 +210,7 @@ int TTAC3AudioStream::createHeaderList()
   return header_list->count();
 }
 
-void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp )
+void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, int start, int end, __attribute__ ((unused))TTCutParameter* cp )
 {
   off64_t start_offset;
   off64_t end_offset;
@@ -319,4 +321,6 @@ QString TTAC3AudioStream::absStreamTime()
       return ttMsecToTimeD( audio_header->abs_frame_time ).toString("hh:mm:ss.zzz" );
     }
   }
+  // TODO: Fix default return value 
+  return "";
 }

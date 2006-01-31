@@ -48,6 +48,7 @@
 #ifndef TTAC3AUDIOSTREAM_H
 #define TTAC3AUDIOSTREAM_H
 
+#include "../common/ttmessagelogger.h"
 #include "ttavstream.h"
 #include "ttac3audioheader.h"
 
@@ -69,6 +70,9 @@ class TTAC3AudioStream : public TTAudioStream
   int     createHeaderList();
   QString streamExtension();
   QString absStreamTime();
+
+ private:
+  TTMessageLogger* log;
 };
 
 #endif //TTAC3AUDIOSTREAM_H

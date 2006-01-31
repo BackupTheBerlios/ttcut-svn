@@ -123,6 +123,7 @@ void TTMessageLogger::warningMsg(QString caller, QString msgString)
 logMsg(WARNING, caller, msgString);
 }
 
+
 /*!
  * Writes an logfile messages from type ERROR
  */
@@ -131,6 +132,7 @@ void TTMessageLogger::errorMsg(QString caller, QString msgString)
 logMsg(ERROR, caller, msgString);
 }
 
+
 /*!
  * Writes an logfile messages from type DEBUG
  */
@@ -138,6 +140,7 @@ void TTMessageLogger::debugMsg(QString caller, QString msgString)
 {
 logMsg(DEBUG, caller, msgString); 
 }
+
 
 void TTMessageLogger::infoMsg(QString caller, const char* msg, ...)
 {

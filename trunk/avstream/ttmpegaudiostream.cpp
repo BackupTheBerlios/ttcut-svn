@@ -120,16 +120,16 @@ void TTMPEGAudioStream::parseAudioHeader( uint8_t* data, int offset, TTMpegAudio
   {
   case 3: // Mpeg 1
     if (audio_header->layer == 3) // Layer I
-      frame_length = trunc((12*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit)*4);
+      frame_length = (int)trunc((12*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit)*4);
     else // Layer II, Layer III
-      frame_length = trunc(144*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit);
+      frame_length = (int)trunc(144*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit);
     break;
   case 0: // Mpeg 2.5
   case 2: // Mpeg 2
     if (audio_header->layer==3) // Layer I
-      frame_length = trunc((6*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit)*4);
+      frame_length = (int)trunc((6*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit)*4);
     else // Layer II, Layer III
-      frame_length = trunc(72*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit);
+      frame_length = (int)trunc(72*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit);
     break;
   default:
     qDebug( "%serror parsing audio header (!)",c_name );
@@ -314,7 +314,7 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
 
     if ( ttAssigned( progress_bar ) )
     {
-      action_string.sprintf( "Audio cut: %d/%d-%d",i+1,start_pos,end_pos );
+      action_string.sprintf( "Audio cut: %d/%ld-%ld",i+1,start_pos,end_pos );
       progress_bar->setActionText( action_string );
     }
 
@@ -377,6 +377,8 @@ QString TTMPEGAudioStream::absStreamTime()
       return ttMsecToTimeD( audio_header->abs_frame_time ).toString("hh:mm:ss.zzz" );
     }
   }
+  // TODO: default return value
+  return QString("");
 }
 
 

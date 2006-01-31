@@ -32,6 +32,9 @@
 
 
 #include "ttcutccrwnd.h"
+
+#include "../common/ttmessagelogger.h"
+
 //Added by qt3to4:
 #include <QLabel>
 #include <QVBoxLayout>
@@ -351,10 +354,13 @@ void TTCutResultTab::refreshCutVideoLength( uint v_length, off64_t v_size )
 	length_size.sprintf( "%6.2lf mb", res_size );
       }
 
-    Q3ListViewItem* listItem = new Q3ListViewItem( lvResultLength, lvResultLength->lastItem(),
-						 stream_type,
-						 length_time,
-						 length_size );
+    // TODO: why is this here ????
+    TTMessageLogger* log = TTMessageLogger::getInstance();
+    log->debugMsg("TTCUTCCRWND", "unused listItem ????");
+    //Q3ListViewItem* listItem = new Q3ListViewItem( lvResultLength, lvResultLength->lastItem(),
+		//				 stream_type,
+		//				 length_time,
+		//				 length_size );
   }
 }
 

@@ -125,7 +125,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
     {
       idd_stream_name = ttChangeFileExt( stream_info->filePath(), "idd" );
 
-      qDebug( "%slook for idd-file: %s",c_name,idd_stream_name.ascii() );
+      log->infoMsg(c_name, "look for idd-file: %s",idd_stream_name.ascii());
 
       // check for Mpeg2Schnitt idd-stream in current directory
       idd_stream_info.setFile( idd_stream_name );
@@ -164,7 +164,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
       num_header  = 0;
     }
 
-    //qDebug("%sheader-list created: %d",c_name,u_result);
+    log->infoMsg(c_name, "%sheader-list created: %d",u_result);
     return u_result;
   }
 
@@ -345,7 +345,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
     }
     else
     {
-      qDebug( "%sno sequence header found (!): %d",c_name,header_index );
+      log->warningMsg(c_name, "no sequence header found (!): %d", header_index );
       return NULL;
     }
   }
@@ -457,7 +457,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
     }
     else
     {
-      qDebug( "%sno group header found (!): %d",c_name,header_index );
+      log->warningMsg(c_name, "no group header found (!): %d", header_index );
       return NULL;
     }
   }
@@ -1022,7 +1022,7 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* fs, int start, int end, TTCutParamet
   // aktueller Header ist kein Sequence-Header...
   if ( current_header->headerType() != TTMpeg2VideoHeader::sequence_start_code )
   {
-    qDebug( "%sno sequence at cut start....",c_name );
+    log->warningMsg(c_name, "no sequence at cut start....");
 
     // Erste (und einzige) Sequence aus dem Stream kopieren
     TTSequenceHeader* m2o  = header_list->sequenceHeaderAt( current_header_list_pos );
@@ -1051,7 +1051,7 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* fs, int start, int end, TTCutParamet
     // Keine Sequence gefunden
     else
     {
-      qDebug("no sequence found in stream (?)");
+      log->warningMsg(c_name, "no sequence found in stream (?)");
     }
   }
    
@@ -1450,7 +1450,9 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
     log->warningMsg( c_name, "bytes_processed: %d",bytes_processed );
     count = -1;
     }
-  }
+  } //while(count > 0)
+
+  log->infoMsg(c_name, "Number of break_objects: %d", break_objects->count());
 
   // noch was zu encoden ?
   if ( break_objects->count() > 0 )
@@ -1474,11 +1476,11 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
 void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream )
 {
-#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
-  qDebug( "%s---------------------------------------------",c_name );
-  qDebug( "%sencode part: start: %d -- end: %d",c_name,start,end );
-  qDebug( "%s---------------------------------------------",c_name );
-#endif
+//#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+  log->infoMsg(c_name, "---------------------------------------------");
+  log->infoMsg(c_name, "encode part: start: %d -- end: %d",start,end );
+  log->infoMsg(c_name, "---------------------------------------------");
+//#endif
 
   QFileInfo new_file_info;
 
@@ -1522,9 +1524,9 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
 
   if ( transcode_prov->encodePart() )
   {
-#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
-    qDebug( "%stranscode exit succesfully",c_name );
-#endif
+//#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    log->infoMsg(c_name, "transcode exit succesfully");
+//#endif
 
     new_file_info.setFile( temp_dir, "encode.m2v" );
     TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream( new_file_info );
@@ -1533,21 +1535,21 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
     new_mpeg_stream->createIndexList();
     new_mpeg_stream->indexList()->sortDisplayOrder();
     
-#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
-    qDebug( "%scut: 0 - %d",c_name,end-start );
-#endif
+//#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    log->infoMsg(c_name, "cut: 0 - %d",end-start );
+//#endif
 
     new_mpeg_stream->cut( cut_stream, 0, end-start, cr );
 
-#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
-    qDebug( "%s---------------------------------------------",c_name );
-#endif
+//#if defined (TTMPEG2VIDEOSTREAM_DEBUG)
+    log->infoMsg(c_name, "---------------------------------------------");
+//#endif
     
     delete new_mpeg_stream;
   }
   else
   {
-    qDebug( "%serror in transcode part (!)",c_name );
+    log->errorMsg(c_name, "error in transcode part (!)");
   }
 
   // remove temporary file

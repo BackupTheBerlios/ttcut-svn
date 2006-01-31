@@ -31,7 +31,7 @@ TTMemoryBuffer::TTMemoryBuffer( uint8_t* buffer, int start, int size )
 
   for ( i = 0; i < size; i++ )
   {
-    if ( start+i < sizeof(buffer) )
+    if ( start+i < (int)sizeof(buffer) )
       temp_buffer[i] = buffer[start+i];
   }
 
@@ -155,7 +155,7 @@ bool TTMemoryBuffer::writeByte( uint8_t byte )
   return true;
 }
 
-bool TTMemoryBuffer::writeTo( TTFileBuffer* f_buffer )
+bool TTMemoryBuffer::writeTo( __attribute__ ((unused))TTFileBuffer* f_buffer )
 {
   return true;
 

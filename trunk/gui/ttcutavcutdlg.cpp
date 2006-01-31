@@ -431,7 +431,7 @@ void TTCutAVCutCommonTab::readFromStdout()
   qApp->processEvents();
 }
 
-void TTCutAVCutCommonTab::exitProcess( int e_code )
+void TTCutAVCutCommonTab::exitProcess( __attribute__ ((unused))int e_code )
 {
   qApp->processEvents();
 }

@@ -484,7 +484,8 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
   int           I;
   int           j;
   int           iCount;
-  int           backIndex;
+  // TODO:  warning: 'backIndex' may be used uninitialized in this function
+  int           backIndex = 0;
 
   //printf("GeheZuPosition: current: %ld | new: %d\n",currentFrameIndex,Position);
 

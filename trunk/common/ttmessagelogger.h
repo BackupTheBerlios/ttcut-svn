@@ -53,6 +53,7 @@ class TTMessageLogger
   public:
     static TTMessageLogger* getInstance(int mode = STD_LOG_MODE);
     void setLogMode(int mode);
+
     void infoMsg(QString caller, QString msgString);
     void warningMsg(QString caller, QString msgString);
     void errorMsg(QString caller, QString msgString);

@@ -99,7 +99,7 @@ uint TTFrameSearch::searchFrame( uint ref_frame_pos, uint start_frame_pos )
    TFrameInfo* frameInfo;
    ulong       delta;
    ulong       min_delta;
-   long        resultPosition;
+   long        resultPosition = 0;
 
 
    foundPosition = -1;

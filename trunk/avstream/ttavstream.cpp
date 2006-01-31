@@ -350,7 +350,7 @@ int TTAVStream::createIndexList()
 
 // cut method
 // -----------------------------------------------------------------------------
-void TTAVStream::cut( __attribute__ ((unused))TTFileBuffer* cut_stream, __attribute__ ((unused))int start, __attribute__ ((unused))int end, TTCutParameter* cp )
+void TTAVStream::cut( __attribute__ ((unused))TTFileBuffer* cut_stream, __attribute__ ((unused))int start, __attribute__ ((unused))int end, __attribute__ ((unused))TTCutParameter* cp )
 {
 
 }

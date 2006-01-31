@@ -70,14 +70,14 @@
 
 class QString;
 
-static int AC3SampleRate[4] =
+__attribute__ ((unused))static int AC3SampleRate[4] =
   {
     //samplerate : 0 bis 3
     48000, 44100, 32000, 0
   };
 
 // bitrate * 1/1000 (!)
-static int AC3BitRate[38] =
+__attribute__ ((unused))static int AC3BitRate[38] =
   {
     //frmsizecod : 0 bis 37
       32,  32,  40,  40,   48,  48,  56,  56,  64,  64,
@@ -111,12 +111,12 @@ static int AC3FrameLength[4][38] =
 };
 
 // acmod -> Number of channels
-static int AC3AudioCodingMode[8] =
+__attribute__ ((unused))static int AC3AudioCodingMode[8] =
 {
   2,1,2,3,3,4,4,5
 };
 
-static char* AC3Mode[8] =
+__attribute__ ((unused))static char* AC3Mode[8] =
 {
   "1+1", "1/0", "2/0", "3/0",
   "2/1", "3/1", "2/2", "3/2"

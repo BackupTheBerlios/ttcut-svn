@@ -68,7 +68,7 @@
 
 class QString;
 
-static int  mpeg_sample_raten[4][4] =
+__attribute__ ((unused))static int  mpeg_sample_raten[4][4] =
   {
     {11025, 12000, 8000, 0}, // version 2.5
     {0, 0, 0, 0},            // unknown
@@ -76,7 +76,7 @@ static int  mpeg_sample_raten[4][4] =
     {44100, 48000, 32000, 0} // version 1.0
   };
 
-static int mpeg_bit_raten[4][4][16] =
+__attribute__ ((unused))static int mpeg_bit_raten[4][4][16] =
   {
     //Version 2.5, Layer III, II, I
     {{0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,0},

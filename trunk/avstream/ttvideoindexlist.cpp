@@ -187,7 +187,7 @@ int TTVideoIndexList::headerListIndex( int index )
   }
   catch ( TTListIndexException )
   {
-    qDebug( "%sexception (!): %ld",c_name,index );
+    qDebug( "%sexception (!): %d",c_name,index );
     return (int)0;
   }
 }
