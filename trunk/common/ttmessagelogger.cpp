@@ -144,7 +144,7 @@ logMsg(DEBUG, caller, msgString);
 
 void TTMessageLogger::infoMsg(QString caller, const char* msg, ...)
 {
-  char buf[512];
+  char buf[1024];
   va_list ap;
 
   va_start( ap, msg );
@@ -156,7 +156,7 @@ void TTMessageLogger::infoMsg(QString caller, const char* msg, ...)
 
 void TTMessageLogger::warningMsg(QString caller, const char* msg, ...)
 {
-  char buf[512];
+  char buf[1024];
   va_list ap;
 
   va_start( ap, msg );
@@ -168,7 +168,7 @@ void TTMessageLogger::warningMsg(QString caller, const char* msg, ...)
 
 void TTMessageLogger::errorMsg(QString caller, const char* msg, ...)
 {
-  char buf[512];
+  char buf[1024];
   va_list ap;
 
   va_start( ap, msg );
@@ -180,7 +180,7 @@ void TTMessageLogger::errorMsg(QString caller, const char* msg, ...)
 
 void TTMessageLogger::debugMsg(QString caller, const char* msg, ...)
 {
-  char buf[512];
+  char buf[1024];
   va_list ap;
 
   va_start( ap, msg );

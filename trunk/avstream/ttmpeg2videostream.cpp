@@ -164,7 +164,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
       num_header  = 0;
     }
 
-    log->infoMsg(c_name, "%sheader-list created: %d",u_result);
+    log->infoMsg(c_name, "header-list created: %d",u_result);
     return u_result;
   }
 
@@ -1141,7 +1141,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 					      TTVideoHeader* start_object,
 					      int start_object_index,
 					      TTVideoHeader* end_object,
-					      __attribute__ ((unsused))int end_object_index,
+					      __attribute__ ((unused))int end_object_index,
 					      TTCutParameter* cr )
 {
   uint8_t*          buffer  = new uint8_t[65536];
@@ -1163,7 +1163,7 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 
   QStack<TTBreakObject*>* break_objects = new QStack<TTBreakObject*>; 
   
-  TTVideoHeader* newMpeg2Object = (TTVideoHeader*)NULL;
+  __attribute__ ((unused))TTVideoHeader* newMpeg2Object = (TTVideoHeader*)NULL;
   
   current_index_pos = start_object_index;
 
