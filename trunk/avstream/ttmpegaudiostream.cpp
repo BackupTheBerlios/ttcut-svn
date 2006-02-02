@@ -48,7 +48,7 @@
 
 #include "ttmpegaudiostream.h"
 
-const char c_name[] = "MPEGAUDIOSTR  : ";
+const char c_name[] = "MPEGAUDIOSTR";
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -61,7 +61,7 @@ const char c_name[] = "MPEGAUDIOSTR  : ";
 TTMPEGAudioStream::TTMPEGAudioStream()
   : TTAudioStream()
 {
-
+   log = TTMessageLogger::getInstance();
 }
 
 // constructor with file info and start position
@@ -69,7 +69,7 @@ TTMPEGAudioStream::TTMPEGAudioStream()
 TTMPEGAudioStream::TTMPEGAudioStream( const QFileInfo &f_info, int s_pos )
   : TTAudioStream( f_info, s_pos)
 {
-
+log = TTMessageLogger::getInstance();
 }
 
 // search next sync byte in stream
@@ -132,7 +132,7 @@ void TTMPEGAudioStream::parseAudioHeader( uint8_t* data, int offset, TTMpegAudio
       frame_length = (int)trunc(72*audio_header->bitRate()/audio_header->sampleRate()+audio_header->padding_bit);
     break;
   default:
-    qDebug( "%serror parsing audio header (!)",c_name );
+    log->errorMsg(c_name, "error parsing audio header (!)");
     frame_length = 0;
     frame_time   = (double)0.0;
     break;
@@ -140,17 +140,17 @@ void TTMPEGAudioStream::parseAudioHeader( uint8_t* data, int offset, TTMpegAudio
 
   if (frame_length > 0)
   {
-    //qDebug( "%sbit rate: %d",c_name,audio_header->bitRate() );
+    //log->infoMsg(c_name, "bit rate: %d",audio_header->bitRate() );
     if ( audio_header->bitRate() > 0 )
     {
       audio_header->frame_length = (int)frame_length;
       audio_header->frame_time   = (double)(audio_header->frame_length * 8000.0) / (double)audio_header->bitRate();
       frame_time                 = audio_header->frame_time;
-      //qDebug( "%sframe length/time: %d / %lf", c_name,frame_length,frame_time );
+      //log->infoMsg(c_name, "frame length/time: %d / %lf", frame_length, frame_time);
     }
     else
     {
-      qDebug( "%sbitrate error: bitrate is 0 (!)",c_name );
+      log->errorMsg(c_name, "bitrate error: bitrate is 0 (!)");
       audio_header->frame_length = (int)0;
       audio_header->frame_time   = (double)0.0;
     }
@@ -258,7 +258,8 @@ int TTMPEGAudioStream::createHeaderList( )
 
   // TODO: looking for interesting stream points, like mode changes etc.  
   
-  //qDebug( "%sheader list created: %d",c_name,header_list->count() );
+  log->infoMsg(c_name, "header list created: %d",header_list->count());
+  log->infoMsg(c_name, "abs stream length:   %s",absStreamTime().toAscii().data());
   
   return header_list->count();
 }

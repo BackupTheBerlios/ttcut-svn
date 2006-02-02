@@ -64,6 +64,7 @@
 #ifndef TTMPEGAUDIOHEADER_H
 #define TTMPEGAUDIOHEADER_H
 
+#include "../common/ttmessagelogger.h"
 #include "ttavheader.h"
 
 class QString;
@@ -128,6 +129,8 @@ public:
   bool    copyright;
   bool    original_home;
   uint8_t emphasis;
+
+  TTMessageLogger* log;
 };
 
 #endif //TTMPEGAUDIOHEADER_H

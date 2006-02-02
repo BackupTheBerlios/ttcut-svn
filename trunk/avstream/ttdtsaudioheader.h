@@ -61,14 +61,14 @@
 class QString;
 
 
-static int dts_frequency_index[16] =
+__attribute__ ((unused))static int dts_frequency_index[16] =
 { 
   0,     8000,  16000, 32000, 64000, 128000, 
   11025, 22050, 44100, 88200, 176400,
   12000, 24000, 48000, 96000, 192000 
 }; 
 
-static int dts_bitrate_index[32] =
+__attribute__ ((unused))static int dts_bitrate_index[32] =
 { 
   32000,   56000,   64000,   96000,   112000, 128000, 
   192000,  224000,  256000,  320000,  384000, 
@@ -78,7 +78,7 @@ static int dts_bitrate_index[32] =
   2048000, 3072000, 3840000, 4096000, 0, 0 
 }; 
 
-static char* dts_acmod[64] =
+__attribute__ ((unused))static char* dts_acmod[64] =
 { 
   "1","DM","2/0","2/0", 
   "2/0","3/0","2.1/0","3.1/0", 
@@ -89,7 +89,7 @@ static char* dts_acmod[64] =
   "","","","","","","","","","","","","","","","" 
 }; 
 
-static int dts_channels[64] =
+__attribute__ ((unused))static int dts_channels[64] =
 { 
   1,2,2,2, 2,3,3,4, 4,5,6,6, 7,8,0,0, 
   0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 

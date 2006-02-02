@@ -60,8 +60,8 @@
 #include "ttfilebuffer.h"
 #endif
 
+#include "../common/ttmessagelogger.h"
 #include "../avcut/ttavcutposition.h"
-
 #include "../gui/ttprogressbar.h"
 
 #include "ttavtypes.h"
@@ -127,6 +127,7 @@ protected:
   bool           stream_open;
   bool           stream_parsed;
   TTProgressBar* progress_bar;
+  TTMessageLogger* log;
 };
 
 
@@ -165,8 +166,8 @@ protected:
   // audio_delay < 0: audio starts after  video (in ms)
   int    audio_delay;
   int    start_pos;
-  int   samples_count;
-  int   frame_length;
+  int    samples_count;
+  int    frame_length;
   double frame_time;
 };
 
