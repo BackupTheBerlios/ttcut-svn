@@ -8,6 +8,7 @@
 /* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 07/16/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 08/09/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 02/02/2006 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -42,7 +43,7 @@
 #include <QGridLayout>
 #include <QDir>
 
-const char c_name[] = "TTCUTPREVIEW  : ";
+const char c_name[] = "TTCUTPREVIEW";
 
 // -----------------------------------------------------------------------------
 // TTCutPreview constructor
@@ -55,6 +56,8 @@ TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
   if ( !name )
     setName( "TTCutPreview" );
 
+  log = TTMessageLogger::getInstance();
+  
   // set desired video widthxheight
   previewWidth  = prevW;
   previewHeight = prevH;
@@ -236,7 +239,7 @@ void TTCutPreview::createPreview( int c_index )
 
       if ( c_index == i || c_index+1 == i || c_index < 0 )
       {
-	selectionString.sprintf( "Start: %s", ttFramesToTime( preview_cut_list->cutInAt( i ), video_stream->frameRate() ).toString("hh:mm:ss").ascii() );
+	selectionString.sprintf( "Start: %s", ttFramesToTime( preview_cut_list->cutInAt( i ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
 	cbCutPreview->insertItem( selectionString );
       }
     }
@@ -257,8 +260,8 @@ void TTCutPreview::createPreview( int c_index )
  	start_index = preview_cut_list->cutOutAt( iPos );
  	end_index   = preview_cut_list->cutInAt( iPos+1 );
 	selectionString.sprintf( "Cut %d-%d: %s - %s",i,i+1,
-				 ttFramesToTime( start_index, video_stream->frameRate() ).toString("hh:mm:ss").ascii(),
-				 ttFramesToTime( end_index, video_stream->frameRate() ).toString("hh:mm:ss").ascii() );
+				 ttFramesToTime( start_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data(),
+				 ttFramesToTime( end_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
 	cbCutPreview->insertItem( selectionString );
       }
     }
@@ -274,7 +277,7 @@ void TTCutPreview::createPreview( int c_index )
 
       if ( c_index == i || c_index+1 == i || c_index < 0 )
       {
-      selectionString.sprintf( "End: %s", ttFramesToTime( preview_cut_list->cutOutAt( iPos ), video_stream->frameRate() ).toString("hh:mm:ss").ascii() );
+      selectionString.sprintf( "End: %s", ttFramesToTime( preview_cut_list->cutOutAt( iPos ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
       cbCutPreview->insertItem( selectionString );
       }
     }
@@ -289,12 +292,12 @@ void TTCutPreview::createPreview( int c_index )
       qApp->processEvents();
 
       video_stream->setProgressBar( progress_bar );
-      video_cut_stream = new TTFileBuffer( preview_video_name.ascii(), fm_open_write );
+      video_cut_stream = new TTFileBuffer( preview_video_name.toAscii().data(), fm_open_write );
 
       if ( TTCut::numAudioTracks > 0 )
       {
 	audio_stream->setProgressBar( progress_bar );
-	audio_cut_stream = new TTFileBuffer( preview_audio_name.ascii(), fm_open_write );
+	audio_cut_stream = new TTFileBuffer( preview_audio_name.toAscii().data(), fm_open_write );
       }
 
       video_stream->cut( video_cut_stream, temp_cut_list );
@@ -348,7 +351,7 @@ void TTCutPreview::createPreview( int c_index )
       mplex_command += " ";
       mplex_command += "2>/dev/null";
 
-      system( mplex_command.ascii() );
+      system( mplex_command.toAscii().data() );
     }
     else
     {
@@ -359,8 +362,9 @@ void TTCutPreview::createPreview( int c_index )
       mplex_command += " ";
       mplex_command += "2>/dev/null";
 
-      system( mplex_command.ascii() );
+      system( mplex_command.toAscii().data() );
     }
+    log->infoMsg(c_name, "mplex command: %s", mplex_command.toAscii().data());
     progress_bar->setProgress( i+1 );
   }
   progress_bar->setComplete();
@@ -515,15 +519,15 @@ void TTCutPreview::exitPreview()
     rm_command += file_info.absoluteFilePath();
     rm_command += " 2>/dev/null";
 
-    system( rm_command.ascii() );
-
+    system( rm_command.toAscii().data());
+    
     done( 0 );
   }
   else
   {
-    if ( stopMPlayer() )
+    if(stopMPlayer())
     {
-      done( 0 );
+      done(0);
     }
     else
       qDebug( "Cant't exit, mplayer still running ???" );
@@ -584,6 +588,7 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
     // start the mplayer process
     if ( mplayerProc->state() != QProcess::Running )
     {
+      log->infoMsg(c_name, "mplayer command: %s", mplayer_cmd.join(" ").toAscii().data());
       mplayerProc->start( "mplayer", mplayer_cmd );
 
       // signal and slot connection for the mplayer process

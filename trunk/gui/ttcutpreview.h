@@ -38,6 +38,7 @@
 #include "ttprogressbar.h"
 #include "ttcutlistview.h"
 
+#include "../common/ttmessagelogger.h"
 #include "../avstream/ttavstream.h"
 #include "../avstream/ttvideoindexlist.h"
 
@@ -106,6 +107,7 @@ protected:
 
  private:
     // private member
+    TTMessageLogger*   log;
     TTVideoStream*     video_stream;
     TTAudioStream*     audio_stream;
     TTVideoIndexList*  video_index;      

@@ -177,7 +177,9 @@ void TTAudioListView::addItem( QString fName, TTAudioStream* a_stream )
   // mode
   listItem->channelMode = audio_header->modeString();
 
-  listItem->delay.sprintf("nn"); 
+  // TODO: add real delay value
+  int delay = 0;
+  listItem->delay.sprintf("%d", delay); 
 
   // pointer to audio stream object
   listItem->audio_stream = a_stream;
