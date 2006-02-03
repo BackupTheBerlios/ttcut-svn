@@ -86,7 +86,7 @@ __attribute__ ((unused))static int AC3BitRate[38] =
       448, 448, 512, 512, 576, 576, 640, 640
   };
 
-static int AC3FrameLength[4][38] =
+__attribute__ ((unused))static int AC3FrameLength[4][38] =
 {
    //samplerate : 0 bis 3, frmsizecod : 0 bis 37
 {     64,   64,   80,   80,   96,   96,  112,  112,  128, 128,

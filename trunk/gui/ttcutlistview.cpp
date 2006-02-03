@@ -659,7 +659,7 @@ void TTCutListView::writeListToProject( TTCutProject* prj )
   avcut_list->sortCutOrder();
 
   // walk through the av cut list
-  for ( i = (uint)0; i < (uint)avcut_list->count(); (uint)i++ )
+  for ( i = 0; i < avcut_list->count(); i++ )
   {
     start_pos = avcut_list->cutInAt( (uint)i );
     end_pos   = avcut_list->cutOutAt( (uint)i );

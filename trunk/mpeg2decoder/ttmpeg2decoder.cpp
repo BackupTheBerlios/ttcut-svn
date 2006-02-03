@@ -323,13 +323,17 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
     case STATE_SEQUENCE:
       switch ( convType )
       {
-      case formatRGB24:
-	mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb24, NULL);
-	break;
-      case formatRGB32:
-	mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb32, NULL);
-	break;
-      }
+        case formatRGB8:
+        case formatYV12:
+        case formatYUV24:
+          break;
+        case formatRGB24:
+	        mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb24, NULL);
+	        break;
+        case formatRGB32:
+	        mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb32, NULL);
+	      break;
+        }
     case STATE_END:
       streamEndReached = true;
     case STATE_SLICE:
@@ -338,6 +342,8 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
 	iSkip--;
 
       isDecodedFrame = true;
+      break;
+    default:
       break;
     }
   } while ( iSkip > 0 );
@@ -374,7 +380,8 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
     case formatYV12:
       frameInfo.size=frameInfo.width*frameInfo.height;
       frameInfo.chroma_size=frameInfo.chroma_width*frameInfo.chroma_height;
-
+    default:
+      break;
     }
   }
   else
@@ -422,6 +429,8 @@ void TTMpeg2Decoder::getCurrentFrameData( uint8_t* data )
     memcpy(data,t_frame_info->V,t_frame_info->chroma_size);
     data+=t_frame_info->chroma_size;
     memcpy(data,t_frame_info->U,t_frame_info->chroma_size);
+    break;
+  default:
     break;
   }
 }
