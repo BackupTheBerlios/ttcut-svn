@@ -88,6 +88,8 @@ protected slots:
     virtual void stopPreview();
     virtual void exitPreview();
 
+    virtual void mplayerStarted();
+
     // mplayer process has information ready for us
     virtual void readFromStdout();
     // mplayer process exited

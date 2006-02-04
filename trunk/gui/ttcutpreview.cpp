@@ -49,15 +49,15 @@ const char c_name[] = "TTCUTPREVIEW";
 // TTCutPreview constructor
 // -----------------------------------------------------------------------------
 TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
-			    const char* name, bool modal, Qt::WFlags fl )
-  : QDialog( parent, name, modal, fl )
+    const char* name, bool modal, Qt::WFlags fl )
+: QDialog( parent, name, modal, fl )
 {
   // set widget's name
   if ( !name )
     setName( "TTCutPreview" );
 
   log = TTMessageLogger::getInstance();
-  
+
   // set desired video widthxheight
   previewWidth  = prevW;
   previewHeight = prevH;
@@ -203,8 +203,6 @@ void TTCutPreview::createPreview( int c_index )
   // ---------------------------------------------------------------------
   for ( i = 0; i < num_preview; i++ )
   {
-
-
     //qDebug( "%s-----------------------------------------------",c_name );
     //qDebug( "%scut index  : %d / %d",c_name,i,cut_index);
 
@@ -234,13 +232,13 @@ void TTCutPreview::createPreview( int c_index )
       //qDebug( "%s(A)first cut %d      : %d",c_name,i,i);
 
       temp_cut_list->deleteAll();
-      
+
       temp_cut_list->addCutPosition( preview_cut_list->entryAt( i ) );
 
       if ( c_index == i || c_index+1 == i || c_index < 0 )
       {
-	selectionString.sprintf( "Start: %s", ttFramesToTime( preview_cut_list->cutInAt( i ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
-	cbCutPreview->insertItem( selectionString );
+        selectionString.sprintf( "Start: %s", ttFramesToTime( preview_cut_list->cutInAt( i ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
+        cbCutPreview->insertItem( selectionString );
       }
     }
 
@@ -257,12 +255,12 @@ void TTCutPreview::createPreview( int c_index )
 
       if ( c_index == i || c_index+1 == i || c_index < 0 )
       {
- 	start_index = preview_cut_list->cutOutAt( iPos );
- 	end_index   = preview_cut_list->cutInAt( iPos+1 );
-	selectionString.sprintf( "Cut %d-%d: %s - %s",i,i+1,
-				 ttFramesToTime( start_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data(),
-				 ttFramesToTime( end_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
-	cbCutPreview->insertItem( selectionString );
+        start_index = preview_cut_list->cutOutAt( iPos );
+        end_index   = preview_cut_list->cutInAt( iPos+1 );
+        selectionString.sprintf( "Cut %d-%d: %s - %s",i,i+1,
+            ttFramesToTime( start_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data(),
+            ttFramesToTime( end_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
+        cbCutPreview->insertItem( selectionString );
       }
     }
 
@@ -277,8 +275,8 @@ void TTCutPreview::createPreview( int c_index )
 
       if ( c_index == i || c_index+1 == i || c_index < 0 )
       {
-      selectionString.sprintf( "End: %s", ttFramesToTime( preview_cut_list->cutOutAt( iPos ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
-      cbCutPreview->insertItem( selectionString );
+        selectionString.sprintf( "End: %s", ttFramesToTime( preview_cut_list->cutOutAt( iPos ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
+        cbCutPreview->insertItem( selectionString );
       }
     }
 
@@ -296,21 +294,21 @@ void TTCutPreview::createPreview( int c_index )
 
       if ( TTCut::numAudioTracks > 0 )
       {
-	audio_stream->setProgressBar( progress_bar );
-	audio_cut_stream = new TTFileBuffer( preview_audio_name.toAscii().data(), fm_open_write );
+        audio_stream->setProgressBar( progress_bar );
+        audio_cut_stream = new TTFileBuffer( preview_audio_name.toAscii().data(), fm_open_write );
       }
 
       video_stream->cut( video_cut_stream, temp_cut_list );
 
       if ( TTCut::numAudioTracks > 0 )
-	audio_stream->cut( audio_cut_stream, temp_cut_list );
+        audio_stream->cut( audio_cut_stream, temp_cut_list );
 
       delete progress_bar;
 
       delete video_cut_stream;  
 
       if ( TTCut::numAudioTracks > 0 )
-	delete audio_cut_stream;
+        delete audio_cut_stream;
     }
     delete temp_cut_list;
     // next video preview clip
@@ -423,7 +421,7 @@ void TTCutPreview::createCutPreviewList( )
     frame_type = video_stream->frameType( end_index );
     //qDebug("%sframe type at end: %ld - %d",c_name,end_index,frame_type);
     while ( frame_type == 3 &&
-	    end_index < video_stream->frameCount()-1 )
+      end_index < video_stream->frameCount()-1 )
     {
       end_index++;
       frame_type = video_stream->frameType( end_index );
@@ -540,7 +538,7 @@ void TTCutPreview::exitPreview()
 // -----------------------------------------------------------------------------
 void TTCutPreview::readFromStdout()
 {
-
+log->infoMsg(c_name, "mplayer output: %s", mplayerProc->readAllStandardOutput().constData());
 }
 
 // -----------------------------------------------------------------------------
@@ -564,25 +562,25 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
     // slave-mode
     // ----------------------------------------------------------------------
     // Switches on slave mode, in which MPlayer works as a backend for other
-    // programs. Instead of intercept- ing keyboard events, MPlayer will read
+    // programs. Instead of intercepting keyboard events, MPlayer will read
     // commands from stdin.
-    // NOTE: See -input cmdlist for a list of slave com- mands and
+    // NOTE: See -input cmdlist for a list of slave commands and
     // DOCS/tech/slave.txt for their description.
     // ----------------------------------------------------------------------
 
     // Every argument must have it's own addArgument
     mplayer_cmd << "-slave"
-		<< "-identify"
-		<< "-quiet"
-		<< "-wid";
+    << "-identify"
+    << "-quiet"
+    << "-wid";
 
     str_cmd.sprintf( "%ld",(long)videoFrame->winId() );
     mplayer_cmd << str_cmd
-		<< "-geometry";
+    << "-geometry";
 
     str_cmd.sprintf( "%dx%d+0+0", previewWidth, previewHeight );
     mplayer_cmd << str_cmd
-		<< videoFile;
+    << videoFile;
 
 
     // start the mplayer process
@@ -593,6 +591,7 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
 
       // signal and slot connection for the mplayer process
       // detect when mplayer has information ready for us
+      connect(mplayerProc, SIGNAL( started() ), SLOT( mplayerStarted() ) );
       connect(mplayerProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
       connect(mplayerProc, SIGNAL( finished(int) ),  SLOT( exitMPlayer(int) ) );
 
@@ -620,6 +619,11 @@ bool TTCutPreview::stopMPlayer()
   }
 
   return false;
+}
+
+void TTCutPreview::mplayerStarted()
+{
+  log->infoMsg(c_name, "mplayer process started");
 }
 
 // exit mplayer process
