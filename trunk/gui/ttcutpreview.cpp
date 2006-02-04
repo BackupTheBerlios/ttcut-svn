@@ -537,7 +537,38 @@ void TTCutPreview::exitPreview()
 // -----------------------------------------------------------------------------
 void TTCutPreview::readFromStdout()
 {
-log->infoMsg(c_name, "mplayer output: %s", mplayerProc->readAllStandardOutput().constData());
+  char       temp_str[101];
+  int        i, i_pos;
+  QString    line;
+  QByteArray ba;
+
+  if(mplayerProc->state() == QProcess::Running)
+  {
+    ba = mplayerProc->readAll();
+
+    i_pos = 0;
+
+    for ( i = 0; i < ba.size(); ++i) 
+    {
+      if ( ba.at(i) != '\n' && i_pos < 100)
+      {
+        temp_str[i_pos] = ba.at(i);
+        i_pos++;
+      }
+      else
+      {
+        temp_str[i_pos] = '\0';
+        line = temp_str;
+        log->infoMsg(c_name, line);
+        i_pos = 0;
+      }
+    }
+  }
+  else
+  {
+    line = "mplayer finished... done(0)";
+    log->infoMsg(c_name, line);
+  }
 }
 
 // -----------------------------------------------------------------------------

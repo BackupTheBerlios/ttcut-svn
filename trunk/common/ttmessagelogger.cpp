@@ -220,7 +220,7 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString)
   write.append(msgString);
 
   if(logMode & CONSOLE)
-    qDebug(write);
+    qDebug(write.toAscii().data());
 
   writeMsg(write);
 }

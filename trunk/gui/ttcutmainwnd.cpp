@@ -108,7 +108,7 @@ const char* c_name = "TTCUTMAINWND  : ";
 // name 'name' and widget flags set to 'f'.
 // -----------------------------------------------------------------------------
 TTCutMainWnd::TTCutMainWnd( QWidget* parent, const char* name, Qt::WFlags fl )
-  : QMainWindow( parent, name, fl )
+  : QMainWindow( parent, fl )
     //    image7( (const char **) image7_data )
 {
   int video_frame_width  = 240;
@@ -141,8 +141,8 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, const char* name, Qt::WFlags fl )
   project_file_name.clear();
 
 
-  if ( !name )
-    setName( "TTCutMainWnd" );
+  //QT3if ( !name )
+  //QT3  setName( "TTCutMainWnd" );
 
   (void)statusBar();
 
@@ -1582,7 +1582,7 @@ void TTCutMainWnd::fileOpen()
       // wrong audio type
       else
       {
-	qDebug( "%swrong audio type for file: %s",c_name,audio_file_name.ascii() );
+	qDebug( "%swrong audio type for file: %s",c_name,audio_file_name.toAscii().data() );
 	
 	delete new_audio_type;
 	

@@ -125,14 +125,14 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
     {
       idd_stream_name = ttChangeFileExt( stream_info->filePath(), "idd" );
 
-      log->infoMsg(c_name, "look for idd-file: %s",idd_stream_name.ascii());
+      log->infoMsg(c_name, "look for idd-file: %s",idd_stream_name.toAscii().data());
 
       // check for Mpeg2Schnitt idd-stream in current directory
       idd_stream_info.setFile( idd_stream_name );
 
       if ( idd_stream_info.exists() )
         {
-    idd_stream         = new TTFileBuffer( idd_stream_name, fm_open_read );
+    idd_stream         = new TTFileBuffer( idd_stream_name.toAscii().data(), fm_open_read );
 
     header_list_exists = createHeaderListFromIdd();
 
@@ -530,7 +530,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
     if ( ttAssigned(stream_info) )
     {
       // Create the file buffer read_only
-      mpeg2_stream = new TTFileBuffer( stream_info->filePath().ascii(), fm_open_read );
+      mpeg2_stream = new TTFileBuffer( stream_info->filePath().toAscii().data(), fm_open_read );
 
       if ( ttAssigned( mpeg2_stream ) )
       {
@@ -736,7 +736,7 @@ TTMpeg2VideoStream::TTMpeg2VideoStream()
     }
 
     // create new idd-stream
-    idd_stream         = new TTFileBuffer( idd_stream_name, fm_open_write );
+    idd_stream         = new TTFileBuffer( idd_stream_name.toAscii().data(), fm_open_write );
 
     buffer[0] = int('i'); // Puffer mit 'idd' fuellen
     buffer[1] = int('d');
@@ -1559,7 +1559,7 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
   rm_cmd         += new_file_info.absolutePath();
   rm_cmd         += "/encode.*";
   
-  system( rm_cmd.ascii() );
+  system( rm_cmd.toAscii().data() );
   
   delete transcode_prov;
 
