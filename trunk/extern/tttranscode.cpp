@@ -185,21 +185,21 @@ void TTTranscodeProvider::transcodeReadOut()
     ba = transcode_proc->readAll();
 
     i_pos = 0;
-    
+
     for ( i = 0; i < ba.size(); ++i) 
     {
       if ( ba.at(i) != '\n' && i_pos < 100)
       {
-	temp_str[i_pos] = ba.at(i);
-	i_pos++;
+        temp_str[i_pos] = ba.at(i);
+        i_pos++;
       }
       else
       {
-	temp_str[i_pos] = '\0';
-	line = temp_str;
-	addLine( line );
-  log->infoMsg(c_name, line);
-	i_pos = 0;
+        temp_str[i_pos] = '\0';
+        line = temp_str;
+        addLine( line );
+        log->infoMsg(c_name, line);
+        i_pos = 0;
       }
     }
   }

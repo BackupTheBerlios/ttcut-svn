@@ -34,6 +34,8 @@
 #ifndef TTCUTPREVIEW_H
 #define TTCUTPREVIEW_H
 
+#include <QProcess>
+
 #include "ttcut.h"
 #include "ttprogressbar.h"
 #include "ttcutlistview.h"
@@ -44,7 +46,6 @@
 
 #include "../avcut/ttavcutposition.h"
 
-class QProcess;
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
@@ -80,20 +81,20 @@ class TTCutPreview : public QDialog
 
 protected slots:
     // sets the strings of the subwidgets using the current language
-    virtual void languageChange();
+    void languageChange();
 
     // combobox and button slots
-    virtual void selectCut( int iCut );
-    virtual void playPreview();
-    virtual void stopPreview();
-    virtual void exitPreview();
+    void selectCut( int iCut );
+    void playPreview();
+    void stopPreview();
+    void exitPreview();
 
-    virtual void mplayerStarted();
+    void mplayerStarted();
 
     // mplayer process has information ready for us
-    virtual void readFromStdout();
+    void readFromStdout();
     // mplayer process exited
-    virtual void exitMPlayer( int e_code );
+    void exitMPlayer( int e_code, QProcess::ExitStatus e_status );
 
 protected:
     // gui elements

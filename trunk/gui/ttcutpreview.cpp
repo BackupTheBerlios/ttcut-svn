@@ -35,7 +35,6 @@
 #include "ttcutpreview.h"
 
 #include <QApplication>
-#include <QProcess>
 #include <QComboBox>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -593,7 +592,7 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
       // detect when mplayer has information ready for us
       connect(mplayerProc, SIGNAL( started() ), SLOT( mplayerStarted() ) );
       connect(mplayerProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
-      connect(mplayerProc, SIGNAL( finished(int) ),  SLOT( exitMPlayer(int) ) );
+      connect(mplayerProc, SIGNAL( finisheded(int, QProcess::ExitStatus) ),  SLOT( exitMPlayer(int, QProcess::ExitStatus) ) );
 
       isPlaying = true;
 
@@ -628,9 +627,11 @@ void TTCutPreview::mplayerStarted()
 
 // exit mplayer process
 // -----------------------------------------------------------------------------
-void TTCutPreview::exitMPlayer(__attribute__ ((unused)) int e_code)
+void TTCutPreview::exitMPlayer(__attribute__ ((unused)) int e_code, QProcess::ExitStatus e_status)
 {
   //qDebug( "%sexit mplayer: exit code: %d",c_name,e_code );
+
+  log->infoMsg(c_name, "exit code %d / exit status %d", e_status);
 
   // delete the mplayer process
   delete mplayerProc;
