@@ -629,6 +629,11 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
 
       return true;
     }
+    else
+    {
+      log->infoMsg(c_name, "mplayer command: %s", mplayer_cmd.join(" ").toAscii().data());
+      log->errorMsg(c_name, "error starting mplayer (!)");
+    }
   }
   return false;
 }

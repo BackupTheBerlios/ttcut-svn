@@ -1516,8 +1516,8 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
   avi_writer->closeAVI();
  
   // transcode object
-  // TODO: use current or last sequence header (!)
-  log->debugMsg(c_name, "TODO: use current sequence header (!)");
+  // use the last sequence header from video stream for information about frame size
+  // and aspect ration (!)
   TTSequenceHeader* seq_head  = header_list->sequenceHeaderAt( start );
   TTEncodeParameter enc_par;
   QDir temp_dir( TTCut::tempDirPath );
