@@ -342,29 +342,29 @@ void TTFileBuffer::nextStartCodeBF()
 
   while ( !stream_eof && ((byte4 & 0xFFFFFF)) != 1 )
   {
-    /* buffer position inside memory buffer area;read from memory buffer*/
+   /* buffer position inside memory buffer area;read from memory buffer*/
     if ( buffer_pos < buffer_read_size )
     {
       byte4 = (byte4 << 8) | mem_buffer[buffer_pos];
-      
+
       /* increment bufferPosition and streamPosition*/
       buffer_pos++;
       stream_pos++;
       read_count++;
     }
-    
+
     /* new buffer pos outside memory buffer; fill the buffer*/
     if ( buffer_pos >= buffer_read_size )
     {
       /* we are in the last stream buffer near the stream end*/
       if ( last_buffer_read )
       {
-	stream_eof = true;
+        stream_eof = true;
       }
       /* fill the memory buffer*/
       else
       {
-	fillBuffer();
+        fillBuffer();
       }
     }
   }
@@ -405,18 +405,25 @@ void TTFileBuffer::nextStartCodeTS()
     while ( mem_buffer[buffer_pos+t_index] != start_code[t_index] )
     {
       if( !seekRelative(shift[mem_buffer[buffer_pos+t_delta]]) )
-	return;
+        return;
     }
     --t_index;
     while ( mem_buffer[buffer_pos+t_index] == start_code[t_index] )
     {
       if ( --t_index < 0 )
       {
-	seekRelative(t_delta);
-	return; 
+        seekRelative(t_delta);
+        return; 
       }
     }
-    seekRelative(look_at+shift[mem_buffer[buffer_pos+t_delta+look_at]]);
+    bool seek = seekRelative(look_at+shift[mem_buffer[buffer_pos+t_delta+look_at]]);
+    if(!seek)
+    {
+      //printf("next start code: %d\n", seek);
+      //printf("t-search index: %d / %d\n", t_index, look_at+shift[mem_buffer[buffer_pos+t_delta+look_at]]);
+      return;
+    }
+ 
   }while(-1);
 }
 
@@ -739,7 +746,7 @@ bool TTFileBuffer::newPosition( off64_t new_pos )
 {
   /* new position inside memory buffer*/
   if ( new_pos >= buffer_start  &&
-       new_pos <  buffer_end    
+      new_pos <  buffer_end    
      )
   {
     buffer_pos += new_pos - stream_pos;
@@ -751,9 +758,9 @@ bool TTFileBuffer::newPosition( off64_t new_pos )
   else
   {
     if ( new_pos > -1             &&
-	(file_mode  == fm_open_read && new_pos < stream_length) ||
-	((file_mode == fm_open_write || file_mode == fm_create) &&
-	 new_pos < stream_length + 1) )
+        (file_mode  == fm_open_read && new_pos < stream_length) ||
+        ((file_mode == fm_open_write || file_mode == fm_create) &&
+         new_pos < stream_length + 1) )
     {
       /* seek to new Position*/
       stream_pos = lseek64(file_handle, (off64_t)new_pos, SEEK_SET);
@@ -764,9 +771,9 @@ bool TTFileBuffer::newPosition( off64_t new_pos )
       fillBuffer();
 
       if ( stream_pos == new_pos )
-	b_result = true;
+        b_result = true;
       else
-	b_result = false;
+        b_result = false;
     }
     else
       b_result = false;

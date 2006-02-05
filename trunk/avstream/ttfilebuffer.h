@@ -121,6 +121,7 @@ public:
 
 
  private:
+  bool     ts_debug;
   char     file_name[256];     /*..name of opened stream......................*/
   int      file_mode;          /*..open mode: read, write, create.............*/
   int      file_handle;        /*..handle to open stream......................*/
