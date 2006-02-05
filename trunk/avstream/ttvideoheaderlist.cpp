@@ -111,16 +111,16 @@ TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( int index )
     {
       i = index-1;
       while ( at(i)->headerType() != TTMpeg2VideoHeader::sequence_start_code && i > 0 )
-	i--;
+        i--;
 
       index = i;
 
       if ( at(index)->headerType() == TTMpeg2VideoHeader::sequence_start_code )
-	return (TTSequenceHeader*)at( index );
+        return (TTSequenceHeader*)at( index );
       else
       {
-	qDebug( "no sequence found for index: %d",index );
-	return NULL;
+        qDebug( "no sequence found for index: %d",index );
+        return NULL;
       }
     }
   }
