@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/02/2006 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -155,6 +156,8 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
   totalSteps        = t_steps;
   normTotalSteps    = 100000;
 
+  // TODO: use a better float compare method an set finer intervalls
+  
   // manual
   if ( r_int > 0 )
     refresh_intervall = r_int;
@@ -180,9 +183,12 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
       refresh_intervall = 100;
   }
 
+  if( refresh_intervall == 0)
+    refresh_intervall = 200;
+      
   refresh = refresh_intervall;
 
-  //qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
+  qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
 
   progressBar->setTotalSteps( normTotalSteps );
   progressBar->setProgress( -1 );

@@ -113,6 +113,13 @@ bool TTCut::readVideoIDD   = false;
 bool TTCut::readAudioIDD   = false;
 bool TTCut::readPrevIDD    = false;
 
+ // Logfile
+bool TTCut::createLogFile     = true;
+bool TTCut::logModeConsole    = false;
+bool TTCut::logModeExtended   = true;
+bool TTCut::logVideoIndexInfo = false;
+bool TTCut::logAudioIndexInfo = false;
+   
 // --------------------------------------------------------------
 // encoder settings
 // --------------------------------------------------------------

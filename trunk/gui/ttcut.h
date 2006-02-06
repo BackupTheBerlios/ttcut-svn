@@ -138,6 +138,13 @@ class TTCut
    static bool readAudioIDD;
    static bool readPrevIDD;
 
+   // Logfile
+   static bool createLogFile;
+   static bool logModeConsole;
+   static bool logModeExtended;
+   static bool logVideoIndexInfo;
+   static bool logAudioIndexInfo;
+   
    // --------------------------------------------------------------
    // encoder settings
    // --------------------------------------------------------------

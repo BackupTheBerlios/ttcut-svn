@@ -581,6 +581,8 @@ int TTMpeg2VideoStream::createIndexList()
 
     idd_file_version = 0;
 
+    log->infoMsg(c_name, "create header list from IDD: %02x", idd_file_version);
+
     if ( idd_stream->readArray( buffer4, 4 ) )
     {
       // idd index file ?
@@ -610,7 +612,7 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
   TTMpeg2VideoHeader* new_header;
 
   //int failsafe = 0;
-  //log->debugMsg(c_name, "create header from mpleg2");
+  log->debugMsg(c_name, "create header list from mpeg2");
   
   if ( ttAssigned( progress_bar ) )
   {
@@ -671,7 +673,9 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
           break;
       }
 
-      //log->debugMsg(c_name, "header type: %02x", header_type);
+      if( TTCut::logVideoIndexInfo )
+        log->debugMsg(c_name, "header type: %02x - %lld", header_type, mpeg2_stream->currentOffset() );
+
       //log->debugMsg(c_name, "strean EOF: %d", mpeg2_stream->streamEOF());
     
 #ifdef __TTMPEG2
@@ -815,8 +819,9 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
   if ( ttAssigned( progress_bar ) )
   {
     progress_bar->setActionText( "read MPEG2Schnitt idd-file" );
-    progress_bar->resetProgress();
+    //progress_bar->resetProgress();
     progress_bar->setTotalSteps( idd_stream->streamLength() );
+    progress_bar->setProgress(1);
   }
 
   try
@@ -884,7 +889,8 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
         }
       }
     }
-    progress_bar->setComplete();
+    if( ttAssigned(progress_bar) )
+      progress_bar->setComplete();
   }
   catch (...)
   {

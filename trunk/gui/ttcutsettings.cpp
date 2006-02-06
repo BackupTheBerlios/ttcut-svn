@@ -855,12 +855,23 @@ void TTCutFilesSettings::setTabData()
   cbCreateAudioIDD->setChecked( TTCut::createAudioIDD );
   cbReadVideoIDD->setChecked( TTCut::readVideoIDD );
   cbReadAudioIDD->setChecked( TTCut::readAudioIDD );
+
+  cbCreateLog->setChecked( TTCut::createLogFile );
+  cbLogExtended->setChecked( TTCut::logModeExtended );
+  cbLogPlusVideoIndex->setChecked( TTCut::logVideoIndexInfo );
 }
 
 // get the tab data and fill the global parameter
 void TTCutFilesSettings::getTabData()
 {
+  TTCut::createVideoIDD    = cbCreateVideoIDD->isChecked( );
+  TTCut::createAudioIDD    = cbCreateAudioIDD->isChecked( );
+  TTCut::readVideoIDD      = cbReadVideoIDD->isChecked( );
+  TTCut::readAudioIDD      = cbReadAudioIDD->isChecked( );
 
+  TTCut::createLogFile     = cbCreateLog->isChecked( );
+  TTCut::logModeExtended   = cbLogExtended->isChecked( );
+  TTCut::logVideoIndexInfo = cbLogPlusVideoIndex->isChecked( );
 }
 
 // /////////////////////////////////////////////////////////////////////////////
