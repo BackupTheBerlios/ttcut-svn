@@ -107,7 +107,7 @@ const char* c_name = "TTCUTMAINWND  : ";
 // Constructs a TTCutMainWnd as a child of 'parent', with the
 // name 'name' and widget flags set to 'f'.
 // -----------------------------------------------------------------------------
-TTCutMainWnd::TTCutMainWnd( QWidget* parent, const char* name, Qt::WFlags fl )
+TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   : QMainWindow( parent, fl )
     //    image7( (const char **) image7_data )
 {
@@ -139,10 +139,6 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, const char* name, Qt::WFlags fl )
   // initialize
   // ---------------------------------------------------------------------------
   project_file_name.clear();
-
-
-  //QT3if ( !name )
-  //QT3  setName( "TTCutMainWnd" );
 
   (void)statusBar();
 

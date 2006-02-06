@@ -106,7 +106,7 @@ class TTCutMainWnd : public QMainWindow
     Q_OBJECT
 
 public:
-  TTCutMainWnd( QWidget* parent=0, const char* name=0, Qt::WFlags fl=Qt::WType_TopLevel );
+  TTCutMainWnd( QWidget* parent=0, Qt::WFlags fl=Qt::WType_TopLevel );
     ~TTCutMainWnd();
 
     void refreshCurrentPosition();
