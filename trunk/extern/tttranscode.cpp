@@ -36,7 +36,7 @@
 
 const char c_name[] = "TTTRANSCODE";
 
-
+// Create the process form for displaying the output of the encode
 TTTranscodeProvider::TTTranscodeProvider( )
   : TTProcessForm( TTCut::mainWindow )
 {
@@ -55,7 +55,7 @@ TTTranscodeProvider::TTTranscodeProvider( )
   qApp->processEvents();
 }
 
-
+// clean up used resources
 TTTranscodeProvider::~TTTranscodeProvider()
 {
 #if defined (TTTRANSCODE_DEBUG)
@@ -67,18 +67,19 @@ TTTranscodeProvider::~TTTranscodeProvider()
   qApp->processEvents();
 }
 
+// parameter for the encoder
 void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 {
 #if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%s----------------------------------------------------",c_name );
-  qDebug( "%stranscode parameter:",c_name );
-  qDebug( "%s----------------------------------------------------",c_name );
-  qDebug( "%savi-file    : %s",c_name,enc_par.avi_input_finfo.absoluteFilePath().ascii() );
-  qDebug( "%smpeg-file   : %s",c_name,enc_par.mpeg2_output_finfo.absoluteFilePath().ascii() );
-  qDebug( "%swidhtxheight: %dx%d",c_name,enc_par.video_width,enc_par.video_height );
-  qDebug( "%saspect-code : %d",c_name,enc_par.video_aspect_code );
-  qDebug( "%sbitrate     : %f",c_name,enc_par.video_bitrate );
-  qDebug( "%s----------------------------------------------------",c_name );
+  log->infoMsg( c_name, "----------------------------------------------------" );
+  log->infoMsg( c_name, "transcode parameter:" );
+  log->infoMsg( c_name, "----------------------------------------------------" );
+  log->infoMsg( c_name, "avi-file    : %s",enc_par.avi_input_finfo.absoluteFilePath().ascii() );
+  log->infoMsg( c_name, "mpeg-file   : %s",enc_par.mpeg2_output_finfo.absoluteFilePath().ascii() );
+  log->infoMsg( c_name, "widhtxheight: %dx%d",enc_par.video_width,enc_par.video_height );
+  log->infoMsg( c_name, "aspect-code : %d",enc_par.video_aspect_code );
+  log->infoMsg( c_name, "bitrate     : %f",enc_par.video_bitrate );
+  log->infoMsg( c_name, "----------------------------------------------------" );
 #endif
 
   //transcode -i encode.avi --pre_clip 0 -y ffmpeg --export_prof dvd-pal --export_asr 2 -o encode
@@ -103,6 +104,7 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
   log->infoMsg(c_name, strl_command_line.join(" "));
 }
 
+// create encoder process and start it
 bool TTTranscodeProvider::encodePart( )    
 {
   int update = 100;
@@ -120,10 +122,13 @@ bool TTTranscodeProvider::encodePart( )
   connect( transcode_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(transcodeError(QProcess::ProcessError)));
   connect( transcode_proc, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(transcodeState(QProcess::ProcessState)));
 
+  log->infoMsg( c_name, "start transcode process" );
+
 #if defined (TTTRANSCODE_DEBUG)
   qDebug( "%sstarting transcode...",c_name );
 #endif
 
+  // start the process; if successfully started() was emitted otherwise error()
   transcode_proc->start( str_command, strl_command_line );
   
   if ( !transcode_proc->waitForStarted() )
@@ -211,6 +216,7 @@ void TTTranscodeProvider::transcodeReadOut()
   }
 }
 
+// process successfully started
 void TTTranscodeProvider::transcodeStarted()
 {
   char       temp_str[101];
@@ -253,15 +259,13 @@ void TTTranscodeProvider::transcodeFinish( int e_code )
   exit_code = e_code;
 }
 
-
+// process error
 void TTTranscodeProvider::transcodeError( __attribute__ ((unused))QProcess::ProcessError proc_error )
 {
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%serror: %d",c_name, proc_error );
-#endif
+  log->errorMsg( c_name, "error: %d", proc_error );
 }
 
-
+// process state changed
 void TTTranscodeProvider::transcodeState( __attribute__ ((unused))QProcess::ProcessState proc_state )
 {
 #if defined (TTTRANSCODE_DEBUG)
