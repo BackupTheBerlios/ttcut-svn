@@ -188,7 +188,7 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
       
   refresh = refresh_intervall;
 
-  qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
+  //qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
 
   progressBar->setTotalSteps( normTotalSteps );
   progressBar->setProgress( -1 );
