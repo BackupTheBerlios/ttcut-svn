@@ -1529,7 +1529,7 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
   TTEncodeParameter enc_par;
   QDir temp_dir( TTCut::tempDirPath );
   QString avi_out_file   = "encode.avi";
-  QString mpeg2_out_file = "encode";
+  QString mpeg2_out_file = "encode"; // extension is added by transcode (!)
   new_file_info.setFile( temp_dir, "encode.avi" );
 
   enc_par.avi_input_finfo.setFile( temp_dir, avi_out_file );
