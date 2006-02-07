@@ -793,7 +793,8 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
         progress_bar->setProgress( index );
     }
 
-    progress_bar->setComplete();
+    if( ttAssigned(progress_bar) )
+      progress_bar->setComplete();
 
     // write sequence end header type
     buffer[0] = 0xB7;
