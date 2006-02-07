@@ -2948,9 +2948,10 @@ void TTCutMainWnd::checkCutPosition()
 // and update the bitrate in the video stream properties display
 void TTCutMainWnd::refreshCurrentPosition()
 {
-  QString      szTemp1, szTemp2;
-  double       fBitRate;
-  int          frame_type = mpeg2_stream->currentFrameType();
+  QString szTemp;
+  QString szTemp1, szTemp2;
+  //double  fBitRate;
+  int     frame_type = mpeg2_stream->currentFrameType();
 
   szTemp1 = mpeg2_stream->currentFrameTime().toString("hh:mm:ss.zzz");
 
@@ -2965,12 +2966,28 @@ void TTCutMainWnd::refreshCurrentPosition()
 
   tlCurrentPosition->update();
 
-  fBitRate = (double) mpeg2_stream->bitRate() * 8.0; // (double)1000.0;
-  szTemp1.sprintf( "%4.1lf kBit/s", fBitRate );
-  tlBitRate->setText( szTemp1 );
+  //fBitRate = (double) mpeg2_stream->bitRate() * 8.0; // (double)1000.0;
+  //szTemp1.sprintf( "%4.1lf kBit/s", fBitRate );
+  //tlBitRate->setText( szTemp1 );
+  //tlBitRate->update();
 
-  tlBitRate->update();
-
+  // set aspect
+  tlVideoAspect->setText( mpeg2_stream->currentSequenceHeader()->aspectRatioText() );
+ tlVideoAspect->update();
+ 
+  // set framerate
+  tlFrameRate->setText( mpeg2_stream->currentSequenceHeader()->frameRateText() );
+ tlFrameRate->update();
+ 
+  // set bitrate
+  szTemp.sprintf( "%4.1f kBit/s", mpeg2_stream->currentSequenceHeader()->bitRateKbit() );
+  tlBitRate->setText( szTemp );
+ tlBitRate->update();
+ 
+  // set VBV buffer size
+  szTemp.sprintf( "%d kWords",mpeg2_stream->currentSequenceHeader()->vbvBufferSize() );
+  tlVbvBuffer->setText( szTemp );
+  tlVbvBuffer->update();
   //qApp->processEvents();
 }
 
