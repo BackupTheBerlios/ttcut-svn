@@ -122,7 +122,7 @@ bool TTTranscodeProvider::encodePart( )
   log->debugMsg( c_name, "set signal and slot connection..." );
   connect( transcode_proc, SIGNAL(readyRead()),this,SLOT(transcodeReadOut()) );
   connect( transcode_proc, SIGNAL(started()),this,SLOT(transcodeStarted()) );
-  connect( transcode_proc, SIGNAL(finished(int, QProcess::ExitStatus)),this,SLOT(transcodeFinish(int)) );
+  connect( transcode_proc, SIGNAL(finished(int, QProcess::ExitStatus)),this,SLOT(transcodeFinish(int, QProcess::ExitStatus)) );
   connect( transcode_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(transcodeError(QProcess::ProcessError)));
   connect( transcode_proc, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(transcodeState(QProcess::ProcessState)));
 

@@ -479,7 +479,7 @@ void TTCutPreview::playPreview()
 {
   if ( !isPlaying )
   {
-    //qDebug( "Start playing preview: %s",current_video_file.ascii() );
+    log->debugMsg( c_name, "Start playing preview: %s",current_video_file.toAscii().data() );
 
     // create mplayer process
     mplayerProc = new QProcess( );
