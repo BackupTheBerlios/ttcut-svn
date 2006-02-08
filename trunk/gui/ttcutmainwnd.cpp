@@ -1833,6 +1833,18 @@ void TTCutMainWnd::openVideoFile()
     // TODO: check for further extension like *.ac3, *.mp2 etc.	
     audio_file_name = ttChangeFileExt( fn, "mpa" );
 
+    QFileInfo* audioInfo = new QFileInfo(audio_file_name);
+
+    if(!audioInfo->exists()){
+      audio_file_name = ttChangeFileExt( fn, "mp2" );
+      audioInfo->setFile( audio_file_name );
+
+      if(!audioInfo->exists())
+        audio_file_name = ttChangeFileExt( fn, "ac3" );
+        }
+
+    delete audioInfo;
+
     // analyze and load video audio streams
     createAVStreams( );
   }
