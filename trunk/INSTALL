@@ -7,8 +7,8 @@ Eine kurze Anleitung um TTCut unter LINUX zu uebersetzen.
 1. Benoetigte Bibliotheken (dev- und runtime-Packete)
 -----------------------------------------------------
 
-Trolltech's Qt-Bibliothek (4.0 und OpenGL Unterstuetzung) Debian: 4.0.0-3
-libmpeg-dec               (>= 0.4.0)                      Debian: 0.4.0b-2.1
+Trolltech's Qt-Bibliothek (4.1 und OpenGL Unterstuetzung) 
+libmpeg-dec               (>= 0.4.0)                      
 
 
 2. Benoetigte Hilfsprogramme
@@ -49,6 +49,11 @@ Geschwindigkeit beim Analysieren des Videos.
 
 TTCut entweder im lokalen Verzeichnis ausfuehren oder z.B nach
 /usr/local/bin kopieren.
+
+4. Bedienung
+------------
+
+http://ttcut.tritime.org
 
 
 4. Probleme
