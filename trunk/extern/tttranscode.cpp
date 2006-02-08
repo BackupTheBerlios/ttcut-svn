@@ -109,39 +109,38 @@ bool TTTranscodeProvider::encodePart( )
 {
   int update = 100;
 
+  
   // create the process object for transcode
+  log->debugMsg( c_name, "before instantiate QProcess ;-)" );
   transcode_proc = new QProcess();
-
+  
   // read both channels: stderr and stdout
+  log->debugMsg( c_name, "set read channel mode ..." );
   transcode_proc->setReadChannelMode( QProcess::MergedChannels );
 
   // signal and slot connection
+  log->debugMsg( c_name, "set signal and slot connection..." );
   connect( transcode_proc, SIGNAL(readyRead()),this,SLOT(transcodeReadOut()) );
   connect( transcode_proc, SIGNAL(started()),this,SLOT(transcodeStarted()) );
-  connect( transcode_proc, SIGNAL(finished(int)),this,SLOT(transcodeFinish(int)) );
+  connect( transcode_proc, SIGNAL(finished(int, QProcess::ExitStatus)),this,SLOT(transcodeFinish(int)) );
   connect( transcode_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(transcodeError(QProcess::ProcessError)));
   connect( transcode_proc, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(transcodeState(QProcess::ProcessState)));
 
-  log->infoMsg( c_name, "start transcode process" );
-
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%sstarting transcode...",c_name );
-#endif
 
   // start the process; if successfully started() was emitted otherwise error()
+  log->infoMsg( c_name, "start transcode process" );
   transcode_proc->start( str_command, strl_command_line );
   
   if ( !transcode_proc->waitForStarted() )
   {
-#if defined (TTTRANSCODE_DEBUG)
-    qDebug( "%serror in waitForStarted: %d",c_name,transcode_proc->state() );
-#endif
+    log->debugMsg( c_name, "error in waitForStarted: %d",transcode_proc->state() );
 
     delete transcode_proc;
 
     return transcode_success;
   }
 
+  log->debugMsg( c_name, "start emergency timer..." );
   QTimer *timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(transcodeKill()));
   timer->start(60000);
@@ -185,9 +184,12 @@ void TTTranscodeProvider::transcodeReadOut()
   QString    line;
   QByteArray ba;
 
+    
   if ( transcode_proc->state() == QProcess::Running )
   {
     ba = transcode_proc->readAll();
+
+    log->debugMsg( c_name, "transcodeReadOut: %d", ba.size() );
 
     i_pos = 0;
 
@@ -230,6 +232,8 @@ void TTTranscodeProvider::transcodeStarted()
 
   ba = transcode_proc->readAll();
 
+  log->debugMsg( c_name, "byte array length: %d", ba.size() );
+  
   i_pos = 0;
 
   for ( i = 0; i < ba.size(); ++i) 
@@ -250,11 +254,9 @@ void TTTranscodeProvider::transcodeStarted()
   }
 }
 
-void TTTranscodeProvider::transcodeFinish( int e_code )
+void TTTranscodeProvider::transcodeFinish( int e_code, QProcess::ExitStatus e_status )
 {
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%stranscode finish: %d",c_name,e_code );
-#endif
+  log->debugMsg( c_name, "transcode finish: %d/%d", e_code, e_status );
 
   exit_code = e_code;
 }

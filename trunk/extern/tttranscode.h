@@ -54,7 +54,7 @@ class TTTranscodeProvider : public TTProcessForm
   public slots:
   void transcodeReadOut();
   void transcodeStarted();
-  void transcodeFinish(int exit_code );
+  void transcodeFinish(int exit_code, QProcess::ExitStatus );
   void transcodeError(QProcess::ProcessError proc_error);
   void transcodeState(QProcess::ProcessState proc_state);
   void transcodeKill();
