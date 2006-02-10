@@ -25,8 +25,8 @@
 /*----------------------------------------------------------------------------*/
 
 // Qt headers
-#include <qapplication.h>
-#include <qgl.h>
+#include <QApplication>
+#include <QGLFormat>
 
 // class declaration for the main window class
 #include "ttcutmainwnd.h"
@@ -45,10 +45,10 @@ int main( int argc, char **argv )
    // Application main widget
    TTCutMainWnd* mainWnd = new TTCutMainWnd();
    
-   a.setMainWidget( mainWnd );
+   //QT3: a.setMainWidget( mainWnd );
 
    // Caption text in applications title bar
-   mainWnd->setCaption( TTCut::versionString );
+   mainWnd->setWindowTitle( TTCut::versionString );
    mainWnd->show();
    
    // set initial size of applications main window

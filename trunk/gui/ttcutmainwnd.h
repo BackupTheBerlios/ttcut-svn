@@ -36,15 +36,7 @@
 #ifndef TTCUTMAINWND_H
 #define TTCUTMAINWND_H
 
-#include <qvariant.h>
-#include <qpixmap.h>
-//#include <q3mainwindow.h>
-#include <qscrollbar.h>
-#include <qthread.h>
-//Added by qt3to4:
 #include <QMainWindow>
-#include <Q3ActionGroup>
-
 #include <QWheelEvent>
 #include <QFocusEvent>
 #include <QGridLayout>
@@ -53,8 +45,6 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QResizeEvent>
-
-
 #include <QMenuBar>
 #include <QFileDialog>
 

@@ -37,27 +37,19 @@
 
 // Qt header
 // -----------------------------------------------------------------------------
-#include <qapplication.h>
-#include <qvariant.h>
-#include <qpushbutton.h>
-#include <qscrollbar.h>
-#include <q3header.h>
-#include <q3listview.h>
-#include <qlabel.h>
-#include <q3frame.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
-#include <qaction.h>
-#include <qmenubar.h>
-#include <q3popupmenu.h>
-#include <q3toolbar.h>
-#include <qimage.h>
-#include <qpixmap.h>
-#include <qfile.h>
-#include <q3filedialog.h>
-#include <q3process.h>
-//Added by qt3to4:
+#include <QApplication>
+#include <QVariant>
+#include <QPushButton>
+#include <QScrollBar>
+#include <QLabel>
+#include <QLayout>
+#include <QToolTip>
+#include <QAction>
+#include <QMenuBar>
+#include <QImage>
+#include <QPixmap>
+#include <QFile>
+#include <QProcess>
 #include <QWheelEvent>
 #include <QFocusEvent>
 #include <QGridLayout>
@@ -186,27 +178,35 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   // --------------------------------------------------------------------------
 
   // file-menu
-  fileNewAction        = new QAction( this, "fileNewAction" );
-  fileNewAction->setIconSet( QIcon( *(TTCut::imgFileNew) ) );
-  fileOpenAction       = new QAction( this, "fileOpenAction" );
-  fileOpenAction->setIconSet( QIcon( *(TTCut::imgFileOpen) ) );
-  fileSaveAction       = new QAction( this, "fileSaveAction" );
-  fileSaveAction->setIconSet( QIcon( *(TTCut::imgFileSave) ) );
-  fileSaveAsAction     = new QAction( this, "fileSaveAsAction" );
-  fileSaveAsAction->setIconSet( QIcon( *(TTCut::imgFileSaveAs) ) );
-  fileExitAction       = new QAction( this, "fileExitAction" );
-  fileExitAction->setIconSet( QIcon( *(TTCut::imgExit) ) );
-  fileRecentAction     = new QAction( this, "fileRecentAction" );
-  fileRecentAction     = new QAction( this, "fileRecentAction" );
+  fileNewAction        = new QAction( this);
+  fileNewAction->setObjectName( "fileNewAction" );
+  fileNewAction->setIcon( QIcon( *(TTCut::imgFileNew) ) );
+  fileOpenAction       = new QAction( this );
+  fileOpenAction->setObjectName( "fileOpenAction" );
+  fileOpenAction->setIcon( QIcon( *(TTCut::imgFileOpen) ) );
+  fileSaveAction       = new QAction( this );
+  fileSaveAction->setObjectName( "fileSaveAction" );
+  fileSaveAction->setIcon( QIcon( *(TTCut::imgFileSave) ) );
+  fileSaveAsAction     = new QAction( this );
+  fileSaveAsAction->setObjectName( "fileSaveAsAction" );
+  fileSaveAsAction->setIcon( QIcon( *(TTCut::imgFileSaveAs) ) );
+  fileExitAction       = new QAction( this );
+  fileExitAction->setObjectName( "fileExitAction" );
+  fileExitAction->setIcon( QIcon( *(TTCut::imgExit) ) );
+  fileRecentAction     = new QAction( this );
+  fileRecentAction->setObjectName( "fileRecentAction" );
 
   // actions-menu
-  actionSaveAction     = new QAction( this, "editUndoAction" );
-  actionSaveAction->setIconSet( QIcon( *(TTCut::imgSaveImage) ) );
-  actionSettingsAction = new QAction( this, "editRedoAction" );
-  actionSettingsAction->setIconSet( QIcon( *(TTCut::imgSettings) ) );
+  actionSaveAction     = new QAction( this );
+  actionSaveAction->setObjectName( "actionSaveAction" );
+  actionSaveAction->setIcon( QIcon( *(TTCut::imgSaveImage) ) );
+  actionSettingsAction = new QAction( this );
+  actionSettingsAction->setObjectName( "actionSettingsAction" );
+  actionSettingsAction->setIcon( QIcon( *(TTCut::imgSettings) ) );
 
   // help-menu
-  helpAboutAction      = new QAction( this, "helpAboutAction" );
+  helpAboutAction      = new QAction( this );
+  helpAboutAction->setObjectName( "helpAboutAction" );
 
 
   // --------------------------------------------------------------------------
@@ -425,7 +425,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   // --------------------------------------------------------------------------
   pbOpenVideoFile = new QPushButton(gbVideoFile);
   pbOpenVideoFile->setObjectName(QString::fromUtf8("pbOpenVideoFile"));
-  pbOpenVideoFile->setPixmap( *(TTCut::imgFileOpen24) );
+  pbOpenVideoFile->setIcon( QIcon(*(TTCut::imgFileOpen24)) );
   pbOpenVideoFile->setMinimumSize(QSize(30, 30));
   pbOpenVideoFile->setMaximumSize(QSize(30, 30));
   gridLayout7->addWidget(pbOpenVideoFile, 0, 0, 2, 1);
@@ -473,7 +473,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
 
   pbOpenAudioFile = new QPushButton(gbAudioFiles);
   pbOpenAudioFile->setObjectName(QString::fromUtf8("pbOpenAudioFile"));
-  pbOpenAudioFile->setPixmap( *(TTCut::imgFileOpen24) );
+  pbOpenAudioFile->setIcon( QIcon(*(TTCut::imgFileOpen24)) );
   pbOpenAudioFile->setMinimumSize(QSize(30, 30));
   pbOpenAudioFile->setMaximumSize(QSize(30, 30));
   
@@ -481,7 +481,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   
   pbAudioFileUp = new QPushButton(gbAudioFiles);
   pbAudioFileUp->setObjectName(QString::fromUtf8("pbAudioFileUp"));
-  pbAudioFileUp->setPixmap( *(TTCut::imgUpArrow) );
+  pbAudioFileUp->setIcon( QIcon(*(TTCut::imgUpArrow)) );
   pbAudioFileUp->setMinimumSize(QSize(30, 24));
   pbAudioFileUp->setMaximumSize(QSize(30, 24));
   
@@ -489,7 +489,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   
   pbAudioFileDown = new QPushButton(gbAudioFiles);
   pbAudioFileDown->setObjectName(QString::fromUtf8("pbAudioFileDown"));
-  pbAudioFileDown->setPixmap( *(TTCut::imgDownArrow) );
+  pbAudioFileDown->setIcon( QIcon(*(TTCut::imgDownArrow)) );
   pbAudioFileDown->setMinimumSize(QSize(30, 24));
   pbAudioFileDown->setMaximumSize(QSize(30, 24));
   
@@ -554,7 +554,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   // cut-out frame search frame
   pbSearchFrame = new QPushButton(gbCutOutFrame);
   pbSearchFrame->setObjectName(QString::fromUtf8("pbSearchFrame"));
-  pbSearchFrame->setIconSet( QIcon( *(TTCut::imgSearch) ) );
+  pbSearchFrame->setIcon( QIcon( *(TTCut::imgSearch) ) );
   QSizePolicy sizePolicy4((QSizePolicy::Policy)1, (QSizePolicy::Policy)0);
   sizePolicy4.setHorizontalStretch(0);
   sizePolicy4.setVerticalStretch(1);
@@ -606,7 +606,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   // --------------------------------------------------------------------------
   pbPlayVideo = new QPushButton(gbCurrentFrame);
   pbPlayVideo->setObjectName(QString::fromUtf8("pbPlayVideo"));
-  pbPlayVideo->setPixmap( *(TTCut::imgPlay) );
+  pbPlayVideo->setIcon( QIcon(*(TTCut::imgPlay)) );
   QSizePolicy sizePolicy6((QSizePolicy::Policy)1, (QSizePolicy::Policy)0);
   sizePolicy6.setHorizontalStretch(0);
   sizePolicy6.setVerticalStretch(1);
@@ -755,7 +755,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
 
   pbGotoCutIn = new QPushButton(gbNavigation);
   pbGotoCutIn->setObjectName(QString::fromUtf8("pbGotoCutIn"));
-  pbGotoCutIn->setIconSet( QIconSet( *(TTCut::imgGoTo) ) );
+  pbGotoCutIn->setIcon( QIconSet( *(TTCut::imgGoTo) ) );
   pbGotoCutIn->setMinimumSize(QSize(52, 20));
   pbGotoCutIn->setMaximumSize(QSize(100, 28));
   gridLayout3->addWidget(pbGotoCutIn, 5, 0, 1, 2);
@@ -767,7 +767,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   
   pbGotoCutOut = new QPushButton(gbNavigation);
   pbGotoCutOut->setObjectName(QString::fromUtf8("pbGotoCutOut"));
-  pbGotoCutOut->setIconSet( QIconSet( *(TTCut::imgGoTo) ) );
+  pbGotoCutOut->setIcon( QIconSet( *(TTCut::imgGoTo) ) );
   pbGotoCutOut->setMinimumSize(QSize(52, 20));
   pbGotoCutOut->setMaximumSize(QSize(100, 28));
   gridLayout3->addWidget(pbGotoCutOut, 6, 0, 1, 2);
@@ -801,7 +801,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   
   pbSetMarker = new QPushButton(gbNavigation);
   pbSetMarker->setObjectName(QString::fromUtf8("pbSetMarker"));
-  pbSetMarker->setIconSet( QIconSet( *(TTCut::imgMarker) ) );
+  pbSetMarker->setIcon( QIconSet( *(TTCut::imgMarker) ) );
   pbSetMarker->setMinimumSize(QSize(52, 20));
   pbSetMarker->setMaximumSize(QSize(300, 28));
   
@@ -816,7 +816,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
   
   pbAddCut = new QPushButton(gbNavigation);
   pbAddCut->setObjectName(QString::fromUtf8("pbAddCut"));
-  pbAddCut->setIconSet( QIconSet( *(TTCut::imgAddToList) ) );
+  pbAddCut->setIcon( QIconSet( *(TTCut::imgAddToList) ) );
   pbAddCut->setMinimumSize(QSize(52, 20));
   pbAddCut->setMaximumSize(QSize(600, 600));
   
@@ -884,7 +884,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
 
   pbChapter = new QPushButton(centralWidget);
   pbChapter->setObjectName(QString::fromUtf8("pbChapter"));
-  pbChapter->setIconSet( QIcon( *(TTCut::imgChapter) ) );
+  pbChapter->setIcon( QIcon( *(TTCut::imgChapter) ) );
   pbChapter->setMinimumSize(QSize(52, 24));
   pbChapter->setMaximumSize(QSize(300, 28));
   
@@ -892,7 +892,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
 
   pbCutPreview = new QPushButton(centralWidget);
   pbCutPreview->setObjectName(QString::fromUtf8("pbCutPreview"));
-  pbCutPreview->setIconSet( QIcon( *(TTCut::imgPreview) ) );
+  pbCutPreview->setIcon( QIcon( *(TTCut::imgPreview) ) );
   pbCutPreview->setMinimumSize(QSize(52, 24));
   pbCutPreview->setMaximumSize(QSize(300, 28));
   
@@ -900,7 +900,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
 
   pbVideoAudioCut = new QPushButton(centralWidget);
   pbVideoAudioCut->setObjectName(QString::fromUtf8("pbVideoAudioCut"));
-  pbVideoAudioCut->setIconSet( QIcon( *(TTCut::imgCutAV) ) );
+  pbVideoAudioCut->setIcon( QIcon( *(TTCut::imgCutAV) ) );
   pbVideoAudioCut->setMinimumSize(QSize(52, 24));
   pbVideoAudioCut->setMaximumSize(QSize(300, 28));
 
@@ -909,7 +909,7 @@ TTCutMainWnd::TTCutMainWnd( QWidget* parent, Qt::WFlags fl )
 
   pbAudioCut = new QPushButton(centralWidget);
   pbAudioCut->setObjectName(QString::fromUtf8("pbAudioCut"));
-  pbAudioCut->setIconSet( QIcon( *(TTCut::imgCutAudio) ) );
+  pbAudioCut->setIcon( QIcon( *(TTCut::imgCutAudio) ) );
   pbAudioCut->setMinimumSize(QSize(52, 24));
   pbAudioCut->setMaximumSize(QSize(300, 28));
   
@@ -1011,7 +1011,7 @@ void TTCutMainWnd::languageChange()
 {
   // Caption for main window title
   // --------------------------------------------------------------------------
-  setCaption( tr( "TTCut 0.10a" ) );
+  setWindowTitle( tr( "TTCut 0.10a" ) );
 
   // video stream section
   // --------------------------------------------------------------------------
@@ -1093,34 +1093,34 @@ void TTCutMainWnd::languageChange()
   // application menu bar
   // --------------------------------------------------------------------------
   fileNewAction->setText( tr( "New" ) );
-  fileNewAction->setMenuText( tr( "&New" ) );
-  fileNewAction->setAccel( tr( "Ctrl+N" ) );
+  //QT3: fileNewAction->setMenuText( tr( "&New" ) );
+  fileNewAction->setShortcut( QKeySequence(tr( "Ctrl+N" )) );
   fileOpenAction->setText( tr( "Open" ) );
-  fileOpenAction->setMenuText( tr( "&Open..." ) );
-  fileOpenAction->setAccel( tr( "Ctrl+O" ) );
+  //QT3: fileOpenAction->setMenuText( tr( "&Open..." ) );
+  fileOpenAction->setShortcut( QKeySequence(tr( "Ctrl+O" )) );
   fileSaveAction->setText( tr( "Save" ) );
-  fileSaveAction->setMenuText( tr( "&Save" ) );
-  fileSaveAction->setAccel( tr( "Ctrl+S" ) );
+  //QT3: fileSaveAction->setMenuText( tr( "&Save" ) );
+  fileSaveAction->setShortcut( QKeySequence(tr( "Ctrl+S" )) );
   fileSaveAsAction->setText( tr( "Save as ..." ) );
-  fileSaveAsAction->setMenuText( tr( "Save as ..." ) );
-  //QT4: fileSaveAsAction->setAccel( QString::null );
+  //QT3: fileSaveAsAction->setMenuText( tr( "Save as ..." ) );
+  //QT3: fileSaveAsAction->setAccel( QString::null );
   fileRecentAction->setText( tr( "Recent projects ..." ) );
-  fileRecentAction->setMenuText( tr( "Recent projects ..." ) );
-  //QT4: fileRecentAction->setAccel( QString::null );
-  fileExitAction->setText( tr( "E%xit" ) );
-  fileExitAction->setMenuText( tr( "E&xit" ) );
-  fileExitAction->setAccel( tr("Ctrl+X") );
+  //QT3: fileRecentAction->setMenuText( tr( "Recent projects ..." ) );
+  //QT3: fileRecentAction->setAccel( QString::null );
+  fileExitAction->setText( tr( "Exit" ) );
+  //QT3: fileExitAction->setMenuText( tr( "E&xit" ) );
+  fileExitAction->setShortcut( QKeySequence(tr("Ctrl+X")) );
 
   actionSaveAction->setText( tr( "Save current frame" ) );
-  actionSaveAction->setMenuText( tr( "Save current frame" ) );
-  //QT4: actionSaveAction->setAccel( QString::null );
+  //QT3: actionSaveAction->setMenuText( tr( "Save current frame" ) );
+  //QT3: actionSaveAction->setAccel( QString::null );
   actionSettingsAction->setText( tr( "Settings ..." ) );
-  actionSettingsAction->setMenuText( tr( "Settings ..." ) );
-  //QT4: actionSettingsAction->setAccel( QString::null );
+  //QT3: actionSettingsAction->setMenuText( tr( "Settings ..." ) );
+  //QT3: actionSettingsAction->setAccel( QString::null );
 
   helpAboutAction->setText( tr( "About" ) );
-  helpAboutAction->setMenuText( tr( "&About" ) );
-  //QT4: helpAboutAction->setAccel( QString::null );
+  //QT3: helpAboutAction->setMenuText( tr( "&About" ) );
+  //QT3: helpAboutAction->setAccel( QString::null );
 }
 
 
@@ -1164,15 +1164,15 @@ void TTCutMainWnd::keyPressEvent ( QKeyEvent * e )
   // ---------------------------------------------------------------------------
   case Qt::Key_Left:
     // backward TTCut::stepPlusAlt
-    if ( e->state() == Qt::AltButton )
+    if ( e->modifiers() == Qt::AltModifier )
       position = current_frame_pos-TTCut::stepPlusAlt;
 
     // backward TTCut::stepPlusCtrl
-    else if( e->state() == Qt::ControlButton )
+    else if( e->modifiers() == Qt::ControlModifier )
       position = current_frame_pos-TTCut::stepPlusCtrl;
 
     // backward TTCut::stepPlusShift
-    else if( e->state() == Qt::ShiftButton )
+    else if( e->modifiers() == Qt::ShiftModifier )
       position = current_frame_pos-TTCut::stepPlusShift;
 
     // backward one frame
@@ -1188,15 +1188,15 @@ void TTCutMainWnd::keyPressEvent ( QKeyEvent * e )
   // ---------------------------------------------------------------------------
   case Qt::Key_Right:
     // forward TTCut::stepPlusAlt
-    if ( e->state() == Qt::AltButton )
+    if ( e->modifiers() == Qt::AltModifier )
       position = current_frame_pos+TTCut::stepPlusAlt;
 
     // forward TTCut::stepPlusCtrl
-    else if( e->state() == Qt::ControlButton )
+    else if( e->modifiers() == Qt::ControlModifier )
       position = current_frame_pos+TTCut::stepPlusCtrl;
 
     // forward TTCut::stepPlusShift
-    else if( e->state() == Qt::ShiftButton )
+    else if( e->modifiers() == Qt::ShiftModifier )
       position = current_frame_pos+TTCut::stepPlusShift;
 
     // forward one frame
@@ -1248,7 +1248,7 @@ void TTCutMainWnd::keyPressEvent ( QKeyEvent * e )
   // ---------------------------------------------------------------------------
   case Qt::Key_I:
     // previous I-Frame
-    if ( e->state() == Qt::ControlButton )
+    if ( e->modifiers() == Qt::ControlModifier )
       gotoPrevIFrame();
     // next I-frame
     else
@@ -1259,7 +1259,7 @@ void TTCutMainWnd::keyPressEvent ( QKeyEvent * e )
   // ---------------------------------------------------------------------------
   case Qt::Key_P:
     // previous P-Frame
-    if ( e->state() == Qt::ControlButton )
+    if ( e->modifiers() == Qt::ControlModifier )
       gotoPrevPFrame();
     // next P-frame
     else
@@ -1270,7 +1270,7 @@ void TTCutMainWnd::keyPressEvent ( QKeyEvent * e )
   // ---------------------------------------------------------------------------
   case Qt::Key_B:
     // previous B-Frame
-    if ( e->state() == Qt::ControlButton )
+    if ( e->modifiers() == Qt::ControlModifier )
       gotoPrevFrame();
     // next B-frame
     else
@@ -1331,7 +1331,7 @@ void TTCutMainWnd::wheelEvent( QWheelEvent* e )
 
   //qDebug( "Wheel delta: %d - steps: %d",e->delta(),iDeltaMod );
 
-  if ( e->state() == Qt::ControlButton )
+  if ( e->modifiers() == Qt::ControlModifier )
     iDeltaMod += TTCut::stepPlusCtrl;
 
   // wheel was rotated forwards away from the user
@@ -1498,8 +1498,8 @@ void TTCutMainWnd::fileOpen()
 	cutOutFrameWnd->moveToFirstFrame( false );
 	
 	// set the slider range
-	sbVideoPosition->setMinValue( 0 );
-	sbVideoPosition->setMaxValue( mpeg2_stream->frameCount()-1 );
+	sbVideoPosition->setMinimum( 0 );
+	sbVideoPosition->setMaximum( mpeg2_stream->frameCount()-1 );
 	
 	// initialize current frame position
 	mpeg2_stream->setCurrentIndex( (uint)0 );
@@ -1722,6 +1722,7 @@ void TTCutMainWnd::actionSave()
   QString      szTemp;
   QString      extension;
   QString      format;
+  QStringList  fileList;
   QString      fileName;
   QFileDialog* fileDlg;
 
@@ -1736,14 +1737,15 @@ void TTCutMainWnd::actionSave()
 			     "Portable Network Graphics (*.png);;JPEG (*.jpg);;Bitmap (*.bmp)" );
   
   // enable specifying a file that doesn't exist
-  fileDlg->setMode( QFileDialog::AnyFile );
+  fileDlg->setFileMode( QFileDialog::AnyFile );
   fileDlg->setAcceptMode( QFileDialog::AcceptSave );
 
   // input filename specified
   if ( fileDlg->exec() == QDialog::Accepted )
   {
      szTemp   = fileDlg->selectedFilter();
-     fileName = fileDlg->selectedFile();
+     fileList = fileDlg->selectedFiles();
+     fileName = fileList.at(0);
 
      if ( szTemp == "Portable Network Graphics (*.png)" )
      {
@@ -1766,12 +1768,12 @@ void TTCutMainWnd::actionSave()
        return;
      }
 
-     fileName = ttChangeFileExt( fileName, extension );
+     fileName = ttChangeFileExt( fileName, extension.toAscii().data() );
      
      //qDebug( "selected filter   : %s",szTemp.ascii() );
      //qDebug( "selected file name: %s",fileName.ascii() );
 
-     currentFrameWnd->saveCurrentFrame( fileName, format );
+     currentFrameWnd->saveCurrentFrame( fileName, format.toAscii().data() );
   }
   delete fileDlg;
 }
@@ -1831,6 +1833,7 @@ void TTCutMainWnd::openVideoFile()
     
     // check for corresponding first audiofile
     // TODO: check for further extension like *.ac3, *.mp2 etc.	
+    // TODO: this is just a quick workaround, needs a better method ;-)
     audio_file_name = ttChangeFileExt( fn, "mpa" );
 
     QFileInfo* audioInfo = new QFileInfo(audio_file_name);
@@ -1841,7 +1844,7 @@ void TTCutMainWnd::openVideoFile()
 
       if(!audioInfo->exists())
         audio_file_name = ttChangeFileExt( fn, "ac3" );
-        }
+    }
 
     delete audioInfo;
 
@@ -1996,7 +1999,7 @@ void TTCutMainWnd::createAVStreams( )
     // wrong audio type
     else
     {
-      qDebug( "%swrong audio type for file: %s",c_name,audio_file_name.ascii() );
+      qDebug( "%swrong audio type for file: %s",c_name,audio_file_name.toAscii().data() );
 
       delete audio_type;
 
@@ -2030,8 +2033,8 @@ void TTCutMainWnd::createAVStreams( )
     cutOutFrameWnd->moveToFirstFrame( false );
      
     // set the slider range
-    sbVideoPosition->setMinValue( 0 );
-    sbVideoPosition->setMaxValue( mpeg2_stream->frameCount()-1 );
+    sbVideoPosition->setMinimum( 0 );
+    sbVideoPosition->setMaximum( mpeg2_stream->frameCount()-1 );
 
     // initialize current frame position
     mpeg2_stream->setCurrentIndex( (uint)0 );
@@ -2152,7 +2155,7 @@ void TTCutMainWnd::openAudioFile()
     // wrong audio type
     else
     {
-      qDebug( "%swrong audio type for file: %s",c_name,audio_file_name.ascii() );
+      qDebug( "%swrong audio type for file: %s",c_name,audio_file_name.toAscii().data() );
 
       delete new_audio_type;
 
@@ -2787,7 +2790,7 @@ void TTCutMainWnd::videoAudioCut()
      progress_bar->show();
      qApp->processEvents();
      
-     video_cut_stream = new TTFileBuffer( videoCutName.ascii(), fm_open_write );
+     video_cut_stream = new TTFileBuffer( videoCutName.toAscii().data(), fm_open_write );
      
      mpeg2_stream->setProgressBar( progress_bar );
      
@@ -2844,7 +2847,7 @@ void TTCutMainWnd::videoAudioCut()
 
      current_audio_stream->setProgressBar( progress_bar );
 
-     audio_cut_stream = new TTFileBuffer( audio_cut_name.ascii(), fm_open_write );
+     audio_cut_stream = new TTFileBuffer( audio_cut_name.toAscii().data(), fm_open_write );
 
      current_audio_stream->cut( audio_cut_stream, avcut_list );
 
