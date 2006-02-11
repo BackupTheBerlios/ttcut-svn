@@ -49,15 +49,20 @@ const char c_name[] = "TTCUTPREVIEW";
 // -----------------------------------------------------------------------------
 TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
     const char* name, bool modal, Qt::WFlags fl )
-: QDialog( parent, name, modal, fl )
+: QDialog( parent, fl )
 {
-  // set widget's name
+  
+  // set the objects name
   if ( !name )
-    setName( "TTCutPreview" );
+    setObjectName( "TTCutPreview" );
 
+  // show dialog modal or modeless
+  setModal( modal );
+  
+  // message logger instance
   log = TTMessageLogger::getInstance();
 
-  // set desired video widthxheight
+  // set desired video width x height
   previewWidth  = prevW;
   previewHeight = prevH;
 
@@ -67,10 +72,11 @@ TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
   isPlaying   = false;
 
   // main layout
-  TTCutPreviewLayout = new QGridLayout( this, 1, 1, 11, 6, "TTCutPreviewLayout");
+  //QT3: TTCutPreviewLayout = new QGridLayout( this, 1, 1, 11, 6 );
+  TTCutPreviewLayout = new QGridLayout( this );
 
   // the video preview window
-  videoFrame = new QFrame( this, "videoFrame" );
+  videoFrame = new QFrame( this );
   videoFrame->setFrameShape( QFrame::StyledPanel );
   videoFrame->setFrameShadow( QFrame::Sunken );
 
@@ -82,21 +88,24 @@ TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
   TTCutPreviewLayout->addWidget( videoFrame, 0, 0 );
 
   // button layout
-  layout1 = new QHBoxLayout( 0, 0, 6, "layout1");
+  //QT3: layout1 = new QHBoxLayout( 0, 0, 6 );
+  layout1 = new QHBoxLayout( );
 
   // combo=box for the cut qualifier
-  cbCutPreview = new QComboBox( FALSE, this, "cbCutPreview" );
+  cbCutPreview = new QComboBox( this );
+  cbCutPreview->setEditable( false );
   cbCutPreview->setMinimumSize( 160, 20 );
+  cbCutPreview->setInsertPolicy( QComboBox::InsertAfterCurrent );
   layout1->addWidget( cbCutPreview );
 
   // play button
-  pbPlay = new QPushButton( this, "pbPlay" );
-  pbPlay->setIconSet( QIcon( *(TTCut::imgPlay) ) );
+  pbPlay = new QPushButton( this );
+  pbPlay->setIcon( QIcon( *(TTCut::imgPlay) ) );
   layout1->addWidget( pbPlay );
 
   // stop button
-  pbStop = new QPushButton( this, "pbStop" );
-  pbStop->setIconSet( QIcon( *(TTCut::imgStop) ) );
+  pbStop = new QPushButton( this );
+  pbStop->setIcon( QIcon( *(TTCut::imgStop) ) );
   layout1->addWidget( pbStop );
 
   // spacer
@@ -104,8 +113,8 @@ TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
   layout1->addItem( spacer1 );
 
   // exit preview button
-  pbExit = new QPushButton( this, "pbExit" );
-  pbExit->setIconSet( QIcon( *(TTCut::imgFileClose) ) );
+  pbExit = new QPushButton( this );
+  pbExit->setIcon( QIcon( *(TTCut::imgFileClose) ) );
   layout1->addWidget( pbExit );
 
   // add button layout to main layoput
@@ -141,7 +150,7 @@ TTCutPreview::~TTCutPreview()
 void TTCutPreview::languageChange()
 {
   // dialog caption
-  setCaption( tr( "Cut Preview" ) );
+  setWindowTitle( tr( "Cut Preview" ) );
 
   // button text
   pbPlay->setText( tr( "Play" ) );
@@ -204,7 +213,6 @@ void TTCutPreview::createPreview( int c_index )
   {
     //qDebug( "%s-----------------------------------------------",c_name );
     //qDebug( "%scut index  : %d / %d",c_name,i,cut_index);
-
     temp_cut_list = new TTAVCutList( 2 );
 
     if ( c_index > 0 )
@@ -237,7 +245,7 @@ void TTCutPreview::createPreview( int c_index )
       if ( c_index == i || c_index+1 == i || c_index < 0 )
       {
         selectionString.sprintf( "Start: %s", ttFramesToTime( preview_cut_list->cutInAt( i ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
-        cbCutPreview->insertItem( selectionString );
+        cbCutPreview->addItem( selectionString );
       }
     }
 
@@ -259,7 +267,7 @@ void TTCutPreview::createPreview( int c_index )
         selectionString.sprintf( "Cut %d-%d: %s - %s",i,i+1,
             ttFramesToTime( start_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data(),
             ttFramesToTime( end_index, video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
-        cbCutPreview->insertItem( selectionString );
+        cbCutPreview->addItem( selectionString );
       }
     }
 
@@ -275,7 +283,7 @@ void TTCutPreview::createPreview( int c_index )
       if ( c_index == i || c_index+1 == i || c_index < 0 )
       {
         selectionString.sprintf( "End: %s", ttFramesToTime( preview_cut_list->cutOutAt( iPos ), video_stream->frameRate() ).toString("hh:mm:ss").toAscii().data() );
-        cbCutPreview->insertItem( selectionString );
+        cbCutPreview->addItem( selectionString );
       }
     }
 
@@ -284,7 +292,7 @@ void TTCutPreview::createPreview( int c_index )
     {
       //qDebug( "%screate preview cut: %d - %s",c_name,i,preview_video_name.ascii());
 
-      progress_bar = new TTProgressBar( this, "ProgressBar", true);
+      progress_bar = new TTProgressBar( this );
       progress_bar->show();
       qApp->processEvents();
 
@@ -316,7 +324,7 @@ void TTCutPreview::createPreview( int c_index )
 
   // multiplex video and audio files give a better result because
   // video and audio synchronisation is much better
-  progress_bar = new TTProgressBar( this, "ProgressBar", true);
+  progress_bar = new TTProgressBar( this );
   progress_bar->show();
   progress_bar->setActionText( "Mplexing preview cuts..." );
   progress_bar->setTotalSteps( num_preview, 1 );
@@ -481,6 +489,9 @@ void TTCutPreview::playPreview()
   {
     log->debugMsg( c_name, "Start playing preview: %s",current_video_file.toAscii().data() );
 
+    // try to grab the keyboard, prevents mplayer from receiving keyboard input
+    grabKeyboard();
+  
     // create mplayer process
     mplayerProc = new QProcess( );
 
@@ -495,6 +506,9 @@ void TTCutPreview::playPreview()
 // -----------------------------------------------------------------------------
 void TTCutPreview::stopPreview()
 {
+  // release the keyboard, so other widgets can receive keyboard input
+  releaseKeyboard();
+  
   if ( !stopMPlayer() )
     qDebug( "No playing preview ???" );
 }

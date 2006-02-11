@@ -32,35 +32,36 @@
 
 #include "ttprogressbar.h"
 
-#include <qapplication.h>
-#include <qlabel.h>
-#include <q3progressbar.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
-#include <qdatetime.h>
-//Added by qt3to4:
+#include <QApplication>
+#include <QLabel>
+#include <QProgressBar>
+#include <QPushButton>
+#include <QLayout>
+#include <QVariant>
+#include <QToolTip>
+#include <QDateTime>
 #include <QHBoxLayout>
 #include <QGridLayout>
 
 const char c_name[] = "TTPROGRESSBAR : ";
 
-TTProgressBar::TTProgressBar( QWidget* parent,  const char* name, bool modal, Qt::WFlags fl )
-    : QDialog( parent, name, modal, fl )
+TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
+    : QDialog( parent, fl )
 {
   // initialize variables
   userCancel = false;
 
-    if ( !name )
-	setName( "TTProgressBar" );
+  //QT3: if ( !name )
+	//QT3: setName( "TTProgressBar" );
+    
     resize( 640, 100 );
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, sizePolicy().hasHeightForWidth() ) );
     setMinimumSize( QSize( 640, 100 ) );
     setMaximumSize( QSize( 640, 100 ) );
     setBaseSize( QSize( 640, 100 ) );
-    setCaption( tr( "Progress Info" ) );
+    
+    setWindowTitle( tr( "Progress Info" ) );
+    
     TTProgressBarLayout = new QGridLayout( this );
     TTProgressBarLayout->setSpacing( 6 );
     TTProgressBarLayout->setMargin( 11 );
@@ -69,31 +70,31 @@ TTProgressBar::TTProgressBar( QWidget* parent,  const char* name, bool modal, Qt
     Layout1->setSpacing( 6 );
     Layout1->setMargin( 0 );
 
-    laAction = new QLabel( this, "laAction" );
+    laAction = new QLabel( this );
     laAction->setText( tr( "Action:" ) );
     Layout1->addWidget( laAction );
 
-    actionString = new QLabel( this, "actionString" );
+    actionString = new QLabel( this );
     actionString->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)1, actionString->sizePolicy().hasHeightForWidth() ) );
     actionString->setMinimumSize( QSize( 250, 0 ) );
     actionString->setText( tr( "TextLabel2" ) );
     Layout1->addWidget( actionString );
 
-    laElapsedTime = new QLabel( this, "laElapsedTime" );
+    laElapsedTime = new QLabel( this );
     laElapsedTime->setText( tr( "Elapsed time:" ) );
     Layout1->addWidget( laElapsedTime );
 
-    elapsedTimeString = new QLabel( this, "elapsedTimeString" );
+    elapsedTimeString = new QLabel( this );
     elapsedTimeString->setText( tr( "00:00:00" ) );
     Layout1->addWidget( elapsedTimeString );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     Layout1->addItem( spacer );
 
-    laPercentage = new QLabel( this, "laPercentage" );
+    laPercentage = new QLabel( this );
     laPercentage->setText( tr( "Percentage complete:" ) );
     Layout1->addWidget( laPercentage );
 
-    percentageString = new QLabel( this, "percentageString" );
+    percentageString = new QLabel( this );
     percentageString->setText( tr( "0%" ) );
     Layout1->addWidget( percentageString );
 
@@ -103,14 +104,15 @@ TTProgressBar::TTProgressBar( QWidget* parent,  const char* name, bool modal, Qt
     Layout2->setSpacing( 6 );
     Layout2->setMargin( 0 );
 
-    progressBar = new Q3ProgressBar( this, "progressBar" );
-    progressBar->setFrameShape( Q3ProgressBar::Panel );
-    progressBar->setFrameShadow( Q3ProgressBar::Sunken );
-    progressBar->setCenterIndicator( true );
-    progressBar->setPercentageVisible( false );
+    progressBar = new QProgressBar( this );
+    //QT3: progressBar->setFrameShape( QFrame::Panel );
+    //QT3: progressBar->setFrameShadow( QFrame::Sunken );
+    //QT3: progressBar->setCenterIndicator( true );
+    //QT3: progressBar->setPercentageVisible( false );
+    progressBar->setTextVisible( false );
     Layout2->addWidget( progressBar );
 
-    pbCancel = new QPushButton( this, "pbCancel" );
+    pbCancel = new QPushButton( this );
     pbCancel->setText( tr( "Cancel" ) );
     Layout2->addWidget( pbCancel );
 
@@ -190,8 +192,11 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
 
   //qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
 
-  progressBar->setTotalSteps( normTotalSteps );
-  progressBar->setProgress( -1 );
+  //QT3: progressBar->setTotalSteps( normTotalSteps );
+  //QT3: progressBar->setProgress( -1 );
+  progressBar->setMinimum( 0 );
+  progressBar->setMaximum( normTotalSteps );
+
   qApp->processEvents();
 }
 
@@ -216,7 +221,8 @@ bool TTProgressBar::setProgress( uint64_t progress )
 
     //printf("norm_progress: %d\n",normProgress);
 
-    progressBar->setProgress( normProgress );
+    //QT3: progressBar->setProgress( normProgress );
+    progressBar->setValue( normProgress );
 
     elapsedMsec += elapsedTime.restart();
     elapsedTimeString->setText( ttMsecToTime( elapsedMsec ).toString( "hh:mm:ss" ));

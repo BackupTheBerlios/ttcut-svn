@@ -1431,7 +1431,7 @@ void TTCutMainWnd::fileOpen()
       }
  
       // set progress bar
-      progress_bar = new TTProgressBar( this, "PBAR" );
+      progress_bar = new TTProgressBar( this );
       mpeg2_stream->setProgressBar( progress_bar );
       progress_bar->show();
       qApp->processEvents();
@@ -1538,7 +1538,7 @@ void TTCutMainWnd::fileOpen()
 	new_audio_stream = (TTAudioStream*)new_audio_type->createAudioStream();
 	
 	// set progress bar
-	progress_bar = new TTProgressBar( this, "PBAR" );
+	progress_bar = new TTProgressBar( this );
 	new_audio_stream->setProgressBar( progress_bar );
 	progress_bar->show();
 	qApp->processEvents();
@@ -1877,7 +1877,7 @@ void TTCutMainWnd::createAVStreams( )
     if ( video_type->avStreamType() == TTAVTypes::mpeg2_demuxed_video )
     {
       mpeg2_stream = (TTMpeg2VideoStream*)video_type->createVideoStream();
-    
+
       delete video_type;
     }
     // wrong video type
@@ -1887,9 +1887,9 @@ void TTCutMainWnd::createAVStreams( )
       delete video_type;
       return;
     }
- 
+
     // set progress bar
-    progress_bar = new TTProgressBar( this, "PBAR" );
+    progress_bar = new TTProgressBar( this );
     mpeg2_stream->setProgressBar( progress_bar );
     progress_bar->show();
     qApp->processEvents();
@@ -1952,17 +1952,17 @@ void TTCutMainWnd::createAVStreams( )
 
     // create the audio stream object for the first audio file
     if ( audio_type->avStreamType() == TTAVTypes::mpeg_audio  ||
-	 audio_type->avStreamType() == TTAVTypes::ac3_audio   ||
-	 audio_type->avStreamType() == TTAVTypes::dts14_audio ||
-	 audio_type->avStreamType() == TTAVTypes::dts16_audio ||
-	 audio_type->avStreamType() == TTAVTypes::pcm_audio      )
+        audio_type->avStreamType() == TTAVTypes::ac3_audio   ||
+        audio_type->avStreamType() == TTAVTypes::dts14_audio ||
+        audio_type->avStreamType() == TTAVTypes::dts16_audio ||
+        audio_type->avStreamType() == TTAVTypes::pcm_audio      )
     {
       current_audio_stream = (TTAudioStream*)audio_type->createAudioStream();
 
       delete audio_type;
 
       // set progress bar
-      progress_bar = new TTProgressBar( this, "PBAR" );
+      progress_bar = new TTProgressBar( this );
       current_audio_stream->setProgressBar( progress_bar );
       progress_bar->show();
       qApp->processEvents();
@@ -1972,22 +1972,22 @@ void TTCutMainWnd::createAVStreams( )
 
       // error reading audio stream or user abort during operation
       if ( num_header == 0 && audio_type->avStreamType() != TTAVTypes::pcm_audio ||
-           num_header == 1 && audio_type->avStreamType() == TTAVTypes::pcm_audio    )
+          num_header == 1 && audio_type->avStreamType() == TTAVTypes::pcm_audio    )
       {
-	qDebug( "%serror reading audio stream; no header list (!)",c_name );
+        log->errorMsg( c_name, "error reading audio stream; no header list (!)" );
 
-	current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
-	delete progress_bar;
-	delete audio_type;
+        current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
+        delete progress_bar;
+        delete audio_type;
 
-	current_audio_stream = (TTAudioStream*)NULL;
-	audio_type           = (TTAudioType*)NULL;
+        current_audio_stream = (TTAudioStream*)NULL;
+        audio_type           = (TTAudioType*)NULL;
       }
       else
       {
-	// remove progress bar
-	current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
-	delete progress_bar;
+        // remove progress bar
+        current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
+        delete progress_bar;
 
         // audio stream succesfully parsed; add item to list
         lvAudioFiles->addItem( audio_file_name, current_audio_stream );
@@ -2019,19 +2019,19 @@ void TTCutMainWnd::createAVStreams( )
     currentFramePos   = 0;
 
     ccrTab->getResultTab()->setVideoStream( mpeg2_stream );
-     
+
     // initialize the the mpeg2 window for the cut-in frame
     //qDebug( "%sopen video stream",c_name );
     currentFrameWnd->openVideoStream( mpeg2_stream );
     currentFrameWnd->moveToFirstFrame( );
-     
+
     // initialize the mpeg2 window for the cut-out frame
     //qDebug( "%sinitialize cut-out stream and window",c_name );
     cut_out_stream = new TTMpeg2VideoStream( QFileInfo(video_file_name));
     cut_out_stream->makeSharedCopy( mpeg2_stream );
     cutOutFrameWnd->openVideoStream( cut_out_stream );
     cutOutFrameWnd->moveToFirstFrame( false );
-     
+
     // set the slider range
     sbVideoPosition->setMinimum( 0 );
     sbVideoPosition->setMaximum( mpeg2_stream->frameCount()-1 );
@@ -2040,10 +2040,10 @@ void TTCutMainWnd::createAVStreams( )
     mpeg2_stream->setCurrentIndex( (uint)0 );
     current_frame_pos = 0;
     sbVideoPosition->setValue( current_frame_pos );
-     
+
     refreshVideoLength();
     refreshCurrentPosition();
-     
+
     enableNavigation();
   }
 }
@@ -2115,7 +2115,7 @@ void TTCutMainWnd::openAudioFile()
       new_audio_stream = (TTAudioStream*)new_audio_type->createAudioStream();
 
       // set progress bar
-      progress_bar = new TTProgressBar( this, "PBAR" );
+      progress_bar = new TTProgressBar( this );
       new_audio_stream->setProgressBar( progress_bar );
       progress_bar->show();
       qApp->processEvents();
@@ -2786,7 +2786,7 @@ void TTCutMainWnd::videoAudioCut()
    {
      //qDebug("Meldung125: Die Videodaten werden in der Datei %s gespeichert.",videoCutName.ascii());
      
-     progress_bar = new TTProgressBar( this, "ProgressBar", true);
+     progress_bar = new TTProgressBar( this );
      progress_bar->show();
      qApp->processEvents();
      
@@ -2841,7 +2841,7 @@ void TTCutMainWnd::videoAudioCut()
 
      //qDebug( "%saudio cut file: %s",c_name,audio_cut_name.ascii() );
      
-     progress_bar = new TTProgressBar( this, "ProgressBar", true);
+     progress_bar = new TTProgressBar( this );
      progress_bar->show();
      qApp->processEvents();
 
