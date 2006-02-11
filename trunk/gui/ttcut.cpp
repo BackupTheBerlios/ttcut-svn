@@ -124,7 +124,7 @@ bool TTCut::logAudioIndexInfo = false;
 // encoder settings
 // --------------------------------------------------------------
 // Version
-QString TTCut::versionString = "TTCut - 0.11.0-alpha";
+QString TTCut::versionString = "TTCut - 0.11.1-alpha";
 // Options
 bool TTCut::encoderMode = false;
 
