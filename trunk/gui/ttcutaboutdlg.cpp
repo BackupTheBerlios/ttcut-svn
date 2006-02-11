@@ -34,8 +34,6 @@
 #include <QPushButton>
 #include <q3textview.h>
 #include <QLayout>
-//#include <qtooltip.h>
-//#include <q3whatsthis.h>
 #include <QGridLayout>
 
 /* 
