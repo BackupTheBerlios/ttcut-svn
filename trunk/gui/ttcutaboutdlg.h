@@ -32,13 +32,13 @@
 #ifndef TTCUTABOUTDLG_H
 #define TTCUTABOUTDLG_H
 
-#include <qvariant.h>
-#include <qdialog.h>
-//Added by qt3to4:
+#include <QVariant>
+#include <QDialog>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
+
 #include "ttcut.h"
 
 class QVBoxLayout;
