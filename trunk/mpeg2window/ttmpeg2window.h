@@ -1,14 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2005/2006                                                 */
 /* FILE     : ttmpeg2window.h                                                 */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 03/01/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/30/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 02/12/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -36,18 +33,14 @@
 #define TTMPEG2WINDOW_H
 
 #include <QGLWidget>
-#include <qdatetime.h>
-#include <qimage.h>
+#include <QDateTime>
+#include <QImage>
 #include <QFileDialog>
 
-//#if defined( __TTCUT)
 #include "../gui/ttcut.h"
-//#else
-//#include "ttmpeg2.h"
-//#endif
 
 #include "../mpeg2decoder/ttmpeg2decoder.h"
-
+#include "../common/ttmessagelogger.h"
 #include "../avstream/ttfilebuffer.h"
 #include "../avstream/ttavheader.h"
 #include "../avstream/ttvideoheaderlist.h"
@@ -85,7 +78,7 @@ class TTMPEG2Window : public QGLWidget
 
  protected:
   void initializeGL();
-  void resizeGL( int, int );
+  void resizeGL( int width, int height );
   void paintGL();
   bool decodeAndShowSlice();
 
@@ -97,6 +90,8 @@ class TTMPEG2Window : public QGLWidget
   int                iSceneHeight;
   int                iVideoWidth;
   int                iVideoHeight;
+  int                iMarginX;
+  int                iMarginY;
   int                iOldWidth;
   int                iOldHeight;
   bool               isResizeAction;
@@ -105,6 +100,7 @@ class TTMPEG2Window : public QGLWidget
   uint8_t*           picBuffer;
   TFrameInfo*        frameInfo;
   QString            mpeg2FileName;
+  TTMessageLogger*   log;
   TTMpeg2Decoder*    mpeg2_decoder;
   TTVideoIndex*      frame_index;
   TTVideoIndexList*  video_index;

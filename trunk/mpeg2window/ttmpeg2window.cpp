@@ -1,15 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2005/2006                                                 */
 /* FILE     : ttmpeg2window.cpp                                               */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 03/01/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/30/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 05/31/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 02/12/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -35,10 +31,8 @@
 // The TTMPEG2Window class is responsible for all OpenGL drawings
 
 // qApplication for the qApp pointer
-#include <qapplication.h>
-#include <qpixmap.h>
-
-#include <QTimer>
+#include <QApplication>
+#include <QPixmap>
 
 // -----------------------------------------------------------------------------
 // class declaration
@@ -52,16 +46,28 @@ const char c_name[] = "TTMPEG2WINDOW : ";
 // Constructor for the TTMPEG2Window
 // -----------------------------------------------------------------------------
 TTMPEG2Window::TTMPEG2Window( QWidget *parent, const char *name )
-  : QGLWidget( parent, name )
+  : QGLWidget( parent )
 {
+  if ( name == "" )
+    name = "TTMPEG2WINDOW";
+  
+  setObjectName( name );
+  
+  // message logger instance
+  log = TTMessageLogger::getInstance();
+
   // initialize member variables
   mpeg2_decoder    = NULL;
   video_header     = NULL;
   video_index      = NULL;
   picBuffer        = NULL;
+  iMarginX         = 2;
+  iMarginY         = 2;
   currentFrame     = 0;
   iOldWidth        = 0;
   iOldHeight       = 0;
+  iVideoWidth      = 0;
+  iVideoHeight     = 0;
   isResizeAction   = false;
 }
 
@@ -86,60 +92,9 @@ void TTMPEG2Window::initializeGL()
 // -----------------------------------------------------------------------------
 // Handle widgets resize events
 // -----------------------------------------------------------------------------
-void TTMPEG2Window::resizeGL( int width, int height )
+void TTMPEG2Window::resizeGL( __attribute__ ((unused))int width, __attribute ((unused))int height )
 {
-  GLdouble zoomFactor;
-  GLdouble rasterPosX, rasterPosY;
-
-  makeCurrent();
-
-  //qDebug( "%sresizeGL: %d - %d",c_name,width,height );
- 
-  // set the new GL viewport according to the new window size
-  iSceneWidth  = width;
-  iSceneHeight = height;
-
-  // select PROJECTION matrix and load identity
-  glMatrixMode( GL_PROJECTION );
-  glLoadIdentity();
-
-  // openGL viewport
-  glViewport( 0, 0, width, height );
-
-  // viewing volume
-  gluOrtho2D(0.0, (GLdouble)width, 0.0, (GLdouble)height);
-
-  // window height is authoritative
-  if ( (long)(iSceneHeight*1000.0*fAspect) <= (long)(iSceneWidth*1000.0) )
-  {
-    zoomFactor = (GLdouble)iSceneHeight / (GLdouble)iVideoHeight;
-  }
-  else
-    zoomFactor = (GLdouble)iSceneWidth  / (GLdouble)iVideoWidth;
-  
-  glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-  glClear( GL_COLOR_BUFFER_BIT );
-  glClear( GL_DEPTH_BUFFER_BIT );
-  
-  rasterPosX = (GLdouble)0.50*((GLdouble)iSceneWidth - (GLdouble)iVideoWidth*zoomFactor);
-  rasterPosY = (GLdouble)iVideoHeight*(GLdouble)zoomFactor +
-    (GLdouble)0.50*((GLdouble)iSceneHeight-(GLdouble)iVideoHeight*zoomFactor);
-  
-  //qDebug( "%srX: %8.4lf rY: %8.4lf zoom: %8.4lf",c_name,rasterPosX,rasterPosY,zoomFactor );
-  
-  glRasterPos2d( rasterPosX, rasterPosY );
-  
-  glPixelZoom( zoomFactor,-zoomFactor );
-  
-  // for slow maschines delay scene refresh 
-  //if ( !isResizeAction ) 
-  //{
-  //isResizeAction = true;
-  //QTimer::singleShot(200, this, SLOT(updateFrame()));
-  //}
-
-  // show current frame
-  showVideoFrame();
+  showVideoFrame();  
   swapBuffers();
 }
 
@@ -172,45 +127,55 @@ void TTMPEG2Window::updateFrame()
 // -----------------------------------------------------------------------------
 void TTMPEG2Window::showVideoFrame()
 {
-  makeCurrent();
-
   GLdouble zoomFactor;
   GLdouble rasterPosX, rasterPosY;
+
+  makeCurrent();
 
   // set the new GL viewport according to the new window size
   iSceneWidth  = width();
   iSceneHeight = height();
-  
+
   // select PROJECTION matrix and load identity
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  
+
   // openGL viewport
   glViewport( 0, 0, width(), height() );
-  
+
   // viewing volume
-  gluOrtho2D(0.0, (GLdouble)width(), 0.0, (GLdouble)height());
-  
-  // window height is authoritative
-  if ( (long)(iSceneHeight*1000.0*fAspect) <= (long)(iSceneWidth*1000.0) )
-  {
-    zoomFactor = (GLdouble)iSceneHeight / (GLdouble)iVideoHeight;
+  gluOrtho2D( 0.0, (GLdouble)width(), 0.0, (GLdouble)height() );
+
+  if ( iVideoWidth == 0 || iVideoHeight == 0 ) {
+    zoomFactor = 1.0;
+  } else {
+    // window height is authoritative
+    // take care rasterPosX is non-negative and rasterPosY always < iSceneHeight, see below
+    // so we add a horizontal and vertical margin during zoom factor calculation
+    if ( (GLdouble)(iSceneHeight*fAspect) <= (GLdouble)iSceneWidth ) {
+      zoomFactor = (GLdouble)iSceneHeight / (GLdouble)(iVideoHeight+2*iMarginY);
+    } else {
+      zoomFactor = (GLdouble)iSceneWidth / (GLdouble)(iVideoWidth+2*iMarginX);
+    }
   }
-  else
-    zoomFactor = (GLdouble)iSceneWidth  / (GLdouble)iVideoWidth;
-  
+
   glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
   glClear( GL_COLOR_BUFFER_BIT );
   glClear( GL_DEPTH_BUFFER_BIT );
-  
+
   rasterPosX = (GLdouble)0.50*((GLdouble)iSceneWidth - (GLdouble)iVideoWidth*zoomFactor);
-  rasterPosY = (GLdouble)iVideoHeight*(GLdouble)zoomFactor +
-    (GLdouble)0.50*((GLdouble)iSceneHeight-(GLdouble)iVideoHeight*zoomFactor);
-  
-  //qDebug( "%srX: %8.4lf rY: %8.4lf zoom: %8.4lf",c_name,rasterPosX,rasterPosY,zoomFactor );
+  rasterPosY = (GLdouble)iVideoHeight*zoomFactor +
+               (GLdouble)0.50*((GLdouble)iSceneHeight-(GLdouble)iVideoHeight*zoomFactor);
+
+   // if something goes wrong
+  if ( rasterPosX < 0.0 || rasterPosY >= (GLdouble)iSceneHeight ) {
+    log->errorMsg( c_name, "iVideoWidth: %d / iVideoHeigth: %d", iVideoWidth, iVideoHeight );
+    log->errorMsg( c_name, "rX: %8.4lf rY: %8.4lf zoom: %8.4lf" , rasterPosX,rasterPosY,zoomFactor );
+    log->errorMsg( c_name, "iSceneHeight: %d iSceneWidth: %d fAscpect: %8.2lf" , iSceneHeight,iSceneWidth,fAspect );
+  }
   
   glRasterPos2d( rasterPosX, rasterPosY );
-  
+
   glPixelZoom( zoomFactor,-zoomFactor );
 
   if ( ttAssigned(picBuffer) )
@@ -226,9 +191,6 @@ void TTMPEG2Window::showVideoFrame()
 
 void TTMPEG2Window::showFrameAt( uint index )
 {
-  // TODO: showFrameAt method
-  //qDebug( "%sshow frame at index: %d",c_name,index );
-
   moveToVideoFrame( index );
 }
 
@@ -309,7 +271,7 @@ void TTMPEG2Window::openVideoFile( QString fName, TTVideoIndexList* viIndex, TTV
        delete mpeg2_decoder;
  
     // create the decoder object
-    mpeg2_decoder  = new TTMpeg2Decoder( fName.ascii(), video_index, video_header );
+    mpeg2_decoder  = new TTMpeg2Decoder( qPrintable(fName), video_index, video_header );
     frameInfo     = mpeg2_decoder->getFrameInfo();
 
     iVideoWidth  = frameInfo->width;
@@ -328,13 +290,13 @@ void TTMPEG2Window::openVideoStream( TTMpeg2VideoStream* v_stream )
     delete mpeg2_decoder;
  
   // create the decoder object
-  mpeg2_decoder  = new TTMpeg2Decoder( mpeg2FileName.ascii(), video_index, video_header );
+  mpeg2_decoder  = new TTMpeg2Decoder( qPrintable(mpeg2FileName), video_index, video_header );
 
   frameInfo     = mpeg2_decoder->getFrameInfo();
 
   iVideoWidth  = frameInfo->width;
   iVideoHeight = frameInfo->height;
-  fAspect      = (double)iVideoWidth/(double)iVideoHeight;
+  fAspect      = (float)iVideoWidth/(float)iVideoHeight;
 }
 
 void TTMPEG2Window::closeVideoStream()
