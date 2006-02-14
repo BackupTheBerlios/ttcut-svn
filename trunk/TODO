@@ -44,3 +44,31 @@ TODO list for project TTCut
   ttcutsettings.h:    Q3GroupBox*    gbPostMuxing;
 
 * Improve performance while reading header informations from Mpeg2Schnitt IDD file
+TODO FILE FOR TTCUT
+-------------------
+
+* use a better float compare funtion in TTProgressBar
+
+* Implement read/write file-settings data
+
+* Check IDD file handling
+
+* Implement read/write for muxing settings
+
+* Check cut list handling, theire meight be errors during delete and edit operations
+
+* Implement a better fallback method for alternate audio fileextension (mp2, ac3)
+
+* Under unknown circumstances the mplayer preview doesn't work
+
+
+
+
+Roadmap -> next planed features
+-------------------------------
+
+* Implement usser dialog for transcode parameter
+
+* Implement mux options: mux-list, mux after cut
+
+* Implement a first version for chapter output (spumux xml)

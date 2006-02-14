@@ -61,8 +61,8 @@ TTMPEG2Window::TTMPEG2Window( QWidget *parent, const char *name )
   video_header     = NULL;
   video_index      = NULL;
   picBuffer        = NULL;
-  iMarginX         = 2;
-  iMarginY         = 2;
+  iMarginX         = 1;
+  iMarginY         = 1;
   currentFrame     = 0;
   iOldWidth        = 0;
   iOldHeight       = 0;
@@ -153,9 +153,9 @@ void TTMPEG2Window::showVideoFrame()
     // take care rasterPosX is non-negative and rasterPosY always < iSceneHeight, see below
     // so we add a horizontal and vertical margin during zoom factor calculation
     if ( (GLdouble)(iSceneHeight*fAspect) <= (GLdouble)iSceneWidth ) {
-      zoomFactor = (GLdouble)iSceneHeight / (GLdouble)(iVideoHeight+2*iMarginY);
+      zoomFactor = (GLdouble)iSceneHeight / (GLdouble)(iVideoHeight+iMarginY);
     } else {
-      zoomFactor = (GLdouble)iSceneWidth / (GLdouble)(iVideoWidth+2*iMarginX);
+      zoomFactor = (GLdouble)iSceneWidth / (GLdouble)(iVideoWidth+iMarginX);
     }
   }
 
@@ -163,9 +163,9 @@ void TTMPEG2Window::showVideoFrame()
   glClear( GL_COLOR_BUFFER_BIT );
   glClear( GL_DEPTH_BUFFER_BIT );
 
-  rasterPosX = (GLdouble)0.50*((GLdouble)iSceneWidth - (GLdouble)iVideoWidth*zoomFactor);
-  rasterPosY = (GLdouble)iVideoHeight*zoomFactor +
-               (GLdouble)0.50*((GLdouble)iSceneHeight-(GLdouble)iVideoHeight*zoomFactor);
+  rasterPosX = (GLdouble)0.50*((double)iSceneWidth - (double)iVideoWidth*zoomFactor);
+  rasterPosY = (GLdouble)(iVideoHeight*zoomFactor +
+                          0.50*((double)iSceneHeight - (double)iVideoHeight*zoomFactor));
 
    // if something goes wrong
   if ( rasterPosX < 0.0 || rasterPosY >= (GLdouble)iSceneHeight ) {
