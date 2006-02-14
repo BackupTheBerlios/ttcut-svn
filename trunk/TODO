@@ -43,9 +43,11 @@ TODO list for project TTCut
   ttcutsettings.h:    Q3GroupBox*    gbMuxerSettings;
   ttcutsettings.h:    Q3GroupBox*    gbPostMuxing;
 
+  Remark:
+  Replacing the GUI QT3_SUPPORT methods need a little GUI redesign. I've made a branch
+  and do the work beside the main trunk.
+  
 * Improve performance while reading header informations from Mpeg2Schnitt IDD file
-TODO FILE FOR TTCUT
--------------------
 
 * use a better float compare funtion in TTProgressBar
 
@@ -61,6 +63,16 @@ TODO FILE FOR TTCUT
 
 * Under unknown circumstances the mplayer preview doesn't work
 
+* Write a FAQ
+  1) If mplayer don't work properly check your default -vo settings. TTCut assumes that
+     you use -vo x11
+
+* In preview play button is without function after playing preview clip until eof
+  (should be fixed in current versions)
+
+* Mouse wheel should not work in cut-out frame window
+
+* Enable the play button
 
 
 
