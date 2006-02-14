@@ -95,7 +95,10 @@ protected slots:
     void readFromStdout();
     // mplayer process exited
     void exitMPlayer( int e_code, QProcess::ExitStatus e_status );
-
+    // mplayer reported an error
+    void errorMplayer( QProcess::ProcessError );
+    // mplayer process state changed
+    void stateChangedMplayer( QProcess::ProcessState newState );
 protected:
     // gui elements
     TTProgressBar* progress_bar;

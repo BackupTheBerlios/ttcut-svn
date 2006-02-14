@@ -581,6 +581,7 @@ void TTCutPreview::readFromStdout()
   else
   {
     line = "mplayer finished... done(0)";
+    isPlaying = false;
     log->infoMsg(c_name, line);
   }
 }
@@ -638,6 +639,8 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
       connect(mplayerProc, SIGNAL( started() ), SLOT( mplayerStarted() ) );
       connect(mplayerProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
       connect(mplayerProc, SIGNAL( finisheded(int, QProcess::ExitStatus) ),  SLOT( exitMPlayer(int, QProcess::ExitStatus) ) );
+      connect(mplayerProc, SIGNAL( error(QProcess::ProcessError) ), SLOT( errorMplayer(QProcess::ProcessError) ) );
+      connect(mplayerProc, SIGNAL( stateChanged(QProcess::ProcessState) ), SLOT( stateChangedMplayer(QProcess::ProcessState) ) );
 
       isPlaying = true;
 
@@ -689,6 +692,22 @@ void TTCutPreview::exitMPlayer(__attribute__ ((unused)) int e_code, QProcess::Ex
   isPlaying = false;
 }
 
+void TTCutPreview::errorMplayer( QProcess::ProcessError error )
+{
+  log->errorMsg(c_name, "error: %d", error);
+
+  delete mplayerProc;
+  isPlaying = false;
+}
+
+void TTCutPreview::stateChangedMplayer( QProcess::ProcessState newState )
+{
+  log->infoMsg(c_name, "state changed: %d", newState);
+
+  if(newState == QProcess::NotRunning){
+    isPlaying = false;
+  }
+}
 
 
 
