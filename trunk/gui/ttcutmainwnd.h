@@ -83,11 +83,11 @@ class QHBoxLayout;
 class QGridLayout;
 class QSpacerItem;
 class QAction;
-class Q3ActionGroup;
+//class Q3ActionGroup;
 class QScrollBar;
 class QPushButton;
-class Q3ListView;
-class Q3ListViewItem;
+//class Q3ListView;
+//class Q3ListViewItem;
 class QLabel;
 class QGroupBox;
 

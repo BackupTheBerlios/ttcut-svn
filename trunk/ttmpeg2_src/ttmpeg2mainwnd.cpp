@@ -944,7 +944,7 @@ void TTMpeg2MainWnd::analyzeMpegStream( )
       return;
     }
  
-    progress_bar = new TTProgressBar( this, "PBAR" );
+    progress_bar = new TTProgressBar( this );
     video_stream->setProgressBar( progress_bar );
     progress_bar->show();
     qApp->processEvents();
