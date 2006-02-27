@@ -31,7 +31,9 @@
 
 
 #include "ttaudiofilelist.h"
+#include "../data/ttaudiolistdata.h"
 
+#include <QHeaderView>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMenu>
@@ -45,8 +47,24 @@ TTAudioFileList::TTAudioFileList(QWidget* parent)
 {
   setupUi( this );
 
+  // set list view header (column) width
+  audioListView->setRootIsDecorated(false);
+  QHeaderView* header = audioListView->header();
+  header->resizeSection(0, 220);
+  header->resizeSection(1, 220);
+  header->resizeSection(2, 140);
+  header->resizeSection(3, 100);
+  header->resizeSection(4, 100);
+  header->resizeSection(5, 100);
+  header->resizeSection(6,  60);
+
+  // data struct for audio list view
+  audioListData = NULL;
+
+  // actions for context menu
   createActions();
 
+  // signal and slot connections
   connect( pbAudioFileOpen,    SIGNAL( clicked() ), SLOT( onFileOpen() ) );
   connect( pbAudioEntryUp,     SIGNAL( clicked() ), SLOT( onItemUp() ) );
   connect( pbAudioEntryDown,   SIGNAL( clicked() ), SLOT( onItemDown() ) );
@@ -54,34 +72,50 @@ TTAudioFileList::TTAudioFileList(QWidget* parent)
   connect( audioListView,      SIGNAL( customContextMenuRequested( const QPoint& ) ), SLOT( onContextMenuRequest( const QPoint& ) ) );
 }
 
-/*!
- * Set the group box title string. This method is needed by designer.
- */
+//! Set the group box title string. This method is needed by designer.
 void TTAudioFileList::setTitle ( const QString& title )
 {
   gbAudioFiles->setTitle( title );
 }
 
-/*!
- * Enable or disable the audiolist widget
- */
-void TTAudioFileList::setControlEnabled( bool enabled )
+//! Set the audio list data object
+void TTAudioFileList::setListData(TTAudioListData* ad)
 {
-    pbAudioFileOpen->setEnabled( enabled );
-    pbAudioEntryUp->setEnabled( enabled );
-    pbAudioEntryDelete->setEnabled( enabled );
-    pbAudioEntryDown->setEnabled( enabled );
-    audioListView->setEnabled( enabled );
+  audioListData = ad;
 }
 
+//! Enable or disable the audiolist widget
+void TTAudioFileList::setControlEnabled( bool enabled )
+{
+  pbAudioFileOpen->setEnabled( enabled );
+  pbAudioEntryUp->setEnabled( enabled );
+  pbAudioEntryDelete->setEnabled( enabled );
+  pbAudioEntryDown->setEnabled( enabled );
+  audioListView->setEnabled( enabled );
+}
+
+//! Open audio file
 void TTAudioFileList::openAudioFile()
 {
   onFileOpen();
 }
 
-/*!
- * Event handler for file open button clicked.
- */
+//! Add audio item
+void TTAudioFileList::addItem(TTAudioListDataItem& item)
+{
+  if (ttAssigned(audioListData)){
+    QTreeWidgetItem* treeItem = new QTreeWidgetItem(audioListView);
+    treeItem->setText(0, item.getFileName());
+    treeItem->setText(1, item.getLength());
+    treeItem->setText(2, item.getVersion());
+    treeItem->setText(3, item.getBitrate());
+    treeItem->setText(4, item.getSamplerate());
+    treeItem->setText(5, item.getMode());
+    treeItem->setText(6, item.getDelay());
+  }
+}
+
+//! Event handler for file open button clicked
 void TTAudioFileList::onFileOpen()
 {
   QString fn = QFileDialog::getOpenFileName( this,
@@ -96,33 +130,67 @@ void TTAudioFileList::onFileOpen()
   }
 }
 
-/*!
- * Event handler for item up button clicked.
- */
+//! Event handler for item up button clicked
 void TTAudioFileList::onItemUp()
 {
-  qDebug("item up");
+  if (audioListView->currentItem() != NULL) {
+
+    // current index
+    int index = audioListView->indexOfTopLevelItem(audioListView->currentItem());
+
+    if (index > 0) {
+      // take current item from list but don't delete it
+      QTreeWidgetItem* cutItem = audioListView->takeTopLevelItem(index);
+
+      // insert new item
+      audioListView->insertTopLevelItem(index-1, cutItem);
+      audioListView->setCurrentItem(cutItem);
+
+      audioListData->swap(index, index-1);
+      audioListData->print();
+    }
+  }
 }
 
-/*!
- * Event handler for item down button clicked.
- */
+//! Event handler for item down button clicked
 void TTAudioFileList::onItemDown()
 {
-  qDebug("item down");
+  if (audioListView->currentItem() != NULL) {
+
+    // current index
+    int index = audioListView->indexOfTopLevelItem(audioListView->currentItem());
+
+    if (index < audioListView->topLevelItemCount()-1) {
+
+      // take current item from list but don't delete it
+      QTreeWidgetItem* curItem = audioListView->takeTopLevelItem(index);
+      
+      audioListView->insertTopLevelItem(index+1, curItem);
+      audioListView->setCurrentItem(curItem);
+
+      audioListData->swap(index, index+1);
+      audioListData->print();
+    }
+  }
 }
 
-/*!
- * Event handler for delete item button clicked.
- */
+//! Event handler for delete item button clicked
 void TTAudioFileList::onDeleteItem()
 {
-  qDebug("delete item");
+  if (audioListView->currentItem() != NULL) {
+
+    // current index
+    int index = audioListView->indexOfTopLevelItem(audioListView->currentItem());
+
+    // remove current item from list
+    delete audioListView->takeTopLevelItem(index);
+
+    audioListData->removeAt(index);
+    audioListData->print();
+  }
 }
 
-/*!
- * User requested a context menu.
- */
+//! User requested a context menu
 void TTAudioFileList::onContextMenuRequest( const QPoint& point )
 {
   if(audioListView->currentItem() != NULL){
@@ -137,9 +205,8 @@ void TTAudioFileList::onContextMenuRequest( const QPoint& point )
   }
 }
 
-/*!
- * Create the actions used by the context menu.
- */
+
+//!Create the actions used by the context menu.
 void TTAudioFileList::createActions()
 {
   itemNewAction = new QAction(tr("&Insert audiofile"), this);

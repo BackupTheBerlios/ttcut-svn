@@ -182,7 +182,7 @@
          <bool>false</bool>
         </property>
         <property name="columnCount" >
-         <number>6</number>
+         <number>7</number>
         </property>
         <property name="sortingEnabled" >
          <bool>false</bool>
@@ -210,6 +210,11 @@
         <column>
          <property name="text" >
           <string>Samplerate</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Channel mode</string>
          </property>
         </column>
         <column>

@@ -158,6 +158,7 @@ public:
   // stream properties common for all audio stream types
   int sampleCount();
   double length();
+  virtual QString absStreamTime(){return "";};
 
 protected:
   // header and index list

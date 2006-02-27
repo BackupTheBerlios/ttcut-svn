@@ -79,6 +79,7 @@ TTCutMainWindow::TTCutMainWindow()
   
   // Audio list
   audioList = new TTAudioListData();
+  audioFileInfo->setListData(audioList);
 
   // no navigation
   navigationEnabled( false );
@@ -338,10 +339,12 @@ void TTCutMainWindow::onReadAudioStream(QString fName)
     } else {
 
       // audio stream succesfully parsed; add item to list
-      int numTracks = audioList->addItem( fName, current_audio_stream );
+      int curIndex = audioList->addItem( fName, current_audio_stream );
+      audioFileInfo->addItem(audioList->itemAt(curIndex));
+      audioList->print();
 
       // first audio track loaded
-      TTCut::numAudioTracks = numTracks;
+      TTCut::numAudioTracks = audioList->count();
     }
 
     delete progress_bar;
@@ -423,7 +426,7 @@ void TTCutMainWindow::onPreviewCut(int index)
   if (TTCut::isVideoOpen && cutListData->count() > 0) {
 
     if (audioList->count() > 0){
-      audioStream = audioList->audioStream(0);
+      audioStream = audioList->audioStreamAt(0);
     }    
 
     // create preview dialog frame
@@ -541,7 +544,7 @@ void TTCutMainWindow::onAudioVideoCut(int index)
 
   while ( AudioAnzahl > 0 )
   {
-    current_audio_stream = audioList->audioStream( list_pos );
+    current_audio_stream = audioList->audioStreamAt( list_pos );
 
     //qDebug( "%scurrent audio stream: %s",c_name,current_audio_stream->fileName().ascii() );
 

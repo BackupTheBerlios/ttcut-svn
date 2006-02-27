@@ -36,6 +36,8 @@
 
 #include "../common/ttcut.h"
 
+class TTAudioListDataItem;
+class TTAudioListData;
 class QMenu;
 class QAction;
 
@@ -47,8 +49,10 @@ class TTAudioFileList : public QWidget, Ui::TTAudioFileListWidget
     TTAudioFileList(QWidget* parent=0);
 
     void setTitle ( const QString & title );
+    void setListData(TTAudioListData* ad);
     void setControlEnabled( bool enabled );
     void openAudioFile();
+    void addItem(TTAudioListDataItem& item);
 
   signals:
     void fileOpened( const QString& fName );
@@ -66,11 +70,12 @@ class TTAudioFileList : public QWidget, Ui::TTAudioFileListWidget
     void createActions();
 
   private:
-    QMenu*   contextMenu;
-    QAction* itemUpAction;
-    QAction* itemDownAction;
-    QAction* itemDeleteAction;
-    QAction* itemNewAction;
+    TTAudioListData* audioListData;
+    QMenu*           contextMenu;
+    QAction*         itemUpAction;
+    QAction*         itemDownAction;
+    QAction*         itemDeleteAction;
+    QAction*         itemNewAction;
 };
 
 #endif
