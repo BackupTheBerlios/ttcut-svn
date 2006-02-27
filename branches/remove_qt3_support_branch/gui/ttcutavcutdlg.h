@@ -41,7 +41,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 
-#include "ttcut.h"
+#include "../common/ttcut.h"
 #include "ttcutsettings.h"
 
 class QProcess;

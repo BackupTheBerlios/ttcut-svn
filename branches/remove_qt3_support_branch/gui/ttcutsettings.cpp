@@ -43,7 +43,7 @@
 #include <qlayout.h>
 #include <qvariant.h>
 #include <qtooltip.h>
-#include <q3whatsthis.h>
+//#include <q3whatsthis.h>
 #include <qcombobox.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
@@ -270,83 +270,83 @@ void TTCutSettings::writeSettings()
 // TTCut settings dialog; Container for the setting tabs
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
-TTCutSettingsDlg::TTCutSettingsDlg( QWidget* parent,  const char* name,
-				    bool modal, Qt::WFlags fl )
-    : QDialog( parent, name, modal, fl )
+TTCutSettingsDlg::TTCutSettingsDlg( QWidget* parent, Qt::WFlags fl )
+    : QDialog( parent, fl )
 {
-    if ( !name )
-	setName( "TTCutSettingsDlg" );
-    resize( 596, 480 );
+  setModal( true );
 
-    setCaption( tr( "Settings" ) );
+  setName( "TTCutSettingsDlg" );
+  resize( 596, 480 );
 
-    // Dialog layout manager
-    TTCutSettingsDlgLayout = new QGridLayout( this );
-    TTCutSettingsDlgLayout->setSpacing( 6 );
-    TTCutSettingsDlgLayout->setMargin( 11 );
+  setCaption( tr( "Settings" ) );
 
-    // the tab widget
-    TTSettingsTab = new QTabWidget( this, "TTSettingsTab" );
-    TTSettingsTab->setEnabled( TRUE );
+  // Dialog layout manager
+  TTCutSettingsDlgLayout = new QGridLayout( this );
+  TTCutSettingsDlgLayout->setSpacing( 6 );
+  TTCutSettingsDlgLayout->setMargin( 11 );
 
-    // common settings tab
-    // ---------------------------------------------------------------
-    commonTab = new TTCutCommonSettings( 0, "CommonTab" );
-    TTSettingsTab->insertTab( commonTab, tr( "Common" ) );
+  // the tab widget
+  TTSettingsTab = new QTabWidget( this, "TTSettingsTab" );
+  TTSettingsTab->setEnabled( TRUE );
 
-    // files settings tab
-    // ---------------------------------------------------------------
-    filesTab = new TTCutFilesSettings( 0, "filesTab" );
-    TTSettingsTab->insertTab( filesTab, tr( "Files" ) );
+  // common settings tab
+  // ---------------------------------------------------------------
+  commonTab = new TTCutCommonSettings( 0, "CommonTab" );
+  TTSettingsTab->insertTab( commonTab, tr( "Common" ) );
 
-    // encoder settings tab
-    // ---------------------------------------------------------------
-    encoderTab = new TTCutEncoderSettings( 0, "EncoderTab" );
-    TTSettingsTab->insertTab( encoderTab, tr( "Encoding" ) );
+  // files settings tab
+  // ---------------------------------------------------------------
+  filesTab = new TTCutFilesSettings( 0, "filesTab" );
+  TTSettingsTab->insertTab( filesTab, tr( "Files" ) );
 
-    // muxer settings tab
-    // ---------------------------------------------------------------
-    muxerTab = new TTCutMuxerSettings( 0, "MuxerTab" );
-    TTSettingsTab->insertTab( muxerTab, tr( "Muxing" ) );
+  // encoder settings tab
+  // ---------------------------------------------------------------
+  encoderTab = new TTCutEncoderSettings( 0, "EncoderTab" );
+  TTSettingsTab->insertTab( encoderTab, tr( "Encoding" ) );
 
-    // chapter settings tab
-    // ---------------------------------------------------------------
-    chapterTab = new TTCutChapterSettings( 0, "ChapterTab" );
-    TTSettingsTab->insertTab( chapterTab, tr( "Chapters" ) );
+  // muxer settings tab
+  // ---------------------------------------------------------------
+  muxerTab = new TTCutMuxerSettings( 0, "MuxerTab" );
+  TTSettingsTab->insertTab( muxerTab, tr( "Muxing" ) );
 
-    // add tab widget to central layout
-    TTCutSettingsDlgLayout->addWidget( TTSettingsTab, 0, 0 );
+  // chapter settings tab
+  // ---------------------------------------------------------------
+  chapterTab = new TTCutChapterSettings( 0, "ChapterTab" );
+  TTSettingsTab->insertTab( chapterTab, tr( "Chapters" ) );
 
-    // button ok, cancel
-    // ---------------------------------------------------------------
-    Layout1 = new QHBoxLayout;
-    Layout1->setSpacing( 6 );
-    Layout1->setMargin( 0 );
-    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    Layout1->addItem( spacer );
+  // add tab widget to central layout
+  TTCutSettingsDlgLayout->addWidget( TTSettingsTab, 0, 0 );
 
-    btnOk = new QPushButton( this, "BtnOk" );
-    btnOk->setText( tr( "&Ok" ) );
-    Layout1->addWidget( btnOk );
+  // button ok, cancel
+  // ---------------------------------------------------------------
+  Layout1 = new QHBoxLayout;
+  Layout1->setSpacing( 6 );
+  Layout1->setMargin( 0 );
+  QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+  Layout1->addItem( spacer );
 
-    btnCancel = new QPushButton( this, "BtnCancel" );
-    btnCancel->setText( tr( "&Cancel" ) );
-    Layout1->addWidget( btnCancel );
+  btnOk = new QPushButton( this, "BtnOk" );
+  btnOk->setText( tr( "&Ok" ) );
+  Layout1->addWidget( btnOk );
 
-    TTCutSettingsDlgLayout->addLayout( Layout1, 1, 0 );
+  btnCancel = new QPushButton( this, "BtnCancel" );
+  btnCancel->setText( tr( "&Cancel" ) );
+  Layout1->addWidget( btnCancel );
 
-    // signals and slot connection
-    // ------------------------------------------------------------------
-    connect( btnOk,     SIGNAL( clicked() ),  SLOT( onDlgOk() ) );
-    connect( btnCancel, SIGNAL( clicked() ),  SLOT( onDlgCancel() ) );
+  TTCutSettingsDlgLayout->addLayout( Layout1, 1, 0 );
 
-    // set the tabs data
-    // ------------------------------------------------------------------
-    commonTab->setTabData();
-    filesTab->setTabData();
-    encoderTab->setTabData();
-    muxerTab->setTabData();
-    chapterTab->setTabData();
+  // signals and slot connection
+  // ------------------------------------------------------------------
+  connect( btnOk,     SIGNAL( clicked() ),  SLOT( onDlgOk() ) );
+  connect( btnCancel, SIGNAL( clicked() ),  SLOT( onDlgCancel() ) );
+
+  // set the tabs data
+  // ------------------------------------------------------------------
+  commonTab->setTabData();
+  filesTab->setTabData();
+  encoderTab->setTabData();
+  muxerTab->setTabData();
+  chapterTab->setTabData();
 }
 
 TTCutSettingsDlg::~TTCutSettingsDlg()
@@ -636,7 +636,7 @@ TTCutCommonSettings::TTCutCommonSettings( QWidget* parent,  const char* name, Qt
     btnDirOpen = new QPushButton( gbFilesDirs, "btnDirOpen" );
     btnDirOpen->setMinimumSize( QSize( 30, 30 ) );
     btnDirOpen->setMaximumSize( QSize( 30, 30 ) );
-    btnDirOpen->setPixmap( *(TTCut::imgFileOpen24) );
+    //FIXME: btnDirOpen->setPixmap( *(TTCut::imgFileOpen24) );
 
     gbFilesDirsLayout->addWidget( btnDirOpen, 0, 2 );
 
@@ -1008,14 +1008,14 @@ TTCutMuxerSettings::TTCutMuxerSettings( QWidget* parent,  const char* name, Qt::
     pbConfigureMuxer->setMinimumSize( QSize( 0, 0 ) );
     pbConfigureMuxer->setMaximumSize( QSize( 32767, 32767 ) );
     pbConfigureMuxer->setText( tr( "configure..." ) );
-    pbConfigureMuxer->setIconSet( QIcon( *(TTCut::imgSettings18) ) );
+    //FIXME: pbConfigureMuxer->setIconSet( QIcon( *(TTCut::imgSettings18) ) );
 
     gbMuxerSettingsLayout->addWidget( pbConfigureMuxer, 1, 3 );
 
     btnOutputPath = new QPushButton( gbMuxerSettings, "btnOutputPath" );
     btnOutputPath->setMinimumSize( QSize( 30, 30 ) );
     btnOutputPath->setMaximumSize( QSize( 30, 30 ) );
-    btnOutputPath->setPixmap( *(TTCut::imgFileOpen24) );
+    //FIXME: btnOutputPath->setPixmap( *(TTCut::imgFileOpen24) );
 
     gbMuxerSettingsLayout->addWidget( btnOutputPath, 2, 5 );
 

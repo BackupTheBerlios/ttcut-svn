@@ -1,0 +1,409 @@
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>TTCutMainWindow</class>
+ <widget class="QMainWindow" name="TTCutMainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1044</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>900</width>
+    <height>750</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <property name="margin" >
+     <number>9</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item row="4" column="0" colspan="3" >
+     <widget class="QTabWidget" name="ccrTab" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>1</hsizetype>
+        <vsizetype>1</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>640</width>
+        <height>150</height>
+       </size>
+      </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="tabCutList" >
+       <attribute name="title" >
+        <string>Cut List</string>
+       </attribute>
+       <attribute name="icon" >
+        <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/cutav_18.xpm</iconset>
+       </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="0" >
+         <widget class="TTCutList" name="cutList" >
+          <property name="title" >
+           <string>GroupBox</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="2" column="2" >
+     <widget class="TTNavigation" name="navigation" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>1</hsizetype>
+        <vsizetype>1</vsizetype>
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>250</width>
+        <height>150</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>250</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>10</height>
+       </size>
+      </property>
+      <property name="title" >
+       <string>Navgation</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" >
+     <widget class="TTCurrentFrame" name="currentFrame" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>7</hsizetype>
+        <vsizetype>7</vsizetype>
+        <horstretch>1</horstretch>
+        <verstretch>4</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>280</width>
+        <height>150</height>
+       </size>
+      </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>10</height>
+       </size>
+      </property>
+      <property name="title" >
+       <string>Current Frame</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <widget class="TTCutOutFrame" name="cutOutFrame" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>7</hsizetype>
+        <vsizetype>7</vsizetype>
+        <horstretch>1</horstretch>
+        <verstretch>4</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>280</width>
+        <height>150</height>
+       </size>
+      </property>
+      <property name="sizeIncrement" >
+       <size>
+        <width>0</width>
+        <height>10</height>
+       </size>
+      </property>
+      <property name="title" >
+       <string>Cut-Out Frame</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3" >
+     <widget class="TTAudioFileList" name="audioFileInfo" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>5</hsizetype>
+        <vsizetype>5</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>640</width>
+        <height>120</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>16777215</width>
+        <height>240</height>
+       </size>
+      </property>
+      <property name="title" >
+       <string>Audiofiles</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="3" >
+     <widget class="TTVideoFileInfo" name="videoFileInfo" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>5</hsizetype>
+        <vsizetype>5</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>640</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>16777215</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="title" >
+       <string>Videofile</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="3" >
+     <widget class="QScrollBar" name="slider" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="invertedAppearance" >
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1044</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuHelp" >
+    <property name="title" >
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout" />
+   </widget>
+   <widget class="QMenu" name="menuAction" >
+    <property name="title" >
+     <string>Action</string>
+    </property>
+    <addaction name="separator" />
+    <addaction name="actionSaveCurrentFrame" />
+    <addaction name="separator" />
+    <addaction name="actionSettings" />
+   </widget>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <property name="icon" >
+     <iconset/>
+    </property>
+    <addaction name="actionFileNew" />
+    <addaction name="actionFileOpen" />
+    <addaction name="actionFileSave" />
+    <addaction name="separator" />
+    <addaction name="actionFileSaveAs" />
+    <addaction name="separator" />
+    <addaction name="actionRecentProjects" />
+    <addaction name="separator" />
+    <addaction name="actionExit" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuAction" />
+   <addaction name="menuHelp" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>727</y>
+     <width>1044</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <action name="actionFileNew" >
+   <property name="icon" >
+    <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/filenew_16.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>New</string>
+   </property>
+   <property name="shortcut" >
+    <string/>
+   </property>
+  </action>
+  <action name="actionFileOpen" >
+   <property name="icon" >
+    <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/fileopen_16.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionFileSave" >
+   <property name="icon" >
+    <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/filesave_16.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionFileSaveAs" >
+   <property name="icon" >
+    <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/filesaveas_16.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>Save as...</string>
+   </property>
+  </action>
+  <action name="actionRecentProjects" >
+   <property name="text" >
+    <string>Recent Projects...</string>
+   </property>
+  </action>
+  <action name="actionExit" >
+   <property name="icon" >
+    <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/exit_16.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionSaveCurrentFrame" >
+   <property name="icon" >
+    <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/saveimage_16.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>Save current frame...</string>
+   </property>
+  </action>
+  <action name="actionSettings" >
+   <property name="icon" >
+    <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/settings_16.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>Settings...</string>
+   </property>
+   <property name="shortcut" >
+    <string/>
+   </property>
+  </action>
+  <action name="actionAbout" >
+   <property name="text" >
+    <string>About</string>
+   </property>
+  </action>
+ </widget>
+ <pixmapfunction></pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>TTCurrentFrame</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcurrentframe.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTAudioFileList</class>
+   <extends>QGroupBox</extends>
+   <header>gui/ttaudiofilelist.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTNavigation</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttnavigation.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTCutOutFrame</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcutoutframe.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTVideoFileInfo</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttvideofileinfo.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTCutList</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcutlist.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="mainwindow.qrc" />
+ </resources>
+ <connections/>
+</ui>

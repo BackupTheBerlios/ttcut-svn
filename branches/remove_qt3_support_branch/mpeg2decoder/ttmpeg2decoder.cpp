@@ -194,7 +194,7 @@ bool TTMpeg2Decoder::openMPEG2File(QString cFName, __attribute__ ((unused))long 
 
   if ( mpeg2Stream == NULL )
   {
-     mpeg2Stream = new TTFileBuffer( mpeg2FileName, fm_open_read );
+     mpeg2Stream = new TTFileBuffer( qPrintable(mpeg2FileName), fm_open_read );
 
      if ( mpeg2Stream == NULL )
 	mpeg2StreamOK = false;
@@ -202,7 +202,7 @@ bool TTMpeg2Decoder::openMPEG2File(QString cFName, __attribute__ ((unused))long 
 	mpeg2StreamOK = true;
   }
   else
-     mpeg2StreamOK = mpeg2Stream->openFile( mpeg2FileName, fm_open_read );
+     mpeg2StreamOK = mpeg2Stream->openFile( qPrintable(mpeg2FileName), fm_open_read );
 
   // initialize the stream buffer for file I/O
   if ( mpeg2StreamOK )

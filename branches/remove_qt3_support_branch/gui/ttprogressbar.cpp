@@ -55,7 +55,7 @@ TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
 	//QT3: setName( "TTProgressBar" );
     
     resize( 640, 100 );
-    setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, sizePolicy().hasHeightForWidth() ) );
+    //setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, sizePolicy().hasHeightForWidth() ) );
     setMinimumSize( QSize( 640, 100 ) );
     setMaximumSize( QSize( 640, 100 ) );
     setBaseSize( QSize( 640, 100 ) );
@@ -75,7 +75,7 @@ TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
     Layout1->addWidget( laAction );
 
     actionString = new QLabel( this );
-    actionString->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)1, actionString->sizePolicy().hasHeightForWidth() ) );
+    //actionString->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)1, actionString->sizePolicy().hasHeightForWidth() ) );
     actionString->setMinimumSize( QSize( 250, 0 ) );
     actionString->setText( tr( "TextLabel2" ) );
     Layout1->addWidget( actionString );

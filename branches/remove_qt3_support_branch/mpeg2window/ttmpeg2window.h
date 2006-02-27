@@ -37,7 +37,7 @@
 #include <QImage>
 #include <QFileDialog>
 
-#include "../gui/ttcut.h"
+#include "../common/ttcut.h"
 
 #include "../mpeg2decoder/ttmpeg2decoder.h"
 #include "../common/ttmessagelogger.h"
@@ -51,60 +51,65 @@
 class TTMPEG2Window : public QGLWidget
 {
   Q_OBJECT
-    
-    public:
-  TTMPEG2Window( QWidget* parent=0, const char* name=0 );
 
-  void openVideoFile( QString fName, TTVideoIndexList* viIndex=NULL, TTVideoHeaderList* viHeader=NULL );
-  void openVideoStream( TTMpeg2VideoStream* v_stream );
-  void closeVideoStream();
+  public:
+    TTMPEG2Window( QWidget* parent=0 );
 
-  // navigation
-  void moveToFirstFrame( bool show = true );
-  long moveToVideoFrame( long iFramePos, int iFrameType=0 );
+    // Needed by Qt Designer
+    void setFrameShape(QFrame::Shape);
+    void setFrameShadow(QFrame::Shadow);
+    void setLineWidth(int width);
 
-  void showVideoFrame();
-  void showFrameAt( uint index );
-  bool showDecodedSlice();
+    void openVideoFile( QString fName, TTVideoIndexList* viIndex=NULL, TTVideoHeaderList* viHeader=NULL );
+    void openVideoStream( TTMpeg2VideoStream* v_stream );
+    void closeVideoStream();
 
-  long currentFrameIndex();
+    // navigation
+    void moveToFirstFrame( bool show = true );
+    long moveToVideoFrame( long iFramePos, int iFrameType=0 );
 
-  int getVideoWidth();
-  int getVideoHeight();
-  int getSceneWidth();
-  int getSceneHeight();
+    void showVideoFrame();
+    void showFrameAt( uint index );
+    bool showDecodedSlice();
 
-  void saveCurrentFrame( QString fName, const char* format );
+    long currentFrameIndex();
 
- protected:
-  void initializeGL();
-  void resizeGL( int width, int height );
-  void paintGL();
-  bool decodeAndShowSlice();
+    int getVideoWidth();
+    int getVideoHeight();
+    int getSceneWidth();
+    int getSceneHeight();
 
-  protected slots:
-  void updateFrame();
+    void saveCurrentFrame( QString fName, const char* format );
 
- private:
-  int                iSceneWidth;
-  int                iSceneHeight;
-  int                iVideoWidth;
-  int                iVideoHeight;
-  int                iMarginX;
-  int                iMarginY;
-  int                iOldWidth;
-  int                iOldHeight;
-  bool               isResizeAction;
-  float              fAspect;
-  long               currentFrame;
-  uint8_t*           picBuffer;
-  TFrameInfo*        frameInfo;
-  QString            mpeg2FileName;
-  TTMessageLogger*   log;
-  TTMpeg2Decoder*    mpeg2_decoder;
-  TTVideoIndex*      frame_index;
-  TTVideoIndexList*  video_index;
-  TTVideoHeaderList* video_header;
+  protected:
+    void initializeGL();
+    void resizeGL( int width, int height );
+    void paintGL();
+    bool decodeAndShowSlice();
+
+    protected slots:
+      void updateFrame();
+
+  private:
+    int                iSceneWidth;
+    int                iSceneHeight;
+    int                iVideoWidth;
+    int                iVideoHeight;
+    int                iMarginX;
+    int                iMarginY;
+    int                iOldWidth;
+    int                iOldHeight;
+    bool               isResizeAction;
+    float              fAspect;
+    long               currentFrame;
+    uint8_t*           picBuffer;
+    TFrameInfo*        frameInfo;
+    QString            mpeg2FileName;
+    TTMessageLogger*   log;
+    TTMpeg2Decoder*    mpeg2_decoder;
+    TTVideoIndex*      frame_index;
+    TTVideoIndexList*  video_index;
+    TTVideoHeaderList* video_header;
 };
 
 #endif //TTMPEG2WINDOW_H

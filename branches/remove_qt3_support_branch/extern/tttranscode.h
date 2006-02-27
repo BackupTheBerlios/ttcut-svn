@@ -32,7 +32,7 @@
 #define TTTRASNCODE_H
 
 #include "../common/ttmessagelogger.h"
-#include "../gui/ttcut.h"
+#include "../common/ttcut.h"
 #include "../gui/ttprocessform.h"
 
 #include <QFileInfo>

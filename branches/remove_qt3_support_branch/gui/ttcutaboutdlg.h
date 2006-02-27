@@ -39,7 +39,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 
-#include "ttcut.h"
+#include "../common/ttcut.h"
 
 class QVBoxLayout;
 class QHBoxLayout;

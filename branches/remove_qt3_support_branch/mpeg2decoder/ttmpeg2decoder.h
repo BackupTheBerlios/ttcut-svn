@@ -37,7 +37,7 @@
 
 // project header files
 //#if defined(__TTCUT)
-#include "../gui/ttcut.h"
+#include "../common/ttcut.h"
 //#else
 //#include "ttmpeg2.h"
 //#endif

@@ -32,34 +32,14 @@
 /*----------------------------------------------------------------------------*/
 
 
-//#ifndef TTCUT_H
-//#define TTCUT_H
-
-#include <math.h>
-
-#include <qstring.h>
-#include <qfile.h>
-#include <qfileinfo.h>
-#include <qdatetime.h>
-#include <qpixmap.h>   
-
 #include "../avstream/ttcommon.h"
-/*
- *extern "C" bool    ttAssigned( const void* pointer );
- *extern "C" bool    ttFileExists( QString fName );
- *extern "C" bool    ttDeleteFile( QString fName );
- *extern "C" QString ttAddFileExt( QString fName, const char* cExt );
- *extern "C" QString ttChangeFileExt( QString fName, const char* cExt );
- *extern "C" QTime   ttMsecToTime( int msec );
- *extern "C" QTime   ttFramesToTime(long lFrames, float fps);
- *extern "C" long    ttTimeToFrames(QTime timeCode, float fps);
-*/
+
 #ifndef TTCUT_H
 #define TTCUT_H
 
-
-//#include "ttmpeg2decoder.h"
-
+class QPixmap;
+class QString;
+class QWidget;
 
 class TTCut
 {
@@ -68,7 +48,7 @@ class TTCut
    ~TTCut();
 
  public:
-   // icons
+  // icons
    static QPixmap* imgDownArrow;
    static QPixmap* imgUpArrow;
    static QPixmap* imgDelete;
@@ -99,6 +79,7 @@ class TTCut
    static QPixmap* imgIFrame;
    static QPixmap* imgPFrame;
    static QPixmap* imgBFrame;
+
 
    // --------------------------------------------------------------
    // common settings

@@ -32,10 +32,11 @@
 /*----------------------------------------------------------------------------*/
 
 #include "ttcut.h"
-//Added by qt3to4:
-#include <QPixmap>
+
+#include <QWidget>
 #include <QDir>
 #include <QCoreApplication>
+#include <QString>
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -76,6 +77,7 @@ QPixmap* TTCut::imgFileClose  = NULL;
 QPixmap* TTCut::imgIFrame     = NULL;
 QPixmap* TTCut::imgPFrame     = NULL;
 QPixmap* TTCut::imgBFrame     = NULL;
+
 
 // --------------------------------------------------------------
 // common settings
@@ -158,20 +160,20 @@ bool TTCut::isWorking         = false;
 // Cut settings
 // --------------------------------------------------------------
 // cut option
-QString TTCut::cutDirPath         = QDir::currentPath();
-QString TTCut::cutVideoName       = "_cut.m2v";
-bool    TTCut::cutWriteMaxBitrate = false;
-bool    TTCut::cutWriteSeqEnd     = false;
-bool    TTCut::correctCutTimeCode = false;
-bool    TTCut::correctCutBitRate  = false;
-bool    TTCut::createCutIDD       = false;
-bool    TTCut::readCutIDD         = false;
+QString  TTCut::cutDirPath         = QDir::currentPath();
+QString  TTCut::cutVideoName       = "_cut.m2v";
+bool     TTCut::cutWriteMaxBitrate = false;
+bool     TTCut::cutWriteSeqEnd     = false;
+bool     TTCut::correctCutTimeCode = false;
+bool     TTCut::correctCutBitRate  = false;
+bool     TTCut::createCutIDD       = false;
+bool     TTCut::readCutIDD         = false;
 
 // --------------------------------------------------------------
 // Global properties
 // --------------------------------------------------------------
-float TTCut::frameRate            = 25.0;
-QWidget* TTCut::mainWindow        = NULL;
+float    TTCut::frameRate          = 25.0;
+QWidget* TTCut::mainWindow         = NULL;
 
 TTCut::TTCut()
 {

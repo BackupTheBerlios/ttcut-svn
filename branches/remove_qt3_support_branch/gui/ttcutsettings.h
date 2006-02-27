@@ -35,12 +35,11 @@
 #define TTCUTSETTINGS_H
 
 
-#include <qdir.h>
-#include <qfile.h>
-#include <qvariant.h>
-#include <qdialog.h>
-#include <qsettings.h>
-//Added by qt3to4:
+#include <QDir>
+#include <QFile>
+#include <QVariant>
+#include <QDialog>
+#include <QSettings>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -61,7 +60,7 @@ class QComboBox;
 class QRadioButton;
 class Q3ButtonGroup;
 
-#include "ttcut.h"
+#include "../common/ttcut.h"
 
 class TTCutCommonSettings;
 class TTCutFilesSettings;
@@ -98,7 +97,7 @@ class TTCutSettingsDlg : public QDialog
     Q_OBJECT
 
 public:
-    TTCutSettingsDlg( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags fl = 0 );
+    TTCutSettingsDlg( QWidget* parent = 0, Qt::WFlags fl = 0 );
     ~TTCutSettingsDlg();
 
     void setGlobalData();
