@@ -53,12 +53,14 @@
 #include "ttaviwriter.h"
 
 #include "../common/ttmessagelogger.h"
-#include "../avcut/ttavcutposition.h"
+//#include "../data/ttcutlistdata.h"
 #include "../extern/tttranscode.h"
 
 #include <QString>
 #include <QFileInfo>
 
+class TTAudioListData;
+class TTCutListData;
 // -----------------------------------------------------------------------------
 // TTMpeg2VideoStream
 // -----------------------------------------------------------------------------
@@ -86,7 +88,7 @@ class TTMpeg2VideoStream : public TTVideoStream
   bool isCutOutPoint( int pos );
 
   void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
+  void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
   void transferMpegObjects( TTFileBuffer* fs,
 			    TTVideoHeader* start_object,
 			    int start_object_index,

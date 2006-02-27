@@ -61,6 +61,7 @@
 #endif
 
 #include "../common/ttmessagelogger.h"
+//#include "../data/ttcutlistdata.h"
 #include "../avcut/ttavcutposition.h"
 #include "../gui/ttprogressbar.h"
 
@@ -73,6 +74,7 @@
 
 #include <qdatetime.h>
 
+class TTCutListData;
 class TTAVTypes;
 class QString;
 class QFileInfo;
@@ -107,7 +109,7 @@ public:
   virtual int createHeaderList();
   virtual int createIndexList();
   virtual void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  virtual void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
+  virtual void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
   virtual bool isCutInPoint( int pos );
   virtual bool isCutOutPoint( int pos );
   virtual QString streamExtension();
