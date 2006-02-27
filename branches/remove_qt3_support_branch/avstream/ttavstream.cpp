@@ -63,8 +63,9 @@
 #pragma warning(disable:186) // pointless comparison...
 #endif
 
-#include "../data/ttcutlistdata.h"
 #include "ttavstream.h"
+#include "../data/ttcutlistdata.h"
+//#include "../data//ttcutparameter.h"
 
 #include <QString>
 #include <qfileinfo.h>

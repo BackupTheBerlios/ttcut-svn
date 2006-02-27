@@ -38,6 +38,7 @@ HEADERS   = common/ttcut.h         \
             common/ttmessagelogger.h\
             data/ttaudiolistdata.h  \
             data/ttcutlistdata.h    \
+            data/ttcutparameter.h \
             gui/ttcutmainwindow.h   \
             gui/ttcutsettings.h     \
             gui/ttvideofileinfo.h   \
@@ -77,13 +78,13 @@ HEADERS   = common/ttcut.h         \
             avstream/ttaviwriter.h \
             mpeg2decoder/ttmpeg2decoder.h \
             mpeg2window/ttmpeg2window.h \
-            avcut/ttavcutposition.h \
             avilib/avilib.h \
             extern/tttranscode.h 
 SOURCES   = common/ttcut.cpp        \
             common/ttmessagelogger.cpp \
             data/ttaudiolistdata.cpp \
             data/ttcutlistdata.cpp \
+            data/ttcutparameter.cpp \
             gui/ttcutmain.cpp       \
             gui/ttcutsettings.cpp \
             gui/ttvideofileinfo.cpp \
@@ -124,7 +125,6 @@ SOURCES   = common/ttcut.cpp        \
             avstream/ttaviwriter.cpp \
             mpeg2decoder/ttmpeg2decoder.cpp \
             mpeg2window/ttmpeg2window.cpp \
-            avcut/ttavcutposition.cpp \
             avilib/avilib.c \
             extern/tttranscode.cpp
 #

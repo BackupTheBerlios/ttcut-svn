@@ -2,33 +2,18 @@
 /* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttmpegaudiostream.h                                             */
+/* FILE     : ttavcutposition.cpp                                             */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/11/2005 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/20/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// TTMPEGAUDIOSTREAM
+// *** TTCUTPARAMETER
 // ----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Overview
-// -----------------------------------------------------------------------------
-//
-//                               +- TTAC3AudioStream
-//                               |
-//                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
-//             |
-//             +- TTVideoStream -TTMpeg2VideoStream
-//
-// -----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
@@ -46,32 +31,55 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTMPEGAUDIOSTREAM_H
-#define TTMPEGAUDIOSTREAM_H
+#include "ttcutparameter.h"
 
-#include "ttavstream.h"
-#include "ttmpegaudioheader.h"
+//#define TTAVCUTLIST_DEBUG
+//#define TTCUTPARAMETER_DEBUG
 
-// -----------------------------------------------------------------------------
-// TTMPEGAudioStream
-// -----------------------------------------------------------------------------
-class TTMPEGAudioStream : public TTAudioStream
+const char c_name[] = "TTCutParameter";
+
+TTCutParameter::TTCutParameter()
 {
- public:
-  TTMPEGAudioStream();
-  TTMPEGAudioStream( const QFileInfo &f_info, int s_pos=0 );
+#if defined(TTCUTPARAMETER_DEBUG)
+  qDebug( "%screate cut parameter object",c_name );
+#endif
+  pictures_written            = 0;
+  first_call                  = true;
+  last_call                   = false;
+  write_max_bitrate           = false;
+  write_sequence_end_code     = false;
+  create_dvd_compliant_stream = false;
 
-  void searchNextSyncByte();
-  void parseAudioHeader( uint8_t* data, int offset, TTMpegAudioHeader* audio_header );
+  result_header_list = (TTVideoHeaderList*)NULL;
+}
 
-  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
+TTCutParameter::~TTCutParameter()
+{
+#if defined(TTCUTPARAMETER_DEBUG)
+  qDebug( "%sdelete cut parameter object",c_name );
+#endif
+  if ( ttAssigned( result_header_list ) )
+  {
+#if defined(TTCUTPARAMETER_DEBUG)
+    qDebug( "%sdelete header list",c_name );
+#endif
+    delete result_header_list;
+  }
+}
 
-  void    readAudioHeader( TTMpegAudioHeader* audio_header );
-  int     createHeaderList( );
-  QString streamExtension();
-  QString absStreamTime();
-  int     searchIndex( double s_time );
-};
+bool TTCutParameter::writeSequenceEndCode()
+{
+  return write_sequence_end_code;
+}
 
-#endif //TTMPEGAUDIOSTREAM_H
+bool TTCutParameter::writeMaxBitrate()
+{
+  return write_max_bitrate;
+}
+
+
+bool TTCutParameter::createDVDCompilantStream()
+{
+  return create_dvd_compliant_stream;
+}  
+

@@ -2,33 +2,18 @@
 /* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttmpegaudiostream.h                                             */
+/* FILE     : ttavcutposition.h                                               */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/11/2005 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/20/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// TTMPEGAUDIOSTREAM
+// *** TTCUTPARAMETER
 // ----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Overview
-// -----------------------------------------------------------------------------
-//
-//                               +- TTAC3AudioStream
-//                               |
-//                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
-//             |
-//             +- TTVideoStream -TTMpeg2VideoStream
-//
-// -----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
@@ -45,33 +30,40 @@
 /* with this program; if not, write to the Free Software Foundation,          */
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
+#ifndef TTCUTPARAMETER_H
+#define TTCUTPARAMETER_H
 
-#ifndef TTMPEGAUDIOSTREAM_H
-#define TTMPEGAUDIOSTREAM_H
+#include <qdatetime.h>
 
-#include "ttavstream.h"
-#include "ttmpegaudioheader.h"
+#include <QVector>
+
+#include "../avstream/ttcommon.h"
+#include "../avstream/ttvideoheaderlist.h"
 
 // -----------------------------------------------------------------------------
-// TTMPEGAudioStream
+// TTCutParameter
 // -----------------------------------------------------------------------------
-class TTMPEGAudioStream : public TTAudioStream
+class TTCutParameter
 {
  public:
-  TTMPEGAudioStream();
-  TTMPEGAudioStream( const QFileInfo &f_info, int s_pos=0 );
+  TTCutParameter();
+  ~TTCutParameter();
 
-  void searchNextSyncByte();
-  void parseAudioHeader( uint8_t* data, int offset, TTMpegAudioHeader* audio_header );
+  bool  writeSequenceEndCode();
+  bool  writeMaxBitrate();
+  bool  createDVDCompilantStream();
 
-  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
-
-  void    readAudioHeader( TTMpegAudioHeader* audio_header );
-  int     createHeaderList( );
-  QString streamExtension();
-  QString absStreamTime();
-  int     searchIndex( double s_time );
+  int   max_bitrate;
+  int   pictures_written;
+  bool  first_call;
+  bool  last_call;
+  TTVideoHeaderList* result_header_list;
+  bool  write_max_bitrate;
+  bool  write_sequence_end_code;
+  bool  create_dvd_compliant_stream;
+  float compliance_max_bitrate;
+  int   compliance_max_mrames;
 };
 
-#endif //TTMPEGAUDIOSTREAM_H
+
+#endif //TTCUTPARAMETER_H

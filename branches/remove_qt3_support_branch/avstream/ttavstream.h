@@ -60,9 +60,8 @@
 #include "ttfilebuffer.h"
 #endif
 
+#include "../data/ttcutparameter.h"
 #include "../common/ttmessagelogger.h"
-//#include "../data/ttcutlistdata.h"
-#include "../avcut/ttavcutposition.h"
 #include "../gui/ttprogressbar.h"
 
 #include "ttavtypes.h"
@@ -74,6 +73,7 @@
 
 #include <qdatetime.h>
 
+//class TTCutParameter;
 class TTCutListData;
 class TTAVTypes;
 class QString;

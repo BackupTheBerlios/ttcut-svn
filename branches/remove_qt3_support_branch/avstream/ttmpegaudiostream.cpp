@@ -55,6 +55,7 @@
 
 
 #include "ttmpegaudiostream.h"
+#include "../data/ttcutlistdata.h"
 
 const char c_name[] = "MPEGAUDIOSTR";
 
@@ -288,7 +289,7 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, int start, int end,__attr
 }
 
 
-void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
+void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 {
   int i;
   TTCutParameter* cut_param = new TTCutParameter();
@@ -318,8 +319,8 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
     if ( i == cut_list->count()-1 )
       cut_param->last_call = true;
 
-    start_pos = cut_list->cutInAt( i );
-    end_pos   = cut_list->cutOutAt( i );
+    start_pos = cut_list->cutInPosAt( i );
+    end_pos   = cut_list->cutOutPosAt( i );
 
     if ( ttAssigned( progress_bar ) )
     {
