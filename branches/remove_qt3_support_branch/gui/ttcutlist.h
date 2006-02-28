@@ -48,7 +48,8 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void setTitle( const QString& title );
 
     void setListData( TTCutListData* ld );
-    
+    void clearList();
+   
   public slots:
     void onAddEntry(int cutIn, int cutOut);
     void onEntryUp();

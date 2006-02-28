@@ -148,22 +148,133 @@ TTCutMainWindow::TTCutMainWindow()
 //! Menu "File new" action
 void TTCutMainWindow::onFileNew()
 {
+  //TODO: ask for saving changes
+  if ( TTCut::isVideoOpen )
+  {
+    closeProject();
+  }
 }
 
 //! Menu "File open" action
 void TTCutMainWindow::onFileOpen()
 {
+  TTCutProject* projectFile;
+  
+  QString fn = QFileDialog::getOpenFileName(this,
+      tr("Open project-file"),
+      TTCut::lastDirPath,
+      "Project(*.prj)");
+
+  if (!fn.isEmpty()) {
+
+    TTCut::projectFileName = fn;
+    
+    // error opening project file
+    try {
+      projectFile = new TTCutProject(fn, QIODevice::ReadOnly);
+    } catch (TTCutProjectOpenException) {
+      log->errorMsg(oName, "error open project file: %s", qPrintable(fn));
+      return;
+    }
+
+    // open and read video file
+    projectFile->seekToVideoSection();
+    QString videoFileName;
+    if (projectFile->readVideoFileName(videoFileName)) {
+      onReadVideoStream(videoFileName);
+    }
+
+    // open and read audio files
+    projectFile->seekToAudioSection();
+    QString audioFileName;
+    while (projectFile->readAudioFileName(audioFileName)) {
+      onReadAudioStream(audioFileName);
+    }
+
+    if (audioList->count() == 0) {
+      log->warningMsg(oName, "no audio files in project: %s", qPrintable(fn));
+
+      // TODO: Open audio file selection dialog
+    }
+
+    // read cut positions
+    projectFile->seekToCutSection();
+    int cutInPos;
+    int cutOutPos;
+    while (projectFile->readCutEntry(cutInPos, cutOutPos)) {
+      cutList->onAddEntry(cutInPos, cutOutPos);
+    }
+
+    // remove project file
+    delete projectFile;
+  }
 }
 
 //! Menu "File save" action
 void TTCutMainWindow::onFileSave()
 {
+  TTCutProject* projectFile;
+
+  // no video open
+  if (!TTCut::isVideoOpen)
+    return;
+
+  if (TTCut::projectFileName.isEmpty()) {
+
+    TTCut::projectFileName = ttChangeFileExt(mpegStream->fileName(), "prj");
+    QFileInfo prjFileInfo(QDir(TTCut::lastDirPath), TTCut::projectFileName);
+
+    TTCut::projectFileName = QFileDialog::getSaveFileName(this,
+        tr("Save project-file"),
+        prjFileInfo.absoluteFilePath(),
+        "Project(*.prj)");
+
+    if (TTCut::projectFileName.isEmpty())
+      return;
+
+    try {
+      projectFile = new TTCutProject(TTCut::projectFileName, QIODevice::WriteOnly);
+    } catch (TTCutProjectOpenException) {
+      log->errorMsg(oName, "error open save project file: %s", qPrintable(TTCut::projectFileName));
+      return;
+    }
+
+    projectFile->clearFile();
+    QFileInfo fInfo(mpegStream->fileName());
+
+    // write video file section
+    projectFile->writeVideoSection(true);
+    projectFile->writeVideoFileName(fInfo.absoluteFilePath());
+    projectFile->writeVideoSection(false);
+
+    // write audio files section
+    audioList->writeToProject(projectFile);
+
+    // write cut section
+    cutListData->writeToProject(projectFile);
+
+    // close project file
+    delete projectFile;
+  }
 }
 
 
 //! Menu "File save as" action
 void TTCutMainWindow::onFileSaveAs()
 {
+  if (!TTCut::isVideoOpen)
+    return;
+
+  TTCut::projectFileName = ttChangeFileExt(mpegStream->fileName(), "prj");
+  QFileInfo prjFileInfo(QDir(TTCut::lastDirPath), TTCut::projectFileName);
+
+  TTCut::projectFileName = QFileDialog::getSaveFileName( this,
+      tr("Save project-file as"),
+      prjFileInfo.absoluteFilePath(),
+      "Project(*.prj)" );
+
+  if (!TTCut::projectFileName.isEmpty())
+    onFileSave();
 }
 
 //! Menu "Recent files..." action
@@ -254,7 +365,7 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
       mpegStream->indexList()->sortDisplayOrder();
 
       videoFileInfo->setVideoInfo( mpegStream );
-        
+
       QString audioName = audioFromVideoName(fName);
 
       if ( !audioName.isEmpty() ) {
@@ -376,33 +487,6 @@ void TTCutMainWindow::onVideoSliderChanged(int sPos)
     // not good (!)qApp->processEvents();
   }
   sliderUpdateFrame = true;
-}
-
-// Signals from the navigation widget
-// ----------------------------------------------------------------------------
-
-//! Add specified cut range to cut list
-void TTCutMainWindow::onAddCutRange(int cutIn, int cutOut)
-{
-  // FIXEM: Mybe not used (!)
-}
-
-// Signals from cut-out widget
-// ----------------------------------------------------------------------------
-
-//! Navigate to previous possible cut out position
-void TTCutMainWindow::onPrevCutOutPos()
-{
-}
-
-//! Navigate to next possible cut out position
-void TTCutMainWindow::onNextCutOutPos()
-{
-}
-
-//! Search for equal frame from current position
-void TTCutMainWindow::onSearchFrame()
-{
 }
 
 // Signals from the current frame widget
@@ -630,8 +714,17 @@ QString TTCutMainWindow::audioFromVideoName(QString videoFile)
   return result;
 }
 
+//! Close current project or video file
 void TTCutMainWindow::closeProject()
 {
+  if (TTCut::isVideoOpen) {
+    videoFileInfo->resetVideoInfo();
+    audioFileInfo->clearList();
+    cutList->clearList();
+    navigationEnabled(false);
+    currentFrame->closeVideoStream();
+    cutOutFrame->closeVideoStream();
+  }
 }
 
 void TTCutMainWindow::navigationEnabled( bool enabled )

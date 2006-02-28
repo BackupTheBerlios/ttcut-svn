@@ -34,6 +34,11 @@ int TTCurrentFrame::currentFramePos()
   return mpeg2Stream->currentIndex();
 }
 
+void TTCurrentFrame::closeVideoStream()
+{
+  mpegWindow->closeVideoStream();
+}
+
 // Signals from the navigation widget
 // ----------------------------------------------------------------------------
 

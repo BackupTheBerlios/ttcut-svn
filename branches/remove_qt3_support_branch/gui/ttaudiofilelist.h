@@ -53,6 +53,7 @@ class TTAudioFileList : public QWidget, Ui::TTAudioFileListWidget
     void setControlEnabled( bool enabled );
     void openAudioFile();
     void addItem(TTAudioListDataItem& item);
+    void clearList();
 
   signals:
     void fileOpened( const QString& fName );

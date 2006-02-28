@@ -84,13 +84,14 @@ QPixmap* TTCut::imgBFrame     = NULL;
 // --------------------------------------------------------------
 
 // Options
-bool    TTCut::fastSlider  = false;
-QString TTCut::tempDirPath = QDir::tempPath();
-QString TTCut::lastDirPath = QDir::homePath();
+bool    TTCut::fastSlider      = false;
+QString TTCut::tempDirPath     = QDir::tempPath();
+QString TTCut::lastDirPath     = QDir::homePath();
+QString TTCut::projectFileName = "";
 
 // Preview
-int TTCut::cutPreviewSeconds = 25;
-int TTCut::playSkipFrames = 0;
+int TTCut::cutPreviewSeconds   = 25;
+int TTCut::playSkipFrames      = 0;
 
 // Frame search
 int TTCut::searchLength   = 45;

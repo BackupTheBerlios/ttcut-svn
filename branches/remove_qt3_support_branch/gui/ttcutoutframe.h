@@ -19,9 +19,10 @@ class TTCutOutFrame : public QWidget, Ui::TTCutOutFrameWidget
     void controlEnabled( bool enabled );    
     void initVideoStream( TTMpeg2VideoStream* vs );
     int currentFramePos();
+    void closeVideoStream();
 
-  public slots:
-    void onGotoCutOut( int pos );
+    public slots:
+      void onGotoCutOut( int pos );
     void onPrevCutOutPos();
     void onNextCutOutPos();
     void onSearchFrame();

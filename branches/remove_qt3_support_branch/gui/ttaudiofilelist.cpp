@@ -94,6 +94,15 @@ void TTAudioFileList::setControlEnabled( bool enabled )
   audioListView->setEnabled( enabled );
 }
 
+void TTAudioFileList::clearList()
+{
+  audioListView->clear();
+
+  if (ttAssigned(audioListData)) {
+    audioListData->deleteAll();
+  }
+}
+
 //! Open audio file
 void TTAudioFileList::openAudioFile()
 {

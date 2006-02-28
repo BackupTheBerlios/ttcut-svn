@@ -15,13 +15,14 @@ class TTCurrentFrame : public QWidget, Ui::TTCurrentFrameWidget
     TTCurrentFrame( QWidget* parent=0 );
 
     void setTitle ( const QString & title );
-void controlEnabled( bool enabled );
+    void controlEnabled( bool enabled );
     void initVideoStream( TTMpeg2VideoStream *vs );
     int currentFramePos();
-void saveCurrentFrame();
+    void saveCurrentFrame();
+    void closeVideoStream();
 
-  public slots:
-    void onPrevIFrame();
+    public slots:
+      void onPrevIFrame();
     void onNextIFrame();
     void onPrevPFrame();
     void onNextPFrame();

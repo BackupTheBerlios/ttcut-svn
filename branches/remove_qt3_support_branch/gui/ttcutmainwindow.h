@@ -11,6 +11,7 @@
 #include "../avstream/ttmpeg2videostream.h"
 #include "ttcutpreview.h"
 #include "ttcutsettings.h"
+#include "ttcutproject.h"
 
 class TTCutListData;
 
@@ -38,12 +39,6 @@ class TTCutMainWindow : public QMainWindow, Ui::TTCutMainWindow
     void onReadAudioStream( QString fName );
 
     void onVideoSliderChanged( int value );
-
-    void onAddCutRange(int cutIn, int cutOut);
-
-    void onPrevCutOutPos();
-    void onNextCutOutPos();
-    void onSearchFrame();
 
     void onNewFramePos(int);
 

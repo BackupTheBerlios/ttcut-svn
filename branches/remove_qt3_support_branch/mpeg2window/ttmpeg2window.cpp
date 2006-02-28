@@ -195,6 +195,7 @@ void TTMPEG2Window::showVideoFrame()
   }
   else
   {
+    //log->debugMsg(c_name, "clear gl buffer");
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
   }

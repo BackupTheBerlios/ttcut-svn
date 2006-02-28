@@ -91,6 +91,7 @@ class TTCut
    static bool    fastSlider;
    static QString tempDirPath;
    static QString lastDirPath;
+   static QString projectFileName;
 
    // Preview
    static int cutPreviewSeconds;

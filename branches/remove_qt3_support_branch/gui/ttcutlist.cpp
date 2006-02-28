@@ -81,6 +81,15 @@ void TTCutList::setListData( TTCutListData* ld )
   cutListData = ld;
 }
 
+void TTCutList::clearList()
+{
+  videoCutList->clear();
+
+  if (ttAssigned(cutListData)) {
+    cutListData->deleteAll();
+  }
+}
+
 //! Add or update an entry in the cut list
 void TTCutList::onAddEntry(int cutIn, int cutOut)
 {

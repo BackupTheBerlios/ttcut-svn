@@ -57,7 +57,7 @@ class TTVideoFileInfo : public QWidget, Ui::TTVideoFileInfoWidget
     void setFrameRate( QString frameRate );
     void setBitRate( QString bitRate );
     void setVBVBuffer( QString vbvBuffer );
-
+    
   protected slots:
     void onFileOpen();
 
