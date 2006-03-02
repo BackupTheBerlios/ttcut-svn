@@ -32,6 +32,7 @@
 
 #include "ui_framenavigationwidget.h"
 
+#include "../common/ttmessagelogger.h"
 #include "../data/ttcutlistdata.h"
 #include "../avstream/ttavstream.h"
 
@@ -46,6 +47,7 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
 
     void controlEnabled( bool enabled );
     void checkCutPosition( TTVideoStream* vs );
+    void keyPressEvent(QKeyEvent* e);
 
   public slots:
     void onPrevIFrame();
@@ -78,10 +80,15 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     void gotoCutOut(int);
     void addCutRange(int, int);
     void gotoMarker(int);
+    void moveNumSteps(int);
+    void moveToHome();
+    void moveToEnd();
 
   protected:
 
   private:
+    TTMessageLogger* log;
+    bool    isControlEnabled;
     bool    isEditCut;
     bool    isCutInPosition;
     bool    isCutOutPosition;

@@ -30,8 +30,20 @@
    </property>
    <item rowspan="2" row="0" column="1" >
     <widget class="QTreeWidget" name="videoCutList" >
+     <property name="minimumSize" >
+      <size>
+       <width>25</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="focusPolicy" >
+      <enum>Qt::StrongFocus</enum>
+     </property>
      <property name="contextMenuPolicy" >
       <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::Panel</enum>
      </property>
      <property name="rootIsDecorated" >
       <bool>false</bool>
@@ -145,6 +157,12 @@
          <height>25</height>
         </size>
        </property>
+       <property name="maximumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
        <property name="text" >
         <string/>
        </property>
@@ -169,6 +187,12 @@
          <height>20</height>
         </size>
        </property>
+       <property name="maximumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
        <property name="text" >
         <string/>
        </property>
@@ -188,6 +212,12 @@
         </sizepolicy>
        </property>
        <property name="minimumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
         <size>
          <width>25</width>
          <height>25</height>

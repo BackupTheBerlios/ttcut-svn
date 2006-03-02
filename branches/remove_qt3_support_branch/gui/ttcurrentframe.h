@@ -21,6 +21,8 @@ class TTCurrentFrame : public QWidget, Ui::TTCurrentFrameWidget
     void saveCurrentFrame();
     void closeVideoStream();
 
+  void wheelEvent ( QWheelEvent * e );
+
     public slots:
       void onPrevIFrame();
     void onNextIFrame();
@@ -35,6 +37,9 @@ class TTCurrentFrame : public QWidget, Ui::TTCurrentFrameWidget
     void onGotoCutOut( int pos );
     void onGotoFrame( int pos );
     void onGotoFrame( int pos, int fast );
+    void onMoveNumSteps(int);
+    void onMoveToHome();
+    void onMoveToEnd();
 
 signals:
     void newFramePosition(int);
@@ -43,6 +48,7 @@ signals:
     void updateCurrentPosition();
 
   private:
+    bool isControlEnabled;
     TTMpeg2VideoStream* mpeg2Stream;
 };
 

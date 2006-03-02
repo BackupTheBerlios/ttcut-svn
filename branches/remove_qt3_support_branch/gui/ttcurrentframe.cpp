@@ -1,10 +1,14 @@
 #include "ttcurrentframe.h"
 
+#include <QWheelEvent>
+
 //! Default constructor
 TTCurrentFrame::TTCurrentFrame(QWidget* parent)
   :QWidget(parent)
 {
   setupUi( this );
+
+  isControlEnabled = true;
 }
 
 //! Needeb by Qt Designer
@@ -15,6 +19,7 @@ void TTCurrentFrame::setTitle ( const QString & title )
 
 void TTCurrentFrame::controlEnabled( bool enabled )
 {
+  isControlEnabled = enabled;
   pbPlayVideo->setEnabled( false );//enabled );
 }
 
@@ -37,6 +42,32 @@ int TTCurrentFrame::currentFramePos()
 void TTCurrentFrame::closeVideoStream()
 {
   mpegWindow->closeVideoStream();
+}
+
+void TTCurrentFrame::wheelEvent ( QWheelEvent * e )
+{
+  if (!isControlEnabled)
+    return;
+
+  int currentPosition = mpeg2Stream->currentIndex();
+  int wheelDelta      = TTCut::stepMouseWheel;
+
+  if ( e->modifiers() == Qt::ControlModifier )
+        wheelDelta += TTCut::stepPlusCtrl;
+    
+  //wheel was rotated forwards away from the user
+  if ( e->delta() > 0 )
+    currentPosition -= wheelDelta;
+  else
+    currentPosition += wheelDelta;
+
+  if ( currentPosition < 0 )
+    currentPosition = 0;
+
+  if( currentPosition >= (int)mpeg2Stream->frameCount() )
+    currentPosition = mpeg2Stream->frameCount()-1;
+
+  onGotoFrame(currentPosition, 0);
 }
 
 // Signals from the navigation widget
@@ -167,6 +198,22 @@ void TTCurrentFrame::onGotoFrame(int pos, int fast)
   updateCurrentPosition();
 }
 
+void TTCurrentFrame::onMoveNumSteps(int steps)
+{
+  int position = mpeg2Stream->currentIndex()+steps;
+  onGotoFrame(position, 0);
+}
+
+void TTCurrentFrame::onMoveToHome()
+{
+  onGotoFrame(0, 0);
+}
+
+void TTCurrentFrame::onMoveToEnd()
+{
+  onGotoFrame(mpeg2Stream->frameCount(), 0);
+}
+
 void TTCurrentFrame::updateCurrentPosition()
 {
   QString szTemp;
@@ -204,10 +251,10 @@ void TTCurrentFrame::saveCurrentFrame()
 
   // get the image file name
   fileDlg = new QFileDialog( this,
-			     "save current frame",
-			     TTCut::lastDirPath,
-			     "Portable Network Graphics (*.png);;JPEG (*.jpg);;Bitmap (*.bmp)" );
-  
+      "save current frame",
+      TTCut::lastDirPath,
+      "Portable Network Graphics (*.png);;JPEG (*.jpg);;Bitmap (*.bmp)" );
+
   // enable specifying a file that doesn't exist
   fileDlg->setFileMode( QFileDialog::AnyFile );
   fileDlg->setAcceptMode( QFileDialog::AcceptSave );
@@ -215,34 +262,34 @@ void TTCurrentFrame::saveCurrentFrame()
   // input filename specified
   if ( fileDlg->exec() == QDialog::Accepted )
   {
-     szTemp   = fileDlg->selectedFilter();
-     fileList = fileDlg->selectedFiles();
-     fileName = fileList.at(0);
+    szTemp   = fileDlg->selectedFilter();
+    fileList = fileDlg->selectedFiles();
+    fileName = fileList.at(0);
 
-     if ( szTemp == "Portable Network Graphics (*.png)" )
-     {
-       format    = "PNG";
-       extension = "png";
-     }
-     else if ( szTemp == "JPEG (*.jpg)" )
-     {
-       format    = "JPG";
-       extension = "jpg";
-     }
-     else if ( szTemp == "Bitmap (*.bmp)" )
-     {
-       format    = "BMP";
-       extension = "bmp";
-     }
-     else
-     {
-       qDebug( "unsupported format" );
-       return;
-     }
+    if ( szTemp == "Portable Network Graphics (*.png)" )
+    {
+      format    = "PNG";
+      extension = "png";
+    }
+    else if ( szTemp == "JPEG (*.jpg)" )
+    {
+      format    = "JPG";
+      extension = "jpg";
+    }
+    else if ( szTemp == "Bitmap (*.bmp)" )
+    {
+      format    = "BMP";
+      extension = "bmp";
+    }
+    else
+    {
+      qDebug( "unsupported format" );
+      return;
+    }
 
-     fileName = ttChangeFileExt( fileName, qPrintable(extension) );
-     
-     mpegWindow->saveCurrentFrame( fileName, qPrintable(format) );
+    fileName = ttChangeFileExt( fileName, qPrintable(extension) );
+
+    mpegWindow->saveCurrentFrame( fileName, qPrintable(format) );
   }
   delete fileDlg;
 }

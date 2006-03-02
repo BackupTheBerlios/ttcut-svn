@@ -29,11 +29,19 @@
 
 #include "ttnavigation.h"
 
+#include <QKeyEvent>
+
+const char oName[] = "TTNavigation";
+
 TTNavigation::TTNavigation(QWidget* parent)
   :QWidget(parent)
 {
   setupUi( this );
 
+  // message logger instance
+  log = TTMessageLogger::getInstance();
+
+  isControlEnabled = true;
   isEditCut        = false;
   isCutInPosition  = false;
   isCutOutPosition = false;
@@ -66,6 +74,7 @@ void TTNavigation::setTitle( const QString & title )
 
 void TTNavigation::controlEnabled( bool enabled )
 {
+  isControlEnabled = enabled;
   pbNextIFrame->setEnabled( enabled );
   pbPrevIFrame->setEnabled( enabled );
   pbNextPFrame->setEnabled( enabled );
@@ -98,6 +107,124 @@ void TTNavigation::checkCutPosition( TTVideoStream* vs )
     pbSetCutOut->setEnabled( true );
   else
     pbSetCutOut->setEnabled( false );
+}
+
+
+void TTNavigation::keyPressEvent(QKeyEvent* e)
+{
+  int steps = 0;
+
+  if (!isControlEnabled)
+    return;
+
+  //log->infoMsg(oName, "key press event");
+
+  switch ( e->key() ) {
+
+    // left arrow key
+    case Qt::Key_Left:
+
+      switch (e->modifiers()) {
+
+        // backward TTCut::stepPlusAlt
+        case Qt::AltModifier:
+          steps -= TTCut::stepPlusAlt;
+          break;
+          // backward TTCut::stepPlusCtrl
+        case Qt::ControlModifier:
+          steps -= TTCut::stepPlusCtrl;
+          break;
+          // backward TTCut::stepPlusShift
+        case Qt::ShiftModifier:
+          steps -= TTCut::stepPlusShift;
+          break;
+          // backward one frame
+        default:
+          steps -= 1;
+          break;
+      }
+
+      emit moveNumSteps(steps);
+      break;
+
+      // right arrow key
+    case Qt::Key_Right:
+
+      switch (e->modifiers()) {
+
+        // forward TTCut::stepPlusAlt
+        case Qt::AltModifier:
+          steps += TTCut::stepPlusAlt;
+          break;
+          // forward TTCut::stepPlusCtrl
+        case Qt::ControlModifier:
+          steps += TTCut::stepPlusCtrl;
+          break;
+          // forward TTCut::stepPlusShift
+        case Qt::ShiftModifier:
+          steps += TTCut::stepPlusShift;
+          break;
+          // forward one frame
+        default:
+          steps += 1;
+          break;
+      }
+
+      emit moveNumSteps(steps);
+      break;
+      // home key: show first frame
+    case Qt::Key_Home:
+      emit moveToHome();
+      break;
+      // end key: show last frame
+    case Qt::Key_End:
+      emit moveToEnd();
+      break;
+      // page down
+    case Qt::Key_PageUp:
+      steps -= TTCut::stepPgUpDown;
+      emit moveNumSteps(steps);
+      break;
+      // page up
+    case Qt::Key_PageDown:
+      steps += TTCut::stepPgUpDown;
+      emit moveNumSteps(steps);
+      break;
+      // I-frame
+    case Qt::Key_I:
+      // previous I-Frame
+      if ( e->modifiers() == Qt::ControlModifier )
+        emit prevIFrame();
+      // next I-frame
+      else
+        emit nextIFrame();
+      break;
+      // ---------------------------------------------------------------------------
+      // P-frame
+      // ---------------------------------------------------------------------------
+    case Qt::Key_P:
+      // previous P-Frame
+      if ( e->modifiers() == Qt::ControlModifier )
+        emit prevPFrame();
+      // next P-frame
+      else
+        emit nextPFrame();
+      break;
+      // ---------------------------------------------------------------------------
+      // B-frame
+      // ---------------------------------------------------------------------------
+    case Qt::Key_B:
+      // previous B-Frame
+      if ( e->modifiers() == Qt::ControlModifier )
+        emit prevBFrame();
+      // next B-frame
+      else
+        emit nextBFrame();
+      break;
+
+    default:
+      break;
+  }
 }
 
 void TTNavigation::onPrevIFrame()

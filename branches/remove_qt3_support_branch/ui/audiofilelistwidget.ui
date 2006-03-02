@@ -72,6 +72,12 @@
             <height>25</height>
            </size>
           </property>
+          <property name="maximumSize" >
+           <size>
+            <width>46</width>
+            <height>46</height>
+           </size>
+          </property>
           <property name="text" >
            <string/>
           </property>
@@ -104,6 +110,12 @@
               <height>15</height>
              </size>
             </property>
+            <property name="maximumSize" >
+             <size>
+              <width>25</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="text" >
              <string/>
             </property>
@@ -126,6 +138,12 @@
              <size>
               <width>25</width>
               <height>15</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>25</width>
+              <height>20</height>
              </size>
             </property>
             <property name="text" >
@@ -152,6 +170,12 @@
               <height>15</height>
              </size>
             </property>
+            <property name="maximumSize" >
+             <size>
+              <width>25</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="text" >
              <string/>
             </property>
@@ -166,6 +190,9 @@
       </item>
       <item row="0" column="1" >
        <widget class="QTreeWidget" name="audioListView" >
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="contextMenuPolicy" >
          <enum>Qt::CustomContextMenu</enum>
         </property>

@@ -69,6 +69,7 @@ TTCutMainWindow::TTCutMainWindow()
   TTCut::imgAddToList  = new QPixmap( addtolist_18_xpm );
   TTCut::imgFileClose  = new QPixmap( fileclose_18_xpm );
 
+  setFocusPolicy(Qt::StrongFocus);
 
   // Message logger instance
   log = TTMessageLogger::getInstance();
@@ -105,19 +106,22 @@ TTCutMainWindow::TTCutMainWindow()
 
   // Connect signals from navigation widget
   // --------------------------------------------------------------------------
-  connect(navigation, SIGNAL(prevIFrame()),     currentFrame, SLOT(onPrevIFrame()));
-  connect(navigation, SIGNAL(nextIFrame()),     currentFrame, SLOT(onNextIFrame()));
-  connect(navigation, SIGNAL(prevPFrame()),     currentFrame, SLOT(onPrevPFrame()));
-  connect(navigation, SIGNAL(nextPFrame()),     currentFrame, SLOT(onNextPFrame()));
-  connect(navigation, SIGNAL(prevBFrame()),     currentFrame, SLOT(onPrevBFrame()));
-  connect(navigation, SIGNAL(nextBFrame()),     currentFrame, SLOT(onNextBFrame()));
-  connect(navigation, SIGNAL(setCutOut(int)),   currentFrame, SLOT(onSetCutOut(int)));
-  connect(navigation, SIGNAL(setCutOut(int)),   cutOutFrame,  SLOT(onGotoCutOut(int)));
-  connect(navigation, SIGNAL(setCutIn(int)),    currentFrame, SLOT(onSetCutIn(int)));
-  connect(navigation, SIGNAL(gotoCutIn(int)),   currentFrame, SLOT(onGotoCutIn(int)));
-  connect(navigation, SIGNAL(gotoCutOut(int)),  currentFrame, SLOT(onGotoCutOut(int)));
+  connect(navigation, SIGNAL(prevIFrame()),      currentFrame, SLOT(onPrevIFrame()));
+  connect(navigation, SIGNAL(nextIFrame()),      currentFrame, SLOT(onNextIFrame()));
+  connect(navigation, SIGNAL(prevPFrame()),      currentFrame, SLOT(onPrevPFrame()));
+  connect(navigation, SIGNAL(nextPFrame()),      currentFrame, SLOT(onNextPFrame()));
+  connect(navigation, SIGNAL(prevBFrame()),      currentFrame, SLOT(onPrevBFrame()));
+  connect(navigation, SIGNAL(nextBFrame()),      currentFrame, SLOT(onNextBFrame()));
+  connect(navigation, SIGNAL(setCutOut(int)),    currentFrame, SLOT(onSetCutOut(int)));
+  connect(navigation, SIGNAL(setCutOut(int)),    cutOutFrame,  SLOT(onGotoCutOut(int)));
+  connect(navigation, SIGNAL(setCutIn(int)),     currentFrame, SLOT(onSetCutIn(int)));
+  connect(navigation, SIGNAL(gotoCutIn(int)),    currentFrame, SLOT(onGotoCutIn(int)));
+  connect(navigation, SIGNAL(gotoCutOut(int)),   currentFrame, SLOT(onGotoCutOut(int)));
   connect(navigation, SIGNAL(addCutRange(int, int)), cutList,   SLOT(onAddEntry(int, int)));
-  connect(navigation, SIGNAL(gotoMarker(int)),  currentFrame, SLOT(onGotoMarker(int)));
+  connect(navigation, SIGNAL(gotoMarker(int)),   currentFrame, SLOT(onGotoMarker(int)));
+  connect(navigation, SIGNAL(moveNumSteps(int)), currentFrame, SLOT(onMoveNumSteps(int)));
+  connect(navigation, SIGNAL(moveToHome()),      currentFrame, SLOT(onMoveToHome()));
+  connect(navigation, SIGNAL(moveToEnd()),       currentFrame, SLOT(onMoveToEnd()));
 
   // Connect signal from video slider
   // --------------------------------------------------------------------------
@@ -129,7 +133,7 @@ TTCutMainWindow::TTCutMainWindow()
 
   // Connect signals from current frame widget
   // --------------------------------------------------------------------------
-  connect(currentFrame, SIGNAL(newFramePos(int)), SLOT(onNewFramePos(int))); 
+  connect(currentFrame, SIGNAL(newFramePosition(int)), SLOT(onNewFramePos(int))); 
 
   // Connect signals from cut list widget
   // --------------------------------------------------------------------------
@@ -145,6 +149,11 @@ TTCutMainWindow::TTCutMainWindow()
 // Signals from the application menu
 // ----------------------------------------------------------------------------
 
+void TTCutMainWindow::keyPressEvent(QKeyEvent* e)
+{
+  navigation->keyPressEvent(e);
+}
+
 //! Menu "File new" action
 void TTCutMainWindow::onFileNew()
 {
@@ -159,7 +168,7 @@ void TTCutMainWindow::onFileNew()
 void TTCutMainWindow::onFileOpen()
 {
   TTCutProject* projectFile;
-  
+
   QString fn = QFileDialog::getOpenFileName(this,
       tr("Open project-file"),
       TTCut::lastDirPath,
@@ -168,7 +177,7 @@ void TTCutMainWindow::onFileOpen()
   if (!fn.isEmpty()) {
 
     TTCut::projectFileName = fn;
-    
+
     // error opening project file
     try {
       projectFile = new TTCutProject(fn, QIODevice::ReadOnly);

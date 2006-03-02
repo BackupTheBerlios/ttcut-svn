@@ -27,6 +27,7 @@
 // Qt headers
 #include <QApplication>
 #include <QGLFormat>
+#include <QPlastiqueStyle>
 
 // class declaration for the main window class
 #include "ttcutmainwindow.h"
@@ -47,6 +48,9 @@ int main( int argc, char **argv )
    
    //QT3: a.setMainWidget( mainWnd );
 
+   QPlastiqueStyle* style = new QPlastiqueStyle();
+   a.setStyle(style);
+   
    // Caption text in applications title bar
    //mainWnd->setWindowTitle( TTCut::versionString );
    mainWnd->show();

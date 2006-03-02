@@ -131,6 +131,9 @@
         <height>10</height>
        </size>
       </property>
+      <property name="focusPolicy" >
+       <enum>Qt::WheelFocus</enum>
+      </property>
       <property name="title" >
        <string>Current Frame</string>
       </property>
@@ -235,7 +238,7 @@
      <x>0</x>
      <y>0</y>
      <width>1044</width>
-     <height>28</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp" >
@@ -278,9 +281,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>727</y>
+     <y>726</y>
      <width>1044</width>
-     <height>23</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>
@@ -360,13 +363,6 @@
  <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>TTCurrentFrame</class>
-   <extends>QGroupBox</extends>
-   <header>../gui/ttcurrentframe.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>TTAudioFileList</class>
    <extends>QGroupBox</extends>
    <header>gui/ttaudiofilelist.h</header>
@@ -384,6 +380,13 @@
    <class>TTCutOutFrame</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutoutframe.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTCurrentFrame</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcurrentframe.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

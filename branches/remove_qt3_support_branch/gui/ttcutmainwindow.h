@@ -22,6 +22,8 @@ class TTCutMainWindow : public QMainWindow, Ui::TTCutMainWindow
   public:
     TTCutMainWindow();
 
+void keyPressEvent(QKeyEvent* e);
+
   public slots:
     void onFileNew();
     void onFileOpen();
