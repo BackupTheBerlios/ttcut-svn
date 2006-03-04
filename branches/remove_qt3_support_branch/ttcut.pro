@@ -42,23 +42,6 @@ HEADERS   = common/ttcut.h\
             data/ttaudiolistdata.h\
             data/ttcutlistdata.h\
             data/ttcutparameter.h\
-            gui/ttcutmainwindow.h\
-            gui/ttcutsettings.h\
-            gui/ttvideofileinfo.h\
-            gui/ttaudiofilelist.h\
-            gui/ttcutoutframe.h\
-            gui/ttcurrentframe.h\
-            gui/ttnavigation.h\
-            gui/ttstreamnavigator.h \
-            gui/ttnavigatordisplay.h \
-            gui/ttcutlist.h\
-            gui/ttprogressbar.h\
-            gui/ttprocessform.h\
-            gui/ttcutpreview.h\
-            gui/ttcutproject.h\
-            gui/ttcutaboutdlg.h\
-            gui/ttsearchframe.h\
-            gui/ttcutavcutdlg.h\
             avstream/ttcommon.h\
             avstream/ttmemorybuffer.h\
             avstream/ttac3audioheader.h\
@@ -84,30 +67,29 @@ HEADERS   = common/ttcut.h\
             mpeg2decoder/ttmpeg2decoder.h\
             mpeg2window/ttmpeg2window.h \
             avilib/avilib.h\
-            extern/tttranscode.h 
+            extern/tttranscode.h\
+            gui/ttcutsettings.h\
+            gui/ttvideofileinfo.h\
+            gui/ttaudiofilelist.h\
+            gui/ttcutoutframe.h\
+            gui/ttcurrentframe.h\
+            gui/ttnavigation.h\
+            gui/ttstreamnavigator.h \
+            gui/ttnavigatordisplay.h \
+            gui/ttcutlist.h\
+            gui/ttprogressbar.h\
+            gui/ttprocessform.h\
+            gui/ttcutpreview.h\
+            gui/ttcutproject.h\
+            gui/ttcutaboutdlg.h\
+            gui/ttsearchframe.h\
+            gui/ttcutavcutdlg.h\
+            gui/ttcutmainwindow.h
 SOURCES   = common/ttcut.cpp\
             common/ttmessagelogger.cpp\
             data/ttaudiolistdata.cpp \
             data/ttcutlistdata.cpp\
             data/ttcutparameter.cpp\
-            gui/ttcutmain.cpp\
-            gui/ttcutsettings.cpp\
-            gui/ttvideofileinfo.cpp\
-            gui/ttcutmainwindow.cpp\
-            gui/ttaudiofilelist.cpp\
-            gui/ttcutoutframe.cpp\
-            gui/ttcurrentframe.cpp\
-            gui/ttnavigation.cpp\
-            gui/ttstreamnavigator.cpp\
-            gui/ttnavigatordisplay.cpp\
-            gui/ttcutlist.cpp\
-            gui/ttprogressbar.cpp\
-            gui/ttprocessform.cpp\
-            gui/ttcutpreview.cpp\
-            gui/ttcutproject.cpp\
-            gui/ttcutaboutdlg.cpp\
-            gui/ttsearchframe.cpp\
-            gui/ttcutavcutdlg.cpp\
             avstream/ttcommon.cpp\
             avstream/ttmemorybuffer.cpp\
             avstream/ttac3audioheader.cpp\
@@ -133,7 +115,25 @@ SOURCES   = common/ttcut.cpp\
             mpeg2decoder/ttmpeg2decoder.cpp\
             mpeg2window/ttmpeg2window.cpp\
             avilib/avilib.c\
-            extern/tttranscode.cpp
+            extern/tttranscode.cpp\
+            gui/ttcutsettings.cpp\
+            gui/ttvideofileinfo.cpp\
+            gui/ttaudiofilelist.cpp\
+            gui/ttcutoutframe.cpp\
+            gui/ttcurrentframe.cpp\
+            gui/ttnavigation.cpp\
+            gui/ttstreamnavigator.cpp\
+            gui/ttnavigatordisplay.cpp\
+            gui/ttcutlist.cpp\
+            gui/ttprogressbar.cpp\
+            gui/ttprocessform.cpp\
+            gui/ttcutpreview.cpp\
+            gui/ttcutproject.cpp\
+            gui/ttcutaboutdlg.cpp\
+            gui/ttsearchframe.cpp\
+            gui/ttcutavcutdlg.cpp\
+            gui/ttcutmainwindow.cpp\
+            gui/ttcutmain.cpp
 #
 # -------------------------------------------------------------------------------
 # TTCUT.PRO ENDE
