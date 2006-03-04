@@ -60,7 +60,7 @@ class TTAudioFileList : public QWidget, Ui::TTAudioFileListWidget
     void itemDeleted( QTreeWidgetItem* item );
     void itemPositionChanged( QTreeWidgetItem* item );
 
-  protected slots:
+  public slots:
     void onFileOpen();
     void onItemUp();
     void onItemDown();

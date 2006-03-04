@@ -127,6 +127,10 @@ void TTAudioFileList::addItem(TTAudioListDataItem& item)
 //! Event handler for file open button clicked
 void TTAudioFileList::onFileOpen()
 {
+  // no video loaded
+  if (!TTCut::isVideoOpen)
+    return;
+  
   QString fn = QFileDialog::getOpenFileName( this,
       tr("Open audio file"),
       TTCut::lastDirPath,

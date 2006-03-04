@@ -72,8 +72,6 @@ extern "C"
 #include "../avstream/ttvideoindexlist.h"
 #include "../avstream/ttmpeg2videoheader.h"
 
-
-
 // constants for mpeg2 pixel format
 // -----------------------------------------------------------------------------
 enum TPixelFormat 

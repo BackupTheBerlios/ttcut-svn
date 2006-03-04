@@ -74,7 +74,8 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void previewCut(int index);
     void audioVideoCut(int index);
     void audioCut(int index);
-  
+    void refreshDisplay();
+ 
   private:
     void createActions();
 

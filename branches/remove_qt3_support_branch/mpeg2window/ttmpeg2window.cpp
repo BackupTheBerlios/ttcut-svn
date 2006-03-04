@@ -78,7 +78,7 @@ void TTMPEG2Window::setFrameShadow(QFrame::Shadow)
 {
 }
 
-void TTMPEG2Window::setLineWidth(int width)
+void TTMPEG2Window::setLineWidth(__attribute__ ((unused))int width)
 {
 }
     
@@ -198,6 +198,7 @@ void TTMPEG2Window::showVideoFrame()
     //log->debugMsg(c_name, "clear gl buffer");
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
+    swapBuffers();
   }
 }
 
@@ -404,13 +405,12 @@ bool TTMPEG2Window::showDecodedSlice()
   return true;
 }
 
-
 // -----------------------------------------------------------------------------
 // Decode current video frame and show the resulting slice
 // -----------------------------------------------------------------------------
 bool TTMPEG2Window::decodeAndShowSlice()
 {
-  bool             result;
+  bool             result = true;
 
   result    = true;
   picBuffer = NULL;

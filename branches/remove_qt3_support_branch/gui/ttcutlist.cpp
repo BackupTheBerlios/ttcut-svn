@@ -87,6 +87,7 @@ void TTCutList::clearList()
 
   if (ttAssigned(cutListData)) {
     cutListData->deleteAll();
+    emit refreshDisplay();
   }
 }
 
@@ -121,6 +122,7 @@ void TTCutList::onAddEntry(int cutIn, int cutOut)
 
       editItemIndex = -1;
     }
+    emit refreshDisplay();
     cutListData->print();
   }
 }
@@ -181,6 +183,7 @@ void TTCutList::onEntryDelete()
     delete videoCutList->takeTopLevelItem(index);
 
     cutListData->removeAt(index);
+    emit refreshDisplay();
     cutListData->print();
   }
 }

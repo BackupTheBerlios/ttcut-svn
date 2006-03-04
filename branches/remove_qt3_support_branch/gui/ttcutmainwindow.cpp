@@ -1,3 +1,31 @@
+/*----------------------------------------------------------------------------*/
+/* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
+/*----------------------------------------------------------------------------*/
+/* PROJEKT  : TTCUT 2005                                                      */
+/* FILE     : ttcutmainwindow.cpp                                             */
+/*----------------------------------------------------------------------------*/
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/26/2006 */
+/*----------------------------------------------------------------------------*/
+
+// ----------------------------------------------------------------------------
+// *** TTCUTMAINWINDOW
+// ----------------------------------------------------------------------------
+
+/*----------------------------------------------------------------------------*/
+/* This program is free software; you can redistribute it and/or modify it    */
+/* under the terms of the GNU General Public License as published by the Free */
+/* Software Foundation;                                                       */
+/* either version 2 of the License, or (at your option) any later version.    */
+/*                                                                            */
+/* This program is distributed in the hope that it will be useful, but WITHOUT*/
+/* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or      */
+/* FITNESS FOR A PARTICULAR PURPOSE.                                          */
+/* See the GNU General Public License for more details.                       */
+/*                                                                            */
+/* You should have received a copy of the GNU General Public License along    */
+/* with this program; if not, write to the Free Software Foundation,          */
+/* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
+/*----------------------------------------------------------------------------*/
 
 #include <QtGui>
 #include <QPixmap>
@@ -89,6 +117,8 @@ TTCutMainWindow::TTCutMainWindow()
   // 
   // Connect signals from main menu
   // --------------------------------------------------------------------------
+  connect(actionOpenVideo,        SIGNAL(activated()), videoFileInfo, SLOT(onFileOpen()));
+  connect(actionOpenAudio,        SIGNAL(activated()), audioFileInfo, SLOT(onFileOpen()));
   connect(actionFileNew,          SIGNAL(activated()), SLOT(onFileNew()));
   connect(actionFileOpen,         SIGNAL(activated()), SLOT(onFileOpen()));
   connect(actionFileSave,         SIGNAL(activated()), SLOT(onFileSave()));
@@ -139,8 +169,9 @@ TTCutMainWindow::TTCutMainWindow()
   // --------------------------------------------------------------------------
   connect(cutList, SIGNAL(entrySelected(int)), cutOutFrame, SLOT(onGotoCutOut(int)));
   connect(cutList, SIGNAL(entryEdit(const TTCutListDataItem&)), navigation, SLOT(onEditCut(const TTCutListDataItem&)));
-  connect(cutList, SIGNAL(gotoCutIn(int)),  currentFrame, SLOT(onGotoFrame(int)));
-  connect(cutList, SIGNAL(gotoCutOut(int)), currentFrame, SLOT(onGotoFrame(int)));
+  connect(cutList, SIGNAL(gotoCutIn(int)),     currentFrame, SLOT(onGotoFrame(int)));
+  connect(cutList, SIGNAL(gotoCutOut(int)),    currentFrame, SLOT(onGotoFrame(int)));
+  connect(cutList, SIGNAL(refreshDisplay()),   streamNavigator, SLOT(onRefreshDisplay()));
   connect(cutList, SIGNAL(previewCut(int)),    SLOT(onPreviewCut(int)));
   connect(cutList, SIGNAL(audioVideoCut(int)), SLOT(onAudioVideoCut(int)));
   connect(cutList, SIGNAL(audioCut(int)),      SLOT(onAudioCut(int)));
@@ -393,8 +424,10 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
       currentFrame->initVideoStream( mpegStream );
       cutOutFrame->initVideoStream( mpegStream );
 
-      streamNavigator->slider()->setMinimum( 0 );
-      streamNavigator->slider()->setMaximum( mpegStream->frameCount()-1 );
+      streamNavigator->setMinValue(0);
+      streamNavigator->setMaxValue(mpegStream->frameCount()-1);
+      streamNavigator->setCutListData(cutListData);
+ 
       onNewFramePos( 0 );
 
       navigationEnabled( true );
@@ -730,6 +763,7 @@ void TTCutMainWindow::closeProject()
     videoFileInfo->resetVideoInfo();
     audioFileInfo->clearList();
     cutList->clearList();
+    streamNavigator->slider()->setValue(0);
     navigationEnabled(false);
     currentFrame->closeVideoStream();
     cutOutFrame->closeVideoStream();
@@ -741,5 +775,5 @@ void TTCutMainWindow::navigationEnabled( bool enabled )
   cutOutFrame->controlEnabled( enabled );
   currentFrame->controlEnabled( enabled );
   navigation->controlEnabled( enabled );
-  streamNavigator->slider()->setEnabled( enabled );
+  streamNavigator->controlEnabled( enabled );
 }

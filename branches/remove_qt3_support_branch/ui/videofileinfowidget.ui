@@ -79,6 +79,12 @@
           <property name="icon" >
            <iconset resource="videofileinfowidget.qrc" >:/pixmaps/pixmaps/fileopen_24.xpm</iconset>
           </property>
+          <property name="iconSize" >
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
           <property name="flat" >
            <bool>false</bool>
           </property>
