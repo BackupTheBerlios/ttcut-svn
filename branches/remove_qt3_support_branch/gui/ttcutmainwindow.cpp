@@ -125,7 +125,7 @@ TTCutMainWindow::TTCutMainWindow()
 
   // Connect signal from video slider
   // --------------------------------------------------------------------------
-  connect(slider, SIGNAL(valueChanged(int)), SLOT(onVideoSliderChanged(int)));
+  connect(streamNavigator, SIGNAL(sliderValueChanged(int)), SLOT(onVideoSliderChanged(int)));
 
   // Connect signals from cut-out frame widget
   // --------------------------------------------------------------------------
@@ -393,8 +393,8 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
       currentFrame->initVideoStream( mpegStream );
       cutOutFrame->initVideoStream( mpegStream );
 
-      slider->setMinimum( 0 );
-      slider->setMaximum( mpegStream->frameCount()-1 );
+      streamNavigator->slider()->setMinimum( 0 );
+      streamNavigator->slider()->setMaximum( mpegStream->frameCount()-1 );
       onNewFramePos( 0 );
 
       navigationEnabled( true );
@@ -505,7 +505,7 @@ void TTCutMainWindow::onVideoSliderChanged(int sPos)
 void TTCutMainWindow::onNewFramePos(int newPos)
 {
   sliderUpdateFrame = false;
-  slider->setValue( newPos );
+  streamNavigator->slider()->setValue( newPos );
   videoFileInfo->setVideoInfo( mpegStream );
   navigation->checkCutPosition( mpegStream );
 }
@@ -741,5 +741,5 @@ void TTCutMainWindow::navigationEnabled( bool enabled )
   cutOutFrame->controlEnabled( enabled );
   currentFrame->controlEnabled( enabled );
   navigation->controlEnabled( enabled );
-  slider->setEnabled( enabled );
+  streamNavigator->slider()->setEnabled( enabled );
 }

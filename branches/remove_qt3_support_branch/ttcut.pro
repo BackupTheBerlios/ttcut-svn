@@ -32,6 +32,8 @@ FORMS     = ui/videofileinfowidget.ui         \
             ui/cutoutframewidget.ui     \
             ui/currentframewidget.ui    \
             ui/framenavigationwidget.ui \
+            ui/streamnavigationwidget.ui \
+            ui/navigatordisplaywidget.ui \
             ui/cutlistwidget.ui         \
             ui/mainwindow.ui
 HEADERS   = common/ttcut.h         \
@@ -46,6 +48,8 @@ HEADERS   = common/ttcut.h         \
             gui/ttcutoutframe.h    \
             gui/ttcurrentframe.h   \
             gui/ttnavigation.h     \
+            gui/ttstreamnavigator.h \
+            gui/ttnavigatordisplay.h \
             gui/ttcutlist.h        \
             gui/ttprogressbar.h    \
             gui/ttprocessform.h    \
@@ -93,6 +97,8 @@ SOURCES   = common/ttcut.cpp        \
             gui/ttcutoutframe.cpp   \
             gui/ttcurrentframe.cpp  \
             gui/ttnavigation.cpp    \
+            gui/ttstreamnavigator.cpp \
+            gui/ttnavigatordisplay.cpp \
             gui/ttcutlist.cpp       \
             gui/ttprogressbar.cpp   \
             gui/ttprocessform.cpp    \
