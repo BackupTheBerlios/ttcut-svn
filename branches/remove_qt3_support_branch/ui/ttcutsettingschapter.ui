@@ -1,0 +1,65 @@
+<!DOCTYPE UI><UI>
+<class>TTCutSettingsChapter</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>TTCutSettingsChapter</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>596</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form3</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>cbSpumuxChapter</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Write spumux (XML) chapter-list</string>
+            </property>
+        </widget>
+        <spacer row="1"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer8</cstring>
+            </property>
+            <property>
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property>
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+</UI>
