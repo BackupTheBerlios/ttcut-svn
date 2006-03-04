@@ -35,6 +35,7 @@ FORMS     = ui/videofileinfowidget.ui\
             ui/streamnavigationwidget.ui\
             ui/navigatordisplaywidget.ui\
             ui/cutlistwidget.ui\
+            ui/aboutdlg.ui\
             ui/mainwindow.ui
 HEADERS   = common/ttcut.h\
             common/ttmessagelogger.h \
@@ -55,7 +56,7 @@ HEADERS   = common/ttcut.h\
             gui/ttprocessform.h\
             gui/ttcutpreview.h\
             gui/ttcutproject.h\
-#            gui/ttcutaboutdlg.h\
+            gui/ttcutaboutdlg.h\
             gui/ttsearchframe.h\
             gui/ttcutavcutdlg.h\
             avstream/ttcommon.h\
@@ -104,7 +105,7 @@ SOURCES   = common/ttcut.cpp\
             gui/ttprocessform.cpp\
             gui/ttcutpreview.cpp\
             gui/ttcutproject.cpp\
-#            gui/ttcutaboutdlg.cpp\
+            gui/ttcutaboutdlg.cpp\
             gui/ttsearchframe.cpp\
             gui/ttcutavcutdlg.cpp\
             avstream/ttcommon.cpp\

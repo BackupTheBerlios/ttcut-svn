@@ -109,12 +109,12 @@ int TTCutListData::addItem(int cutInIndex, int cutOutIndex)
   off64_t lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
-  log->infoMsg(oName, "Insert cut position");
-  log->infoMsg(oName, "------------------------------------------");
-  log->infoMsg(oName, "Cut-In : %s (%d)",  qPrintable(cutInTime.toString("hh:mm:ss.zzz")), cutInIndex);
-  log->infoMsg(oName, "Cut-Out: %s (%d)",  qPrintable(cutOutTime.toString("hh:mm:ss.zzz")), cutOutIndex);
-  log->infoMsg(oName, "Length : %s (%lld)",qPrintable(cutLengthTime.toString("hh:mm:ss.zzz")), lengthBytes);
-  log->infoMsg(oName, "------------------------------------------");
+  //log->infoMsg(oName, "Insert cut position");
+  //log->infoMsg(oName, "------------------------------------------");
+  //log->infoMsg(oName, "Cut-In : %s (%d)",  qPrintable(cutInTime.toString("hh:mm:ss.zzz")), cutInIndex);
+  //log->infoMsg(oName, "Cut-Out: %s (%d)",  qPrintable(cutOutTime.toString("hh:mm:ss.zzz")), cutOutIndex);
+  //log->infoMsg(oName, "Length : %s (%lld)",qPrintable(cutLengthTime.toString("hh:mm:ss.zzz")), lengthBytes);
+  //log->infoMsg(oName, "------------------------------------------");
 
   TTCutListDataItem item(cutInIndex, cutInTime, cutOutIndex, cutOutTime, cutLengthTime, lengthBytes);
   item.cutInFrameType = mpegStream->frameType(cutInIndex);
@@ -141,12 +141,12 @@ int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
   off64_t lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
-  log->infoMsg(oName, "Update cut position at index: %d", index);
-  log->infoMsg(oName, "------------------------------------------");
-  log->infoMsg(oName, "Cut-In : %s (%d)",  qPrintable(cutInTime.toString("hh:mm:ss.zzz")), cutInIndex);
-  log->infoMsg(oName, "Cut-Out: %s (%d)",  qPrintable(cutOutTime.toString("hh:mm:ss.zzz")), cutOutIndex);
-  log->infoMsg(oName, "Length : %s (%lld)",qPrintable(cutLengthTime.toString("hh:mm:ss.zzz")), lengthBytes);
-  log->infoMsg(oName, "------------------------------------------");
+  //log->infoMsg(oName, "Update cut position at index: %d", index);
+  //log->infoMsg(oName, "------------------------------------------");
+  //log->infoMsg(oName, "Cut-In : %s (%d)",  qPrintable(cutInTime.toString("hh:mm:ss.zzz")), cutInIndex);
+  //log->infoMsg(oName, "Cut-Out: %s (%d)",  qPrintable(cutOutTime.toString("hh:mm:ss.zzz")), cutOutIndex);
+  //log->infoMsg(oName, "Length : %s (%lld)",qPrintable(cutLengthTime.toString("hh:mm:ss.zzz")), lengthBytes);
+  //log->infoMsg(oName, "------------------------------------------");
 
   //TTCutListDataItem item = at(index);
   data[index].cutInIndex      = cutInIndex;

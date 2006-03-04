@@ -123,7 +123,7 @@ void TTCutList::onAddEntry(int cutIn, int cutOut)
       editItemIndex = -1;
     }
     emit refreshDisplay();
-    cutListData->print();
+    //cutListData->print();
   }
 }
 
@@ -144,7 +144,7 @@ void TTCutList::onEntryUp()
       videoCutList->setCurrentItem(curItem);
 
       cutListData->swap(index, index-1);
-      cutListData->print();
+      //cutListData->print();
     }
   }
 }
@@ -166,7 +166,7 @@ void TTCutList::onEntryDown()
       videoCutList->setCurrentItem(curItem);
 
       cutListData->swap(index, index+1);
-      cutListData->print();
+      //cutListData->print();
     }
   }
 }
@@ -184,7 +184,7 @@ void TTCutList::onEntryDelete()
 
     cutListData->removeAt(index);
     emit refreshDisplay();
-    cutListData->print();
+    //cutListData->print();
   }
 }
 

@@ -33,6 +33,7 @@
 #include "ttcutmainwindow.h"
 #include "ttcutavcutdlg.h"
 #include "ttprogressbar.h"
+#include "ttcutaboutdlg.h"
 
 #include "../ui//pixmaps/downarrow_18.xpm"
 #include "../ui/pixmaps/uparrow_18.xpm"
@@ -356,6 +357,8 @@ void TTCutMainWindow::onActionSettings()
 //! Menu "About" action
 void TTCutMainWindow::onHelpAbout()
 {
+  TTCutAboutDlg about(this);
+  about.exec();
 }
 
 // Signals from the video info widget
@@ -525,8 +528,6 @@ void TTCutMainWindow::onVideoSliderChanged(int sPos)
 
     videoFileInfo->setVideoInfo( mpegStream );
     navigation->checkCutPosition( mpegStream );
-
-    // not good (!)qApp->processEvents();
   }
   sliderUpdateFrame = true;
 }
@@ -567,7 +568,7 @@ void TTCutMainWindow::onPreviewCut(int index)
   }
 }
 
-void TTCutMainWindow::onAudioVideoCut(int index)
+void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 {
   QString        AudioDateiEndung;
   QString        HString;
@@ -708,8 +709,9 @@ void TTCutMainWindow::onAudioVideoCut(int index)
   // Ende Audioschnitt
 }
 
-void TTCutMainWindow::onAudioCut(int index)
+void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
 {
+//#warning "not implemented"
 }
 
 // Service methods

@@ -46,13 +46,11 @@ int main( int argc, char **argv )
    // Application main widget
    TTCutMainWindow* mainWnd = new TTCutMainWindow();
    
-   //QT3: a.setMainWidget( mainWnd );
-
    QPlastiqueStyle* style = new QPlastiqueStyle();
    a.setStyle(style);
    
    // Caption text in applications title bar
-   //mainWnd->setWindowTitle( TTCut::versionString );
+   mainWnd->setWindowTitle( TTCut::versionString );
    mainWnd->show();
    
    // set initial size of applications main window

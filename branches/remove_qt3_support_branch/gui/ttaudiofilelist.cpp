@@ -160,7 +160,7 @@ void TTAudioFileList::onItemUp()
       audioListView->setCurrentItem(cutItem);
 
       audioListData->swap(index, index-1);
-      audioListData->print();
+      //audioListData->print();
     }
   }
 }
@@ -182,7 +182,7 @@ void TTAudioFileList::onItemDown()
       audioListView->setCurrentItem(curItem);
 
       audioListData->swap(index, index+1);
-      audioListData->print();
+      //audioListData->print();
     }
   }
 }
@@ -199,7 +199,7 @@ void TTAudioFileList::onDeleteItem()
     delete audioListView->takeTopLevelItem(index);
 
     audioListData->removeAt(index);
-    audioListData->print();
+    //audioListData->print();
   }
 }
 
