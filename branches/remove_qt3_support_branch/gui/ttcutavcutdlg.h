@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttcutavcutdlg.h                                                 */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 04/01/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 03/05/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -31,108 +31,42 @@
 #ifndef TTCUTAVCUTDLG_H
 #define TTCUTAVCUTDLG_H
 
-#include <qvariant.h>
-#include <qdialog.h>
-#include <q3process.h>
-//Added by qt3to4:
-#include <QLabel>
-#include <QVBoxLayout>
-#include <Q3Frame>
-#include <QHBoxLayout>
-#include <QGridLayout>
+#include "ui_avcutdialog.h"
 
+#include "../common/ttmessagelogger.h"
 #include "../common/ttcut.h"
-#include "ttcutsettings.h"
 
-class QProcess;
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QPushButton;
-class QTabWidget;
-class QWidget;
-class Q3Frame;
-class QLineEdit;
-class QLabel;
-class Q3GroupBox;
-class QCheckBox;
+#include <QProcess>
 
-
-class TTCutAVCutCommonTab;
+class QString;
 
 // -----------------------------------------------------------------------------
 // TTCut A/V cut dialog; 
 // -----------------------------------------------------------------------------
-class TTCutAVCutDlg : public QDialog
+class TTCutAVCutDlg : public QDialog, Ui::TTCutAVCutDlg
 { 
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    TTCutAVCutDlg( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags fl = 0 );
+  public:
+    TTCutAVCutDlg( QWidget* parent=0);
     ~TTCutAVCutDlg();
 
     void setGlobalData();
+    void setCommonData();
+    void getCommonData();
 
-protected slots:
+  protected slots:
     void onDlgStart();
     void onDlgCancel();
+    void onDirectoryOpen();
+    void readFromStdout();
+    void exitProcess(int e_code, QProcess::ExitStatus);
 
-protected:
-    QGridLayout* TTCutAVCutDlgLayout;
-    QHBoxLayout* Layout1;
-    QTabWidget*  twAVCut;
-    QPushButton* pbStart;
-    QPushButton* pbCancel;
-
- private:
-    TTCutAVCutCommonTab*  commonTab;
-    TTCutEncoderSettings* encoderTab;
-    TTCutMuxerSettings*   muxerTab;
-    TTCutChapterSettings* chapterTab;
-};
-
-
-// -----------------------------------------------------------------------------
-// TTCut common settings for A/V cut
-// -----------------------------------------------------------------------------
-class TTCutAVCutCommonTab : public QWidget
-{ 
-    Q_OBJECT
-
-public:
-    TTCutAVCutCommonTab( QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = 0 );
-    ~TTCutAVCutCommonTab();
-
-    // set the tab data from the global parameter
-    void setTabData();
-
-    // get the tab data and fill the global parameter
-    void getTabData();
-
-    protected slots:
-    virtual void selectCutDirAction();
-    virtual void readFromStdout();
-    virtual void exitProcess( int e_code );
-
- protected:
-    QGridLayout* TTCutAVCutCommonTabLayout;
-    QGridLayout* Layout2;
-    QGridLayout* Layout3;
-    QGridLayout* gbCutOptionsLayout;
-    QLineEdit*   leOutputFile;
-    QLabel*      laOutPath;
-    QLineEdit*   leOutputPath;
-    QLabel*      laOutFile;
-    QPushButton* pbSelectPath;
-    QLabel*      laFreeSpace;
-    QLabel*      textFreeDriveSpace1;
-    QLabel*      textFreeDriveSpace2;
-    Q3GroupBox*   gbCutOptions;
-    QCheckBox*   cbMaxBitrate;
-    QCheckBox*   cbWriteSeqEnd;
-    Q3Frame*      Frame4;
+  private:
+    void getFreeDiskSpace();
 
  private:
+    TTMessageLogger* log;
     QProcess*    dfProc;
     QString      dfOutput1;
     QString      dfOutput2;

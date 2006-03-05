@@ -617,7 +617,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   // --------------------------------------------------------------------------
   // start dialog for cut options
   // --------------------------------------------------------------------------
-  TTCutAVCutDlg*  cutAVDlg = new TTCutAVCutDlg( this, "CutAVDlg" );
+  TTCutAVCutDlg*  cutAVDlg = new TTCutAVCutDlg(this);
 
 
   // user cancel; exit

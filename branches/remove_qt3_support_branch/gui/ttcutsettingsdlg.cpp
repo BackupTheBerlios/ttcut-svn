@@ -2,13 +2,13 @@
 /* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttcutmainwindow.h                                               */
+/* FILE     : ttcutsettingsdlg.cpp                                            */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/26/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTMAINWINDOW
+// *** TTCUTSETTINGSDLG
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -27,70 +27,55 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTCUTMAINWINDOW_H
-#define TTCUTMAINWINDOW_H
-
-#include "ui_mainwindow.h"
+#include "ttcutsettingsdlg.h"
 
 #include "../common/ttcut.h"
-#include "../common/ttmessagelogger.h"
-#include "../data/ttaudiolistdata.h"
-#include "../data/ttcutlistdata.h"
-#include "../avstream/ttavtypes.h"
-#include "../avstream/ttmpeg2videostream.h"
-#include "ttcutpreview.h"
-#include "ttcutsettings.h"
-#include "ttcutsettingsdlg.h"
-#include "ttcutproject.h"
 
-class TTCutListData;
-
-class TTCutMainWindow : public QMainWindow, Ui::TTCutMainWindow
+  
+TTCutSettingsDlg::TTCutSettingsDlg(QWidget* parent)
+:QDialog(parent)
 {
-  Q_OBJECT
+  setupUi(this);
 
-  public:
-    TTCutMainWindow();
+  // set the tabs data
+  // ------------------------------------------------------------------
+  commonPage->setTabData();
+  filesPage->setTabData();
+  encodingPage->setTabData();
+  muxingPage->setTabData();
+  chaptersPage->setTabData();
 
-void keyPressEvent(QKeyEvent* e);
+  // signal and slot connections
+  connect(okButton,     SIGNAL(clicked()), SLOT(onDlgOk()));
+  connect(cancelButton, SIGNAL(clicked()), SLOT(onDlgCancel()));
+}
 
-  public slots:
-    void onFileNew();
-    void onFileOpen();
-    void onFileSave();
-    void onFileSaveAs();
-    void onFileRecent();
-    void onFileExit();
+// save the tabs data
+void TTCutSettingsDlg::setGlobalData()
+{
+    commonPage->getTabData();
+    filesPage->getTabData();
+    encodingPage->getTabData();
+    muxingPage->getTabData();
+    chaptersPage->getTabData();
+}
 
-    void onActionSave();
-    void onActionSettings();
 
-    void onHelpAbout();
+// exit, saving changes
+void TTCutSettingsDlg::onDlgOk()
+{
+   setGlobalData();
 
-    void onReadVideoStream( QString fName );
-    void onReadAudioStream( QString fName );
+   done( 0 );
+}
 
-    void onVideoSliderChanged( int value );
 
-    void onNewFramePos(int);
+// exit, discard changes
+void TTCutSettingsDlg::onDlgCancel()
+{
+   done( 1 );
+}
 
-    void onPreviewCut(int index);
-    void onAudioVideoCut(int index);
-    void onAudioCut(int index);
 
-  private:
-    void closeProject();
-    void createAVStreams( QString videoFile, QString audioFile );
-    QString audioFromVideoName(QString videoFile); 
-    void navigationEnabled( bool enabled );
-   
-  private:
-   TTCutSettings*      settings;
-   TTAudioListData*    audioList;
-   TTCutListData*      cutListData;
-   TTMessageLogger*    log;
-   TTMpeg2VideoStream* mpegStream;
-   bool sliderUpdateFrame;
-};
 
-#endif //TTCUTMAINWINDOW_H
+

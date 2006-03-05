@@ -2,13 +2,13 @@
 /* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttcutmainwindow.h                                               */
+/* FILE     : ttcutsettingsfiles.cpp                                          */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/26/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTMAINWINDOW
+// *** TTCUTSETTINGSFILES
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -27,70 +27,26 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTCUTMAINWINDOW_H
-#define TTCUTMAINWINDOW_H
-
-#include "ui_mainwindow.h"
+#include "ttcutsettingsmuxer.h"
 
 #include "../common/ttcut.h"
-#include "../common/ttmessagelogger.h"
-#include "../data/ttaudiolistdata.h"
-#include "../data/ttcutlistdata.h"
-#include "../avstream/ttavtypes.h"
-#include "../avstream/ttmpeg2videostream.h"
-#include "ttcutpreview.h"
-#include "ttcutsettings.h"
-#include "ttcutsettingsdlg.h"
-#include "ttcutproject.h"
 
-class TTCutListData;
-
-class TTCutMainWindow : public QMainWindow, Ui::TTCutMainWindow
+  
+TTCutSettingsMuxer::TTCutSettingsMuxer(QWidget* parent)
+:QWidget(parent)
 {
-  Q_OBJECT
+  setupUi(this);
+}
 
-  public:
-    TTCutMainWindow();
+void TTCutSettingsMuxer::setTitle(__attribute__((unused))const QString& title)
+{
+}
 
-void keyPressEvent(QKeyEvent* e);
+void TTCutSettingsMuxer::setTabData()
+{
+}
 
-  public slots:
-    void onFileNew();
-    void onFileOpen();
-    void onFileSave();
-    void onFileSaveAs();
-    void onFileRecent();
-    void onFileExit();
+void TTCutSettingsMuxer::getTabData()
+{
+}
 
-    void onActionSave();
-    void onActionSettings();
-
-    void onHelpAbout();
-
-    void onReadVideoStream( QString fName );
-    void onReadAudioStream( QString fName );
-
-    void onVideoSliderChanged( int value );
-
-    void onNewFramePos(int);
-
-    void onPreviewCut(int index);
-    void onAudioVideoCut(int index);
-    void onAudioCut(int index);
-
-  private:
-    void closeProject();
-    void createAVStreams( QString videoFile, QString audioFile );
-    QString audioFromVideoName(QString videoFile); 
-    void navigationEnabled( bool enabled );
-   
-  private:
-   TTCutSettings*      settings;
-   TTAudioListData*    audioList;
-   TTCutListData*      cutListData;
-   TTMessageLogger*    log;
-   TTMpeg2VideoStream* mpegStream;
-   bool sliderUpdateFrame;
-};
-
-#endif //TTCUTMAINWINDOW_H

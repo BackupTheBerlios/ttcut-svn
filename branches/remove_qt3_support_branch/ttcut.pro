@@ -11,8 +11,8 @@
 #
 PROJECT           = TTCUT
 CONFIG            += qt warn_on release
-QT                += opengl qt3support
-DEFINES           += _FILE_OFFSET_BITS=64
+QT                += opengl
+DEFINES           += _FILE_OFFSET_BITS=64 QT3_SUPPORT_WARNINGS
 DIST              = TTCut
 TARGET            = ttcut
 LIBS              = -lmpeg2 -lmpeg2convert
@@ -26,6 +26,10 @@ RESOURCES = ui/videofileinfowidget.qrc\
             ui/currentframewidget.qrc\
             ui/framenavigationwidget.qrc \
             ui/cutlistwidget.qrc\
+            ui/ttcutsettingscommon.qrc\
+            ui/ttcutsettingsmuxer.qrc\
+            ui/ttsettingsdialog.qrc\
+            ui/avcutdialog.qrc\
             ui/mainwindow.qrc
 FORMS     = ui/videofileinfowidget.ui\
             ui/audiofilelistwidget.ui\
@@ -35,6 +39,13 @@ FORMS     = ui/videofileinfowidget.ui\
             ui/streamnavigationwidget.ui\
             ui/navigatordisplaywidget.ui\
             ui/cutlistwidget.ui\
+            ui/ttcutsettingschapter.ui\
+            ui/ttcutsettingsmuxer.ui\
+            ui/ttcutsettingsencoder.ui\
+            ui/ttcutsettingsfiles.ui\
+            ui/ttcutsettingscommon.ui\
+            ui/ttsettingsdialog.ui\
+            ui/avcutdialog.ui\
             ui/aboutdlg.ui\
             ui/mainwindow.ui
 HEADERS   = common/ttcut.h\
@@ -69,6 +80,12 @@ HEADERS   = common/ttcut.h\
             avilib/avilib.h\
             extern/tttranscode.h\
             gui/ttcutsettings.h\
+            gui/ttcutsettingschapter.h\
+            gui/ttcutsettingsmuxer.h\
+            gui/ttcutsettingsencoder.h\
+            gui/ttcutsettingsfiles.h\
+            gui/ttcutsettingscommon.h\
+            gui/ttcutsettingsdlg.h\
             gui/ttvideofileinfo.h\
             gui/ttaudiofilelist.h\
             gui/ttcutoutframe.h\
@@ -117,6 +134,12 @@ SOURCES   = common/ttcut.cpp\
             avilib/avilib.c\
             extern/tttranscode.cpp\
             gui/ttcutsettings.cpp\
+            gui/ttcutsettingschapter.cpp\
+            gui/ttcutsettingsmuxer.cpp\
+            gui/ttcutsettingsencoder.cpp\
+            gui/ttcutsettingsfiles.cpp\
+            gui/ttcutsettingscommon.cpp\
+            gui/ttcutsettingsdlg.cpp\
             gui/ttvideofileinfo.cpp\
             gui/ttaudiofilelist.cpp\
             gui/ttcutoutframe.cpp\

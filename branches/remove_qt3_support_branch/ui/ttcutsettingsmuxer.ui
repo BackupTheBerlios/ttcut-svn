@@ -1,307 +1,223 @@
-<!DOCTYPE UI><UI>
-<class>TTCutSettingsMuxer</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
-        <cstring>TTCutSettingsMuxer</cstring>
-    </property>
-    <property stdset="1">
-        <name>geometry</name>
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>596</width>
-            <height>370</height>
-        </rect>
-    </property>
-    <property stdset="1">
-        <name>caption</name>
-        <string>Form2</string>
-    </property>
-    <grid>
-        <property stdset="1">
-            <name>margin</name>
-            <number>11</number>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>TTCutSettingsMuxer</class>
+ <widget class="QWidget" name="TTCutSettingsMuxer" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>585</width>
+    <height>427</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form2</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="3" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>574</width>
+       <height>151</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Muxer Settings</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="2" column="5" >
+       <widget class="QPushButton" name="btnOutputPath" >
+        <property name="minimumSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
-            <number>6</number>
+        <property name="maximumSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
-        <widget row="0"  column="0" >
-            <class>QButtonGroup</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>bgMuxOptions</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Mux options</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget row="0"  column="1" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>rbCreateMuxScript</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Create mux script for batch muxing</string>
-                    </property>
-                </widget>
-                <widget row="0"  column="0" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>rbMuxStreams</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Finally mux result streams</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget row="1"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>gbMuxerSettings</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Muxer settings</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <spacer row="1"  column="4"  rowspan="1"  colspan="2" >
-                    <property>
-                        <name>name</name>
-                        <cstring>Spacer6</cstring>
-                    </property>
-                    <property>
-                        <name>orientation</name>
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property>
-                        <name>sizeType</name>
-                        <enum>Expanding</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget row="0"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>laMuxTarget</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>MPEG-2 target</string>
-                    </property>
-                </widget>
-                <widget row="0"  column="1" >
-                    <class>QComboBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>cbMuxTarget</cstring>
-                    </property>
-                </widget>
-                <spacer row="0"  column="2" >
-                    <property>
-                        <name>name</name>
-                        <cstring>Spacer5</cstring>
-                    </property>
-                    <property>
-                        <name>orientation</name>
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property>
-                        <name>sizeType</name>
-                        <enum>Expanding</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget row="2"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>laOutputPath</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Output path</string>
-                    </property>
-                </widget>
-                <widget row="1"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QComboBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>cbMuxerProg</cstring>
-                    </property>
-                </widget>
-                <widget row="1"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>laMuxerProg</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Used muxer</string>
-                    </property>
-                </widget>
-                <widget row="1"  column="3" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>pbConfigureMuxer</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
-                        <size>
-                            <width>0</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>maximumSize</name>
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>configure...</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="5" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>btnOutputPath</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
-                        <size>
-                            <width>24</width>
-                            <height>24</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>maximumSize</name>
-                        <size>
-                            <width>24</width>
-                            <height>24</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>f</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="1"  rowspan="1"  colspan="4" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>leOutputPath</cstring>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget row="2"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>gbPostMuxing</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>post muxing action</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget row="0"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>cbPause</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Pause</string>
-                    </property>
-                </widget>
-                <widget row="1"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>cbDeleteES</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Delete elemtary streams</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <spacer row="3"  column="0" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer7</cstring>
-            </property>
-            <property>
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property>
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-    </grid>
-</widget>
-</UI>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="icon" >
+         <iconset resource="ttcutsettingsmuxer.qrc" >:/pixmaps/pixmaps/fileopen_24.xpm</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QComboBox" name="cbMuxTarget" />
+      </item>
+      <item row="1" column="4" colspan="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>50</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="laOutputPath" >
+        <property name="text" >
+         <string>Output path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>248</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="1" colspan="4" >
+       <widget class="QLineEdit" name="leOutputPath" />
+      </item>
+      <item row="1" column="1" colspan="2" >
+       <widget class="QComboBox" name="cbMuxerProg" />
+      </item>
+      <item row="1" column="3" >
+       <widget class="QPushButton" name="pbConfigureMuxer" >
+        <property name="minimumSize" >
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>32767</width>
+          <height>32767</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>configure...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="laMuxerProg" >
+        <property name="text" >
+         <string>Used muxer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="laMuxTarget" >
+        <property name="text" >
+         <string>MPEG-2 target</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="bgMuxOptions" >
+     <property name="title" >
+      <string>Multiplex Options</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="1" >
+       <widget class="QRadioButton" name="rbCreateMuxScript" >
+        <property name="text" >
+         <string>Create mux script for batch muxing</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="rbMuxStreams" >
+        <property name="text" >
+         <string>Finally mux result streams</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Action after multiplexing</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="1" column="0" >
+       <widget class="QCheckBox" name="cbDeleteES" >
+        <property name="text" >
+         <string>Delete elemtary streams</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QCheckBox" name="cbPause" >
+        <property name="text" >
+         <string>Pause</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="ttcutsettingsmuxer.qrc" />
+ </resources>
+ <connections/>
+</ui>

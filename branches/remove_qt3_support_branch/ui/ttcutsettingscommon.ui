@@ -1,680 +1,480 @@
-<!DOCTYPE UI><UI>
-<class>TTCutCommonSettings</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
-        <cstring>TTCutCommonSettings</cstring>
-    </property>
-    <property stdset="1">
-        <name>geometry</name>
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>577</width>
-            <height>328</height>
-        </rect>
-    </property>
-    <property stdset="1">
-        <name>caption</name>
-        <string>Common</string>
-    </property>
-    <grid>
-        <property stdset="1">
-            <name>margin</name>
-            <number>11</number>
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>TTCutSettingsCommon</class>
+ <widget class="QWidget" name="TTCutSettingsCommon" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>660</width>
+    <height>468</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Common</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="3" column="0" colspan="2" >
+    <widget class="QGroupBox" name="gbFilesDirectories" >
+     <property name="title" >
+      <string>Files / Directories</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="2" >
+       <widget class="QPushButton" name="btnDirOpen" >
+        <property name="minimumSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
-            <number>6</number>
+        <property name="maximumSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
-        <widget row="0"  column="0"  rowspan="2"  colspan="1" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>gbNavigation</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Navigation</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget row="1"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>cbQuickSearch</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Use quick seek (slider positioned only on I-Frames)</string>
-                    </property>
-                </widget>
-                <widget row="0"  column="0" >
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Layout4</cstring>
-                    </property>
-                    <hbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QLayoutWidget</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>Layout1</cstring>
-                            </property>
-                            <vbox>
-                                <property stdset="1">
-                                    <name>margin</name>
-                                    <number>0</number>
-                                </property>
-                                <property stdset="1">
-                                    <name>spacing</name>
-                                    <number>6</number>
-                                </property>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laSliderClick</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>Slider click placement</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laPgUpDown</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>Page up/down placement</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laArrowPlacement</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>Arrow keys placement</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laAltJump</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>'Alt' key jump distance</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laCtrlJump</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>'Ctrl' key jump distance</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laQuickJump</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>Quick jump distance</string>
-                                    </property>
-                                </widget>
-                            </vbox>
-                        </widget>
-                        <widget>
-                            <class>QLayoutWidget</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>Layout2</cstring>
-                            </property>
-                            <vbox>
-                                <property stdset="1">
-                                    <name>margin</name>
-                                    <number>0</number>
-                                </property>
-                                <property stdset="1">
-                                    <name>spacing</name>
-                                    <number>6</number>
-                                </property>
-                                <widget>
-                                    <class>QSpinBox</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>sbSliderClickPlacement</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>maxValue</name>
-                                        <number>200</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minValue</name>
-                                        <number>5</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>lineStep</name>
-                                        <number>5</number>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QSpinBox</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>sbPgUpDown</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>maxValue</name>
-                                        <number>200</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minValue</name>
-                                        <number>5</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>lineStep</name>
-                                        <number>5</number>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QSpinBox</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>sbArrowKeyPlacement</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>maxValue</name>
-                                        <number>200</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minValue</name>
-                                        <number>5</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>lineStep</name>
-                                        <number>5</number>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QSpinBox</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>sbAltDistance</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>maxValue</name>
-                                        <number>200</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minValue</name>
-                                        <number>5</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>lineStep</name>
-                                        <number>5</number>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QSpinBox</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>sbCtrlDistance</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>maxValue</name>
-                                        <number>200</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minValue</name>
-                                        <number>5</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>lineStep</name>
-                                        <number>5</number>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QSpinBox</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>sbQuickJumpDistance</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>maxValue</name>
-                                        <number>200</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>minValue</name>
-                                        <number>5</number>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>lineStep</name>
-                                        <number>5</number>
-                                    </property>
-                                </widget>
-                            </vbox>
-                        </widget>
-                        <widget>
-                            <class>QLayoutWidget</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>Layout3</cstring>
-                            </property>
-                            <vbox>
-                                <property stdset="1">
-                                    <name>margin</name>
-                                    <number>0</number>
-                                </property>
-                                <property stdset="1">
-                                    <name>spacing</name>
-                                    <number>6</number>
-                                </property>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laFrames1</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>frames</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laFrames2</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>frames</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laFrames3</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>frames</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laFrames4</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>frames</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laFrames5</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>frames</string>
-                                    </property>
-                                </widget>
-                                <widget>
-                                    <class>QLabel</class>
-                                    <property stdset="1">
-                                        <name>name</name>
-                                        <cstring>laSeconds1</cstring>
-                                    </property>
-                                    <property stdset="1">
-                                        <name>text</name>
-                                        <string>seconds</string>
-                                    </property>
-                                </widget>
-                            </vbox>
-                        </widget>
-                    </hbox>
-                </widget>
-            </grid>
-        </widget>
-        <widget row="0"  column="1" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>gbSearchPlay</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Search/Play</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget row="0"  column="0" >
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Layout5</cstring>
-                    </property>
-                    <vbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>laSearch</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Search CutOut Frame within</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>laPreview</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Preview each Cut</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>laSkip</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Skip while playing</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <widget row="0"  column="1" >
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Layout6</cstring>
-                    </property>
-                    <vbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QSpinBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>sbSearchIntervall</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>200</number>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>5</number>
-                            </property>
-                            <property stdset="1">
-                                <name>lineStep</name>
-                                <number>5</number>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QSpinBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>spPreviewLength</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>200</number>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>5</number>
-                            </property>
-                            <property stdset="1">
-                                <name>lineStep</name>
-                                <number>5</number>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QSpinBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>sbSkipFrames</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>maxValue</name>
-                                <number>200</number>
-                            </property>
-                            <property stdset="1">
-                                <name>minValue</name>
-                                <number>5</number>
-                            </property>
-                            <property stdset="1">
-                                <name>lineStep</name>
-                                <number>5</number>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-                <widget row="0"  column="2" >
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Layout7</cstring>
-                    </property>
-                    <vbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>laSeconds2</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>seconds</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>laSeconds3</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>seconds</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>laFrame6</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>frames</string>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-            </grid>
-        </widget>
-        <spacer row="1"  column="1" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer1</cstring>
-            </property>
-            <property>
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property>
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget row="3"  column="0"  rowspan="1"  colspan="2" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>gbFilesDirs</cstring>
-            </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>Files/Directories</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget row="0"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>laTempDir</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Temp directory</string>
-                    </property>
-                </widget>
-                <widget row="0"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>leTempDirectory</cstring>
-                    </property>
-                </widget>
-                <widget row="0"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>btnDirOpen</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
-                        <size>
-                            <width>24</width>
-                            <height>24</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>maximumSize</name>
-                        <size>
-                            <width>24</width>
-                            <height>24</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>f</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <spacer row="2"  column="0" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer2</cstring>
-            </property>
-            <property>
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property>
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-    </grid>
-</widget>
-</UI>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="icon" >
+         <iconset resource="ttcutsettingscommon.qrc" >:/pixmaps/pixmaps/fileopen_24.xpm</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="laTempDir" >
+        <property name="text" >
+         <string>Temp directory</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QLineEdit" name="leTempDirectory" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item rowspan="2" row="0" column="0" >
+    <widget class="QGroupBox" name="gbNavigation" >
+     <property name="title" >
+      <string>Navigation</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="1" column="0" colspan="3" >
+       <widget class="QCheckBox" name="cbQuickSearch" >
+        <property name="text" >
+         <string>Use quick seek (slider positioned only on I-Frames)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QSpinBox" name="sbSliderClickPlacement" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sbPgUpDown" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sbArrowKeyPlacement" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sbAltDistance" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sbCtrlDistance" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sbQuickJumpDistance" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sbMouseWheel" >
+          <property name="maximum" >
+           <number>500</number>
+          </property>
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+          <property name="value" >
+           <number>120</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0" >
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>6</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="laSliderClick" >
+          <property name="text" >
+           <string>Slider click placement</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laPgUpDown" >
+          <property name="text" >
+           <string>Page up/down placement</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laArrowPlacement" >
+          <property name="text" >
+           <string>Arrow keys placement</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laAltJump" >
+          <property name="text" >
+           <string>'Alt' key jump distance</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laCtrlJump" >
+          <property name="text" >
+           <string>'Ctrl' key jump distance</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laQuickJump" >
+          <property name="text" >
+           <string>Quick jump distance</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laQuickJump_2" >
+          <property name="text" >
+           <string>Mouse wheel distance</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="2" >
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="laFrames1" >
+          <property name="text" >
+           <string>frames</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laFrames2" >
+          <property name="text" >
+           <string>frames</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laFrames3" >
+          <property name="text" >
+           <string>frames</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laFrames4" >
+          <property name="text" >
+           <string>frames</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laFrames5" >
+          <property name="text" >
+           <string>frames</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laSeconds1" >
+          <property name="text" >
+           <string>seconds</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laSeconds1_2" >
+          <property name="text" >
+           <string>frames</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QGroupBox" name="gbSearchPlay" >
+     <property name="title" >
+      <string>Search / Play</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="0" column="2" >
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="laSeconds2" >
+          <property name="text" >
+           <string>seconds</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laSeconds3" >
+          <property name="text" >
+           <string>seconds</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laFrame6" >
+          <property name="text" >
+           <string>frames</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1" >
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QSpinBox" name="sbSearchIntervall" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spPreviewLength" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sbSkipFrames" >
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+          <property name="minimum" >
+           <number>5</number>
+          </property>
+          <property name="singleStep" >
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0" >
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="laSearch" >
+          <property name="text" >
+           <string>Search CutOut Frame within</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laPreview" >
+          <property name="text" >
+           <string>Preview each Cut</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="laSkip" >
+          <property name="text" >
+           <string>Skip while playing</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="ttcutsettingscommon.qrc" />
+ </resources>
+ <connections/>
+</ui>
