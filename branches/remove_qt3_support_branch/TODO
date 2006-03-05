@@ -2,10 +2,7 @@
 TODO list for project TTCut
 -------------------------------------------------------------------------------
 
-* Remove QT3 support depencies in:
-
-  - TTCutSettings (i go to build a new dialog next time)
-  - TTCutAvCutDlg (same as settings dialog)
+* Remove unused parameter warnings
 
 * Improve performance while reading header informations from Mpeg2Schnitt IDD file
   (not so importend)
@@ -22,7 +19,7 @@ TODO list for project TTCut
 
 * Internationalisation (!!!)
 
-* User warnin when click "New Project" an video stream is loaded (!)
+* User warning when click "New Project" an video stream is loaded (!)
 
 * Display the resulting stream lengths after cut
 
@@ -30,6 +27,6 @@ TODO list for project TTCut
 
 * Cut audio only
 
-* Find a logo (!!!!!) (Tux with siccors and film ?)
+* Find a logo (!!!!!) 
 
 
