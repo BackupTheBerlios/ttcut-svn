@@ -36,13 +36,14 @@
 #include <QDialog>
 //#include <qdatetime.h>
 //Added by qt3to4:
+#include <QDateTime>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
 
 //#include "ttmpeg2.h"
-#include "ttcut.h"
+#include "../common/ttcut.h"
 
 #ifndef _WIN32
 #include <inttypes.h>

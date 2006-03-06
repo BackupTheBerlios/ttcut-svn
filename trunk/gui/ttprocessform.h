@@ -32,7 +32,7 @@
 #ifndef TTPROCESSFORM_H
 #define TTPROCESSFORM_H
 
-#include "ttcut.h"
+#include "../common/ttcut.h"
 
 #include <QtCore/QVariant>
 #include <QtGui/QAction>

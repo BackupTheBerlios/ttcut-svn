@@ -65,7 +65,7 @@ class TTAC3AudioStream : public TTAudioStream
   void readAudioHeader( TTAC3AudioHeader* audio_header );
 
   void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
+  void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
 
   int     createHeaderList();
   QString streamExtension();

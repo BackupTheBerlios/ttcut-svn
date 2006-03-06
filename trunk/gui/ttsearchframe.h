@@ -36,7 +36,7 @@
 
 #include <qstring.h>
 
-#include "ttcut.h"
+#include "../common/ttcut.h"
 #include "ttprogressbar.h"
 
 

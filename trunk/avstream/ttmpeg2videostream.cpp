@@ -50,6 +50,8 @@
 
 #include "ttmpeg2videostream.h"
 
+#include "../data/ttcutlistdata.h"
+
 #include <QDir>
 #include <QStack>
 
@@ -901,6 +903,9 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
 
 bool TTMpeg2VideoStream::isCutInPoint( int pos )
 {
+  if ( pos < 0 )
+    pos = currentIndex();
+  
   if ( TTCut::encoderMode )
     return true;
 
@@ -915,6 +920,9 @@ bool TTMpeg2VideoStream::isCutInPoint( int pos )
 
 bool TTMpeg2VideoStream::isCutOutPoint( int pos )
 {
+  if ( pos < 0 )
+    pos = currentIndex();
+
   if ( TTCut::encoderMode )
     return true;
 
@@ -928,7 +936,7 @@ bool TTMpeg2VideoStream::isCutOutPoint( int pos )
 
 
 
-void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
+void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 {
   int i;
   TTCutParameter* cut_param = new TTCutParameter();
@@ -954,8 +962,8 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list )
     if ( i == cut_list->count()-1 )
       cut_param->last_call = true;
 
-    start_pos = cut_list->cutInAt( i );
-    end_pos   = cut_list->cutOutAt( i );
+    start_pos = cut_list->cutInPosAt( i );
+    end_pos   = cut_list->cutOutPosAt( i );
 
     if ( ttAssigned( progress_bar ) )
     {

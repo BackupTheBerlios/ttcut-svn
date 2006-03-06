@@ -64,6 +64,8 @@
 #endif
 
 #include "ttavstream.h"
+#include "../data/ttcutlistdata.h"
+//#include "../data//ttcutparameter.h"
 
 #include <QString>
 #include <qfileinfo.h>
@@ -355,7 +357,7 @@ void TTAVStream::cut( __attribute__ ((unused))TTFileBuffer* cut_stream, __attrib
 
 }
 
-void TTAVStream::cut( __attribute__ ((unused))TTFileBuffer* cut_stream, __attribute__ ((unused))TTAVCutList* cut_list )
+void TTAVStream::cut( __attribute__ ((unused))TTFileBuffer* cut_stream, __attribute__ ((unused))TTCutListData* cut_list )
 {
 
 }

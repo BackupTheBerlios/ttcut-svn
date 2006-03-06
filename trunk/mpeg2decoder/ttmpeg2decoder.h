@@ -37,7 +37,7 @@
 
 // project header files
 //#if defined(__TTCUT)
-#include "../gui/ttcut.h"
+#include "../common/ttcut.h"
 //#else
 //#include "ttmpeg2.h"
 //#endif
@@ -71,8 +71,6 @@ extern "C"
 #include "../avstream/ttvideoheaderlist.h"
 #include "../avstream/ttvideoindexlist.h"
 #include "../avstream/ttmpeg2videoheader.h"
-
-
 
 // constants for mpeg2 pixel format
 // -----------------------------------------------------------------------------

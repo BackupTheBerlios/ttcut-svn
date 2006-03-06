@@ -40,18 +40,16 @@
 #include "ttmpeg2window.h"
 
 
-const char c_name[] = "TTMPEG2WINDOW : ";
+const char c_name[] = "TTMOEG2Window";
 
 // -----------------------------------------------------------------------------
 // Constructor for the TTMPEG2Window
 // -----------------------------------------------------------------------------
-TTMPEG2Window::TTMPEG2Window( QWidget *parent, const char *name )
+TTMPEG2Window::TTMPEG2Window( QWidget *parent )
   : QGLWidget( parent )
 {
-  if ( name == "" )
-    name = "TTMPEG2WINDOW";
   
-  setObjectName( name );
+  setObjectName( c_name );
   
   // message logger instance
   log = TTMessageLogger::getInstance();
@@ -71,6 +69,19 @@ TTMPEG2Window::TTMPEG2Window( QWidget *parent, const char *name )
   isResizeAction   = false;
 }
 
+// Needed by Qt Designer
+void TTMPEG2Window::setFrameShape(QFrame::Shape)
+{
+}
+
+void TTMPEG2Window::setFrameShadow(QFrame::Shadow)
+{
+}
+
+void TTMPEG2Window::setLineWidth(__attribute__ ((unused))int width)
+{
+}
+    
 
 // -----------------------------------------------------------------------------
 // Initialize the Qt OpenGL context
@@ -184,8 +195,10 @@ void TTMPEG2Window::showVideoFrame()
   }
   else
   {
+    //log->debugMsg(c_name, "clear gl buffer");
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
+    swapBuffers();
   }
 }
 
@@ -392,13 +405,12 @@ bool TTMPEG2Window::showDecodedSlice()
   return true;
 }
 
-
 // -----------------------------------------------------------------------------
 // Decode current video frame and show the resulting slice
 // -----------------------------------------------------------------------------
 bool TTMPEG2Window::decodeAndShowSlice()
 {
-  bool             result;
+  bool             result = true;
 
   result    = true;
   picBuffer = NULL;

@@ -64,7 +64,7 @@ class TTPCMAudioStream : public TTAudioStream
   int   findChunk( uint32_t chunk_name, uint8_t* buffer, int buf_size);
   int   createHeaderList();
   void  cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );  
-  void  cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
+  void  cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
   QString streamExtension();
   TTPCMAudioHeader* getSample( int index );
   int   getLessOrSame( float time );

@@ -1,203 +1,163 @@
 #/*.............................................................................*/
-#/*..(c) 2003/2005 TriTime......................................................*/
+#/*  (c) 2003/2008 TriTime  (ttcut.tritime.org)                                 */
 #/*-----------------------------------------------------------------------------*/
-#/*..FILE:   QMake Projektfile for ttcut                                      ..*/
+#/*  FILE:   QMake Projektfile for ttcut                                        */
 #/*-----------------------------------------------------------------------------*/
-#/*..ABOUT:                                                                   ..*/
+#/*  ABOUT:                                                                     */
 #/*-----------------------------------------------------------------------------*/
-#/*..AUTHOR:    b. altendorf              DATE: 21.10.2003         TIME: 20:26..*/
-#/*..MODIFIED:  b. altendorf              DATE: 25.10.2003         TIME: 17:30..*/
-#/*..MODIFIED:  b. altendorf              DATE: 14.12.2003         TIME: 09:30..*/
-#/*..MODIFIED:  b. altendorf              DATE: 23.02.2005         TIME: 11:00..*/
-#/*..MODIFIED:  b. altendorf              DATE: 01.03.2005         TIME: 16:00..*/
-#/*..MODIFIED:  b. altendorf              DATE: 23.03.2005         TIME: 16:00..*/
-#/*..MODIFIED:  b. altendorf              DATE: 13.06.2005         TIME: 09:00..*/
-#/*..MODIFIED:  b. altendorf              DATE: 02.07.2005         TIME: 08:00..*/
-#/*..MODIFIED:  b. altendorf              DATE: 17.07.2005         TIME: 13:30..*/
-#/*..MODIFIED:  b. altendorf              DATE: 05.08.2005         TIME: 12:00..*/
+#/*  AUTHOR:    b. altendorf (ttcut@tritime.org)              DATE: 02/18/2006  */
 #/*-----------------------------------------------------------------------------*/
 #
 #
-#REQUIRES         = opengl
 PROJECT           = TTCUT
-CONFIG            += opengl warn_on release
-QT                += qt3support	opengl
-#QT                += opengl
-DEFINES           += _FILE_OFFSET_BITS=64
+CONFIG            += qt warn_on release
+QT                += opengl
+DEFINES           += _FILE_OFFSET_BITS=64 QT3_SUPPORT_WARNINGS
 DIST              = TTCut
 TARGET            = ttcut
 LIBS              = -lmpeg2 -lmpeg2convert
-# WIN LIBS        = -lglaux -lglu32 -Llibmpeg2/win32/lib -llibmpeg2 -llibmpeg2convert
 OBJECTS_DIR       = obj
 MOC_DIR           = moc
+UI_DIR            = ui_h 
+RCC_DIR           = res
+RESOURCES = ui/videofileinfowidget.qrc\
+            ui/audiofilelistwidget.qrc\
+            ui/cutoutframewidget.qrc\
+            ui/currentframewidget.qrc\
+            ui/framenavigationwidget.qrc \
+            ui/cutlistwidget.qrc\
+            ui/ttcutsettingscommon.qrc\
+            ui/ttcutsettingsmuxer.qrc\
+            ui/ttsettingsdialog.qrc\
+            ui/avcutdialog.qrc\
+            ui/mainwindow.qrc
+FORMS     = ui/videofileinfowidget.ui\
+            ui/audiofilelistwidget.ui\
+            ui/cutoutframewidget.ui\
+            ui/currentframewidget.ui\
+            ui/framenavigationwidget.ui\
+            ui/streamnavigationwidget.ui\
+            ui/navigatordisplaywidget.ui\
+            ui/cutlistwidget.ui\
+            ui/ttcutsettingschapter.ui\
+            ui/ttcutsettingsmuxer.ui\
+            ui/ttcutsettingsencoder.ui\
+            ui/ttcutsettingsfiles.ui\
+            ui/ttcutsettingscommon.ui\
+            ui/ttsettingsdialog.ui\
+            ui/avcutdialog.ui\
+            ui/aboutdlg.ui\
+            ui/mainwindow.ui
+HEADERS   = common/ttcut.h\
+            common/ttmessagelogger.h \
+            data/ttaudiolistdata.h\
+            data/ttcutlistdata.h\
+            data/ttcutparameter.h\
+            avstream/ttcommon.h\
+            avstream/ttmemorybuffer.h\
+            avstream/ttac3audioheader.h\
+            avstream/ttac3audiostream.h\
+            avstream/ttaudioheaderlist.h\
+            avstream/ttaudioindexlist.h\
+            avstream/ttavheader.h\
+            avstream/ttavstream.h\
+            avstream/ttavtypes.h\
+            avstream/ttdtsaudioheader.h\
+            avstream/ttdtsaudiostream.h\     
+            avstream/ttfilebuffer.h\ 
+            avstream/ttheaderlist.h\ 
+            avstream/ttmpeg2videoheader.h\
+            avstream/ttmpeg2videostream.h\   
+            avstream/ttmpegaudioheader.h\    
+            avstream/ttmpegaudiostream.h\    
+            avstream/ttpcmaudioheader.h\     
+            avstream/ttpcmaudiostream.h\     
+            avstream/ttvideoheaderlist.h\    
+            avstream/ttvideoindexlist.h\
+            avstream/ttaviwriter.h\
+            mpeg2decoder/ttmpeg2decoder.h\
+            mpeg2window/ttmpeg2window.h \
+            avilib/avilib.h\
+            extern/tttranscode.h\
+            gui/ttcutsettings.h\
+            gui/ttcutsettingschapter.h\
+            gui/ttcutsettingsmuxer.h\
+            gui/ttcutsettingsencoder.h\
+            gui/ttcutsettingsfiles.h\
+            gui/ttcutsettingscommon.h\
+            gui/ttcutsettingsdlg.h\
+            gui/ttvideofileinfo.h\
+            gui/ttaudiofilelist.h\
+            gui/ttcutoutframe.h\
+            gui/ttcurrentframe.h\
+            gui/ttnavigation.h\
+            gui/ttstreamnavigator.h \
+            gui/ttnavigatordisplay.h \
+            gui/ttcutlist.h\
+            gui/ttprogressbar.h\
+            gui/ttprocessform.h\
+            gui/ttcutpreview.h\
+            gui/ttcutproject.h\
+            gui/ttcutaboutdlg.h\
+            gui/ttsearchframe.h\
+            gui/ttcutavcutdlg.h\
+            gui/ttcutmainwindow.h
+SOURCES   = common/ttcut.cpp\
+            common/ttmessagelogger.cpp\
+            data/ttaudiolistdata.cpp \
+            data/ttcutlistdata.cpp\
+            data/ttcutparameter.cpp\
+            avstream/ttcommon.cpp\
+            avstream/ttmemorybuffer.cpp\
+            avstream/ttac3audioheader.cpp\
+            avstream/ttac3audiostream.cpp\
+            avstream/ttaudioheaderlist.cpp\
+            avstream/ttaudioindexlist.cpp\
+            avstream/ttavheader.cpp\
+            avstream/ttavstream.cpp\
+            avstream/ttavtypes.cpp\
+            avstream/ttdtsaudioheader.cpp\
+            avstream/ttdtsaudiostream.cpp\     
+            avstream/ttfilebuffer.cpp\ 
+            avstream/ttheaderlist.cpp\ 
+            avstream/ttmpeg2videoheader.cpp\
+            avstream/ttmpeg2videostream.cpp\   
+            avstream/ttmpegaudioheader.cpp\    
+            avstream/ttmpegaudiostream.cpp\    
+            avstream/ttpcmaudioheader.cpp\     
+            avstream/ttpcmaudiostream.cpp\     
+            avstream/ttvideoheaderlist.cpp\    
+            avstream/ttvideoindexlist.cpp\
+            avstream/ttaviwriter.cpp\
+            mpeg2decoder/ttmpeg2decoder.cpp\
+            mpeg2window/ttmpeg2window.cpp\
+            avilib/avilib.c\
+            extern/tttranscode.cpp\
+            gui/ttcutsettings.cpp\
+            gui/ttcutsettingschapter.cpp\
+            gui/ttcutsettingsmuxer.cpp\
+            gui/ttcutsettingsencoder.cpp\
+            gui/ttcutsettingsfiles.cpp\
+            gui/ttcutsettingscommon.cpp\
+            gui/ttcutsettingsdlg.cpp\
+            gui/ttvideofileinfo.cpp\
+            gui/ttaudiofilelist.cpp\
+            gui/ttcutoutframe.cpp\
+            gui/ttcurrentframe.cpp\
+            gui/ttnavigation.cpp\
+            gui/ttstreamnavigator.cpp\
+            gui/ttnavigatordisplay.cpp\
+            gui/ttcutlist.cpp\
+            gui/ttprogressbar.cpp\
+            gui/ttprocessform.cpp\
+            gui/ttcutpreview.cpp\
+            gui/ttcutproject.cpp\
+            gui/ttcutaboutdlg.cpp\
+            gui/ttsearchframe.cpp\
+            gui/ttcutavcutdlg.cpp\
+            gui/ttcutmainwindow.cpp\
+            gui/ttcutmain.cpp
 #
-SOURCES           = \
-#
-#                   -------------------------------------------------------------
-#                   compat
-#                   -------------------------------------------------------------
-#
-#                   -------------------------------------------------------------
-#                   COMMON
-#                   -------------------------------------------------------------
-#
-                    common/ttmessagelogger.cpp \
-#                    
-#                   -------------------------------------------------------------
-#                   AVSTREAM
-#                   -------------------------------------------------------------
-                    avstream/ttcommon.cpp \
-                    avstream/ttmemorybuffer.cpp \
-                    avstream/ttac3audioheader.cpp \
-                    avstream/ttac3audiostream.cpp \
-                    avstream/ttaudioheaderlist.cpp \
-                    avstream/ttaudioindexlist.cpp \
-                    avstream/ttavheader.cpp \
-                    avstream/ttavstream.cpp \
-                    avstream/ttavtypes.cpp \
-                    avstream/ttdtsaudioheader.cpp \
-                    avstream/ttdtsaudiostream.cpp \     
-                    avstream/ttfilebuffer.cpp \ 
-# WIN32             avstream/ttwfilebuffer.cpp \ 
-                    avstream/ttheaderlist.cpp \ 
-                    avstream/ttmpeg2videoheader.cpp \
-                    avstream/ttmpeg2videostream.cpp \   
-                    avstream/ttmpegaudioheader.cpp \    
-                    avstream/ttmpegaudiostream.cpp \    
-                    avstream/ttpcmaudioheader.cpp \     
-                    avstream/ttpcmaudiostream.cpp \     
-                    avstream/ttvideoheaderlist.cpp \    
-                    avstream/ttvideoindexlist.cpp \
-      	            avstream/ttaviwriter.cpp \
-#
-#                   -------------------------------------------------------------
-#                   GUI
-#                   -------------------------------------------------------------
-                    gui/ttcutmainwnd.cpp \
-                    gui/ttcutsettings.cpp \
-                    gui/ttcutavcutdlg.cpp \
-                    gui/ttcutquickjump.cpp \
-                    gui/ttprogressbar.cpp \
-                    gui/ttcutpreview.cpp \
-                    gui/ttsearchframe.cpp \
-                    gui/ttcutaboutdlg.cpp \
-                    gui/ttcutlistview.cpp \
-                    gui/ttcutccrwnd.cpp \
-                    gui/ttaudiolistview.cpp \
-                    gui/ttprocessform.cpp \
-                    gui/ttcut.cpp \
-      	            gui/ttcutproject.cpp \
-                    gui/main.cpp \
-#
-#                   -------------------------------------------------------------
-#                   MPEG2DECODER
-#                   -------------------------------------------------------------
-                    mpeg2decoder/ttmpeg2decoder.cpp \
-#
-#                   -------------------------------------------------------------
-#                   MPEG2WINDOW
-#                   -------------------------------------------------------------
-                    mpeg2window/ttmpeg2window.cpp \
-#
-#                   -------------------------------------------------------------
-#                   AVCUT
-#                   -------------------------------------------------------------
-#                   avcut/tschnittsuche.cpp \
-                    avcut/ttavcutposition.cpp \
-#
-#                   -------------------------------------------------------------
-#                   AVILIB
-#                   -------------------------------------------------------------
-	                  avilib/avilib.c \
-#
-#                   -------------------------------------------------------------
-#                   EXTERN
-#                   -------------------------------------------------------------
-	                  extern/tttranscode.cpp
-#
-HEADERS           = \
-#                   -------------------------------------------------------------
-#                   COMPAT
-#                   -------------------------------------------------------------
-#
-#                   -------------------------------------------------------------
-#                   COMMON
-#                   -------------------------------------------------------------
-                    common/ttmessagelogger.h \
-#                    
-#                   -------------------------------------------------------------
-#                   AVSTREAM
-#                   -------------------------------------------------------------
-                    avstream/ttcommon.h \
-                    avstream/ttmemorybuffer.h \
-                    avstream/ttac3audioheader.h \
-                    avstream/ttac3audiostream.h \
-                    avstream/ttaudioheaderlist.h \
-                    avstream/ttaudioindexlist.h \
-                    avstream/ttavheader.h \
-                    avstream/ttavstream.h \
-                    avstream/ttavtypes.h \
-                    avstream/ttdtsaudioheader.h \
-                    avstream/ttdtsaudiostream.h \       
-                    avstream/ttfilebuffer.h \   
-# WIN32             avstream/ttwfilebuffer.h \ 
-                    avstream/ttheaderlist.h \   
-                    avstream/ttmpeg2videoheader.h \
-                    avstream/ttmpeg2videostream.h \     
-                    avstream/ttmpegaudioheader.h \      
-                    avstream/ttmpegaudiostream.h \      
-                    avstream/ttpcmaudioheader.h \       
-                    avstream/ttpcmaudiostream.h \       
-                    avstream/ttvideoheaderlist.h \      
-                    avstream/ttvideoindexlist.h \
-                    avstream/ttaviwriter.h \
-#
-#                   -------------------------------------------------------------
-#                   GUI
-#                   -------------------------------------------------------------
-                    gui/ttcutmainwnd.h \
-                    gui/ttcutsettings.h \
-                    gui/ttcutavcutdlg.h \
-                    gui/ttcutquickjump.h \
-                    gui/ttprogressbar.h \
-                    gui/ttcutpreview.h \
-                    gui/ttsearchframe.h \
-                    gui/ttcutaboutdlg.h \
-                    gui/ttcutlistview.h \
-                    gui/ttcutccrwnd.h \
-                    gui/ttaudiolistview.h \
-                    gui/ttprocessform.h \
-	            gui/ttcutproject.h \
-                    gui/ttcut.h \
-#
-#                   -------------------------------------------------------------
-#                   MPEG2DECODER
-#                   -------------------------------------------------------------
-                    mpeg2decoder/ttmpeg2decoder.h \
-#
-#                   -------------------------------------------------------------
-#                   MPEG2WINDOW
-#                   -------------------------------------------------------------
-                    mpeg2window/ttmpeg2window.h \
-#
-#                   -------------------------------------------------------------
-#                   AVCUT
-#                   -------------------------------------------------------------
-#                   avcut/tschnittsuche.h \
-                    avcut/ttavcutposition.h \
-#
-#                   -------------------------------------------------------------
-#                   AVILIB
-#                   -------------------------------------------------------------
-	            avilib/avilib.h \
-#
-#                   -------------------------------------------------------------
-#                   EXTERN
-#                   -------------------------------------------------------------
-	            extern/tttranscode.h
-#
-#
-TRANSLATIONS   = ttcut_en.ts
 # -------------------------------------------------------------------------------
 # TTCUT.PRO ENDE
 # -------------------------------------------------------------------------------

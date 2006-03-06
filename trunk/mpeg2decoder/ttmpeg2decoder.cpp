@@ -194,7 +194,7 @@ bool TTMpeg2Decoder::openMPEG2File(QString cFName, __attribute__ ((unused))long 
 
   if ( mpeg2Stream == NULL )
   {
-     mpeg2Stream = new TTFileBuffer( mpeg2FileName, fm_open_read );
+     mpeg2Stream = new TTFileBuffer( qPrintable(mpeg2FileName), fm_open_read );
 
      if ( mpeg2Stream == NULL )
 	mpeg2StreamOK = false;
@@ -202,7 +202,7 @@ bool TTMpeg2Decoder::openMPEG2File(QString cFName, __attribute__ ((unused))long 
 	mpeg2StreamOK = true;
   }
   else
-     mpeg2StreamOK = mpeg2Stream->openFile( mpeg2FileName, fm_open_read );
+     mpeg2StreamOK = mpeg2Stream->openFile( qPrintable(mpeg2FileName), fm_open_read );
 
   // initialize the stream buffer for file I/O
   if ( mpeg2StreamOK )
@@ -269,7 +269,6 @@ uint8_t* TTMpeg2Decoder::getMPEG2Frame()
   return sliceData;
 }
 
-
 // -----------------------------------------------------------------------------
 // Decode a mpeg2 slice
 // -----------------------------------------------------------------------------
@@ -289,64 +288,65 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
 
     switch (state)
     {
-    case STATE_BUFFER:
-      // stream end reached ???
-      try
-      {
-      if (!mpeg2Stream->readArray( streamBuffer, streamBufferSize ))
-      {
-	// TODO: video stream contains no END code
+      case STATE_BUFFER:
+        // stream end reached ???
+        try
+        {
+          if (!mpeg2Stream->readArray( streamBuffer, streamBufferSize ))
+          {
+            // TODO: video stream contains no END code
 
-	// LeseX returns false if the number of readed bytes lower
-	// streamBufferSize
-	// in this case we must ask if stream end was reached or not
-	//if ( mpeg2Stream->isStreamEnd() && !streamEndReached )
-	//{
-	//qDebug( "error LesenX: No sequence end code found" );
-	  // no SequenceEndCode; inject code into buffer to cause the decoder
-	  // to decode the last frames
-	  //streamBufferSize = 4;
-	  //streamBuffer[0]=streamBuffer[1]=0x00;
-	  //streamBuffer[2]=0x01;
-	  //streamBuffer[3]=0xb7;
-	//}  
-      }
-      } 
-      catch ( TTStreamEOFException )
-      {
-	qDebug( "%sdecode: stream EOF (!)",c_name );
-      }
-      //fill mpeg2 buffer with data
-      streamEndReached = false;
-      mpeg2_buffer (mpeg2Decoder, streamBuffer, streamBuffer + streamBufferSize);
-      break;
-    case STATE_SEQUENCE:
-      switch ( convType )
-      {
-        case formatRGB8:
-        case formatYV12:
-        case formatYUV24:
-          break;
-        case formatRGB24:
-	        mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb24, NULL);
-	        break;
-        case formatRGB32:
-	        mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb32, NULL);
-	      break;
+            // LeseX returns false if the number of readed bytes lower
+            // streamBufferSize
+            // in this case we must ask if stream end was reached or not
+            //if ( mpeg2Stream->isStreamEnd() && !streamEndReached )
+            //{
+            //qDebug( "error LesenX: No sequence end code found" );
+            // no SequenceEndCode; inject code into buffer to cause the decoder
+            // to decode the last frames
+            //streamBufferSize = 4;
+            //streamBuffer[0]=streamBuffer[1]=0x00;
+            //streamBuffer[2]=0x01;
+            //streamBuffer[3]=0xb7;
+            //}  
+          }
+        } 
+        catch ( TTStreamEOFException )
+        {
+          qDebug( "%sdecode: stream EOF (!)",c_name );
         }
-    case STATE_END:
-      streamEndReached = true;
-    case STATE_SLICE:
-    case STATE_INVALID_END:
-      if ( mpeg2Info->display_fbuf )
-	iSkip--;
+        //fill mpeg2 buffer with data
+        streamEndReached = false;
+        mpeg2_buffer (mpeg2Decoder, streamBuffer, streamBuffer + streamBufferSize);
+        break;
+      case STATE_SEQUENCE:
+        switch ( convType )
+        {
+          case formatRGB8:
+          case formatYV12:
+          case formatYUV24:
+            break;
+          case formatRGB24:
+            mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb24, NULL);
+            break;
+          case formatRGB32:
+            mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb32, NULL);
+            break;
+        }
+      case STATE_END:
+        streamEndReached = true;
+      case STATE_SLICE:
+      case STATE_INVALID_END:
+        if ( mpeg2Info->display_fbuf )
+          iSkip--;
 
-      isDecodedFrame = true;
-      break;
-    default:
-      break;
+        isDecodedFrame = true;
+        break;
+      default:
+        break;
     }
   } while ( iSkip > 0 );
+
 
   // reset skip frames parameter
   iSkipFrames = 1;
@@ -369,19 +369,19 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
 
     switch ( pixelFormat )
     {
-    case formatRGB24:
-      frameInfo.size=frameInfo.width*frameInfo.height*3;
-      frameInfo.chroma_size=0;
-      break;
-    case formatRGB32:
-      frameInfo.size=frameInfo.width*frameInfo.height*4;
-      frameInfo.chroma_size=0;
-      break;
-    case formatYV12:
-      frameInfo.size=frameInfo.width*frameInfo.height;
-      frameInfo.chroma_size=frameInfo.chroma_width*frameInfo.chroma_height;
-    default:
-      break;
+      case formatRGB24:
+        frameInfo.size=frameInfo.width*frameInfo.height*3;
+        frameInfo.chroma_size=0;
+        break;
+      case formatRGB32:
+        frameInfo.size=frameInfo.width*frameInfo.height*4;
+        frameInfo.chroma_size=0;
+        break;
+      case formatYV12:
+        frameInfo.size=frameInfo.width*frameInfo.height;
+        frameInfo.chroma_size=frameInfo.chroma_width*frameInfo.chroma_height;
+      default:
+        break;
     }
   }
   else

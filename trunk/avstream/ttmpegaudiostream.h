@@ -65,7 +65,7 @@ class TTMPEGAudioStream : public TTAudioStream
   void parseAudioHeader( uint8_t* data, int offset, TTMpegAudioHeader* audio_header );
 
   void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
+  void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
 
   void    readAudioHeader( TTMpegAudioHeader* audio_header );
   int     createHeaderList( );

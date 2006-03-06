@@ -159,7 +159,7 @@ int TTPCMAudioStream::createHeaderList()
   return (int)0;;
 }
 
-void TTPCMAudioStream::cut(__attribute__ ((unused)) TTFileBuffer* cut_stream, __attribute__ ((unused))TTAVCutList* cut_list )
+void TTPCMAudioStream::cut(__attribute__ ((unused)) TTFileBuffer* cut_stream, __attribute__ ((unused))TTCutListData* cut_list )
 {
 
 }

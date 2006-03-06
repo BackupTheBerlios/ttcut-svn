@@ -36,15 +36,14 @@
 
 #include <QProcess>
 
-#include "ttcut.h"
+#include "../common/ttcut.h"
 #include "ttprogressbar.h"
-#include "ttcutlistview.h"
 
 #include "../common/ttmessagelogger.h"
+#include "../data/ttaudiolistdata.h"
+#include "../data/ttcutlistdata.h"
 #include "../avstream/ttavstream.h"
 #include "../avstream/ttvideoindexlist.h"
-
-#include "../avcut/ttavcutposition.h"
 
 class QVBoxLayout;
 class QHBoxLayout;
@@ -69,7 +68,7 @@ class TTCutPreview : public QDialog
     ~TTCutPreview();
 
     // public member methods
-    void initPreview( TTVideoStream* v_stream, TTAudioStream* a_stream, TTAVCutList* c_list );
+    void initPreview( TTVideoStream* v_stream, TTAudioStream* a_stream, TTCutListData* c_list );
     void createPreview( int cut_index=-1 );
 
  protected:
@@ -118,8 +117,8 @@ protected:
     TTAudioStream*     audio_stream;
     TTVideoIndexList*  video_index;      
     TTVideoHeaderList* video_header;     
-    TTAVCutList*       avcut_list;       
-    TTAVCutList*       preview_cut_list; 
+    TTCutListData*     avcut_list;
+    TTCutListData*     preview_cut_list;
     int                cut_index;
     TTFileBuffer*      video_cut_stream;
     TTFileBuffer*      audio_cut_stream;

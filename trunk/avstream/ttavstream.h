@@ -60,8 +60,8 @@
 #include "ttfilebuffer.h"
 #endif
 
+#include "../data/ttcutparameter.h"
 #include "../common/ttmessagelogger.h"
-#include "../avcut/ttavcutposition.h"
 #include "../gui/ttprogressbar.h"
 
 #include "ttavtypes.h"
@@ -73,6 +73,8 @@
 
 #include <qdatetime.h>
 
+//class TTCutParameter;
+class TTCutListData;
 class TTAVTypes;
 class QString;
 class QFileInfo;
@@ -107,7 +109,7 @@ public:
   virtual int createHeaderList();
   virtual int createIndexList();
   virtual void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  virtual void cut( TTFileBuffer* cut_stream, TTAVCutList* cut_list );
+  virtual void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
   virtual bool isCutInPoint( int pos );
   virtual bool isCutOutPoint( int pos );
   virtual QString streamExtension();
@@ -156,6 +158,7 @@ public:
   // stream properties common for all audio stream types
   int sampleCount();
   double length();
+  virtual QString absStreamTime(){return "";};
 
 protected:
   // header and index list

@@ -32,39 +32,19 @@
 #ifndef TTCUTABOUTDLG_H
 #define TTCUTABOUTDLG_H
 
-#include <QVariant>
-#include <QDialog>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
+#include "../ui_h/ui_aboutdlg.h"
+#include "../common/ttcut.h"
 
-#include "ttcut.h"
-
-class QVBoxLayout;
-class QHBoxLayout;
-class QGridLayout;
-class QLabel;
-class QPushButton;
-class Q3TextView;
-
-class TTCutAboutDlg : public QDialog
+class TTCutAboutDlg : public QDialog, Ui::TTCutAboutDlg
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    TTCutAboutDlg( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags fl = 0 );
+  public:
+    TTCutAboutDlg(QWidget* parent = 0);
     ~TTCutAboutDlg();
 
-    protected slots:
+  protected slots:
     void onDlgClose();
-
- private:
-    QLabel*      laVersionInformation;
-    QPushButton* btnClose;
-    Q3TextView*   tvDisclaimer;
-    Q3TextView*   TextView2;
-    QGridLayout* TTCutAboutDlgLayout;
 };
 
 #endif // TTCUTABOUTDLG_H
