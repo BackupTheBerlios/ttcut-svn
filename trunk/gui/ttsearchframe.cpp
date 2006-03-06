@@ -76,7 +76,7 @@ bool TTFrameSearch::initFrameSearch( TTVideoStream* v_stream )
    file_size       = v_stream->streamLengthByte();
 
    //create the decoder object
-   decoder = new TTMpeg2Decoder( video_file_name.ascii(), index_list, header_list );
+   decoder = new TTMpeg2Decoder( qPrintable(video_file_name), index_list, header_list );
 
    // must set the format for conversion here
    decoder->decodeFirstMPEG2Frame( formatYV12 );
