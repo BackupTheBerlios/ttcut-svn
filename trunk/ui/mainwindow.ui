@@ -200,7 +200,7 @@
         <string>Videofile</string>
        </attribute>
        <attribute name="icon" >
-        <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/saveimage_16.xpm</iconset>
+        <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/tv.png</iconset>
        </attribute>
        <layout class="QGridLayout" >
         <property name="margin" >
@@ -291,7 +291,7 @@
      <x>0</x>
      <y>0</y>
      <width>1044</width>
-     <height>24</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp" >
@@ -336,9 +336,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>731</y>
+     <y>726</y>
      <width>1044</width>
-     <height>19</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>
@@ -470,6 +470,20 @@
  <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>TTAudioFileList</class>
+   <extends>QGroupBox</extends>
+   <header>gui/ttaudiofilelist.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTNavigation</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttnavigation.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
    <class>TTStreamNavigator</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttstreamnavigator.h</header>
@@ -501,20 +515,6 @@
    <class>TTCutList</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutlist.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTAudioFileList</class>
-   <extends>QGroupBox</extends>
-   <header>gui/ttaudiofilelist.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTNavigation</class>
-   <extends>QGroupBox</extends>
-   <header>../gui/ttnavigation.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

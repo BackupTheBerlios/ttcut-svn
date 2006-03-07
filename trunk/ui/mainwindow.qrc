@@ -13,5 +13,6 @@
         <file>pixmaps/filesaveas_16.xpm</file>
         <file>pixmaps/saveimage_16.xpm</file>
         <file>pixmaps/settings_16.xpm</file>
+        <file>pixmaps/tv.png</file>
     </qresource>
 </RCC>

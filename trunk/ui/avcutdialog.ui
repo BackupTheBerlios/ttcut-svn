@@ -8,286 +8,280 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>623</width>
-    <height>358</height>
+    <width>703</width>
+    <height>421</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>TTCut - Video Cut Options</string>
   </property>
-  <widget class="QTabWidget" name="tabWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>9</x>
-     <y>9</y>
-     <width>605</width>
-     <height>297</height>
-    </rect>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
    </property>
-   <widget class="QWidget" name="tabCommon" >
-    <attribute name="title" >
-     <string>Common</string>
-    </attribute>
-    <attribute name="icon" >
-     <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/settings_18.xpm</iconset>
-    </attribute>
-    <widget class="QGroupBox" name="gbCutOptions" >
-     <property name="geometry" >
-      <rect>
-       <x>9</x>
-       <y>184</y>
-       <width>583</width>
-       <height>78</height>
-      </rect>
-     </property>
-     <property name="title" >
-      <string>Cut Options</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="0" >
-       <widget class="QCheckBox" name="cbEndCode" >
-        <property name="text" >
-         <string>Write Sequence Wnd Code</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="cbMaxBitrate" >
-        <property name="text" >
-         <string>Write max bitrate to first sequence</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QGroupBox" name="gbOutput" >
-     <property name="geometry" >
-      <rect>
-       <x>9</x>
-       <y>9</y>
-       <width>583</width>
-       <height>94</height>
-      </rect>
-     </property>
-     <property name="title" >
-      <string>Cut Output Options</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="2" >
-       <widget class="QPushButton" name="btnDirOpen" >
-        <property name="minimumSize" >
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize" >
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="icon" >
-         <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/fileopen_24.xpm</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="leOutputPath" />
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="laOutputPath" >
-        <property name="text" >
-         <string>Output path</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="2" >
-       <widget class="QLineEdit" name="leOutputFile" />
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="laOutputFile" >
-        <property name="text" >
-         <string>Output file</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QGroupBox" name="gbFreeDriveSpace" >
-     <property name="geometry" >
-      <rect>
-       <x>9</x>
-       <y>109</y>
-       <width>583</width>
-       <height>69</height>
-      </rect>
-     </property>
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>5</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>4</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title" >
-      <string>Free Drive Space</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="laFreeDiskSpace2" >
-        <property name="text" >
-         <string>No information available</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="laFreeDiskSpace1" >
-        <property name="text" >
-         <string>No information available</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tabEncoding" >
-    <attribute name="title" >
-     <string>Encoding</string>
-    </attribute>
-    <attribute name="icon" >
-     <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/exec.png</iconset>
-    </attribute>
-    <layout class="QGridLayout" >
-     <property name="margin" >
-      <number>9</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item row="0" column="0" >
-      <widget class="TTCutSettingsEncoder" name="encodingPage" >
-       <property name="title" >
-        <string>GroupBox</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="tabMuxing" >
-    <attribute name="title" >
-     <string>Muxing</string>
-    </attribute>
-    <attribute name="icon" >
-     <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/filter.png</iconset>
-    </attribute>
-    <layout class="QGridLayout" >
-     <property name="margin" >
-      <number>9</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item row="0" column="0" >
-      <widget class="TTCutSettingsMuxer" name="muxingPage" >
-       <property name="title" >
-        <string>GroupBox</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="tabChapters" >
-    <attribute name="title" >
-     <string>Chapters</string>
-    </attribute>
-    <attribute name="icon" >
-     <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/chapter_18.xpm</iconset>
-    </attribute>
-    <layout class="QGridLayout" >
-     <property name="margin" >
-      <number>9</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item row="0" column="0" >
-      <widget class="TTCutSettingsChapter" name="chaptersPage" >
-       <property name="title" >
-        <string>GroupBox</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QWidget" name="layoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>9</x>
-     <y>312</y>
-     <width>605</width>
-     <height>37</height>
-    </rect>
+   <property name="spacing" >
+    <number>6</number>
    </property>
-   <layout class="QHBoxLayout" >
-    <property name="margin" >
-     <number>0</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
-    <item>
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" >
-       <size>
-        <width>131</width>
-        <height>31</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QPushButton" name="okButton" >
-      <property name="text" >
-       <string>Start</string>
-      </property>
+   <item row="1" column="0" >
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>131</width>
+         <height>31</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton" >
+       <property name="text" >
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="tabWidget" >
+     <widget class="QWidget" name="tabCommon" >
+      <attribute name="title" >
+       <string>Common</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/settings_18.xpm</iconset>
+      </attribute>
+      <widget class="QGroupBox" name="gbCutOptions" >
+       <property name="geometry" >
+        <rect>
+         <x>9</x>
+         <y>184</y>
+         <width>583</width>
+         <height>78</height>
+        </rect>
+       </property>
+       <property name="title" >
+        <string>Cut Options</string>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="1" column="0" >
+         <widget class="QCheckBox" name="cbEndCode" >
+          <property name="text" >
+           <string>Write Sequence Wnd Code</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QCheckBox" name="cbMaxBitrate" >
+          <property name="text" >
+           <string>Write max bitrate to first sequence</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="gbOutput" >
+       <property name="geometry" >
+        <rect>
+         <x>9</x>
+         <y>9</y>
+         <width>583</width>
+         <height>94</height>
+        </rect>
+       </property>
+       <property name="title" >
+        <string>Cut Output Options</string>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="1" column="2" >
+         <widget class="QPushButton" name="btnDirOpen" >
+          <property name="minimumSize" >
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="icon" >
+           <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/fileopen_24.xpm</iconset>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QLineEdit" name="leOutputPath" />
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="laOutputPath" >
+          <property name="text" >
+           <string>Output path</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="2" >
+         <widget class="QLineEdit" name="leOutputFile" />
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="laOutputFile" >
+          <property name="text" >
+           <string>Output file</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="gbFreeDriveSpace" >
+       <property name="geometry" >
+        <rect>
+         <x>9</x>
+         <y>109</y>
+         <width>583</width>
+         <height>69</height>
+        </rect>
+       </property>
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>5</hsizetype>
+         <vsizetype>5</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>4</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title" >
+        <string>Free Drive Space</string>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="laFreeDiskSpace2" >
+          <property name="text" >
+           <string>No information available</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="laFreeDiskSpace1" >
+          <property name="text" >
+           <string>No information available</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="cancelButton" >
-      <property name="text" >
-       <string>Cancel</string>
-      </property>
+     <widget class="QWidget" name="tabEncoding" >
+      <attribute name="title" >
+       <string>Encoding</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/exec.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="TTCutSettingsEncoder" name="encodingPage" >
+         <property name="title" >
+          <string>GroupBox</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-    </item>
-   </layout>
-  </widget>
+     <widget class="QWidget" name="tabMuxing" >
+      <attribute name="title" >
+       <string>Muxing</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/filter.png</iconset>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="TTCutSettingsMuxer" name="muxingPage" >
+         <property name="title" >
+          <string>GroupBox</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabChapters" >
+      <attribute name="title" >
+       <string>Chapters</string>
+      </attribute>
+      <attribute name="icon" >
+       <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/chapter_18.xpm</iconset>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="TTCutSettingsChapter" name="chaptersPage" >
+         <property name="title" >
+          <string>GroupBox</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <pixmapfunction></pixmapfunction>
  <customwidgets>
