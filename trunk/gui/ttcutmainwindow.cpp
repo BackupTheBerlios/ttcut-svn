@@ -103,6 +103,12 @@ TTCutMainWindow::TTCutMainWindow()
   // Message logger instance
   log = TTMessageLogger::getInstance();
 
+  // Qt version at runtime
+  log->infoMsg(oName, "Qt-Version: %s", qVersion());
+#if QT_VERSION < 0x040100
+  log->warningMsg(oName, "Qt-Version >= 4.1.0 required");
+#endif
+
   // Settings
   settings = new TTCutSettings();
   settings->readSettings();

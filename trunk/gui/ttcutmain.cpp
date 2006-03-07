@@ -26,6 +26,7 @@
 
 // Qt headers
 #include <QApplication>
+#include <QMessageBox>
 #include <QGLFormat>
 #include <QPlastiqueStyle>
 
@@ -34,6 +35,8 @@
 
 int main( int argc, char **argv )
 {
+  QT_REQUIRE_VERSION(argc, argv, "4.1.0");
+
    QApplication::setColorSpec( QApplication::CustomColor );
    QApplication a( argc, argv );
    
