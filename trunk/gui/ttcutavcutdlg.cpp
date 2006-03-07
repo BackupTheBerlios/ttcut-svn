@@ -117,7 +117,7 @@ void TTCutAVCutDlg::onDirectoryOpen()
     qApp->processEvents();
   }
 
-  //getFreeDiskSpace();
+  getFreeDiskSpace();
 }
 
 
@@ -141,7 +141,7 @@ void TTCutAVCutDlg::setCommonData()
   // write sequence end code
   cbEndCode->setChecked(TTCut::cutWriteSeqEnd);
 
-  //getFreeDiskSpace();
+  getFreeDiskSpace();
  }
 
 // get tab data and set global parameter
