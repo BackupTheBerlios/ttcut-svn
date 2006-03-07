@@ -55,7 +55,7 @@
        <string>Files</string>
       </attribute>
       <attribute name="icon" >
-       <iconset resource="ttsettingsdialog.qrc" >:/pixmaps/pixmaps/fileopen_16.xpm</iconset>
+       <iconset resource="ttsettingsdialog.qrc" >:/pixmaps/pixmaps/pipe.png</iconset>
       </attribute>
       <layout class="QGridLayout" >
        <property name="margin" >
@@ -78,7 +78,7 @@
        <string>Encoding</string>
       </attribute>
       <attribute name="icon" >
-       <iconset resource="ttsettingsdialog.qrc" >:/pixmaps/pixmaps/saveimage_16.xpm</iconset>
+       <iconset resource="ttsettingsdialog.qrc" >:/pixmaps/pixmaps/exec.png</iconset>
       </attribute>
       <layout class="QGridLayout" >
        <property name="margin" >
@@ -101,7 +101,7 @@
        <string>Muxing</string>
       </attribute>
       <attribute name="icon" >
-       <iconset resource="ttsettingsdialog.qrc" >:/pixmaps/pixmaps/preview_18.xpm</iconset>
+       <iconset resource="ttsettingsdialog.qrc" >:/pixmaps/pixmaps/filter.png</iconset>
       </attribute>
       <layout class="QGridLayout" >
        <property name="margin" >

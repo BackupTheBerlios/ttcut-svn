@@ -177,6 +177,9 @@
     <attribute name="title" >
      <string>Encoding</string>
     </attribute>
+    <attribute name="icon" >
+     <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/exec.png</iconset>
+    </attribute>
     <layout class="QGridLayout" >
      <property name="margin" >
       <number>9</number>
@@ -196,6 +199,9 @@
    <widget class="QWidget" name="tabMuxing" >
     <attribute name="title" >
      <string>Muxing</string>
+    </attribute>
+    <attribute name="icon" >
+     <iconset resource="avcutdialog.qrc" >:/pixmaps/pixmaps/filter.png</iconset>
     </attribute>
     <layout class="QGridLayout" >
      <property name="margin" >
