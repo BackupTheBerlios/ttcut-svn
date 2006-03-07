@@ -38,7 +38,7 @@ TTStreamNavigator::TTStreamNavigator(QWidget* parent)
   connect(videoSlider, SIGNAL(sliderMoved(int)),  SLOT(onSliderMoved(int)));
 }
 
-void TTStreamNavigator::setTitle(const QString& title)
+void TTStreamNavigator::setTitle(__attribute__((unused))const QString& title)
 {
 }
 
@@ -77,7 +77,7 @@ void TTStreamNavigator::onNewSliderValue(int val)
   emit sliderValueChanged(val);
 }
 
-void TTStreamNavigator::onSliderMoved(int val)
+void TTStreamNavigator::onSliderMoved(__attribute__((unused))int val)
 {
   qApp->processEvents();
 }

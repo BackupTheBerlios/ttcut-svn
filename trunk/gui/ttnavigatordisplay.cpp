@@ -68,12 +68,12 @@ void TTNavigatorDisplay::onRefreshDisplay()
   
 }
 
-void TTNavigatorDisplay::resizeEvent(QResizeEvent* event)
+void TTNavigatorDisplay::resizeEvent(__attribute__((unused))QResizeEvent* event)
 {
   scaleFactor = navigatorDisplay->geometry().width() / (double)(maxValue-minValue);
 }
 
-void TTNavigatorDisplay::paintEvent(QPaintEvent *event)
+void TTNavigatorDisplay::paintEvent(__attribute__((unused))QPaintEvent *event)
 {
   if (ttAssigned(cutListData) && isControlEnabled)
     drawCutList();

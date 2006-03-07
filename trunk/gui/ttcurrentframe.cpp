@@ -181,12 +181,12 @@ void TTCurrentFrame::onGotoMarker(int markerPos)
 }
 
 //! Cut in position was set
-void TTCurrentFrame::onSetCutIn(int cutInPos)
+void TTCurrentFrame::onSetCutIn(__attribute__((unused))int cutInPos)
 {
 }
 
 //! Cut out position was set
-void TTCurrentFrame::onSetCutOut(int cutOutPos)
+void TTCurrentFrame::onSetCutOut(__attribute__((unused))int cutOutPos)
 {
 }
 

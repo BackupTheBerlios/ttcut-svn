@@ -125,7 +125,7 @@ int TTCutListData::addItem(int cutInIndex, int cutOutIndex)
   return data.count()-1;
 }
 
-int TTCutListData::addCutPosition(int cutInIndex, int cutOutIndex, int order)
+int TTCutListData::addCutPosition(int cutInIndex, int cutOutIndex, __attribute__((unused))int order)
 {
   return addItem(cutInIndex, cutOutIndex);
 }

@@ -41,7 +41,7 @@ TTVideoFileInfo::TTVideoFileInfo(QWidget* parent)
   connect(pbVideoOpen, SIGNAL(clicked()), SLOT(onFileOpen()));
 }
 
-void TTVideoFileInfo::setTitle( const QString & title )
+void TTVideoFileInfo::setTitle( __attribute__((unused))const QString & title )
 {
 
 }

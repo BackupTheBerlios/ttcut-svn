@@ -73,7 +73,7 @@ TTAudioFileList::TTAudioFileList(QWidget* parent)
 }
 
 //! Set the group box title string. This method is needed by designer.
-void TTAudioFileList::setTitle ( const QString& title )
+void TTAudioFileList::setTitle ( __attribute__((unused))const QString& title )
 {
   //gbAudioFiles->setTitle( title );
 }

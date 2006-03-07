@@ -189,7 +189,7 @@ void TTCutList::onEntryDelete()
 }
 
 //! Entry selected; Selection changed
-void TTCutList::onEntrySelected(QTreeWidgetItem* item, int column)
+void TTCutList::onEntrySelected(__attribute((unused))QTreeWidgetItem* item, __attribute__((unused))int column)
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
@@ -261,7 +261,7 @@ void TTCutList::onAVCut()
 //! Cut audio only button action
 void TTCutList::onAudioCut()
 {
-  int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+  videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
   emit audioCut(-1);
 }
 
