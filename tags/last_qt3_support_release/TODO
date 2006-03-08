@@ -1,0 +1,74 @@
+-------------------------------------------------------------------------------
+TODO list for project TTCut
+-------------------------------------------------------------------------------
+
+* Remove QT3 support depencies:
+
+  Compile TTCut with -DQT3_SUPPORT_WARNINGS an you will see where to replace
+  QT3 support members:
+
+  ttaudiolistview.h:  class TTAudioListItem : public Q3ListViewItem
+  ttaudiolistview.h:  class TTAudioListView : public Q3ListView
+  ttaudiolistview.h:  Q3PopupMenu*   itemContextMenu;
+  ttaudiolistview.h:  Q3PopupMenu*   listContextMenue;
+  ttcutaboutdlg.h:    class Q3TextView;
+  ttcutaboutdlg.h:    Q3TextView*   tvDisclaimer;
+  ttcutaboutdlg.h:    Q3TextView*   TextView2;
+  ttcutavcutdlg.h:    #include <Q3Frame>
+  ttcutavcutdlg.h:    class Q3Frame;
+  ttcutavcutdlg.h:    class Q3GroupBox;
+  ttcutavcutdlg.h:    Q3GroupBox*   gbCutOptions;
+  ttcutavcutdlg.h:    Q3Frame*      Frame4;
+  ttcutccrwnd.h:      class Q3ListView;
+  ttcutccrwnd.h:      class Q3ListViewItem;
+  ttcutccrwnd.h:      Q3ListView*   lvTempChapter;
+  ttcutccrwnd.h:      Q3ListView*   lvDestTimeStamp;
+  ttcutccrwnd.h:      Q3ListView*   lvResultLength;
+  ttcutlistview.h:    class TTCutListItem : public Q3ListViewItem
+  ttcutlistview.h:    class TTCutListView : public Q3ListView
+  ttcutlistview.h:    Q3PopupMenu*      itemContextMenu;
+  ttcutlistview.h:    Q3PopupMenu*      listContextMenue;
+  ttcutmainwnd.h:     class Q3ActionGroup;
+  ttcutmainwnd.h:     class Q3ListView;
+  ttcutmainwnd.h:     class Q3ListViewItem;
+  ttcutsettings.h:    class Q3GroupBox;
+  ttcutsettings.h:    class Q3ButtonGroup;
+  ttcutsettings.h:    Q3GroupBox*   gbNavigation;
+  ttcutsettings.h:    Q3GroupBox*   gbSearchPlay;
+  ttcutsettings.h:    Q3GroupBox*   gbFilesDirs;
+  ttcutsettings.h:    Q3GroupBox*   cbCreateCutVideoIDD;
+  ttcutsettings.h:    Q3GroupBox*   gbLogfile;
+  ttcutsettings.h:    Q3GroupBox*   gbLogfileOptions;
+  ttcutsettings.h:    Q3ButtonGroup* bgMuxOptions;
+  ttcutsettings.h:    Q3GroupBox*    gbMuxerSettings;
+  ttcutsettings.h:    Q3GroupBox*    gbPostMuxing;
+
+* Improve performance while reading header informations from Mpeg2Schnitt IDD file
+TODO FILE FOR TTCUT
+-------------------
+
+* use a better float compare funtion in TTProgressBar
+
+* Implement read/write file-settings data
+
+* Check IDD file handling
+
+* Implement read/write for muxing settings
+
+* Check cut list handling, theire meight be errors during delete and edit operations
+
+* Implement a better fallback method for alternate audio fileextension (mp2, ac3)
+
+* Under unknown circumstances the mplayer preview doesn't work
+
+
+
+
+Roadmap -> next planed features
+-------------------------------
+
+* Implement usser dialog for transcode parameter
+
+* Implement mux options: mux-list, mux after cut
+
+* Implement a first version for chapter output (spumux xml)
