@@ -1,0 +1,68 @@
+-------------------------------------------------------------------------------
+TODO list for project TTCut
+-------------------------------------------------------------------------------
+
+* Remove unused parameter warnings
+
+* Improve performance while reading header informations from Mpeg2Schnitt IDD file
+  (not so importend)
+
+* Find a solution for realtime playback demuxed video stream (play-button)
+
+* Improve performance while reading header informations from Mpeg2Schnitt IDD file
+
+* use a better float compare funtion in TTProgressBar
+
+* Implement read/write file-settings data
+
+* Check IDD file handling
+
+* Implement read/write for muxing settings
+
+* Check cut list handling, theire meight be errors during delete and edit operations
+
+* Implement a better fallback method for alternate audio fileextension (mp2, ac3)
+
+* Under unknown circumstances the mplayer preview doesn't work
+
+* Write a FAQ
+  1) If mplayer don't work properly check your default -vo settings. TTCut assumes that
+     you use -vo x11
+
+* In preview play button is without function after playing preview clip until eof
+  (should be fixed in current versions)
+
+* Mouse wheel should not work in cut-out frame window
+
+* Enable the play button
+
+
+
+Roadmap -> next planed features
+-------------------------------
+
+* Implement usser dialog for transcode parameter
+
+* Implement mux options: mux-list, mux after cut
+
+* Implement a first version for chapter output (spumux xml)
+
+* Make the current frame position clickable (enter current frame positon)
+
+* Write the mux list and support direct muxing after cut
+
+* Recent project file list
+
+* More keyboard short cuts
+
+* Internationalisation (!!!)
+
+* User warning when click "New Project" an video stream is loaded (!)
+
+* Display the resulting stream lengths after cut
+
+* Find solution for chapter marks
+
+* Cut audio only
+
+* Find a logo (!!!!!) 
