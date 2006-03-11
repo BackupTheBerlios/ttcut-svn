@@ -53,6 +53,7 @@ HEADERS   = common/ttcut.h\
             data/ttaudiolistdata.h\
             data/ttcutlistdata.h\
             data/ttcutparameter.h\
+            data/ttmuxlistdata.h\
             avstream/ttcommon.h\
             avstream/ttmemorybuffer.h\
             avstream/ttac3audioheader.h\
@@ -107,6 +108,7 @@ SOURCES   = common/ttcut.cpp\
             data/ttaudiolistdata.cpp \
             data/ttcutlistdata.cpp\
             data/ttcutparameter.cpp\
+            data/ttmuxlistdata.cpp\
             avstream/ttcommon.cpp\
             avstream/ttmemorybuffer.cpp\
             avstream/ttac3audioheader.cpp\

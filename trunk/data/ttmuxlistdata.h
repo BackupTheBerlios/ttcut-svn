@@ -2,13 +2,13 @@
 /* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttaudiolistdata.h                                               */
+/* FILE     : ttmuxlistdata.h                                                 */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/26/2006 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTAUDIOLISTDATA
+// *** TTMUXLISTDATA
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -27,71 +27,54 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTAUDIOLISTDATA_H
-#define TTAUDIOLISTDATA_H
+#ifndef TTMUXLISTDATA_H
+#define TTMUXLISTDATA_H
 
+#include "../common/ttcut.h"
 #include "../common/ttmessagelogger.h"
-#include "../avstream/ttavheader.h"
-#include "../avstream/ttavstream.h"
-#include "../gui/ttcutproject.h"
 
 #include <QList>
+#include <QStringList>
 
-class TTAudiostream;
-class TTCutProject;
 class QString;
 class QFileInfo;
 
-class TTAudioListDataItem
+class TTMuxListDataItem
 {
-  friend class TTAudioListData;
+  friend class TTMuxListData;
   
   public:
-    TTAudioListDataItem();
-    TTAudioListDataItem(QFileInfo fInfo, TTAudioStream* aStream);
+    TTMuxListDataItem();
+    TTMuxListDataItem(QString video, QStringList audio);
 
-    QFileInfo      getFileInfo();
-    TTAudioStream* getAudioStream();
-    QString        getFileName();
-    QString        getLength();
-    QString        getVersion();
-    QString        getMode();
-    QString        getBitrate();
-    QString        getSamplerate();
-    QString        getDelay();
+    QString     getVideoName();
+    QStringList getAudioNames();
     
   private:
-    QFileInfo      audioFileInfo;
-    TTAudioStream* audioStream;
-    QString        audioLength;
-    QString        audioVersion;
-    QString        audioMode;
-    QString        audioSamplerate;
-    QString        audioBitrate;
-    QString        audioDelay;    
+    QString     videoFileName;
+    QStringList audioFileNames;
 };
 
 
-class TTAudioListData
+class TTMuxListData
 {
   public:
-    TTAudioListData();
-    ~TTAudioListData();
+    TTMuxListData();
+    ~TTMuxListData();
 
-    int  addItem(QString fName, TTAudioStream* aStream);
-    TTAudioListDataItem& itemAt(int index);
-    TTAudioStream* audioStreamAt(int index);
+    int  addItem(QString video);
+    int  addItem(QString video, QString audio);
+    int  addItem(QString video, QStringList audio);
+    void appendAudioName(int index, QString audio);
+    TTMuxListDataItem& itemAt(int index);
     int  count();
     void deleteAll();
     void removeAt(int index);
-    void swap(int a, int b);
     void print();
-    void writeToProject(TTCutProject* prj);
 
   private:
     TTMessageLogger* log;
-    QList<TTAudioListDataItem>data;
-
+    QList<TTMuxListDataItem>data;
 };
 
-#endif //TTAUDIOLISTDATA_H
+#endif //TTMUXLISTDATA_H

@@ -36,6 +36,7 @@
 #include "../common/ttmessagelogger.h"
 #include "../data/ttaudiolistdata.h"
 #include "../data/ttcutlistdata.h"
+#include "../data/ttmuxlistdata.h"
 #include "../avstream/ttavtypes.h"
 #include "../avstream/ttmpeg2videostream.h"
 #include "ttcutpreview.h"
@@ -51,6 +52,7 @@ class TTCutMainWindow : public QMainWindow, Ui::TTCutMainWindow
 
   public:
     TTCutMainWindow();
+    ~TTCutMainWindow();
 
 void keyPressEvent(QKeyEvent* e);
 
@@ -88,6 +90,7 @@ void keyPressEvent(QKeyEvent* e);
    TTCutSettings*      settings;
    TTAudioListData*    audioList;
    TTCutListData*      cutListData;
+   TTMuxListData*      muxListData;
    TTMessageLogger*    log;
    TTMpeg2VideoStream* mpegStream;
    bool sliderUpdateFrame;

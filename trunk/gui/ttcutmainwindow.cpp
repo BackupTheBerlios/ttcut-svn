@@ -61,6 +61,8 @@
 #include "../ui/pixmaps/addtolist_18.xpm"
 #include "../ui/pixmaps/fileclose_18.xpm"
 
+#include <QStringList>
+#include <QString>
 
 const char oName[] = "TTCutMainWindow";
 
@@ -116,6 +118,9 @@ TTCutMainWindow::TTCutMainWindow()
   // Audio list
   audioList = new TTAudioListData();
   audioFileInfo->setListData(audioList);
+
+  // Mux list
+  muxListData = new TTMuxListData();
 
   // no navigation
   navigationEnabled( false );
@@ -182,6 +187,15 @@ TTCutMainWindow::TTCutMainWindow()
   connect(cutList, SIGNAL(previewCut(int)),    SLOT(onPreviewCut(int)));
   connect(cutList, SIGNAL(audioVideoCut(int)), SLOT(onAudioVideoCut(int)));
   connect(cutList, SIGNAL(audioCut(int)),      SLOT(onAudioCut(int)));
+}
+
+//! Destructor: Clean up used resources
+TTCutMainWindow::~TTCutMainWindow()
+{
+  delete settings;
+  delete audioList;
+  delete muxListData;
+  delete cutListData;
 }
 
 // Signals from the application menu
@@ -579,6 +593,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   QString        AudioDateiEndung;
   QString        HString;
   int            AudioAnzahl;
+  int            muxIndex = 0;
   int list_pos = 0;
   bool           nurAudioSchneiden;
   QString        videoCutName;
@@ -659,6 +674,8 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
     mpegStream->cut( video_cut_stream, cutListData );
 
+    muxIndex = muxListData->addItem(video_cut_stream->fileName());
+ 
     //qDebug("Meldung128: Das Schneiden der Datei %s ist beendet.",HString.ascii());
     delete progress_bar;
     delete video_cut_stream;
@@ -706,13 +723,18 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
     current_audio_stream->cut( audio_cut_stream, cutListData );
 
+    muxListData->appendAudioName(muxIndex, audio_cut_stream->fileName());
+    
     delete progress_bar;
     delete audio_cut_stream;
 
     list_pos++;
     AudioAnzahl--;
   }
-  // Ende Audioschnitt
+  // Ende Audioschnitta
+
+  // mux list
+  muxListData->print();
 }
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
