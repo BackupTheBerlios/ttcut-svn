@@ -126,6 +126,8 @@ TTCutMainWindow::TTCutMainWindow()
   // no navigation
   navigationEnabled( false );
   
+  readProjectFile = false;
+  
   // Signal and slot connections
   // 
   // Connect signals from main menu
@@ -243,6 +245,7 @@ void TTCutMainWindow::onFileOpen()
     projectFile->seekToVideoSection();
     QString videoFileName;
     if (projectFile->readVideoFileName(videoFileName)) {
+      readProjectFile = true;
       onReadVideoStream(videoFileName);
     }
 
@@ -432,10 +435,11 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
 
       QString audioName = audioFromVideoName(fName);
 
-      if ( !audioName.isEmpty() ) {
+      if ( !audioName.isEmpty() && !readProjectFile) {
         onReadAudioStream(audioName);
 
         if ( TTCut::numAudioTracks ==  0 ) {
+          log->infoMsg(oName, "TODO: Show audio file open dialog");
           // show open file dialog
         }
       }

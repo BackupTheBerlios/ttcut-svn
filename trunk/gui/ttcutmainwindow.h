@@ -94,6 +94,7 @@ void keyPressEvent(QKeyEvent* e);
    TTMessageLogger*    log;
    TTMpeg2VideoStream* mpegStream;
    bool sliderUpdateFrame;
+   bool readProjectFile;
 };
 
 #endif //TTCUTMAINWINDOW_H
