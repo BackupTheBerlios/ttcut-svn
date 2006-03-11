@@ -1,14 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttmuxlistdata.h                                                 */
+/* FILE     : ttmplexprovider.h                                               */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2006 */
+/* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTMUXLISTDATA
+// *** TTMPLEXPROVIDER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -27,57 +28,19 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTMUXLISTDATA_H
-#define TTMUXLISTDATA_H
+#ifndef TTMPLEXPROVIDER_H
+#define TTMPLEXPROVIDER_H
 
-#include "../common/ttcut.h"
-#include "../common/ttmessagelogger.h"
+class TTMuxListData;
 
-#include <QList>
-#include <QStringList>
-
-class QString;
-class QFileInfo;
-
-class TTMuxListDataItem
+class TTMplexProvider
 {
-  friend class TTMuxListData;
-  
   public:
-    TTMuxListDataItem();
-    TTMuxListDataItem(QString video, QStringList audio);
+    TTMplexProvider();
+    ~TTMplexProvider();
 
-    QString     getVideoName();
-    QStringList getAudioNames();
-    
-  private:
-    QString     videoFileName;
-    QStringList audioFileNames;
+    void writeMuxScript(TTMuxListData* muxData);
 };
 
 
-class TTMuxListData
-{
-  public:
-    TTMuxListData();
-    ~TTMuxListData();
-
-    int  addItem(QString video);
-    int  addItem(QString video, QString audio);
-    int  addItem(QString video, QStringList audio);
-    void appendAudioName(int index, QString audio);
-    TTMuxListDataItem& itemAt(int index);
-    QString videoFileAt(int index);
-    int     numAudioFilesAt(int index);
-    QString audioFileAt(int index, int nr);
-    int  count();
-    void deleteAll();
-    void removeAt(int index);
-    void print();
-
-  private:
-    TTMessageLogger* log;
-    QList<TTMuxListDataItem>data;
-};
-
-#endif //TTMUXLISTDATA_H
+#endif //TTMPLEXPROVIDER

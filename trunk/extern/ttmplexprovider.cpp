@@ -1,14 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttmuxlistdata.h                                                 */
+/* FILE     : ttmplexprovider.cpp                                             */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2006 */
+/* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTMUXLISTDATA
+// *** TTMPLEXPROVIDER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -27,57 +28,63 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTMUXLISTDATA_H
-#define TTMUXLISTDATA_H
+#include "ttmplexprovider.h"
 
 #include "../common/ttcut.h"
-#include "../common/ttmessagelogger.h"
+#include "../data/ttmuxlistdata.h"
 
-#include <QList>
+#include <QString>
 #include <QStringList>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QTextStream>
 
-class QString;
-class QFileInfo;
-
-class TTMuxListDataItem
+TTMplexProvider::TTMplexProvider()
 {
-  friend class TTMuxListData;
-  
-  public:
-    TTMuxListDataItem();
-    TTMuxListDataItem(QString video, QStringList audio);
+}
 
-    QString     getVideoName();
-    QStringList getAudioNames();
-    
-  private:
-    QString     videoFileName;
-    QStringList audioFileNames;
-};
-
-
-class TTMuxListData
+TTMplexProvider::~TTMplexProvider()
 {
-  public:
-    TTMuxListData();
-    ~TTMuxListData();
+}
 
-    int  addItem(QString video);
-    int  addItem(QString video, QString audio);
-    int  addItem(QString video, QStringList audio);
-    void appendAudioName(int index, QString audio);
-    TTMuxListDataItem& itemAt(int index);
-    QString videoFileAt(int index);
-    int     numAudioFilesAt(int index);
-    QString audioFileAt(int index, int nr);
-    int  count();
-    void deleteAll();
-    void removeAt(int index);
-    void print();
+void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
+{
+  QStringList mplexCmd;
+  QString     mpegFileName;
+  QFileInfo   muxInfo(QDir(TTCut::cutDirPath), "muxscript.sh" );
+  QFile       muxFile(muxInfo.absoluteFilePath());
 
-  private:
-    TTMessageLogger* log;
-    QList<TTMuxListDataItem>data;
-};
+  if (muxInfo.exists())
+    muxFile.remove();
 
-#endif //TTMUXLISTDATA_H
+  muxFile.open(QIODevice::WriteOnly | QIODevice::Text);
+
+  QTextStream muxOutStream(&muxFile);
+
+  muxOutStream << "# TTCut - Mplex script ver. 0.10.1" << "\n";
+  muxOutStream << "#!/bin/sh" << "\n";
+  muxOutStream << "#\n";
+
+  for (int i=0; i < muxData->count(); i++) {
+
+    mplexCmd.clear();
+
+    // video output file name
+    mpegFileName = ttChangeFileExt(muxData->videoFileAt(i), "mpg");
+
+    mplexCmd << "mplex"
+      << "-f8"
+      << "-o"
+      << mpegFileName
+      << muxData->videoFileAt(i);
+
+    for (int j=0; j < muxData->numAudioFilesAt(i); j++) {
+      mplexCmd << muxData->audioFileAt(i, j);
+    }
+    muxOutStream << mplexCmd.join(" ") << "\n";
+    muxOutStream << "#\n";
+  }
+  muxFile.flush();
+  muxFile.close();
+}

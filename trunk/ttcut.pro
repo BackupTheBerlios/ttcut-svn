@@ -80,6 +80,7 @@ HEADERS   = common/ttcut.h\
             mpeg2window/ttmpeg2window.h \
             avilib/avilib.h\
             extern/tttranscode.h\
+            extern/ttmplexprovider.h\
             gui/ttcutsettings.h\
             gui/ttcutsettingschapter.h\
             gui/ttcutsettingsmuxer.h\
@@ -135,6 +136,7 @@ SOURCES   = common/ttcut.cpp\
             mpeg2window/ttmpeg2window.cpp\
             avilib/avilib.c\
             extern/tttranscode.cpp\
+            extern/ttmplexprovider.cpp\
             gui/ttcutsettings.cpp\
             gui/ttcutsettingschapter.cpp\
             gui/ttcutsettingsmuxer.cpp\

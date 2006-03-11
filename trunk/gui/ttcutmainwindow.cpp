@@ -34,6 +34,7 @@
 #include "ttcutavcutdlg.h"
 #include "ttprogressbar.h"
 #include "ttcutaboutdlg.h"
+#include "../extern/ttmplexprovider.h"
 
 #include "../ui//pixmaps/downarrow_18.xpm"
 #include "../ui/pixmaps/uparrow_18.xpm"
@@ -735,6 +736,8 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
   // mux list
   muxListData->print();
+  TTMplexProvider mplexProvider;
+  mplexProvider.writeMuxScript(muxListData);
 }
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)

@@ -158,6 +158,22 @@ void TTMuxListData::appendAudioName(int index, QString audio)
   data[index].audioFileNames.append(audio);
 }
 
+QString TTMuxListData::videoFileAt(int index)
+{
+  return data[index].videoFileName;
+}
+
+int TTMuxListData::numAudioFilesAt(int index)
+{
+  return data[index].audioFileNames.size();
+}
+
+QString TTMuxListData::audioFileAt(int index, int nr)
+{
+    return data[index].audioFileNames.at(nr);
+}
+
+
 //! Returns the data item at position index
 TTMuxListDataItem& TTMuxListData::itemAt(int index)
 {
