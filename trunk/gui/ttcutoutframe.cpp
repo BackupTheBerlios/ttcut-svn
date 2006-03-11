@@ -98,6 +98,7 @@ void TTCutOutFrame::onPrevCutOutPos()
   emit newCutOutFramePos(cutOutIndex);
 
   mpegWindow->showFrameAt(cutOutIndex);
+  updateCurrentPosition();
 }
 
 //! Goto next possible cut-out position
@@ -113,6 +114,7 @@ void TTCutOutFrame::onNextCutOutPos()
   emit newCutOutFramePos(cutOutIndex);
 
   mpegWindow->showFrameAt(cutOutIndex);
+  updateCurrentPosition();
 }
 
 //! On search equal frame action
