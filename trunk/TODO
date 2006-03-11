@@ -29,13 +29,13 @@ TODO list for project TTCut
   1) If mplayer don't work properly check your default -vo settings. TTCut assumes that
      you use -vo x11
 
-* In preview play button is without function after playing preview clip until eof
-  (should be fixed in current versions)
+* Enable the play button (this seems to be not a simple task...)
 
-* Mouse wheel should not work in cut-out frame window
+* Check strange QProcess behavior in new version, some crashes .-(
 
-* Enable the play button
+* Check cut quality
 
+* Why new version (without QT3_SUPPORT) often crashes (see QProcess ??)
 
 
 Roadmap -> next planed features
@@ -49,7 +49,7 @@ Roadmap -> next planed features
 
 * Make the current frame position clickable (enter current frame positon)
 
-* Write the mux list and support direct muxing after cut
+* Write the mux list and support direct muxing after cut (first step is done)
 
 * Recent project file list
 
