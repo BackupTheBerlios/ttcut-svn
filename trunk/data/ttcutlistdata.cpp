@@ -182,6 +182,11 @@ int TTCutListData::cutOutPosAt(int index)
   return cutOutPos(index);
 }
 
+void TTCutListData::setCutOutPosAt(int index, int cutOut)
+{
+  data[index].cutOutIndex = cutOut;
+}
+
 QString TTCutListData::streamFileName()
 {
   return mpegStream->fileName();

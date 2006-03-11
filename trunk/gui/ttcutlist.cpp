@@ -47,9 +47,9 @@ TTCutList::TTCutList(QWidget* parent)
   videoCutList->setRootIsDecorated( false );
   QHeaderView* header = videoCutList->header();
   header->resizeSection(0, 200);
-  header->resizeSection(1, 120);
-  header->resizeSection(2, 120);
-  header->resizeSection(3, 120);
+  header->resizeSection(1, 140);
+  header->resizeSection(2, 140);
+  header->resizeSection(3, 150);
   header->resizeSection(4,  80);
   
   // data struct for cut list view
@@ -263,6 +263,19 @@ void TTCutList::onAudioCut()
 {
   videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
   emit audioCut(-1);
+}
+
+void TTCutList::onEditCutOut(int cutOut)
+{
+  if (videoCutList->currentItem() != NULL && ttAssigned(cutListData)) {
+
+    QTreeWidgetItem* curItem = videoCutList->currentItem();
+    int index = videoCutList->indexOfTopLevelItem(curItem);
+
+    cutListData->setCutOutPosAt(index, cutOut);
+    curItem->setText(2, cutListData->cutOutPosString(index));
+    curItem->setText(3, cutListData->cutLengthString(index));
+  }
 }
 
 //! Contex menu requested

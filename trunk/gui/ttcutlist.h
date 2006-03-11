@@ -64,6 +64,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void onPreview();
     void onAVCut();
     void onAudioCut();
+    void onEditCutOut(int cutOut);
     void onContextMenuRequest(const QPoint& point);
 
   signals:

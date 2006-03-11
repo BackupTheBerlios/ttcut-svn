@@ -88,11 +88,31 @@ void TTCutOutFrame::onGotoCutOut(int pos)
 //! Goto previous possible cut-out position
 void TTCutOutFrame::onPrevCutOutPos()
 {
+  int cutOutIndex; 
+  
+  if (!TTCut::encoderMode)
+    cutOutIndex = mpeg2Stream->moveToPrevPIFrame();
+  else
+    cutOutIndex = mpeg2Stream->moveToPrevFrame();
+
+  emit newCutOutFramePos(cutOutIndex);
+
+  mpegWindow->showFrameAt(cutOutIndex);
 }
 
 //! Goto next possible cut-out position
 void TTCutOutFrame::onNextCutOutPos()
 {
+   int cutOutIndex; 
+  
+  if (!TTCut::encoderMode)
+    cutOutIndex = mpeg2Stream->moveToNextPIFrame();
+  else
+    cutOutIndex = mpeg2Stream->moveToNextFrame();
+
+  emit newCutOutFramePos(cutOutIndex);
+
+  mpegWindow->showFrameAt(cutOutIndex);
 }
 
 //! On search equal frame action

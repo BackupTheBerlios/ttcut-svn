@@ -86,6 +86,7 @@ class TTCutListData
     int cutInPosAt(int index);
     int cutOutPos(int index);
     int cutOutPosAt(int index);
+    void setCutOutPosAt(int index, int cutOut);
     QString streamFileName();
     QString cutInPosString(int index);
     QString cutOutPosString(int index);

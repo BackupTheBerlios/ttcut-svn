@@ -175,6 +175,7 @@ TTCutMainWindow::TTCutMainWindow()
   // Connect signals from cut-out frame widget
   // --------------------------------------------------------------------------
   connect(cutOutFrame, SIGNAL(equalFrameFound(int)), currentFrame, SLOT(onGotoFrame(int)));
+  connect(cutOutFrame, SIGNAL(newCutOutFramePos(int)), cutList,    SLOT(onEditCutOut(int)));
 
   // Connect signals from current frame widget
   // --------------------------------------------------------------------------
@@ -258,7 +259,7 @@ void TTCutMainWindow::onFileOpen()
 
     if (audioList->count() == 0) {
       log->warningMsg(oName, "no audio files in project: %s", qPrintable(fn));
-
+      audioFileInfo->onFileOpen();
       // TODO: Open audio file selection dialog
     }
 
@@ -441,6 +442,7 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
         if ( TTCut::numAudioTracks ==  0 ) {
           log->infoMsg(oName, "TODO: Show audio file open dialog");
           // show open file dialog
+          audioFileInfo->onFileOpen();
         }
       }
 
