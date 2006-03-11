@@ -154,7 +154,6 @@ int TTMuxListData::addItem(QString video, QStringList audio)
 
 void TTMuxListData::appendAudioName(int index, QString audio)
 {
-  qDebug("append audio file: %s", qPrintable(audio));
   data[index].audioFileNames.append(audio);
 }
 

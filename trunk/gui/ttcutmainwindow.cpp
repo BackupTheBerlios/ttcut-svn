@@ -656,6 +656,15 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   video_cut_file_info.setFile ( QDir(TTCut::cutDirPath), videoCutName );
   videoCutName = video_cut_file_info.absoluteFilePath();
 
+  // if file exists delete it
+  if (video_cut_file_info.exists()) {
+    // TODO: User warning about deleting file
+    log->warningMsg(oName, "deleting existing video cut file: %s", qPrintable(videoCutName));
+    QFile tempFile(videoCutName);
+    tempFile.remove();
+    tempFile.close();
+  }
+  
   // --------------------------------------------------------------------------
   // Cut video-file
   // --------------------------------------------------------------------------
@@ -713,7 +722,16 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     // ------------------------------------------------------------------------
 
     //qDebug( "%saudio cut file: %s",c_name,audio_cut_name.ascii() );
-
+    
+    // audio file exists
+    if (audio_cut_file_info.exists()) {
+      // TODO: Warning about deleting file
+      log->warningMsg(oName, "deleting existing audio cut file: %s", qPrintable(audio_cut_name));
+      QFile tempFile(audio_cut_name);
+      tempFile.remove();
+      tempFile.close();
+    }
+    
     progress_bar = new TTProgressBar( this );
     progress_bar->show();
     qApp->processEvents();
