@@ -31,6 +31,7 @@
 #include "tttranscode.h"
 
 #include <QTimer>
+#include <QTextStream>
 
 //#define TTTRANSCODE_DEBUG
 
@@ -185,33 +186,19 @@ void TTTranscodeProvider::transcodeReadOut()
   QByteArray ba;
 
     
-  if ( transcode_proc->state() == QProcess::Running )
-  {
+  if ( transcode_proc->state() == QProcess::Running ) {
     ba = transcode_proc->readAll();
 
     log->debugMsg( c_name, "transcodeReadOut: %d", ba.size() );
+    
+    QTextStream out(&ba);
 
-    i_pos = 0;
-
-    for ( i = 0; i < ba.size(); ++i) 
-    {
-      if ( ba.at(i) != '\n' && i_pos < 100)
-      {
-        temp_str[i_pos] = ba.at(i);
-        i_pos++;
-      }
-      else
-      {
-        temp_str[i_pos] = '\0';
-        line = temp_str;
-        addLine( line );
-        log->infoMsg(c_name, line);
-        i_pos = 0;
-      }
+    while (!out.atEnd()) {
+      line = out.readLine();
+      log->infoMsg(c_name, "Test: %s", qPrintable(line));
+      addLine(line);
     }
-  }
-  else
-  {
+  } else {
     line = "transcode finished... done(0)";
     addLine( line );
     log->infoMsg(c_name, line);
@@ -233,7 +220,7 @@ void TTTranscodeProvider::transcodeStarted()
   ba = transcode_proc->readAll();
 
   log->debugMsg( c_name, "byte array length: %d", ba.size() );
-  
+
   i_pos = 0;
 
   for ( i = 0; i < ba.size(); ++i) 
