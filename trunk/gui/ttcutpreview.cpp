@@ -1,19 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttcutpreview.cpp                                                */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/13/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 07/16/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/09/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 02/02/2006 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 03/12/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTPREVIEW
+// TTCUTPREVIEW
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -35,30 +31,21 @@
 #include "ttcutpreview.h"
 
 #include <QApplication>
-#include <QComboBox>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QGridLayout>
 #include <QDir>
 
-const char c_name[] = "TTCUTPREVIEW";
+const char c_name[] = "TTCutPreview";
 
 // -----------------------------------------------------------------------------
 // TTCutPreview constructor
 // -----------------------------------------------------------------------------
-TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
-    const char* name, bool modal, Qt::WFlags fl )
-: QDialog( parent, fl )
+TTCutPreview::TTCutPreview(QWidget* parent, int prevW, int prevH)
+  : QDialog(parent)
 {
-  
-  // set the objects name
-  if ( !name )
-    setObjectName( "TTCutPreview" );
+  setupUi(this);
 
-  // show dialog modal or modeless
-  setModal( modal );
-  
+  // set the objects name
+  setObjectName(c_name);
+
   // message logger instance
   log = TTMessageLogger::getInstance();
 
@@ -71,62 +58,13 @@ TTCutPreview::TTCutPreview( QWidget* parent, int prevW, int prevH,
   mplexProc   = NULL;
   isPlaying   = false;
 
-  // main layout
-  //QT3: TTCutPreviewLayout = new QGridLayout( this, 1, 1, 11, 6 );
-  TTCutPreviewLayout = new QGridLayout( this );
-
-  // the video preview window
-  videoFrame = new QFrame( this );
-  videoFrame->setFrameShape( QFrame::StyledPanel );
-  videoFrame->setFrameShadow( QFrame::Sunken );
-
   // set the frame size according the video size
   videoFrame->setMinimumSize( QSize( previewWidth, previewHeight ) );
   videoFrame->setMaximumSize( QSize( previewWidth, previewHeight ) );
 
-  // add video preview window to main layout
-  TTCutPreviewLayout->addWidget( videoFrame, 0, 0 );
-
-  // button layout
-  //QT3: layout1 = new QHBoxLayout( 0, 0, 6 );
-  layout1 = new QHBoxLayout( );
-
-  // combo=box for the cut qualifier
-  cbCutPreview = new QComboBox( this );
   cbCutPreview->setEditable( false );
   cbCutPreview->setMinimumSize( 160, 20 );
   cbCutPreview->setInsertPolicy( QComboBox::InsertAfterCurrent );
-  layout1->addWidget( cbCutPreview );
-
-  // play button
-  pbPlay = new QPushButton( this );
-  pbPlay->setIcon( QIcon( *(TTCut::imgPlay) ) );
-  layout1->addWidget( pbPlay );
-
-  // stop button
-  pbStop = new QPushButton( this );
-  pbStop->setIcon( QIcon( *(TTCut::imgStop) ) );
-  layout1->addWidget( pbStop );
-
-  // spacer
-  spacer1 = new QSpacerItem( 40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  layout1->addItem( spacer1 );
-
-  // exit preview button
-  pbExit = new QPushButton( this );
-  pbExit->setIcon( QIcon( *(TTCut::imgFileClose) ) );
-  layout1->addWidget( pbExit );
-
-  // add button layout to main layoput
-  TTCutPreviewLayout->addLayout( layout1, 1, 0 );
-
-  // set button and label text
-  languageChange();
-
-  // resize widget to minimum size
-  setMinimumSize(640,480);
-  resize( QSize(640, 480).expandedTo(minimumSizeHint()) );
-  setMaximumSize( QSize(640, 480).expandedTo(minimumSizeHint()) );
 
   // connect signals and slots
   connect( cbCutPreview, SIGNAL( highlighted(int) ), SLOT( selectCut(int) ) );
@@ -142,20 +80,6 @@ TTCutPreview::~TTCutPreview()
 {
   if ( ttAssigned( preview_cut_list ) )
     delete preview_cut_list;
-}
-
-// -----------------------------------------------------------------------------
-// Sets the strings of the subwidgets using the current language.
-// -----------------------------------------------------------------------------
-void TTCutPreview::languageChange()
-{
-  // dialog caption
-  setWindowTitle( tr( "Cut Preview" ) );
-
-  // button text
-  pbPlay->setText( tr( "Play" ) );
-  pbStop->setText( tr( "Stop" ) );
-  pbExit->setText( tr( "Exit" ) );
 }
 
 // -----------------------------------------------------------------------------

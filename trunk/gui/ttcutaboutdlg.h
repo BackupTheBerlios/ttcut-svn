@@ -32,7 +32,7 @@
 #ifndef TTCUTABOUTDLG_H
 #define TTCUTABOUTDLG_H
 
-#include "../ui_h/ui_aboutdlg.h"
+#include "ui_aboutdlg.h"
 #include "../common/ttcut.h"
 
 class TTCutAboutDlg : public QDialog, Ui::TTCutAboutDlg

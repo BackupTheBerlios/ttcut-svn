@@ -61,6 +61,9 @@
    </item>
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
      <widget class="QWidget" name="tabCommon" >
       <attribute name="title" >
        <string>Common</string>
@@ -183,6 +186,9 @@
           </property>
           <item row="1" column="0" >
            <widget class="QCheckBox" name="cbEndCode" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>Write Sequence Wnd Code</string>
             </property>
@@ -190,6 +196,9 @@
           </item>
           <item row="0" column="0" >
            <widget class="QCheckBox" name="cbMaxBitrate" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>Write max bitrate to first sequence</string>
             </property>
@@ -224,6 +233,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabMuxing" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
       <attribute name="title" >
        <string>Muxing</string>
       </attribute>
@@ -247,6 +259,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabChapters" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
       <attribute name="title" >
        <string>Chapters</string>
       </attribute>
@@ -262,6 +277,9 @@
        </property>
        <item row="0" column="0" >
         <widget class="TTCutSettingsChapter" name="chaptersPage" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="title" >
           <string>GroupBox</string>
          </property>

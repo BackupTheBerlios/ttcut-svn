@@ -1,18 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttcutpreview.h                                                  */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/13/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 07/16/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/09/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 03/12/2005 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTPREVIEW
+// TTCUTPREVIEW
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -33,6 +30,9 @@
 
 #ifndef TTCUTPREVIEW_H
 #define TTCUTPREVIEW_H
+
+#include "ui_previewwidget.h"
+
 
 #include <QProcess>
 
@@ -57,32 +57,25 @@ class QFrame;
 // -----------------------------------------------------------------------------
 // TTCUTPREVIEW
 // -----------------------------------------------------------------------------
-class TTCutPreview : public QDialog
+class TTCutPreview : public QDialog, Ui::TTPreviewWidget
 {
     Q_OBJECT
 
   public:
        // public constructor / destructor
-    TTCutPreview( QWidget* parent = 0, int prevW = 640, int prevH = 480,
-		  const char* name = 0, bool modal = TRUE, Qt::WFlags fl = 0 );
+    TTCutPreview( QWidget* parent = 0, int prevW = 640, int prevH = 480);
     ~TTCutPreview();
 
-    // public member methods
     void initPreview( TTVideoStream* v_stream, TTAudioStream* a_stream, TTCutListData* c_list );
     void createPreview( int cut_index=-1 );
 
  protected:
-    // protected member methods
     bool playMPlayer( QString videoFile, QString audioFile );
     bool stopMPlayer();
 
     void createCutPreviewList( );
 
 protected slots:
-    // sets the strings of the subwidgets using the current language
-    void languageChange();
-
-    // combobox and button slots
     void selectCut( int iCut );
     void playPreview();
     void stopPreview();
@@ -90,29 +83,14 @@ protected slots:
 
     void mplayerStarted();
 
-    // mplayer process has information ready for us
     void readFromStdout();
-    // mplayer process exited
     void exitMPlayer( int e_code, QProcess::ExitStatus e_status );
-    // mplayer reported an error
     void errorMplayer( QProcess::ProcessError );
-    // mplayer process state changed
     void stateChangedMplayer( QProcess::ProcessState newState );
-protected:
-    // gui elements
-    TTProgressBar* progress_bar;
-    QComboBox*     cbCutPreview;
-    QPushButton*   pbPlay;
-    QPushButton*   pbStop;
-    QPushButton*   pbExit;
-    QFrame*        videoFrame;
-    QGridLayout*   TTCutPreviewLayout;
-    QHBoxLayout*   layout1;
-    QSpacerItem*   spacer1;
-
+    
  private:
-    // private member
     TTMessageLogger*   log;
+    TTProgressBar*     progress_bar;
     TTVideoStream*     video_stream;
     TTAudioStream*     audio_stream;
     TTVideoIndexList*  video_index;      
