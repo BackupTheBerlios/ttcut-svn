@@ -37,6 +37,7 @@ TODO list for project TTCut
 
 * Why new version (without QT3_SUPPORT) often crashes (see QProcess ??)
 
+* Interface for extern progs: transcode, mplex
 
 Roadmap -> next planed features
 -------------------------------
