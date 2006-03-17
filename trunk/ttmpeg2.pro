@@ -12,6 +12,7 @@
 #/*..MODIFIED:  b. altendorf              DATE: 01.03.2005         TIME: 16:00..*/
 #/*..MODIFIED:  b. altendorf              DATE: 23.03.2005         TIME: 16:00..*/
 #/*..MODIFIED:  b. altendorf              DATE: 05.08.2005         TIME: 12:00..*/
+#/*..MODIFIED:  b. altendorf              DATE: 17.03.2006         TIME: 21:30..*/
 #/*-----------------------------------------------------------------------------*/
 #
 #
@@ -29,116 +30,123 @@ MOC_DIR           = ttmpeg2_moc
 SOURCES           = \
 #
                     common/ttmessagelogger.cpp\
+                    common/ttcut.cpp\
 #
+                    data/ttcutlistdata.cpp\
+                    data/ttaudiolistdata.cpp\
+                    data/ttcutparameter.cpp\
+                    data/ttmuxlistdata.cpp\
 #                   ------------------------------------------------------------
 #                   AVStream / AVHeader
 #                   ------------------------------------------------------------
-	            avstream/ttcommon.cpp \
-	            avstream/ttmemorybuffer.cpp \
-		    avstream/ttac3audioheader.cpp \
-		    avstream/ttac3audiostream.cpp \
-		    avstream/ttaudioheaderlist.cpp \
-		    avstream/ttaudioindexlist.cpp \
-		    avstream/ttavheader.cpp \
-		    avstream/ttavstream.cpp \
-		    avstream/ttavtypes.cpp \
-		    avstream/ttdtsaudioheader.cpp \
-		    avstream/ttdtsaudiostream.cpp \	
-		    avstream/ttfilebuffer.cpp \	
-		    avstream/ttheaderlist.cpp \	
-		    avstream/ttmpeg2videoheader.cpp \
-		    avstream/ttmpeg2videostream.cpp \	
-		    avstream/ttmpegaudioheader.cpp \	
-		    avstream/ttmpegaudiostream.cpp \	
-		    avstream/ttpcmaudioheader.cpp \	
-		    avstream/ttpcmaudiostream.cpp \	
-		    avstream/ttvideoheaderlist.cpp \	
-		    avstream/ttvideoindexlist.cpp \
-	            avstream/ttaviwriter.cpp \
+                    avstream/ttcommon.cpp \
+                    avstream/ttmemorybuffer.cpp \
+                    avstream/ttac3audioheader.cpp \
+                    avstream/ttac3audiostream.cpp \
+                    avstream/ttaudioheaderlist.cpp \
+                    avstream/ttaudioindexlist.cpp \
+                    avstream/ttavheader.cpp \
+                    avstream/ttavstream.cpp \
+                    avstream/ttavtypes.cpp \
+                    avstream/ttdtsaudioheader.cpp \
+                    avstream/ttdtsaudiostream.cpp \	
+                    avstream/ttfilebuffer.cpp \	
+                    avstream/ttheaderlist.cpp \	
+                    avstream/ttmpeg2videoheader.cpp \
+                    avstream/ttmpeg2videostream.cpp \	
+                    avstream/ttmpegaudioheader.cpp \	
+                    avstream/ttmpegaudiostream.cpp \	
+                    avstream/ttpcmaudioheader.cpp \	
+                    avstream/ttpcmaudiostream.cpp \	
+                    avstream/ttvideoheaderlist.cpp \	
+                    avstream/ttvideoindexlist.cpp \
+                    avstream/ttaviwriter.cpp \
 #
-	            avilib/avilib.c \
+                    avilib/avilib.c \
 #
-                    avcut/ttavcutposition.cpp \
 #                   ------------------------------------------------------------
 #                   MPEG2
 #                   ------------------------------------------------------------
-	            mpeg2decoder/ttmpeg2decoder.cpp \
-	            mpeg2window/ttmpeg2window.cpp \
+                    mpeg2decoder/ttmpeg2decoder.cpp \
+                    mpeg2window/ttmpeg2window.cpp \
 #                   ------------------------------------------------------------
 #                   GUI (TTCut)
 #                   ------------------------------------------------------------
-	            gui/ttcut.cpp \
                     gui/ttprogressbar.cpp \
                     gui/ttprocessform.cpp \
+                    gui/ttcutproject.cpp\
 #
 #                   ------------------------------------------------------------
 #                   GUI (TTMpeg2)
 #                   ------------------------------------------------------------
 #                   ttmpeg2_src/ttmpeg2test.cpp \
-#	            ttmpeg2_src/ttslidetest.cpp \
-	            ttmpeg2_src/slidemain.cpp \
-	            ttmpeg2_src/ttmpeg2infoview.cpp \
-	            ttmpeg2_src/ttframechart.cpp \
-	            ttmpeg2_src/ttmpeg2mainwnd.cpp \
+#	                  ttmpeg2_src/ttslidetest.cpp \
+                    ttmpeg2_src/slidemain.cpp \
+                    ttmpeg2_src/ttmpeg2infoview.cpp \
+                    ttmpeg2_src/ttframechart.cpp \
+                    ttmpeg2_src/ttmpeg2mainwnd.cpp \
 #
 #                   -------------------------------------------------------------
 #                   EXTERN
 #                   -------------------------------------------------------------
-	            extern/tttranscode.cpp
+                    extern/tttranscode.cpp
 #
 HEADERS           = \
 #
                     common/ttmessagelogger.h \
+                    common/ttcut.h\
+                    data/ttcutlistdata.h\
+                    data/ttaudiolistdata.h\
+                    data/ttcutparameter.h\
+                    data/ttmuxlistdata.h\
 #                    
 #                   ------------------------------------------------------------
 #                   AVStream / AVHeader
 #                   ------------------------------------------------------------
-	            avstream/ttcommon.h \
-	            avstream/ttmemorybuffer.h \
-		    avstream/ttac3audioheader.h \
-		    avstream/ttac3audiostream.h \
-		    avstream/ttaudioheaderlist.h \
-		    avstream/ttaudioindexlist.h \
-		    avstream/ttavheader.h \
-		    avstream/ttavstream.h \
-		    avstream/ttavtypes.h \
-		    avstream/ttdtsaudioheader.h \
-		    avstream/ttdtsaudiostream.h \	
-		    avstream/ttfilebuffer.h \	
-		    avstream/ttheaderlist.h \	
-		    avstream/ttmpeg2videoheader.h \
-		    avstream/ttmpeg2videostream.h \	
-		    avstream/ttmpegaudioheader.h \	
-		    avstream/ttmpegaudiostream.h \	
-		    avstream/ttpcmaudioheader.h \	
-		    avstream/ttpcmaudiostream.h \	
-		    avstream/ttvideoheaderlist.h \	
-		    avstream/ttvideoindexlist.h \
-	            avstream/ttaviwriter.h \
+                    avstream/ttcommon.h \
+                    avstream/ttmemorybuffer.h \
+                    avstream/ttac3audioheader.h \
+                    avstream/ttac3audiostream.h \
+                    avstream/ttaudioheaderlist.h \
+                    avstream/ttaudioindexlist.h \
+                    avstream/ttavheader.h \
+                    avstream/ttavstream.h \
+                    avstream/ttavtypes.h \
+                    avstream/ttdtsaudioheader.h \
+                    avstream/ttdtsaudiostream.h \	
+                    avstream/ttfilebuffer.h \	
+                    avstream/ttheaderlist.h \	
+                    avstream/ttmpeg2videoheader.h \
+                    avstream/ttmpeg2videostream.h \	
+                    avstream/ttmpegaudioheader.h \	
+                    avstream/ttmpegaudiostream.h \	
+                    avstream/ttpcmaudioheader.h \	
+                    avstream/ttpcmaudiostream.h \	
+                    avstream/ttvideoheaderlist.h \	
+                    avstream/ttvideoindexlist.h \
+                    avstream/ttaviwriter.h \
 #
-                    avcut/ttavcutposition.h \
 #                   ------------------------------------------------------------
 #                   MPEG2
 #                   ------------------------------------------------------------
-	            mpeg2decoder/ttmpeg2decoder.h \
-	            mpeg2window/ttmpeg2window.h \
+                    mpeg2decoder/ttmpeg2decoder.h \
+                    mpeg2window/ttmpeg2window.h \
 #                   ------------------------------------------------------------
 #                   GUI (TTCut)
 #                   ------------------------------------------------------------
-	            gui/ttcut.h \
                     gui/ttprogressbar.h \
                     gui/ttprocessform.h \
+                    gui/ttcutproject.h\
 #
 #                   ------------------------------------------------------------
 #                   GUI (TTMpeg2)
 #                   ------------------------------------------------------------
 #                   ttmpeg2_src/ttmpeg2test.h \
-#	            ttmpeg2_src/ttslidetest.h \
-	            ttmpeg2_src/ttmpeg2infoview.h \
-	            ttmpeg2_src/ttframechart.h \
-	            ttmpeg2_src/ttmpeg2mainwnd.h \
+                    ttmpeg2_src/ttmpeg2infoview.h \
+                    ttmpeg2_src/ttframechart.h \
+                    ttmpeg2_src/ttmpeg2mainwnd.h \
 #
 #                   -------------------------------------------------------------
 #                   EXTERN
 #                   -------------------------------------------------------------
-	            extern/tttranscode.h
+                    extern/tttranscode.h

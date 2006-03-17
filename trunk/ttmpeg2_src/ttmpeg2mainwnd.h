@@ -33,7 +33,7 @@
 #ifndef TTMPEG2MAINWND_H
 #define TTMPEG2MAINWND_H
 
-#include "../gui/ttcut.h"
+#include "../common/ttcut.h"
 
 #ifdef __WIN32
 #include "../avstream/ttwfilebuffer.h"
