@@ -313,7 +313,7 @@ TFrameInfo* TTMpeg2Decoder::decodeMPEG2Frame( TPixelFormat pixelFormat, int type
         } 
         catch ( TTStreamEOFException )
         {
-          qDebug( "%sdecode: stream EOF (!)",c_name );
+          //qDebug( "%sdecode: stream EOF (!)",c_name );
         }
         //fill mpeg2 buffer with data
         streamEndReached = false;

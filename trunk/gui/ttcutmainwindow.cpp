@@ -886,9 +886,7 @@ int TTCutMainWindow::openAudioStream(QString fName)
 void TTCutMainWindow::initStreamNavigator()
 {
   if (!ttAssigned(cutListData)) {
-    qDebug("assign cutListData");
     cutListData = new TTCutListData(mpegStream);
-
     cutList->setListData(cutListData);
   }
 
