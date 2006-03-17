@@ -91,6 +91,14 @@ void TTCutList::clearList()
   }
 }
 
+void TTCutList::focusOutEvent(QFocusEvent* event) 
+{
+  if (videoCutList->currentItem() != NULL) {
+    qDebug("cut list lost focus");
+    videoCutList->setCurrentItem(NULL);
+  }
+}
+
 //! Add or update an entry in the cut list
 void TTCutList::onAddEntry(int cutIn, int cutOut)
 {

@@ -85,7 +85,10 @@ void keyPressEvent(QKeyEvent* e);
     void createAVStreams( QString videoFile, QString audioFile );
     QString audioFromVideoName(QString videoFile); 
     void navigationEnabled( bool enabled );
-   
+    int openVideoStream(QString fName);
+    int openAudioStream(QString fName);
+    void initStreamNavigator();
+    
   private:
    TTCutSettings*      settings;
    TTAudioListData*    audioList;
@@ -94,7 +97,6 @@ void keyPressEvent(QKeyEvent* e);
    TTMessageLogger*    log;
    TTMpeg2VideoStream* mpegStream;
    bool sliderUpdateFrame;
-   bool readProjectFile;
 };
 
 #endif //TTCUTMAINWINDOW_H

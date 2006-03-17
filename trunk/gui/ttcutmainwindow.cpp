@@ -125,8 +125,12 @@ TTCutMainWindow::TTCutMainWindow()
 
   // no navigation
   navigationEnabled( false );
-  
-  readProjectFile = false;
+ 
+  // init
+  cutListData            = NULL;
+  mpegStream             = NULL;
+  TTCut::isVideoOpen     = false;
+  TTCut::projectFileName = "";
   
   // Signal and slot connections
   // 
@@ -213,9 +217,11 @@ void TTCutMainWindow::keyPressEvent(QKeyEvent* e)
 //! Menu "File new" action
 void TTCutMainWindow::onFileNew()
 {
-  //TODO: ask for saving changes
-  if ( TTCut::isVideoOpen )
-  {
+  if (TTCut::isVideoOpen) {
+    if (ttAssigned(cutListData) && cutListData->count() > 0) {
+      //TODO: Ask for saving changes
+      log->infoMsg(oName, "TODO: Ask for saving changes in project");
+    }
     closeProject();
   }
 }
@@ -231,7 +237,7 @@ void TTCutMainWindow::onFileOpen()
       "Project(*.prj)");
 
   if (!fn.isEmpty()) {
-
+  
     TTCut::projectFileName = fn;
 
     // error opening project file
@@ -246,30 +252,37 @@ void TTCutMainWindow::onFileOpen()
     projectFile->seekToVideoSection();
     QString videoFileName;
     if (projectFile->readVideoFileName(videoFileName)) {
-      readProjectFile = true;
-      onReadVideoStream(videoFileName);
+      openVideoStream(videoFileName);
+    }
+
+    if (!TTCut::isVideoOpen) {
+      log->errorMsg(oName, "error open video file: %s", qPrintable(videoFileName));
+      return;
     }
 
     // open and read audio files
     projectFile->seekToAudioSection();
     QString audioFileName;
     while (projectFile->readAudioFileName(audioFileName)) {
-      onReadAudioStream(audioFileName);
+      openAudioStream(audioFileName);
     }
 
     if (audioList->count() == 0) {
       log->warningMsg(oName, "no audio files in project: %s", qPrintable(fn));
       audioFileInfo->onFileOpen();
-      // TODO: Open audio file selection dialog
     }
 
     // read cut positions
     projectFile->seekToCutSection();
+    cutListData = new TTCutListData(mpegStream);
+    cutList->setListData(cutListData);
     int cutInPos;
     int cutOutPos;
     while (projectFile->readCutEntry(cutInPos, cutOutPos)) {
       cutList->onAddEntry(cutInPos, cutOutPos);
     }
+
+    initStreamNavigator();
 
     // remove project file
     delete projectFile;
@@ -282,9 +295,12 @@ void TTCutMainWindow::onFileSave()
   TTCutProject* projectFile;
 
   // no video open
-  if (!TTCut::isVideoOpen)
+  if (!TTCut::isVideoOpen) {
+    log->warningMsg(oName, "no video open");
     return;
+  }
 
+  // Ask for file name
   if (TTCut::projectFileName.isEmpty()) {
 
     TTCut::projectFileName = ttChangeFileExt(mpegStream->fileName(), "prj");
@@ -297,37 +313,38 @@ void TTCutMainWindow::onFileSave()
 
     if (TTCut::projectFileName.isEmpty())
       return;
-
-    try {
-      projectFile = new TTCutProject(TTCut::projectFileName, QIODevice::WriteOnly);
-    } catch (TTCutProjectOpenException) {
-      log->errorMsg(oName, "error open save project file: %s", qPrintable(TTCut::projectFileName));
-      return;
-    }
-
-    projectFile->clearFile();
-    QFileInfo fInfo(mpegStream->fileName());
-
-    // write video file section
-    projectFile->writeVideoSection(true);
-    projectFile->writeVideoFileName(fInfo.absoluteFilePath());
-    projectFile->writeVideoSection(false);
-
-    // write audio files section
-    audioList->writeToProject(projectFile);
-
-    // write cut section
-    cutListData->writeToProject(projectFile);
-
-    // close project file
-    delete projectFile;
   }
+
+  try {
+    projectFile = new TTCutProject(TTCut::projectFileName, QIODevice::WriteOnly);
+  } catch (TTCutProjectOpenException) {
+    log->errorMsg(oName, "error open save project file: %s", qPrintable(TTCut::projectFileName));
+    return;
+  }
+
+  projectFile->clearFile();
+
+  // write video file section
+  projectFile->writeVideoSection(true);
+  projectFile->writeVideoFileName(mpegStream->fileInfo()->absoluteFilePath());
+  projectFile->writeVideoSection(false);
+
+  // write audio files section
+  audioList->writeToProject(projectFile);
+
+  // write cut section
+  cutListData->writeToProject(projectFile);
+
+  // close project file
+  delete projectFile;
 }
 
 
 //! Menu "File save as" action
 void TTCutMainWindow::onFileSaveAs()
 {
+  qDebug("save project file as");
+
   if (!TTCut::isVideoOpen)
     return;
 
@@ -343,16 +360,24 @@ void TTCutMainWindow::onFileSaveAs()
     onFileSave();
 }
 
+
 //! Menu "Recent files..." action
 void TTCutMainWindow::onFileRecent()
 {
+  //TODO: Add support for recent file list
 }
+
 
 //! Menu "Exit" action
 void TTCutMainWindow::onFileExit()
 {
   // If project file open and has changes ask for save changes
-
+  if (TTCut::isVideoOpen) {
+    if (ttAssigned(cutListData) && cutListData->count() > 0) {
+      log->infoMsg(oName, "TODO: Ask for saving changes in project");
+    }
+  }
+  
   // Save application setting
   if ( ttAssigned(settings) ) {
     settings->writeSettings();
@@ -392,90 +417,19 @@ void TTCutMainWindow::onHelpAbout()
 //! Signal from open video action
 void TTCutMainWindow::onReadVideoStream(QString fName)
 {
-  TTVideoType*   videoType;
-  TTProgressBar* progressBar;
+  if (openVideoStream(fName) > 0) {
+    initStreamNavigator();
 
-  log->infoMsg(oName, "Read video stream: %s", qPrintable(fName));
+    QString audioName = audioFromVideoName(fName);
 
-  // Close current project
-  if(TTCut::isVideoOpen){
-    closeProject();
-  }
+    if (!audioName.isEmpty()) {
+      onReadAudioStream(audioName);
 
-  videoType = new TTVideoType( fName );
-
-  // MPEG2 video
-  if( videoType->avStreamType() == TTAVTypes::mpeg2_demuxed_video ){
-
-    mpegStream = (TTMpeg2VideoStream*)videoType->createVideoStream();
-
-    // init progress bar
-    progressBar = new TTProgressBar( this );
-    mpegStream->setProgressBar( progressBar );
-    progressBar->show();
-    qApp->processEvents();
-
-    // create header- and index-list for mpeg stream
-    int numHeader = mpegStream->createHeaderList();
-    int numIndex  = 0;
-
-    if( numHeader > 0 ){
-      numIndex = mpegStream->createIndexList(); 
-    }else{
-      log->warningMsg(oName, "no header list created");
-    }
-
-    if(numIndex > 0){
-
-      // Videostream successfully openend, header and indexlists created
-      progressBar->hide();
-      TTCut::isVideoOpen = true;
-      mpegStream->indexList()->sortDisplayOrder();
-
-      videoFileInfo->setVideoInfo( mpegStream );
-
-      QString audioName = audioFromVideoName(fName);
-
-      if ( !audioName.isEmpty() && !readProjectFile) {
-        onReadAudioStream(audioName);
-
-        if ( TTCut::numAudioTracks ==  0 ) {
-          log->infoMsg(oName, "TODO: Show audio file open dialog");
-          // show open file dialog
-          audioFileInfo->onFileOpen();
-        }
+      if ( TTCut::numAudioTracks ==  0 ) {      
+        audioFileInfo->onFileOpen();
       }
-
-      // initialize cut list data object
-      cutListData = new TTCutListData( mpegStream );
-      cutList->setListData( cutListData );
-
-      // show video stream in current frame and prepare cut-out frame preview
-      currentFrame->initVideoStream( mpegStream );
-      cutOutFrame->initVideoStream( mpegStream );
-
-      streamNavigator->setMinValue(0);
-      streamNavigator->setMaxValue(mpegStream->frameCount()-1);
-      streamNavigator->setCutListData(cutListData);
- 
-      onNewFramePos( 0 );
-
-      navigationEnabled( true );
-
-    } else {
-      log->warningMsg(oName, "no index list created");
-      delete mpegStream;
-      mpegStream = (TTMpeg2VideoStream*)NULL;
     }
-
-    mpegStream->setProgressBar((TTProgressBar*)NULL);    
-    delete progressBar;
-
-  }else{
-    log->warningMsg(oName, "wrong video type for file: %s", qPrintable(fName));
-  }
-
-  delete videoType;
+  }    
 }
 
 // Signals from the audio list view widget
@@ -484,60 +438,7 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
 //! Signal from open audio action
 void TTCutMainWindow::onReadAudioStream(QString fName)
 {
-  TTAudioType*   audio_type;
-  TTAudioStream* current_audio_stream;
-  TTProgressBar* progress_bar;
-
-  log->infoMsg(oName, "Read audio stream: %s", qPrintable(fName));
-
-  // get the strem type and create according stream-object
-  audio_type   = new TTAudioType( fName );
-
-  // create the audio stream object for the first audio file
-  if ( audio_type->avStreamType() == TTAVTypes::mpeg_audio  ||
-      audio_type->avStreamType() == TTAVTypes::ac3_audio   ||
-      audio_type->avStreamType() == TTAVTypes::dts14_audio ||
-      audio_type->avStreamType() == TTAVTypes::dts16_audio ||
-      audio_type->avStreamType() == TTAVTypes::pcm_audio      ) {
-
-    current_audio_stream = (TTAudioStream*)audio_type->createAudioStream();
-
-    // set progress bar
-    progress_bar = new TTProgressBar( this );
-    current_audio_stream->setProgressBar( progress_bar );
-    progress_bar->show();
-    qApp->processEvents();
-
-    // create header list for audio stream
-    int num_header = current_audio_stream->createHeaderList();
-
-    // error reading audio stream or user abort during operation
-    if ( num_header == 0 && audio_type->avStreamType() != TTAVTypes::pcm_audio ||
-        num_header == 1 && audio_type->avStreamType() == TTAVTypes::pcm_audio    ) {
-
-      log->errorMsg( oName, "error reading audio stream; no header list (!)" );
-
-      delete current_audio_stream;
-
-    } else {
-
-      // audio stream succesfully parsed; add item to list
-      int curIndex = audioList->addItem( fName, current_audio_stream );
-      audioFileInfo->addItem(audioList->itemAt(curIndex));
-      audioList->print();
-
-      // first audio track loaded
-      TTCut::numAudioTracks = audioList->count();
-    }
-
-    delete progress_bar;
-    current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
-
-  } else {
-    log->errorMsg(oName, "wrong audio type for file: %s", qPrintable(fName));
-  }
-
-  delete audio_type;
+  openAudioStream(fName);
 }
 
 
@@ -670,7 +571,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     tempFile.remove();
     tempFile.close();
   }
-  
+
   // --------------------------------------------------------------------------
   // Cut video-file
   // --------------------------------------------------------------------------
@@ -691,7 +592,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     mpegStream->cut( video_cut_stream, cutListData );
 
     muxIndex = muxListData->addItem(video_cut_stream->fileName());
- 
+
     //qDebug("Meldung128: Das Schneiden der Datei %s ist beendet.",HString.ascii());
     delete progress_bar;
     delete video_cut_stream;
@@ -728,7 +629,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     // ------------------------------------------------------------------------
 
     //qDebug( "%saudio cut file: %s",c_name,audio_cut_name.ascii() );
-    
+
     // audio file exists
     if (audio_cut_file_info.exists()) {
       // TODO: Warning about deleting file
@@ -737,7 +638,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
       tempFile.remove();
       tempFile.close();
     }
-    
+
     progress_bar = new TTProgressBar( this );
     progress_bar->show();
     qApp->processEvents();
@@ -749,7 +650,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     current_audio_stream->cut( audio_cut_stream, cutListData );
 
     muxListData->appendAudioName(muxIndex, audio_cut_stream->fileName());
-    
+
     delete progress_bar;
     delete audio_cut_stream;
 
@@ -766,7 +667,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
 {
-//#warning "not implemented"
+  //#warning "not implemented"
 }
 
 // Service methods
@@ -824,9 +725,12 @@ void TTCutMainWindow::closeProject()
     navigationEnabled(false);
     currentFrame->closeVideoStream();
     cutOutFrame->closeVideoStream();
+    TTCut::isVideoOpen     = false;
+    TTCut::projectFileName = "";
   }
 }
 
+//! Enable or disable navigation
 void TTCutMainWindow::navigationEnabled( bool enabled )
 {
   cutOutFrame->controlEnabled( enabled );
@@ -834,3 +738,165 @@ void TTCutMainWindow::navigationEnabled( bool enabled )
   navigation->controlEnabled( enabled );
   streamNavigator->controlEnabled( enabled );
 }
+
+//! Open video stream and create video index and header lists
+int TTCutMainWindow::openVideoStream(QString fName)
+{
+  int result = -1;
+  TTVideoType*   videoType;
+  TTProgressBar* progressBar;
+  QFileInfo fInfo(fName);
+
+  if (!fInfo.exists()) {
+    log->errorMsg(oName, "Video file doesn't exists: %s", qPrintable(fName));
+    return result;
+  }
+
+  log->infoMsg(oName, "Read video stream: %s", qPrintable(fName));
+
+  // Close current project
+  if(TTCut::isVideoOpen){
+    closeProject();
+  }
+
+  videoType = new TTVideoType( fName );
+
+  // MPEG2 video
+  if(!videoType->avStreamType() == TTAVTypes::mpeg2_demuxed_video) {
+    log->errorMsg(oName, "wrong video type: %s", qPrintable(fName));
+    return result;
+  }
+
+  mpegStream = (TTMpeg2VideoStream*)videoType->createVideoStream();
+
+  // init progress bar
+  progressBar = new TTProgressBar( this );
+  mpegStream->setProgressBar( progressBar );
+  progressBar->show();
+  qApp->processEvents();
+
+  // create header- and index-list for mpeg stream
+  int numHeader = mpegStream->createHeaderList();
+  int numIndex  = 0;
+
+  if( numHeader > 0 ){
+    numIndex = mpegStream->createIndexList(); 
+  }else{
+    log->errorMsg(oName, "no header list created");
+    delete progressBar;
+    mpegStream->setProgressBar((TTProgressBar*)NULL);    
+    mpegStream = (TTMpeg2VideoStream*)NULL;
+    return result;
+  }
+
+  if (numIndex == 0) {
+    log->errorMsg(oName, "no index list created");
+    delete progressBar;
+    mpegStream->setProgressBar((TTProgressBar*)NULL);    
+    mpegStream = (TTMpeg2VideoStream*)NULL;
+    return result;
+  }
+
+  result = numIndex;
+
+  // Videostream successfully openend, header and indexlists created
+  progressBar->hide();
+  TTCut::isVideoOpen = true;
+  mpegStream->indexList()->sortDisplayOrder();
+
+  videoFileInfo->setVideoInfo( mpegStream );
+
+  // show video stream in current frame and prepare cut-out frame preview
+  currentFrame->initVideoStream( mpegStream );
+  cutOutFrame->initVideoStream( mpegStream );
+
+  onNewFramePos( 0 );
+
+  mpegStream->setProgressBar((TTProgressBar*)NULL);    
+
+  delete progressBar;
+  delete videoType;
+
+  return result;
+}
+
+//! Open audio stream
+int TTCutMainWindow::openAudioStream(QString fName)
+{
+  int result = -1;
+  TTAudioType*   audio_type;
+  TTAudioStream* current_audio_stream;
+  TTProgressBar* progress_bar;
+
+  log->infoMsg(oName, "Read audio stream: %s", qPrintable(fName));
+
+  // get the strem type and create according stream-object
+  audio_type   = new TTAudioType( fName );
+
+  // create the audio stream object for the first audio file
+  if ( audio_type->avStreamType() == TTAVTypes::mpeg_audio  ||
+      audio_type->avStreamType() == TTAVTypes::ac3_audio   ||
+      audio_type->avStreamType() == TTAVTypes::dts14_audio ||
+      audio_type->avStreamType() == TTAVTypes::dts16_audio ||
+      audio_type->avStreamType() == TTAVTypes::pcm_audio      ) {
+
+    current_audio_stream = (TTAudioStream*)audio_type->createAudioStream();
+
+    // set progress bar
+    progress_bar = new TTProgressBar( this );
+    current_audio_stream->setProgressBar( progress_bar );
+    progress_bar->show();
+    qApp->processEvents();
+
+    // create header list for audio stream
+    int num_header = current_audio_stream->createHeaderList();
+
+    // error reading audio stream or user abort during operation
+    if ( num_header == 0 && audio_type->avStreamType() != TTAVTypes::pcm_audio ||
+        num_header == 1 && audio_type->avStreamType() == TTAVTypes::pcm_audio    ) {
+
+      log->errorMsg( oName, "error reading audio stream; no header list (!)" );
+      delete current_audio_stream;
+
+    } else {
+
+      // audio stream succesfully parsed; add item to list
+      int curIndex = audioList->addItem( fName, current_audio_stream );
+      audioFileInfo->addItem(audioList->itemAt(curIndex));
+      audioList->print();
+
+      result = curIndex;
+
+      // first audio track loaded
+      TTCut::numAudioTracks = audioList->count();
+    }
+
+    delete progress_bar;
+    current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
+
+  } else {
+    log->errorMsg(oName, "wrong audio type for file: %s", qPrintable(fName));
+  }
+
+  delete audio_type;
+  return result;
+}
+
+//! Intitialize stream navigator display and cut list data
+void TTCutMainWindow::initStreamNavigator()
+{
+  if (!ttAssigned(cutListData)) {
+    qDebug("assign cutListData");
+    cutListData = new TTCutListData(mpegStream);
+
+    cutList->setListData(cutListData);
+  }
+
+  streamNavigator->setMinValue(0);
+  streamNavigator->setMaxValue(mpegStream->frameCount()-1);
+  streamNavigator->setCutListData(cutListData);
+
+  navigationEnabled( true );
+}
+
+
