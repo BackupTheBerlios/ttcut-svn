@@ -49,7 +49,7 @@
 //#include <sys/stdarg.h>
 
 
-const int   TTMessageLogger::STD_LOG_MODE      = TTMessageLogger::SUMMARIZE | TTMessageLogger::CONSOLE;
+const int   TTMessageLogger::STD_LOG_MODE      = TTMessageLogger::SUMMARIZE;
 const char* TTMessageLogger::INFO_FILE_NAME    = "info.log";
 const char* TTMessageLogger::WARNING_FILE_NAME = "warning.log";
 const char* TTMessageLogger::ERROR_FILE_NAME   = "error.log";
@@ -219,7 +219,7 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString)
   write.append("] ");
   write.append(msgString);
 
-  if(logMode & CONSOLE)
+  if(logMode & CONSOLE && msgType != ERROR)
     qDebug(write.toAscii().data());
 
   writeMsg(write);

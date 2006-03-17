@@ -55,7 +55,7 @@ TTCutList::TTCutList(QWidget* parent)
   // data struct for cut list view
   cutListData   = NULL;
   editItemIndex = -1;
-  
+    
   // actions for context menu
   createActions();
 
@@ -91,13 +91,6 @@ void TTCutList::clearList()
   }
 }
 
-void TTCutList::focusOutEvent(QFocusEvent* event) 
-{
-  if (videoCutList->currentItem() != NULL) {
-    qDebug("cut list lost focus");
-    videoCutList->setCurrentItem(NULL);
-  }
-}
 
 //! Add or update an entry in the cut list
 void TTCutList::onAddEntry(int cutIn, int cutOut)
@@ -216,7 +209,10 @@ void TTCutList::onEntryEdit()
     curItem->setBackgroundColor(2, Qt::lightGray);
     curItem->setBackgroundColor(3, Qt::lightGray);
     curItem->setBackgroundColor(4,Qt::lightGray);
-    videoCutList->setCurrentItem(NULL);
+
+    // deselect item
+    videoCutList->setItemSelected(curItem, false);
+
     editItemIndex = index;
     emit entryEdit(cutListData->at(index));
   }

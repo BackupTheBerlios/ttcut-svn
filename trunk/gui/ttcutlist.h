@@ -46,8 +46,6 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     TTCutList(QWidget* parent=0);
 
     void setTitle( const QString& title );
-    void focusOutEvent(QFocusEvent* event);
-
     void setListData( TTCutListData* ld );
     void clearList();
    

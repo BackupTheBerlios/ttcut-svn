@@ -166,5 +166,5 @@ void TTCutOutFrame::updateCurrentPosition()
 
   laCutOutFramePosition->update();
 
-  emit newCutOutFramePos( mpeg2Stream->currentIndex() );
+  //remove: emit newCutOutFramePos( mpeg2Stream->currentIndex() );
 }
