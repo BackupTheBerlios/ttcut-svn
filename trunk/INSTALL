@@ -40,7 +40,7 @@ TTCut uebersetzen.
 Das sollte alles sein.
 
 Eventuell habe ich vergessen in der Datei "ttcut.pro" unter CONFIG
-vergessen debug gegen release zu tauschen. Das ist nicht weiter tragisch.
+debug gegen release zu tauschen. Das ist nicht weiter tragisch.
 Die Quellen werden dann mit der Option -g (Debug) uebersetz. Jedoch
 erreicht TTCut mit der Standard-Optimierung -O2 des g++ eine etwas hoehere
 Geschwindigkeit beim Analysieren des Videos.
@@ -56,7 +56,6 @@ TTCut entweder im lokalen Verzeichnis ausfuehren oder z.B nach
 
 http://ttcut.tritime.org
 
-
 4. Probleme
 -----------
 
@@ -64,4 +63,9 @@ Sollte etwas nicht funktionieren bitte kurze Problembeschreibung an
 
 ttcut@tritime.org oder b.altendorf@tritime.de
 
+5. Update
+---------
 
+Letzte Release:       https://developer.berlios.de/projects/ttcut/
+
+Aktuelle Entwicklung: svn checkout svn://svn.berlios.de/trunk/trunk 

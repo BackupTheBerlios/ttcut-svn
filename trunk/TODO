@@ -2,51 +2,29 @@
 TODO list for project TTCut
 -------------------------------------------------------------------------------
 
-* Remove unused parameter warnings
 
-* Improve performance while reading header informations from Mpeg2Schnitt IDD file
-  (not so importend)
+
+* Check warning about type conversion in ttfilebuffer
+
+* Check IDD file handling and improve speed while reading header from IDD
 
 * Find a solution for realtime playback demuxed video stream (play-button)
 
-* Improve performance while reading header informations from Mpeg2Schnitt IDD file
+* Add option settings for transcode and mplex
 
-* use a better float compare funtion in TTProgressBar
-
-* Implement read/write file-settings data
-
-* Check IDD file handling
-
-* Implement read/write for muxing settings
-
-* Check cut list handling, theire meight be errors during delete and edit operations
-
-* Implement a better fallback method for alternate audio fileextension (mp2, ac3)
-
-* Under unknown circumstances the mplayer preview doesn't work
+* Implement plugin interface for external tools (transcode, mplex, mplayer)
 
 * Write a FAQ
-  1) If mplayer don't work properly check your default -vo settings. TTCut assumes that
-     you use -vo x11
+  1) If mplayer don't work properly check your default -vo settings. 
+     TTCut assumes that you use -vo x11.
+     Also check that you have the right permissons to /dev/dsp
 
-* Enable the play button (this seems to be not a simple task...)
+* Check strange QProcess behavior: under some circumstances transcode crashed and
+  may force the x-server to shutdown
 
-* Check strange QProcess behavior in new version, some crashes .-(
-
-* Check cut quality
-
-* Why new version (without QT3_SUPPORT) often crashes (see QProcess ??)
-
-* Interface for extern progs: transcode, mplex
-
-Roadmap -> next planed features
--------------------------------
-
-* Implement usser dialog for transcode parameter
+* Check cut quality in conjunction with transcode -> ttmpeg2
 
 * Implement mux options: mux-list, mux after cut
-
-* Implement a first version for chapter output (spumux xml)
 
 * Make the current frame position clickable (enter current frame positon)
 

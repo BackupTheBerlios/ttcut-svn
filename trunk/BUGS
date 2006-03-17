@@ -2,4 +2,5 @@
 TTCut-Buglist (Known issues)
 -------------------------------------------------------------------------------
 
-
+* Sometimes TTCut crashed while executing transcode and forces the xserver
+  to shut down.
