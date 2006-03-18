@@ -49,7 +49,7 @@
 //#include <sys/stdarg.h>
 
 
-const int   TTMessageLogger::STD_LOG_MODE      = TTMessageLogger::SUMMARIZE;
+const int   TTMessageLogger::STD_LOG_MODE      = TTMessageLogger::SUMMARIZE | TTMessageLogger::CONSOLE;
 const char* TTMessageLogger::INFO_FILE_NAME    = "info.log";
 const char* TTMessageLogger::WARNING_FILE_NAME = "warning.log";
 const char* TTMessageLogger::ERROR_FILE_NAME   = "error.log";

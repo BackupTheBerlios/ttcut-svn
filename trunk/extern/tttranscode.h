@@ -1,15 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : tttranscode.h                                                   */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/07/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 03/18/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTTRANSCODE
+// TTTRANSCODE
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -52,16 +52,16 @@ class TTTranscodeProvider : public TTProcessForm
   bool encodePart( );
 
   public slots:
-  void transcodeReadOut();
-  void transcodeStarted();
-  void transcodeFinish(int exit_code, QProcess::ExitStatus );
-  void transcodeError(QProcess::ProcessError proc_error);
-  void transcodeState(QProcess::ProcessState proc_state);
-  void transcodeKill();
+  void onProcReadOut();
+  void onProcStarted();
+  void onProcFinished(int exit_code, QProcess::ExitStatus );
+  void onProcError(QProcess::ProcessError proc_error);
+  void onProcStateChanged(QProcess::ProcessState proc_state);
+  void onProcKill();
 
  private:
   TTMessageLogger* log;
-  QProcess*        transcode_proc;
+  QProcess*        proc;
   QString          str_command;
   QStringList      strl_command_line;
   int              exit_code;
@@ -85,5 +85,5 @@ class TTEncodeParameter
   float     video_max_bitrate;
 };
 
-#endif
+#endif //TTTRANSCODE_H  
    

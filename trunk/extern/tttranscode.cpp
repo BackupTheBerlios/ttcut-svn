@@ -1,15 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : tttranscode.cpp                                                 */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/07/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 03/18/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTTRANSCODE
+// TTTRANSCODE
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -35,12 +35,15 @@
 
 //#define TTTRANSCODE_DEBUG
 
-const char c_name[] = "TTTRANSCODE";
+#define EVENT_LOOP_INTERVALL 100000
 
-// Create the process form for displaying the output of the encode
+const char c_name[] = "TTTranscodeProvider";
+
+//! Create the process form for displaying the output of the encode
 TTTranscodeProvider::TTTranscodeProvider( )
   : TTProcessForm( TTCut::mainWindow )
 {
+  // message logger instance
   log = TTMessageLogger::getInstance();
   log->infoMsg(c_name, "start transcode");
   
@@ -52,35 +55,29 @@ TTTranscodeProvider::TTTranscodeProvider( )
   setModal( true );
   addLine( str_head );
   show();  
-
   qApp->processEvents();
 }
 
-// clean up used resources
+//! Clean up used resources
 TTTranscodeProvider::~TTTranscodeProvider()
 {
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%sdestructor call: close window",c_name );
-#endif
-
   close();
-
   qApp->processEvents();
 }
 
-// parameter for the encoder
+//! Parameter for the encoder
 void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 {
 #if defined (TTTRANSCODE_DEBUG)
-  log->infoMsg( c_name, "----------------------------------------------------" );
-  log->infoMsg( c_name, "transcode parameter:" );
-  log->infoMsg( c_name, "----------------------------------------------------" );
-  log->infoMsg( c_name, "avi-file    : %s",enc_par.avi_input_finfo.absoluteFilePath().ascii() );
-  log->infoMsg( c_name, "mpeg-file   : %s",enc_par.mpeg2_output_finfo.absoluteFilePath().ascii() );
-  log->infoMsg( c_name, "widhtxheight: %dx%d",enc_par.video_width,enc_par.video_height );
-  log->infoMsg( c_name, "aspect-code : %d",enc_par.video_aspect_code );
-  log->infoMsg( c_name, "bitrate     : %f",enc_par.video_bitrate );
-  log->infoMsg( c_name, "----------------------------------------------------" );
+  log->debugMsg( c_name, "----------------------------------------------------" );
+  log->debugMsg( c_name, "transcode parameter:" );
+  log->debugMsg( c_name, "----------------------------------------------------" );
+  log->debugMsg( c_name, "avi-file    : %s",enc_par.avi_input_finfo.absoluteFilePath().ascii() );
+  log->debugMsg( c_name, "mpeg-file   : %s",enc_par.mpeg2_output_finfo.absoluteFilePath().ascii() );
+  log->debugMsg( c_name, "widhtxheight: %dx%d",enc_par.video_width,enc_par.video_height );
+  log->debugMsg( c_name, "aspect-code : %d",enc_par.video_aspect_code );
+  log->debugMsg( c_name, "bitrate     : %f",enc_par.video_bitrate );
+  log->debugMsg( c_name, "----------------------------------------------------" );
 #endif
 
   //transcode -i encode.avi --pre_clip 0 -y ffmpeg --export_prof dvd-pal --export_asr 2 -o encode
@@ -105,172 +102,166 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
   log->infoMsg(c_name, strl_command_line.join(" "));
 }
 
-// create encoder process and start it
+//! Create encoder process and start it
 bool TTTranscodeProvider::encodePart( )    
 {
-  int update = 100;
-
+  int update        = EVENT_LOOP_INTERVALL;     //update intervall for local event loop
+  transcode_success = false;      
   
   // create the process object for transcode
-  log->debugMsg( c_name, "before instantiate QProcess ;-)" );
-  transcode_proc = new QProcess();
+  log->debugMsg( c_name, "before instantiate QProcess" );
+  proc = new QProcess();
   
   // read both channels: stderr and stdout
-  log->debugMsg( c_name, "set read channel mode ..." );
-  transcode_proc->setReadChannelMode( QProcess::MergedChannels );
+  log->debugMsg( c_name, "set read channel mode to QProcess::MergedChannels" );
+  proc->setReadChannelMode( QProcess::MergedChannels );
 
   // signal and slot connection
-  log->debugMsg( c_name, "set signal and slot connection..." );
-  connect( transcode_proc, SIGNAL(readyRead()),this,SLOT(transcodeReadOut()) );
-  connect( transcode_proc, SIGNAL(started()),this,SLOT(transcodeStarted()) );
-  connect( transcode_proc, SIGNAL(finished(int, QProcess::ExitStatus)),this,SLOT(transcodeFinish(int, QProcess::ExitStatus)) );
-  connect( transcode_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(transcodeError(QProcess::ProcessError)));
-  connect( transcode_proc, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(transcodeState(QProcess::ProcessState)));
-
+  log->debugMsg(c_name, "signal and slot connections");
+  connect(proc, SIGNAL(error(QProcess::ProcessError)),       SLOT(onProcError(QProcess::ProcessError)));
+  connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onProcFinished(int, QProcess::ExitStatus)));  
+  connect(proc, SIGNAL(readyRead()),                         SLOT(onProcReadOut()) );
+  connect(proc, SIGNAL(started()),                           SLOT(onProcStarted()) );
+  connect(proc, SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(onProcStateChanged(QProcess::ProcessState)));
 
   // start the process; if successfully started() was emitted otherwise error()
-  log->infoMsg( c_name, "start transcode process" );
-  transcode_proc->start( str_command, strl_command_line );
+  log->infoMsg(c_name, "start transcode process");
+  proc->start(str_command, strl_command_line);
   
-  if ( !transcode_proc->waitForStarted() )
-  {
-    log->debugMsg( c_name, "error in waitForStarted: %d",transcode_proc->state() );
-
-    delete transcode_proc;
-
-    return transcode_success;
-  }
-
-  log->debugMsg( c_name, "start emergency timer..." );
-  QTimer *timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(transcodeKill()));
-  timer->start(60000);
-  
-  transcode_success = true;
-
-  while ( transcode_proc->state() == QProcess::Running )
-  {
+  // we must wait until the process has finished
+  log->debugMsg(c_name, "start local event loop");
+  while (proc->state() == QProcess::Starting ||
+         proc->state() == QProcess::Running     ) {
     update--;
-    if ( update == 0 )
-    {
+    if ( update == 0 ) {
       qApp->processEvents();
-      update = 100;
+      update = EVENT_LOOP_INTERVALL;
     }
   }
 
-  if ( transcode_proc->state() == QProcess::Running )
-  {
-#if defined (TTTRANSCODE_DEBUG)
-    qDebug( "%stry to kill the process...",c_name );
-#endif
-    transcode_proc->kill();
-  }
+  log->debugMsg(c_name, "local event loop finished");
+  qApp->processEvents();
+  
+  delete proc;
 
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%sdelete process: %d",c_name,transcode_proc->state() );
-#endif
-  delete transcode_proc;
-
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%sexit encodePart: %d",c_name,transcode_success );
-#endif
+  log->debugMsg(c_name, "transcode success: %d", transcode_success);
   return transcode_success;
 }
 
 
-void TTTranscodeProvider::transcodeReadOut()
+//! This signal is emitted once every time new data is available for reading from the device.
+void TTTranscodeProvider::onProcReadOut()
 {
-  char       temp_str[101];
-  int        i, i_pos;
   QString    line;
   QByteArray ba;
 
-    
-  if ( transcode_proc->state() == QProcess::Running ) {
-    ba = transcode_proc->readAll();
+  ba = proc->readAll();
 
-    log->debugMsg( c_name, "transcodeReadOut: %d", ba.size() );
-    
-    QTextStream out(&ba);
+  log->debugMsg(c_name, "onProcReadOut: %d", ba.size());
 
-    while (!out.atEnd()) {
-      line = out.readLine();
-      log->infoMsg(c_name, "Test: %s", qPrintable(line));
-      addLine(line);
-    }
-  } else {
-    line = "transcode finished... done(0)";
-    addLine( line );
-    log->infoMsg(c_name, line);
+  QTextStream out(&ba);
+
+  while (!out.atEnd()) {
+    line = out.readLine();
+    log->infoMsg(c_name, "* %s", qPrintable(line));
+    addLine(line);
   }
 }
 
-// process successfully started
-void TTTranscodeProvider::transcodeStarted()
+//! This signal is emitted when the process has started; state() returns Running
+void TTTranscodeProvider::onProcStarted()
 {
-  char       temp_str[101];
-  int        i, i_pos;
   QString    line;
   QByteArray ba;
 
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%stranscode read std out ...",c_name );
-#endif
+  ba = proc->readAll();
+  QTextStream out(&ba);
 
-  ba = transcode_proc->readAll();
-
-  log->debugMsg( c_name, "byte array length: %d", ba.size() );
-
-  i_pos = 0;
-
-  for ( i = 0; i < ba.size(); ++i) 
-  {
-    if ( ba.at(i) != '\n' && i_pos < 100)
-    {
-      temp_str[i_pos] = ba.at(i);
-      i_pos++;
-    }
-    else
-    {
-      temp_str[i_pos] = '\0';
-      line = temp_str;
-      addLine( line );
-      log->infoMsg(c_name, line);
-      i_pos = 0;
-    }
-  }
+  line = out.readLine();
+  log->infoMsg(c_name, line);
+  addLine( line );
 }
 
-void TTTranscodeProvider::transcodeFinish( int e_code, QProcess::ExitStatus e_status )
+//! This signal is emitted when the process finishes
+void TTTranscodeProvider::onProcFinished(int e_code, QProcess::ExitStatus e_status)
 {
-  log->debugMsg( c_name, "transcode finish: %d/%d", e_code, e_status );
+  QString procMsg;
 
+  switch (e_status) {
+    case QProcess::NormalExit:
+      log->debugMsg(c_name, "The process ecxited normally: %d", e_code);
+      procMsg = tr("Transcode exit normally ... done(0)");
+      transcode_success = true;
+      break;
+    case QProcess::CrashExit:
+      log->debugMsg(c_name, "The process crashed: %d", e_code);
+      procMsg = tr("Transcode crashed");
+      transcode_success = false;
+      break;
+    default:
+      log->debugMsg(c_name, "Unknown process exit status (!): %d", e_code);
+      procMsg = tr("unknown process exit status");
+      transcode_success = false;
+      break;
+  }
+  addLine(procMsg);
   exit_code = e_code;
 }
 
-// process error
-void TTTranscodeProvider::transcodeError( __attribute__ ((unused))QProcess::ProcessError proc_error )
+//! This signal is emitted when an error occurs with the process
+void TTTranscodeProvider::onProcError(QProcess::ProcessError proc_error)
 {
-  log->errorMsg( c_name, "error: %d", proc_error );
-}
-
-// process state changed
-void TTTranscodeProvider::transcodeState( __attribute__ ((unused))QProcess::ProcessState proc_state )
-{
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%sstate changed: %d",c_name, proc_state );
-#endif
-}
-
-
-void TTTranscodeProvider::transcodeKill( )
-{
-#if defined (TTTRANSCODE_DEBUG)
-  qDebug( "%stranscode kill",c_name );
-#endif
-
-  qDebug( "%stime-out-event forces transcode to terminate (!)",c_name );
-
+  QString errorMsg;
+  
+  switch (proc_error) {
+    case QProcess::FailedToStart:
+      errorMsg = tr("The process failed to start.");
+      break;
+    case QProcess::Crashed:
+      errorMsg = tr("The process crashed some time after starting successfully.");
+      break;
+    case QProcess::Timedout:
+      errorMsg = tr("The last waitFor...() function timed out.");
+      break;
+    case QProcess::WriteError:
+      errorMsg = tr("An error occured when attempting to write to the process.");
+      break;
+    case QProcess::ReadError:
+      errorMsg = tr("An error occured when attempting to read from the process.");
+      break;
+    case QProcess::UnknownError:
+    default:
+      errorMsg = QString(tr("An unknown error occured: %1")).arg(proc_error);
+      break;
+  }
+  addLine(errorMsg);
+  log->errorMsg(c_name, qPrintable(errorMsg));
   transcode_success = false;
-  transcode_proc->kill();
+}
+
+//! This signal is emitted whenever the state changed
+void TTTranscodeProvider::onProcStateChanged(QProcess::ProcessState proc_state)
+{
+  switch (proc_state) {
+    case QProcess::NotRunning:
+      log->debugMsg(c_name, "The process is not running.");
+      break;
+    case QProcess::Starting:
+      log->debugMsg(c_name, "The process is starting, but program has not yet been invoked.");
+      break;
+    case QProcess::Running:
+      log->debugMsg(c_name, "The process is running and is ready for reading and writing.");
+      break;
+    default:
+      log->debugMsg(c_name, "Unknown process state: %d", proc_state);
+      break;
+  }
+}
+
+//! Kills the current process, causing it to exit immediately
+void TTTranscodeProvider::onProcKill( )
+{
+  log->debugMsg(c_name, "Kill the current process, causing it to exit immediately.");
+  transcode_success = false;
+  proc->kill();
 }
