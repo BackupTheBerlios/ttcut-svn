@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/pixmaps" >
+        <file>pixmaps/messagebox_critical.png</file>
+    </qresource>
+</RCC>

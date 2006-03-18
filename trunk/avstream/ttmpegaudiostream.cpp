@@ -181,6 +181,8 @@ void TTMPEGAudioStream::readAudioHeader( TTMpegAudioHeader* audio_header )
 
   // parse current audio header and fill header struct
   parseAudioHeader( data, 0, audio_header );
+
+  delete []data;
 }
 
 // create the audio header list

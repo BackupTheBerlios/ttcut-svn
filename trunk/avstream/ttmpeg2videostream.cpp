@@ -1571,11 +1571,8 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
     new_file_info.setFile( temp_dir, "encode.m2v" );
     TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream( new_file_info );
    
-    log->infoMsg(c_name, "create header list for encoded stream");
     int header_count = new_mpeg_stream->createHeaderList(); 
-    log->infoMsg(c_name, "create index list for encoded stream");
     int index_count  = new_mpeg_stream->createIndexList();
-    log->infoMsg(c_name, "sort index list to disply order");
     new_mpeg_stream->indexList()->sortDisplayOrder();
     
     log->infoMsg(c_name, "header list created: header: %d / index: %d", header_count, index_count);
@@ -1599,6 +1596,7 @@ void TTMpeg2VideoStream::encodePart( int start, int end, TTCutParameter* cr, TTF
   
   system( rm_cmd.toAscii().data() );
   
+  delete avi_writer;
   delete transcode_prov;
 
   if ( ttAssigned( progress_bar ) )

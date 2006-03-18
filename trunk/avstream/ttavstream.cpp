@@ -282,7 +282,6 @@ void TTAVStream::copySegment( TTFileBuffer* cut_stream, off64_t start_adr, off64
   off64_t  progress;
   uint8_t* buffer      = new uint8_t[65536];
   off64_t  count       = end_adr-start_adr+1;
-  // UNUSED: off64_t  total_steps = count;
 
   //qDebug( "%scopy segment: %lld/%lld - %lld",c_name,count,start_adr,end_adr );
   //qDebug( "%scopy segment: cut stream offset: %lld",c_name,cut_stream->currentOffset() );

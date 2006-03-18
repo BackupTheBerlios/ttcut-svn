@@ -31,6 +31,7 @@ RESOURCES   = ui/videofileinfowidget.qrc\
               ui/ttsettingsdialog.qrc\
               ui/previewwidget.qrc\
               ui/avcutdialog.qrc\
+              ui/processviewwidget.qrc\
               ui/mainwindow.qrc
 FORMS       = ui/videofileinfowidget.ui\
               ui/audiofilelistwidget.ui\
@@ -47,6 +48,7 @@ FORMS       = ui/videofileinfowidget.ui\
               ui/ttcutsettingscommon.ui\
               ui/ttsettingsdialog.ui\
               ui/previewwidget.ui\
+              ui/processviewwidget.ui\
               ui/avcutdialog.ui\
               ui/aboutdlg.ui\
               ui/mainwindow.ui

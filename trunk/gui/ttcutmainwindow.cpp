@@ -561,11 +561,14 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   // user cancel; exit
   if ( cutAVDlg->exec() == 1 )
   {
+    delete cutAVDlg;
     return;
   }
 
   // dialog exit with start
   // --------------------------------------------------------------------------
+  delete cutAVDlg;
+  
   // set new video cut name
   videoCutName = TTCut::cutVideoName;
 

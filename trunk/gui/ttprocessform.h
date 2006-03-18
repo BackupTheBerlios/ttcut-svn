@@ -1,15 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttprocessform.h                                                 */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/07/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 03/18/2006 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTPROCESSFORM
+// TTPROCESSFORM
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -32,33 +32,24 @@
 #ifndef TTPROCESSFORM_H
 #define TTPROCESSFORM_H
 
+#include "ui_processviewwidget.h"
 #include "../common/ttcut.h"
 
-#include <QtCore/QVariant>
-#include <QtGui/QAction>
 #include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QFrame>
-#include <QtGui/QGridLayout>
-#include <QtGui/QListWidget>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QDialog>
-#include <QtGui/QWidget>
 
-class TTProcessForm : public QDialog
+class TTProcessForm : public QDialog, Ui::ProcessViewWidget
 {
- public:
-  TTProcessForm( QWidget* parent );
-  virtual ~TTProcessForm();
+  public:
+    TTProcessForm(QWidget* parent);
+    ~TTProcessForm();
 
-  void addLine( QString& str_line );
+  public:
+    void setFrameCaption(QString& caption);
+    void addLine(QString& str_line);
+    void showCancelButton(bool show);
 
- private:
-    QGridLayout *gridLayout;
-    QFrame      *btnPlaceHolder;
-    QListWidget *procOutputList;
-    QSpacerItem *spacerItem;
-    QSpacerItem *spacerItem1;
+  signals:
+    void btnCancelClicked();
 };
 
 #endif // TTPROCESSFORM_H

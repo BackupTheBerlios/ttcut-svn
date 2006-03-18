@@ -9,7 +9,7 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTPROCESSFORM
+// TTPROCESSFORM
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -31,53 +31,39 @@
 #include "ttprocessform.h"
 
 
-TTProcessForm::TTProcessForm( QWidget* parent )
-  : QDialog( parent )
+TTProcessForm::TTProcessForm(QWidget* parent)
+  : QDialog(parent)
 {
-  setObjectName(QString::fromUtf8("TTProcessForm"));
-  resize(QSize(567, 400).expandedTo(minimumSizeHint()));
-  gridLayout = new QGridLayout(this);
-  gridLayout->setSpacing(6);
-  gridLayout->setMargin(8);
-  gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-  btnPlaceHolder = new QFrame(this);
-  btnPlaceHolder->setObjectName(QString::fromUtf8("btnPlaceHolder"));
-  btnPlaceHolder->setMinimumSize(QSize(65, 24));
-  btnPlaceHolder->setMaximumSize(QSize(65, 24));
-  btnPlaceHolder->setFrameShape(QFrame::NoFrame);
-  btnPlaceHolder->setFrameShadow(QFrame::Plain);
-  
-  gridLayout->addWidget(btnPlaceHolder, 1, 1, 1, 1);
-  
-  procOutputList = new QListWidget(this);
-  procOutputList->setObjectName(QString::fromUtf8("procOutputList"));
-  procOutputList->setEnabled(false);
-  
-  gridLayout->addWidget(procOutputList, 0, 0, 1, 3);
-  
-  spacerItem = new QSpacerItem(141, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-  
-  gridLayout->addItem(spacerItem, 1, 0, 1, 1);
-  
-  spacerItem1 = new QSpacerItem(181, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  setupUi(this);
 
-  gridLayout->addItem(spacerItem1, 1, 2, 1, 1);
+  btnCancel->hide();
 
-  setWindowTitle(QApplication::translate("TTProcessForm", "Form"));
-
-  qApp->processEvents();
+  // signal and slot connection
+  connect(btnCancel, SIGNAL(clicked()), SIGNAL(btnCancelClicked()));
 }
 
 TTProcessForm::~TTProcessForm()
 {
-
+  for (int i=0; i < procOutputList->count(); i++) {
+    delete procOutputList->takeItem(i);
+  }
 }
 
-void TTProcessForm::addLine( QString& str_line )
+void TTProcessForm::setFrameCaption(QString& caption)
 {
-  QListWidgetItem *item = new QListWidgetItem( procOutputList );
-  item->setText( str_line );
-  procOutputList->scrollToItem( item, QAbstractItemView::EnsureVisible );
+  gbProcessView->setTitle(caption);
+}
+
+void TTProcessForm::showCancelButton(bool show)
+{
+  btnCancel->setVisible(show);
+}
+
+void TTProcessForm::addLine(QString& str_line)
+{
+  QListWidgetItem *item = new QListWidgetItem(procOutputList);
+  item->setText(str_line);
+  procOutputList->scrollToItem(item, QAbstractItemView::EnsureVisible);
 
   qApp->processEvents();
 }
