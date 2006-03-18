@@ -45,12 +45,15 @@ void TTCutSettingsFiles::setTitle(__attribute__((unused))const QString& title)
 // set the tab data from the global parameter
 void TTCutSettingsFiles::setTabData()
 {
+  // IDD files
   cbCreateVideoIDD->setChecked( TTCut::createVideoIDD );
   cbCreateAudioIDD->setChecked( TTCut::createAudioIDD );
   cbReadVideoIDD->setChecked( TTCut::readVideoIDD );
   cbReadAudioIDD->setChecked( TTCut::readAudioIDD );
 
+  // Logfile
   cbCreateLog->setChecked( TTCut::createLogFile );
+  cbLogConsole->setChecked( TTCut::logModeConsole );
   cbLogExtended->setChecked( TTCut::logModeExtended );
   cbLogPlusVideoIndex->setChecked( TTCut::logVideoIndexInfo );
 }
@@ -66,6 +69,7 @@ void TTCutSettingsFiles::getTabData()
 
   // logfile
   TTCut::createLogFile     = cbCreateLog->isChecked( );
+  TTCut::logModeConsole    = cbLogConsole->isChecked();
   TTCut::logModeExtended   = cbLogExtended->isChecked( );
   TTCut::logVideoIndexInfo = cbLogPlusVideoIndex->isChecked( );
 }

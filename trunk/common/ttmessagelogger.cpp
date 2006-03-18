@@ -49,7 +49,8 @@
 //#include <sys/stdarg.h>
 
 
-const int   TTMessageLogger::STD_LOG_MODE      = TTMessageLogger::SUMMARIZE | TTMessageLogger::CONSOLE;
+const int   TTMessageLogger::STD_LOG_MODE      = TTMessageLogger::SUMMARIZE;
+int         TTMessageLogger::logMode           = TTMessageLogger::STD_LOG_MODE;
 const char* TTMessageLogger::INFO_FILE_NAME    = "info.log";
 const char* TTMessageLogger::WARNING_FILE_NAME = "warning.log";
 const char* TTMessageLogger::ERROR_FILE_NAME   = "error.log";
@@ -65,8 +66,12 @@ QString TTMessageLogger::stdLogFilePath = "./logfile.log";
  */
 TTMessageLogger::TTMessageLogger(int mode)
 {
-  logfile = new QFile(stdLogFilePath);
-  logMode = mode;
+  logfile     = new QFile(stdLogFilePath);
+  logEnabled  = true;
+  logMode     = mode;
+  logConsole  = false;
+  logExtended = false;
+  
 
   QFile file(stdLogFilePath);
   
@@ -102,6 +107,26 @@ TTMessageLogger* TTMessageLogger::getInstance(int mode)
   return loggerInstance;
 }
 
+void TTMessageLogger::enableLogFile(bool enable)
+{
+  logEnabled = enable;
+}
+
+void TTMessageLogger::setLogModeConsole(bool console)
+{
+  if (console) {
+    logMode = SUMMARIZE | CONSOLE;
+  } else {
+    logMode = SUMMARIZE;
+  }
+  logConsole = console;
+}
+
+void TTMessageLogger::setLogModeExtended(bool extended)
+{
+  logExtended = extended;
+}
+ 
 void TTMessageLogger::setLogMode(int mode)
 {
   logMode = mode;
@@ -200,6 +225,9 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString)
 {
   QString write;
   
+  if (!logEnabled && msgType != ERROR)
+    return;
+  
   if(msgType == INFO)
     write = "[info]";
 
@@ -219,7 +247,7 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString)
   write.append("] ");
   write.append(msgString);
 
-  if(logMode & CONSOLE && msgType != ERROR)
+  if(logMode & CONSOLE || msgType == ERROR)
     qDebug(write.toAscii().data());
 
   writeMsg(write);

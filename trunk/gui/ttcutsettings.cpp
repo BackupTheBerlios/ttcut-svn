@@ -102,6 +102,16 @@ void TTCutSettings::readSettings()
   TTCut::readPrevIDD    = value( "ReadPrevIDD/", TTCut::readPrevIDD ).toBool();
   endGroup();
 
+  // Log file
+  // --------------------------------------------------------------------------
+  beginGroup( "/LogFile" );
+  TTCut::createLogFile     = value( "CreateLogFile/",     TTCut::createLogFile ).toBool();
+  TTCut::logModeConsole    = value( "LogModeConsole/",    TTCut::logModeConsole ).toBool();
+  TTCut::logModeExtended   = value( "LogModeExtended/",   TTCut::logModeExtended ).toBool();
+  TTCut::logVideoIndexInfo = value( "LogVideoIndexInfo/", TTCut::logVideoIndexInfo ).toBool();
+  TTCut::logAudioIndexInfo = value( "LogAudioIndexInfo/", TTCut::logAudioIndexInfo ).toBool();
+  endGroup();
+  
   // Encoder settings
   // ---------------------------------------------------------------------------
   beginGroup( "/Encoder" );
@@ -202,6 +212,16 @@ void TTCutSettings::writeSettings()
   setValue( "ReadPrevIDD/",     TTCut::readPrevIDD );
   endGroup();
 
+  // Log file
+  // --------------------------------------------------------------------------
+  beginGroup( "/LogFile" );
+  setValue( "CreateLogFile/",     TTCut::createLogFile );
+  setValue( "LogModeConsole/",    TTCut::logModeConsole );
+  setValue( "LogModeExtended/",   TTCut::logModeExtended );
+  setValue( "LogVideoIndexInfo/", TTCut::logVideoIndexInfo );
+  setValue( "LogAudioIndexInfo/", TTCut::logAudioIndexInfo );
+  endGroup();
+  
   // Encoder settings
   // ---------------------------------------------------------------------------
   beginGroup( "/Encoder" );

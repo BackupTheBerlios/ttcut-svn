@@ -12,12 +12,6 @@
 // TTMESSAGELOGGER
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-// TODO
-// -----------------------------------------------------------------------------
-// *
-// -----------------------------------------------------------------------------
-
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
 /* under the terms of the GNU General Public License as published by the Free */
@@ -52,6 +46,11 @@ class TTMessageLogger
 
   public:
     static TTMessageLogger* getInstance(int mode = STD_LOG_MODE);
+
+    void enableLogFile(bool enable);
+    void setLogModeConsole(bool console);
+    void setLogModeExtended(bool extended);
+    
     void setLogMode(int mode);
 
     void infoMsg(QString caller, QString msgString);
@@ -85,8 +84,11 @@ void writeMsg(QString msgString);
     QFile* logfile;
     static TTMessageLogger* loggerInstance;
     static QString stdLogFilePath;
-    int    logMode;
+    bool   logEnabled;
+    bool   logConsole;
+    bool   logExtended;
 
+    static       int   logMode;
     static const int   STD_LOG_MODE;
     static const char* INFO_FILE_NAME;
     static const char* WARNING_FILE_NAME;

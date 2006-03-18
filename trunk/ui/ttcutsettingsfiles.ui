@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>583</width>
-    <height>343</height>
+    <width>656</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -22,6 +22,56 @@
    <property name="spacing" >
     <number>6</number>
    </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="gbIDDFiles" >
+     <property name="title" >
+      <string>MPEG2Schnitt Index Files (*.idd)</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="cbCreateVideoIDD" >
+        <property name="text" >
+         <string>Create video index file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cbReadVideoIDD" >
+        <property name="text" >
+         <string>Read video index file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cbCreateAudioIDD" >
+        <property name="text" >
+         <string>Create audio index file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cbReadAudioIDD" >
+        <property name="text" >
+         <string>Read audio index file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cbCreateCutIDD" >
+        <property name="text" >
+         <string>Create cut video index file</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0" >
     <spacer>
      <property name="orientation" >
@@ -29,8 +79,8 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>297</width>
+       <height>101</height>
       </size>
      </property>
     </spacer>
@@ -59,17 +109,24 @@
          <property name="spacing" >
           <number>6</number>
          </property>
-         <item row="1" column="0" >
+         <item row="2" column="0" >
           <widget class="QCheckBox" name="cbLogPlusVideoIndex" >
            <property name="text" >
             <string>Video index information</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0" >
+         <item row="1" column="0" >
           <widget class="QCheckBox" name="cbLogExtended" >
            <property name="text" >
             <string>Extended messages and informations</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <widget class="QCheckBox" name="cbLogConsole" >
+           <property name="text" >
+            <string>Write to console</string>
            </property>
           </widget>
          </item>
@@ -80,56 +137,6 @@
        <widget class="QCheckBox" name="cbCreateLog" >
         <property name="text" >
          <string>Create logfile</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="gbIDDFiles" >
-     <property name="title" >
-      <string>MPEG2Schnitt Index Files (*.idd)</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="4" column="0" >
-       <widget class="QCheckBox" name="cbCreateCutIDD" >
-        <property name="text" >
-         <string>Create cut video index file</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QCheckBox" name="cbReadAudioIDD" >
-        <property name="text" >
-         <string>Read audio index file</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QCheckBox" name="cbCreateAudioIDD" >
-        <property name="text" >
-         <string>Create audio index file</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QCheckBox" name="cbReadVideoIDD" >
-        <property name="text" >
-         <string>Read video index file</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="cbCreateVideoIDD" >
-        <property name="text" >
-         <string>Create video index file</string>
         </property>
        </widget>
       </item>

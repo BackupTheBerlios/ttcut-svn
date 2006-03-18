@@ -8,7 +8,7 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTMAINWINDOW
+// TTCUTMAINWINDOW
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -105,17 +105,21 @@ TTCutMainWindow::TTCutMainWindow()
 
   // Message logger instance
   log = TTMessageLogger::getInstance();
-
+  
   // Qt version at runtime
   log->infoMsg(oName, "Qt-Version: %s", qVersion());
 #if QT_VERSION < 0x040100
-  log->warningMsg(oName, "Qt-Version >= 4.1.0 required");
+  log->errorMsg(oName, "Qt-Version >= 4.1.0 required");
 #endif
 
   // Settings
   settings = new TTCutSettings();
   settings->readSettings();
-  
+  log->enableLogFile(TTCut::createLogFile);
+  log->setLogModeConsole(TTCut::logModeConsole);
+  log->setLogModeExtended(TTCut::logModeExtended);
+
+ 
   // Audio list
   audioList = new TTAudioListData();
   audioFileInfo->setListData(audioList);
@@ -400,6 +404,11 @@ void TTCutMainWindow::onActionSettings()
 {
   TTCutSettingsDlg* settingsDlg = new TTCutSettingsDlg( this );
   settingsDlg->exec();
+
+  log->enableLogFile(TTCut::createLogFile);
+  log->setLogModeConsole(TTCut::logModeConsole);
+  log->setLogModeExtended(TTCut::logModeExtended);
+
 
   delete settingsDlg;
 }
