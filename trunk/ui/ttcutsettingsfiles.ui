@@ -98,7 +98,7 @@
        <number>6</number>
       </property>
       <item row="1" column="0" >
-       <widget class="QGroupBox" name="groupBox" >
+       <widget class="QGroupBox" name="gbLogfileOptions" >
         <property name="title" >
          <string>Logfile Options</string>
         </property>

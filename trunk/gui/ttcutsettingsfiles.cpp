@@ -36,6 +36,8 @@ TTCutSettingsFiles::TTCutSettingsFiles(QWidget* parent)
 :QWidget(parent)
 {
   setupUi(this);
+
+  connect(cbCreateLog, SIGNAL(stateChanged(int)), SLOT(onCreateLogStateChanged(int)));
 }
 
 void TTCutSettingsFiles::setTitle(__attribute__((unused))const QString& title)
@@ -56,6 +58,8 @@ void TTCutSettingsFiles::setTabData()
   cbLogConsole->setChecked( TTCut::logModeConsole );
   cbLogExtended->setChecked( TTCut::logModeExtended );
   cbLogPlusVideoIndex->setChecked( TTCut::logVideoIndexInfo );
+
+  gbLogfileOptions->setEnabled(TTCut::createLogFile);
 }
 
 // get the tab data and fill the global parameter
@@ -74,4 +78,11 @@ void TTCutSettingsFiles::getTabData()
   TTCut::logVideoIndexInfo = cbLogPlusVideoIndex->isChecked( );
 }
 
-
+void TTCutSettingsFiles::onCreateLogStateChanged(int state)
+{
+  if (state == QCheckBox::Off) {
+    gbLogfileOptions->setEnabled(false);
+  } else {
+    gbLogfileOptions->setEnabled(true);
+  }
+}

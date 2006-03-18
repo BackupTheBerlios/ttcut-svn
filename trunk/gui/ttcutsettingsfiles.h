@@ -8,7 +8,7 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTSETTINGSFIILES
+// TTCUTSETTINGSFIILES
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -45,6 +45,9 @@ class TTCutSettingsFiles : public QWidget, Ui::TTCutSettingsFiles
     void setTitle( const QString& title );
     void setTabData();
     void getTabData();
+
+public slots:
+    void onCreateLogStateChanged(int);
 };
 
 #endif
