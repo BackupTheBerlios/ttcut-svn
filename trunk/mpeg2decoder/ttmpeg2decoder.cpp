@@ -127,7 +127,7 @@ TTMpeg2Decoder::~TTMpeg2Decoder()
   }
 
   if ( ttAssigned(streamBuffer) )
-     delete streamBuffer;
+     delete [] streamBuffer;
 }
 
 // -----------------------------------------------------------------------------

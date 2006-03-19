@@ -1379,6 +1379,8 @@ void TTMpeg2VideoStream::transferMpegObjects( TTFileBuffer* fs,
 	    buffer[current_object->headerOffset()-abs_pos+5] = time_code[1];
 	    buffer[current_object->headerOffset()-abs_pos+6] = time_code[2];
 	    buffer[current_object->headerOffset()-abs_pos+7] = time_code[3];
+
+      delete tc;
 	  }
 	  
 	  // -------------------------------------------------------------------

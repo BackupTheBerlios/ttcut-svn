@@ -143,7 +143,7 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   }
   //qDebug( "%s------------------------------------------------",c_name );
   
-  delete ref_data;
+  delete [] ref_data;
 
   return frame_count;  
 }

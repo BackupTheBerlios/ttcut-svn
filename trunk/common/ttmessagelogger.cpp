@@ -87,12 +87,14 @@ TTMessageLogger::TTMessageLogger(int mode)
  */
 TTMessageLogger::~TTMessageLogger()
 {
-  if(logfile != NULL)
-  {
+  if (logfile != NULL) {
     logfile->close();
     delete logfile;
   }
-  
+ 
+  if (loggerInstance != NULL) {
+    delete loggerInstance;
+  }
 }
 
 /*!

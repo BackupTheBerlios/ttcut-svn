@@ -196,7 +196,7 @@ TTTimeCode* ttFrameToTimeCode( int frame_nr, float fps)
 {
   int frames_per_second = (int)(fps+0.5);
   TTTimeCode* tc = new TTTimeCode();
-  
+ 
   //if (useNTSCDropFrame && fps==30000m/1001m)
   //{
     // NTSC mit DropFrame-Korrektur
