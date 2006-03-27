@@ -50,7 +50,6 @@ class TTCutSettings : public QSettings
    void readSettings();
    void writeSettings();
 
-
    private:
    QString searchPath;
    QDir    userHomeDir;

@@ -122,7 +122,10 @@ bool TTCut::logModeConsole    = false;
 bool TTCut::logModeExtended   = true;
 bool TTCut::logVideoIndexInfo = false;
 bool TTCut::logAudioIndexInfo = false;
-   
+
+// Recent files
+QStringList TTCut::recentFileList;
+
 // --------------------------------------------------------------
 // encoder settings
 // --------------------------------------------------------------

@@ -113,6 +113,7 @@ TTCutMainWindow::TTCutMainWindow()
 #endif
 
   // Settings
+  TTCut::recentFileList.clear();
   settings = new TTCutSettings();
   settings->readSettings();
   log->enableLogFile(TTCut::createLogFile);
@@ -140,17 +141,26 @@ TTCutMainWindow::TTCutMainWindow()
   // 
   // Connect signals from main menu
   // --------------------------------------------------------------------------
-  connect(actionOpenVideo,        SIGNAL(activated()), videoFileInfo, SLOT(onFileOpen()));
-  connect(actionOpenAudio,        SIGNAL(activated()), audioFileInfo, SLOT(onFileOpen()));
-  connect(actionFileNew,          SIGNAL(activated()), SLOT(onFileNew()));
-  connect(actionFileOpen,         SIGNAL(activated()), SLOT(onFileOpen()));
-  connect(actionFileSave,         SIGNAL(activated()), SLOT(onFileSave()));
-  connect(actionFileSaveAs,       SIGNAL(activated()), SLOT(onFileSaveAs()));
-  connect(actionRecentProjects,   SIGNAL(activated()), SLOT(onFileRecent()));
-  connect(actionExit,             SIGNAL(activated()), SLOT(onFileExit()));
-  connect(actionSaveCurrentFrame, SIGNAL(activated()), SLOT(onActionSave()));
-  connect(actionSettings,         SIGNAL(activated()), SLOT(onActionSettings()));
-  connect(actionAbout,            SIGNAL(activated()), SLOT(onHelpAbout()));
+  connect(actionOpenVideo,        SIGNAL(triggered()), videoFileInfo, SLOT(onFileOpen()));
+  connect(actionOpenAudio,        SIGNAL(triggered()), audioFileInfo, SLOT(onFileOpen()));
+  connect(actionFileNew,          SIGNAL(triggered()), SLOT(onFileNew()));
+  connect(actionFileOpen,         SIGNAL(triggered()), SLOT(onFileOpen()));
+  connect(actionFileSave,         SIGNAL(triggered()), SLOT(onFileSave()));
+  connect(actionFileSaveAs,       SIGNAL(triggered()), SLOT(onFileSaveAs()));
+  connect(actionExit,             SIGNAL(triggered()), SLOT(onFileExit()));
+  connect(actionSaveCurrentFrame, SIGNAL(triggered()), SLOT(onActionSave()));
+  connect(actionSettings,         SIGNAL(triggered()), SLOT(onActionSettings()));
+  connect(actionAbout,            SIGNAL(triggered()), SLOT(onHelpAbout()));
+
+  // recent files
+  for (int i = 0; i < MaxRecentFiles; ++i) {
+    recentFileAction[i] = new QAction(this);
+    recentFileAction[i]->setVisible(false);
+    menuRecentProjects->addAction(recentFileAction[i]);
+    connect(recentFileAction[i], SIGNAL(triggered()), SLOT(onFileRecent()));
+  }
+ 
+  updateRecentFileActions();
 
   // Connect signals from video and audio info
   // --------------------------------------------------------------------------
@@ -233,63 +243,13 @@ void TTCutMainWindow::onFileNew()
 //! Menu "File open" action
 void TTCutMainWindow::onFileOpen()
 {
-  TTCutProject* projectFile;
-
   QString fn = QFileDialog::getOpenFileName(this,
       tr("Open project-file"),
       TTCut::lastDirPath,
       "Project(*.prj)");
 
   if (!fn.isEmpty()) {
-  
-    TTCut::projectFileName = fn;
-
-    // error opening project file
-    try {
-      projectFile = new TTCutProject(fn, QIODevice::ReadOnly);
-    } catch (TTCutProjectOpenException) {
-      log->errorMsg(oName, "error open project file: %s", qPrintable(fn));
-      return;
-    }
-
-    // open and read video file
-    projectFile->seekToVideoSection();
-    QString videoFileName;
-    if (projectFile->readVideoFileName(videoFileName)) {
-      openVideoStream(videoFileName);
-    }
-
-    if (!TTCut::isVideoOpen) {
-      log->errorMsg(oName, "error open video file: %s", qPrintable(videoFileName));
-      return;
-    }
-
-    // open and read audio files
-    projectFile->seekToAudioSection();
-    QString audioFileName;
-    while (projectFile->readAudioFileName(audioFileName)) {
-      openAudioStream(audioFileName);
-    }
-
-    if (audioList->count() == 0) {
-      log->warningMsg(oName, "no audio files in project: %s", qPrintable(fn));
-      audioFileInfo->onFileOpen();
-    }
-
-    // read cut positions
-    projectFile->seekToCutSection();
-    cutListData = new TTCutListData(mpegStream);
-    cutList->setListData(cutListData);
-    int cutInPos;
-    int cutOutPos;
-    while (projectFile->readCutEntry(cutInPos, cutOutPos)) {
-      cutList->onAddEntry(cutInPos, cutOutPos);
-    }
-
-    initStreamNavigator();
-
-    // remove project file
-    delete projectFile;
+    openProjectFile(fn);
   }
 }
 
@@ -368,7 +328,12 @@ void TTCutMainWindow::onFileSaveAs()
 //! Menu "Recent files..." action
 void TTCutMainWindow::onFileRecent()
 {
-  //TODO: Add support for recent file list
+  QAction* action = qobject_cast<QAction*>(sender());
+
+  if (action) {
+    log->infoMsg(oName, "open recent project file: %s", qPrintable(action->data().toString()));
+    openProjectFile(action->data().toString());
+  }
 }
 
 
@@ -381,7 +346,7 @@ void TTCutMainWindow::onFileExit()
       log->infoMsg(oName, "TODO: Ask for saving changes in project");
     }
   }
-  
+
   // Save application setting
   if ( ttAssigned(settings) ) {
     settings->writeSettings();
@@ -568,7 +533,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   // dialog exit with start
   // --------------------------------------------------------------------------
   delete cutAVDlg;
-  
+
   // set new video cut name
   videoCutName = TTCut::cutVideoName;
 
@@ -751,6 +716,69 @@ void TTCutMainWindow::navigationEnabled( bool enabled )
   streamNavigator->controlEnabled( enabled );
 }
 
+//! Open project file
+bool TTCutMainWindow::openProjectFile(QString fName)
+{
+  bool result = false;
+  TTCutProject* projectFile;
+
+  TTCut::projectFileName = fName;
+
+  // error opening project file
+  try {
+    projectFile = new TTCutProject(fName, QIODevice::ReadOnly);
+  } catch (TTCutProjectOpenException) {
+    log->errorMsg(oName, "error open project file: %s", qPrintable(fName));
+    return result;
+  }
+
+  // open and read video file
+  projectFile->seekToVideoSection();
+  QString videoFileName;
+  if (projectFile->readVideoFileName(videoFileName)) {
+    openVideoStream(videoFileName);
+  }
+
+  if (!TTCut::isVideoOpen) {
+    log->errorMsg(oName, "error open video file: %s", qPrintable(videoFileName));
+    return result;
+  }
+
+  // open and read audio files
+  projectFile->seekToAudioSection();
+  QString audioFileName;
+  while (projectFile->readAudioFileName(audioFileName)) {
+    openAudioStream(audioFileName);
+  }
+
+  if (audioList->count() == 0) {
+    log->warningMsg(oName, "no audio files in project: %s", qPrintable(fName));
+    audioFileInfo->onFileOpen();
+  }
+
+  // read cut positions
+  projectFile->seekToCutSection();
+  cutListData = new TTCutListData(mpegStream);
+  cutList->setListData(cutListData);
+  int cutInPos;
+  int cutOutPos;
+  while (projectFile->readCutEntry(cutInPos, cutOutPos)) {
+    cutList->onAddEntry(cutInPos, cutOutPos);
+  }
+
+  initStreamNavigator();
+
+  // add project file to recent file list
+  insertRecentFile(fName);
+
+  // remove project file
+  delete projectFile;
+
+  result = true;
+
+  return result;
+}
+
 //! Open video stream and create video index and header lists
 int TTCutMainWindow::openVideoStream(QString fName)
 {
@@ -909,4 +937,38 @@ void TTCutMainWindow::initStreamNavigator()
   navigationEnabled( true );
 }
 
+//! Update recent file menu actions
+void TTCutMainWindow::updateRecentFileActions()
+{
+  int numRecentFiles = qMin(TTCut::recentFileList.size(), (int)MaxRecentFiles);
 
+  for (int i = 0; i < numRecentFiles; ++i) {
+    QString text = tr("&%1 %2").arg(i+1).
+      arg(QFileInfo(TTCut::recentFileList[i]).fileName());
+    recentFileAction[i]->setText(text);
+    recentFileAction[i]->setData(TTCut::recentFileList[i]);
+    recentFileAction[i]->setVisible(true);
+  }
+
+  for (int j = numRecentFiles; j < MaxRecentFiles; ++j) {
+    recentFileAction[j]->setVisible(false);
+  }
+}
+
+//! Insert new file in recent file list
+void TTCutMainWindow::insertRecentFile(const QString& fName)
+{
+  TTCut::recentFileList.removeAll(fName);
+  TTCut::recentFileList.prepend(fName);
+
+  while (TTCut::recentFileList.size() > MaxRecentFiles) {
+    TTCut::recentFileList.removeLast();
+  }
+
+  foreach (QWidget* widget, QApplication::topLevelWidgets()) {
+    TTCutMainWindow* mainWin = qobject_cast<TTCutMainWindow*>(widget);
+    if (mainWin) {
+      mainWin->updateRecentFileActions();
+    }
+  }
+}

@@ -85,10 +85,13 @@ void keyPressEvent(QKeyEvent* e);
     void createAVStreams( QString videoFile, QString audioFile );
     QString audioFromVideoName(QString videoFile); 
     void navigationEnabled( bool enabled );
+    bool openProjectFile(QString fName);
     int openVideoStream(QString fName);
     int openAudioStream(QString fName);
     void initStreamNavigator();
-    
+    void updateRecentFileActions();
+    void insertRecentFile(const QString& fName);
+
   private:
    TTCutSettings*      settings;
    TTAudioListData*    audioList;
@@ -96,7 +99,11 @@ void keyPressEvent(QKeyEvent* e);
    TTMuxListData*      muxListData;
    TTMessageLogger*    log;
    TTMpeg2VideoStream* mpegStream;
-   bool sliderUpdateFrame;
+   bool                sliderUpdateFrame;
+
+   // recent files menu 
+   enum {MaxRecentFiles = 5};
+   QAction* recentFileAction[MaxRecentFiles];
 };
 
 #endif //TTCUTMAINWINDOW_H

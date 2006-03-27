@@ -148,9 +148,15 @@ void TTCutSettings::readSettings()
   TTCut::readCutIDD         = value( "ReadIDD/", TTCut::readCutIDD ).toBool();
   endGroup();
 
+  // Recent files
+  // --------------------------------------------------------------------------
+  beginGroup( "/RecentFiles" );
+  TTCut::recentFileList    = value( "RecentFiles/", TTCut::recentFileList ).toStringList();
   endGroup();
+  
+  endGroup(); // settings
 
-  // check temporary path; we must ensure we have a temporary directory
+  // check temporary path; we must ensure taht we have a temporary directory
   // the temporary directory is used for the preview clips and for
   // the temporary avi-clips
   if ( !QDir( TTCut::tempDirPath ).exists() )
@@ -258,5 +264,11 @@ void TTCutSettings::writeSettings()
   setValue( "ReadIDD/",         TTCut::readCutIDD );
   endGroup();
 
+  // Recent files
+  // --------------------------------------------------------------------------
+  beginGroup( "/RecentFiles" );
+  setValue( "RecentFiles/", TTCut::recentFileList );
   endGroup();
+ 
+  endGroup(); // settings
 }

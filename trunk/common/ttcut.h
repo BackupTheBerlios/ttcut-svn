@@ -126,7 +126,10 @@ class TTCut
    static bool logModeExtended;
    static bool logVideoIndexInfo;
    static bool logAudioIndexInfo;
-   
+  
+   // Recent files
+   static QStringList recentFileList;
+
    // --------------------------------------------------------------
    // encoder settings
    // --------------------------------------------------------------

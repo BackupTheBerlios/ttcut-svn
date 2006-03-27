@@ -316,6 +316,11 @@
     <property name="icon" >
      <iconset/>
     </property>
+    <widget class="QMenu" name="menuRecentProjects" >
+     <property name="title" >
+      <string>Recent Projects</string>
+     </property>
+    </widget>
     <addaction name="actionOpenVideo" />
     <addaction name="actionOpenAudio" />
     <addaction name="separator" />
@@ -324,7 +329,7 @@
     <addaction name="actionFileSave" />
     <addaction name="actionFileSaveAs" />
     <addaction name="separator" />
-    <addaction name="actionRecentProjects" />
+    <addaction name="menuRecentProjects" />
     <addaction name="separator" />
     <addaction name="actionExit" />
    </widget>
@@ -401,11 +406,6 @@
     <string>Save Project under new file name</string>
    </property>
   </action>
-  <action name="actionRecentProjects" >
-   <property name="text" >
-    <string>Recent Projects...</string>
-   </property>
-  </action>
   <action name="actionExit" >
    <property name="icon" >
     <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/exit_16.xpm</iconset>
@@ -470,13 +470,6 @@
  <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>TTAudioFileList</class>
-   <extends>QGroupBox</extends>
-   <header>gui/ttaudiofilelist.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>TTNavigation</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttnavigation.h</header>
@@ -515,6 +508,13 @@
    <class>TTCutList</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutlist.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTAudioFileList</class>
+   <extends>QGroupBox</extends>
+   <header>gui/ttaudiofilelist.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
