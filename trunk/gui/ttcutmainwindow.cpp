@@ -70,6 +70,7 @@ const char oName[] = "TTCutMainWindow";
 TTCutMainWindow::TTCutMainWindow() 
 : QMainWindow()
 {
+
   // setup Qt Designer UI
   setupUi( this );
 
@@ -107,7 +108,8 @@ TTCutMainWindow::TTCutMainWindow()
   log = TTMessageLogger::getInstance();
   
   // Qt version at runtime
-  log->infoMsg(oName, "Qt-Version: %s", qVersion());
+  log->infoMsg(oName, "TTCut-Version: %s", qPrintable(TTCut::versionString));
+  log->infoMsg(oName, "Qt-Version:    %s", qVersion());
 #if QT_VERSION < 0x040100
   log->errorMsg(oName, "Qt-Version >= 4.1.0 required");
 #endif

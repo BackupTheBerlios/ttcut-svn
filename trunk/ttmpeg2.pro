@@ -26,6 +26,40 @@ TARGET            = ttmpeg2
 LIBS              = -lmpeg2 -lmpeg2convert
 OBJECTS_DIR       = ttmpeg2_obj
 MOC_DIR           = ttmpeg2_moc
+UI_DIR      = ui_h 
+RCC_DIR     = res
+RESOURCES   = ui/videofileinfowidget.qrc\
+              ui/audiofilelistwidget.qrc\
+              ui/cutoutframewidget.qrc\
+              ui/currentframewidget.qrc\
+              ui/framenavigationwidget.qrc \
+              ui/cutlistwidget.qrc\
+              ui/ttcutsettingscommon.qrc\
+              ui/ttcutsettingsmuxer.qrc\
+              ui/ttsettingsdialog.qrc\
+              ui/previewwidget.qrc\
+              ui/avcutdialog.qrc\
+              ui/processviewwidget.qrc\
+              ui/mainwindow.qrc
+FORMS       = ui/videofileinfowidget.ui\
+              ui/audiofilelistwidget.ui\
+              ui/cutoutframewidget.ui\
+              ui/currentframewidget.ui\
+              ui/framenavigationwidget.ui\
+              ui/navigatordisplaywidget.ui\
+              ui/streamnavigationwidget.ui\
+              ui/cutlistwidget.ui\
+              ui/ttcutsettingschapter.ui\
+              ui/ttcutsettingsmuxer.ui\
+              ui/ttcutsettingsencoder.ui\
+              ui/ttcutsettingsfiles.ui\
+              ui/ttcutsettingscommon.ui\
+              ui/ttsettingsdialog.ui\
+              ui/previewwidget.ui\
+              ui/processviewwidget.ui\
+              ui/avcutdialog.ui\
+              ui/aboutdlg.ui\
+              ui/mainwindow.ui
 #
 SOURCES           = \
 #

@@ -40,7 +40,7 @@
 #include "ttmpeg2window.h"
 
 
-const char c_name[] = "TTMOEG2Window";
+const char c_name[] = "TTMPEG2Window";
 
 // -----------------------------------------------------------------------------
 // Constructor for the TTMPEG2Window
