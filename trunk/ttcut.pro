@@ -47,6 +47,7 @@ FORMS       = ui/videofileinfowidget.ui\
               ui/ttcutsettingsfiles.ui\
               ui/ttcutsettingscommon.ui\
               ui/ttsettingsdialog.ui\
+              ui/mplexparamdlg.ui\
               ui/previewwidget.ui\
               ui/processviewwidget.ui\
               ui/avcutdialog.ui\

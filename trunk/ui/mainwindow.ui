@@ -8,14 +8,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1044</width>
+    <width>900</width>
     <height>750</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
     <width>900</width>
-    <height>750</height>
+    <height>700</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -290,8 +290,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1044</width>
-     <height>29</height>
+     <width>900</width>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp" >
@@ -337,16 +337,7 @@
    <addaction name="menuAction" />
    <addaction name="menuHelp" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>726</y>
-     <width>1044</width>
-     <height>24</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar" />
   <action name="actionFileNew" >
    <property name="icon" >
     <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/filenew_16.xpm</iconset>
@@ -470,6 +461,27 @@
  <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>TTVideoFileInfo</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttvideofileinfo.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTCutList</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcutlist.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTAudioFileList</class>
+   <extends>QGroupBox</extends>
+   <header>gui/ttaudiofilelist.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
    <class>TTNavigation</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttnavigation.h</header>
@@ -494,27 +506,6 @@
    <class>TTCurrentFrame</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcurrentframe.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTVideoFileInfo</class>
-   <extends>QGroupBox</extends>
-   <header>../gui/ttvideofileinfo.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTCutList</class>
-   <extends>QGroupBox</extends>
-   <header>../gui/ttcutlist.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTAudioFileList</class>
-   <extends>QGroupBox</extends>
-   <header>gui/ttaudiofilelist.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

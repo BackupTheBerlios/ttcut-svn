@@ -39,6 +39,8 @@
 
 class TTProcessForm : public QDialog, Ui::ProcessViewWidget
 {
+  Q_OBJECT
+
   public:
     TTProcessForm(QWidget* parent);
     ~TTProcessForm();

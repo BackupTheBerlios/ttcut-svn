@@ -562,7 +562,7 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
       // detect when mplayer has information ready for us
       connect(mplayerProc, SIGNAL( started() ), SLOT( mplayerStarted() ) );
       connect(mplayerProc, SIGNAL( readyRead() ),SLOT( readFromStdout() ) );
-      connect(mplayerProc, SIGNAL( finisheded(int, QProcess::ExitStatus) ),  SLOT( exitMPlayer(int, QProcess::ExitStatus) ) );
+      connect(mplayerProc, SIGNAL( finished(int, QProcess::ExitStatus) ),  SLOT( exitMPlayer(int, QProcess::ExitStatus) ) );
       connect(mplayerProc, SIGNAL( error(QProcess::ProcessError) ), SLOT( errorMplayer(QProcess::ProcessError) ) );
       connect(mplayerProc, SIGNAL( stateChanged(QProcess::ProcessState) ), SLOT( stateChangedMplayer(QProcess::ProcessState) ) );
 

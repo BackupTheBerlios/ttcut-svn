@@ -31,6 +31,8 @@
 #ifndef TTMPLEXPROVIDER_H
 #define TTMPLEXPROVIDER_H
 
+#include <QHash>
+
 class TTMuxListData;
 
 class TTMplexProvider
@@ -40,6 +42,13 @@ class TTMplexProvider
     ~TTMplexProvider();
 
     void writeMuxScript(TTMuxListData* muxData);
+
+    int createVerboseHash();
+    int createFormatHash();
+
+  private:
+    QHash<QString, int> verbose;
+    QHash<QString, int> format;
 };
 
 

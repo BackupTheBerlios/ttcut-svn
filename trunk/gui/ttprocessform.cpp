@@ -36,10 +36,11 @@ TTProcessForm::TTProcessForm(QWidget* parent)
 {
   setupUi(this);
 
+  btnCancel->setAutoDefault(false);
   btnCancel->hide();
 
   // signal and slot connection
-  connect(btnCancel, SIGNAL(clicked()), SIGNAL(btnCancelClicked()));
+  connect(btnCancel, SIGNAL(clicked(bool)), SIGNAL(btnCancelClicked()));
 }
 
 TTProcessForm::~TTProcessForm()
