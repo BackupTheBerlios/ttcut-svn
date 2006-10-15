@@ -447,8 +447,7 @@ void TTCutPreview::exitPreview()
   QString   file_name  = "preview*";
   QFileInfo file_info;
 
-  if ( !isPlaying )
-  {
+  if ( !isPlaying ) {
     // clean up preview* files in temp directory
     file_info.setFile( QDir(TTCut::tempDirPath), file_name );
     rm_command += file_info.absoluteFilePath();
@@ -456,16 +455,16 @@ void TTCutPreview::exitPreview()
 
     system( rm_command.toAscii().data());
 
+    releaseKeyboard();
+    
     done( 0 );
-  }
-  else
-  {
-    if(stopMPlayer())
-    {
+  } else {
+    if(stopMPlayer()) {
+      releaseKeyboard();
       done(0);
-    }
-    else
+    } else {
       qDebug( "Cant't exit, mplayer still running ???" );
+    }
   }
 }
 
@@ -613,6 +612,9 @@ void TTCutPreview::exitMPlayer(__attribute__ ((unused)) int e_code, QProcess::Ex
   // delete the mplayer process
   delete mplayerProc;
 
+  // release the keyboard
+  releaseKeyboard();
+  
   isPlaying = false;
 }
 
@@ -620,6 +622,9 @@ void TTCutPreview::errorMplayer( QProcess::ProcessError error )
 {
   log->errorMsg(c_name, "error: %d", error);
 
+  // release the Keyboard()
+  releaseKeyboard();
+  
   delete mplayerProc;
   isPlaying = false;
 }
