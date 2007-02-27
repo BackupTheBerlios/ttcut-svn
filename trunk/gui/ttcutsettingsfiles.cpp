@@ -80,7 +80,7 @@ void TTCutSettingsFiles::getTabData()
 
 void TTCutSettingsFiles::onCreateLogStateChanged(int state)
 {
-  if (state == QCheckBox::Off) {
+  if (state == Qt::Unchecked) {
     gbLogfileOptions->setEnabled(false);
   } else {
     gbLogfileOptions->setEnabled(true);

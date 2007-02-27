@@ -12,7 +12,7 @@
 PROJECT     = TTCUT
 CONFIG      += qt warn_on release
 QT          += opengl
-DEFINES     += _FILE_OFFSET_BITS=64 QT3_SUPPORT_WARNINGS
+DEFINES     += _FILE_OFFSET_BITS=64
 DIST        = TTCut
 TARGET      = ttcut
 LIBS        = -lmpeg2 -lmpeg2convert

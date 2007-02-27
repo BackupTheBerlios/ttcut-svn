@@ -1,15 +1,12 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTCutSettingsChapter</class>
  <widget class="QWidget" name="TTCutSettingsChapter" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
-    <height>480</height>
+    <width>537</width>
+    <height>307</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -47,8 +44,8 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <resources/>
+ <resources>
+  <include location="ttcutsettingschapter.qrc" />
+ </resources>
  <connections/>
 </ui>
-

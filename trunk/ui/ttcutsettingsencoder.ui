@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTCutSettingsEncoder</class>
  <widget class="QWidget" name="TTCutSettingsEncoder" >
   <property name="geometry" >
@@ -29,8 +26,8 @@
    </property>
   </widget>
  </widget>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <resources/>
+ <resources>
+  <include location="ttcutsettingsencoder.qrc" />
+ </resources>
  <connections/>
 </ui>
-
