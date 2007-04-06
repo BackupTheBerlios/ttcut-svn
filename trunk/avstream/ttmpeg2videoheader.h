@@ -114,6 +114,7 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
 
   bool readHeader( TTFileBuffer* mpeg2_stream );
   bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
+  bool writeDisplayExtension(TTFileBuffer* mpeg2_stream, off64_t offset);
   void parseBasicData( uint8_t* data, int offset=0);
   void parseExtendedData( uint8_t* data, int offset=0 );
   void printHeader( );
@@ -145,17 +146,33 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
   int      profile_and_level_indication;
   bool     progressive_sequence;
   int      chroma_format;
+  int      horizontal_size_extension;
+  int      vertical_size_enxtension;
+  int      bit_rate_extension;
+  int      vbv_buffer_size_extension;
   bool     low_delay;
+  int      frame_rate_extension_n;
+  int      frame_rate_extension_d;
 
   // from sequence_display_extension
   int      video_format;
+  bool     colour_description;
+  int      colour_primaries;
+  int      transfer_characteristics;
+  int      matrix_coefficients;
+  int      display_horizontal_size;
+  uint8_t  display_extension_marker_bit;
+  int      display_vertical_size;
 
-  // internal: number of pictures in sequence
-  int      pictures_in_sequence;
-  bool     is_sequence_extension;
+  // internal:
+  int      pictures_in_sequence;          // number of pictures in sequence
+  bool     is_sequence_extension;         // sequence has extension
+  bool     is_sequence_diplay_extension;  // sequence has diplay extension
 };
 
-
+/*! \brief SequenceEndHeader
+ * 
+ */
 class TTSequenceEndHeader : public TTMpeg2VideoHeader
 {
  public:
@@ -200,11 +217,12 @@ class TTPicturesHeader : public TTMpeg2VideoHeader
  public:
   TTPicturesHeader();
 
-  bool readHeader( TTFileBuffer* mpeg2_stream );
-  bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
-  void parseBasicData( uint8_t* data, int offset=0 );
-  void parseExtendedData( uint8_t* data, int offset=0 );
-  void printHeader( );
+  bool    readHeader( TTFileBuffer* mpeg2_stream );
+  bool    readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
+  void    parseBasicData( uint8_t* data, int offset=0 );
+  void    parseExtendedData( uint8_t* data, int offset=0 );
+  QString codingTypeString();
+  void    printHeader( );
 
   // from picture_header [00]
   int     temporal_reference;

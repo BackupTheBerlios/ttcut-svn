@@ -8,6 +8,7 @@
 /* MODIFIED: b. altendorf                                    DATE: 03/19/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 03/23/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 03/31/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 04/06/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -130,7 +131,7 @@ QStringList TTCut::recentFileList;
 // encoder settings
 // --------------------------------------------------------------
 // Version
-QString TTCut::versionString = "TTCut - 0.11.4-alpha";
+QString TTCut::versionString = "TTCut - 0.19.1";
 
 // Options
 bool TTCut::encoderMode = false;

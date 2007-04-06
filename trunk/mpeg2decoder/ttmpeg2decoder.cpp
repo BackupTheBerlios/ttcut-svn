@@ -496,7 +496,7 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
   // TODO:  warning: 'backIndex' may be used uninitialized in this function
   int           backIndex = 0;
 
-  //printf("GeheZuPosition: current: %ld | new: %d\n",currentFrameIndex,Position);
+  //qDebug("Goto: %d / FrameType: %d", iFramePos, iFrameType);
 
   // we must have index seek available
   if ( !isIndexSeek || !isDecoder )
@@ -509,7 +509,7 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
 
   // goto index position must be in valid range
   if ( iFramePos >= (long)videoIndexList->count() ||
-       iFramePos <  0                          )
+      iFramePos <  0                          )
   {
     qDebug( "%swrong position: %ld | %d",c_name,iFramePos,videoIndexList->count() );
     return currentFrameIndex;
@@ -525,15 +525,15 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
       j = 1;
       do
       {
-	if ( iFramePos+j >= (long)videoIndexList->count() ) break;
+        if ( iFramePos+j >= (long)videoIndexList->count() ) break;
 
-	frame_index = videoIndexList->videoIndexAt( iFramePos+j );
-	j++;
+        frame_index = videoIndexList->videoIndexAt( iFramePos+j );
+        j++;
       } while ( frame_index->picture_coding_type != iFrameType );
 
       iFramePos += j-1;
       if ( iFramePos > (long)videoIndexList->count()-1 )
-	iFramePos = videoIndexList->count()-1;
+        iFramePos = videoIndexList->count()-1;
     }
     // search backward
     else
@@ -541,14 +541,14 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
       j = -1;
       do
       {
-	if ( iFramePos+j < 0 ) break;
+        if ( iFramePos+j < 0 ) break;
 
-	frame_index = videoIndexList->videoIndexAt( iFramePos+j );
-	j--;
+        frame_index = videoIndexList->videoIndexAt( iFramePos+j );
+        j--;
       } while ( frame_index->picture_coding_type != iFrameType );
       iFramePos += j+1;
       if ( iFramePos < 0 )
-	iFramePos = 0;
+        iFramePos = 0;
     }
   }
 
@@ -584,14 +584,19 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
     I--;
   }
 
+  //qDebug("I-Frame position at backIndex: %d", backIndex);
+
   // found I-Frame position at backIndex
-  frame_index = videoIndexList->videoIndexAt( backIndex );
+  frame_index     = videoIndexList->videoIndexAt( backIndex );
   current_picture = videoHeaderList->pictureHeaderAt( frame_index->header_list_index );
 
   // move to required stream position
   // ---------------------------------------------------------------------------
-  framePosition( frame_index->display_order,iFramePos,
-		 current_picture->headerOffset(), current_picture->temporal_reference );
+  framePosition(
+      frame_index->display_order,
+      iFramePos,
+      current_picture->headerOffset(), 
+      current_picture->temporal_reference );
 
   return currentFrameIndex;
 }
@@ -600,11 +605,10 @@ long TTMpeg2Decoder::moveToFrameIndex( long iFramePos, int iFrameType )
 // move to specified frame position
 // -----------------------------------------------------------------------------
 bool TTMpeg2Decoder::framePosition( long dOrderI, long posDOrder,
-				    uint64_t sIAdress, int tempRefer )
+				                            uint64_t sIAdress, int tempRefer )
 {
-  bool          bResult;
-  //int           i;
-  int           numBFrames;
+  bool bResult;
+  int  numBFrames;
 
   //dOrderI  : previous I-Frame position in display order
   //posDOrder: go to position in display-order

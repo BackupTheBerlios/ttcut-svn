@@ -1,16 +1,15 @@
 /*----------------------------------------------------------------------------*/
 /* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2006                                                      */
-/* FILE     : ttvideofileinfo.h                                               */
+/* PROJEKT  : TTCUT 2007                                                      */
+/* FILE     : ttframeinfo.h                                                   */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 02/19/2006 */
-/* MODIFIED: b. altendorf                                    DATE: 03/21/2007 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/01/2007 */
+/* MODIFIED: b. altendorf                                    DATE:            */
 /*----------------------------------------------------------------------------*/
  
 // ----------------------------------------------------------------------------
-// TTVIDEOFILEINFO
+// TTFRAMEINFO
 // ----------------------------------------------------------------------------
   
 /*----------------------------------------------------------------------------*/
@@ -30,43 +29,31 @@
 /*----------------------------------------------------------------------------*/
   
 
-#ifndef TTVIDEOFILEINFO_H
-#define TTVIDEOFILEINFO_H
+#ifndef TTFRAMEINFO_H
+#define TTFRAMEINFO_H
 
-#include "ui_videofileinfowidget.h"
-#include "../common/ttcut.h"
-#include "../avstream/ttavtypes.h"
-#include "../avstream/ttmpeg2videostream.h"
+#include "ui_frameinfowidget.h"
 
-class TTVideoFileInfo : public QWidget, Ui::TTVideoFileInfoWidget
+class TTFrameInfo : public QWidget, Ui::FrameInfoWidget
 {
   Q_OBJECT
 
   public:
-    TTVideoFileInfo( QWidget* parent=0 );
+    TTFrameInfo( QWidget* parent=0 );
 
-    void setTitle (const QString & title);
-    void enableControl(bool value);
-    void resetVideoInfo();
+    void setTitle ( const QString & title );
     void clearControl();
-    void setVideoInfo(TTMpeg2VideoStream* mpeg2Stream);
-    void setFileName(QString fName);
-    void setLength(QString length);
-    void setLength(QTime total, int numFrames);
-    void setResolution(QString resolution);
-    void setResolution(int width, int height);
-    void setAspect(QString aspect);
-    void setFrameRate(QString frameRate);
-    void setBitRate(QString bitRate);
-    void setBitRate(float bitRate);
-    void setVBVBuffer(QString vbvBuffer);
-    void setVBVBuffer(int buffSize);
-    
-  public slots:
-    void onFileOpen();
-
-  signals:
-    void fileOpened( QString fileName );
+    void setNumDisplayOrder(int num);
+    void setNumDisplayOrder(int num, int tempRef);
+    void setNumStreamOrder(int num);
+    void setNumStreamOrder(int num, int tempRef);
+    void setNumOrder(int display, int stream);
+    void setFrameTime(QTime current, QTime total);
+    void setFrameTime(QTime current, int tempRef);
+    void setFrameSize(long size);
+    void setFrameType(int type);
+    void setFrameOffset(long offset);
+    void setGOPNumber(int gopNum);
+    void setGOPNumber(int gopNum, int tempRef);
 };
-
 #endif

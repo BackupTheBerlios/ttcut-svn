@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (b.altendorf@tritime.de)           DATE: 02/23/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 02/19/2006 */
+/* MODIFIED: b. altendorf                                    DATE: 03/21/2007 */
 /*----------------------------------------------------------------------------*/
  
 // ----------------------------------------------------------------------------
@@ -33,6 +34,9 @@
 #include <QFileInfo>
 #include <QFileDialog>
 
+/*
+ * Constructor
+ */
 TTVideoFileInfo::TTVideoFileInfo(QWidget* parent)
   :QWidget(parent)
 {
@@ -41,9 +45,41 @@ TTVideoFileInfo::TTVideoFileInfo(QWidget* parent)
   connect(pbVideoOpen, SIGNAL(clicked()), SLOT(onFileOpen()));
 }
 
+/*
+ * Set widget title
+ */
 void TTVideoFileInfo::setTitle( __attribute__((unused))const QString & title )
 {
+}
 
+/*!
+ * Enable / disable the control and his child controls
+ */
+void TTVideoFileInfo::enableControl(bool value)
+{
+  pbVideoOpen->setEnabled(value);
+}
+
+/*
+ * legacy ;-)
+ */
+void TTVideoFileInfo::resetVideoInfo()
+{
+  clearControl();
+}
+
+/*
+ * Reset the video file info text labels to default values
+ */
+void TTVideoFileInfo::clearControl()
+{
+  infoVideoFileName->setText("---");
+  infoVideoLength->setText("---");
+  infoVideoResolution->setText("---");
+  infoVideoAspectRatio->setText("---");
+  infoVideoFramerate->setText("---");
+  infoVideoBitrate->setText("---");
+  infoVideoBuffer->setText("---");
 }
 
 void TTVideoFileInfo::setVideoInfo( TTMpeg2VideoStream* mpeg2Stream )
@@ -58,7 +94,7 @@ void TTVideoFileInfo::setVideoInfo( TTMpeg2VideoStream* mpeg2Stream )
   QTime time = ttFramesToTime( numFrames, mpeg2Stream->frameRate() );
   szTemp.sprintf("%s (%d)", qPrintable(time.toString("hh:mm:ss.zzz")), numFrames);
   infoVideoLength->setText( szTemp );
-  
+
   // set video resolution
   szTemp.sprintf("%dx%d",mpeg2Stream->currentSequenceHeader()->horizontalSize(),
       mpeg2Stream->currentSequenceHeader()->verticalSize());
@@ -71,60 +107,124 @@ void TTVideoFileInfo::setVideoInfo( TTMpeg2VideoStream* mpeg2Stream )
   infoVideoFramerate->setText(mpeg2Stream->currentSequenceHeader()->frameRateText());
 
   // set bitrate
-  szTemp.sprintf("%4.1f kBit/s", mpeg2Stream->currentSequenceHeader()->bitRateKbit());
+  szTemp.sprintf("%4.1f kBit/s",
+      mpeg2Stream->currentSequenceHeader()->bitRateKbit());
   infoVideoBitrate->setText( szTemp );
 
   // set VBV buffer size
-  szTemp.sprintf("%d kWords",mpeg2Stream->currentSequenceHeader()->vbvBufferSize());
+  szTemp.sprintf("%d kWords",
+      mpeg2Stream->currentSequenceHeader()->vbvBufferSize());
   infoVideoBuffer->setText( szTemp );
 }
 
-void TTVideoFileInfo::resetVideoInfo()
+
+
+/*
+ * Set the video stream file name
+ */
+void TTVideoFileInfo::setFileName(QString fName)
 {
-  infoVideoFileName->setText("---");
-  infoVideoLength->setText("---");
-  infoVideoResolution->setText("---");
-  infoVideoAspectRatio->setText("---");
-  infoVideoFramerate->setText("---");
-  infoVideoBitrate->setText("---");
-  infoVideoBuffer->setText("---");
+  infoVideoFileName->setText(fName); 
 }
 
-void TTVideoFileInfo::setFileName( QString fName )
+/*
+ * Set the video stream length as QString
+ */
+void TTVideoFileInfo::setLength(QString length)
 {
-  infoVideoFileName->setText( fName ); 
+  infoVideoLength->setText(length);
 }
 
-void TTVideoFileInfo::setLength( QString length )
+/*
+ * Set the video stream file length as QTime an the number of frames
+ * as int
+ */
+void TTVideoFileInfo::setLength(QTime total, int numFrames)
 {
-  infoVideoLength->setText( length );
+  QString tmpString;
+
+  tmpString.sprintf("%s (%d)", 
+      qPrintable(total.toString("hh:mm:ss.zzz")), 
+      numFrames);
+  infoVideoLength->setText(tmpString);
 }
 
-void TTVideoFileInfo::setResolution( QString resolution )
+/*
+ * Set the video stream resolution as QString
+ */
+void TTVideoFileInfo::setResolution(QString resolution)
 {
-  infoVideoResolution->setText( resolution );
+  infoVideoResolution->setText(resolution);
 }
 
-void TTVideoFileInfo::setAspect( QString aspect )
+/*
+ * Set the video stream resolution as width x heigth
+ */
+void TTVideoFileInfo::setResolution(int width, int height)
+{
+  QString tmpString;
+
+  tmpString.sprintf("%dx%d", width, height);
+  infoVideoResolution->setText(tmpString);
+}
+
+/*
+ * Set the video stream aspect ratio as QString
+ */
+void TTVideoFileInfo::setAspect(QString aspect)
 {
   infoVideoAspectRatio->setText( aspect );  
 }
 
-void TTVideoFileInfo::setFrameRate( QString frameRate )
+/*
+ * Set the video stream framerate as QString
+ */
+void TTVideoFileInfo::setFrameRate(QString frameRate)
 {
-  infoVideoFramerate->setText( frameRate );
+  infoVideoFramerate->setText(frameRate);
 }
 
-void TTVideoFileInfo::setBitRate( QString bitRate )
+/*
+ * Set the video stream bitrate as QString
+ */
+void TTVideoFileInfo::setBitRate(QString bitRate)
 {
-  infoVideoBitrate->setText( bitRate );
+  infoVideoBitrate->setText(bitRate);
 }
 
-void TTVideoFileInfo::setVBVBuffer( QString vbvBuffer )
+/*
+ * Set the video stream bitrate as float value
+ */
+void TTVideoFileInfo::setBitRate(float rate)
 {
-  infoVideoBuffer->setText( vbvBuffer );
+  QString tmpString;
+
+  tmpString.sprintf("%4.1f kBit/s", rate);
+  infoVideoBitrate->setText(tmpString);
 }
 
+/*
+ * Set the video stream VBV buffer size as QString
+ */
+void TTVideoFileInfo::setVBVBuffer(QString vbvBuffer)
+{
+  infoVideoBuffer->setText(vbvBuffer);
+}
+
+/*
+ * Set the video stream VBV buffer as int value
+ */
+void TTVideoFileInfo::setVBVBuffer(int buffSize)
+{
+  QString tmpString;
+
+  tmpString.sprintf("%d kWords", buffSize);
+  infoVideoBuffer->setText(tmpString);
+}
+
+/*
+ * Show the file open dialog 
+ */
 void TTVideoFileInfo::onFileOpen()
 {
   QString fn = QFileDialog::getOpenFileName( this,

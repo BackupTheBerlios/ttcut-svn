@@ -1,16 +1,15 @@
 /*----------------------------------------------------------------------------*/
 /* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2006                                                      */
-/* FILE     : ttvideofileinfo.h                                               */
+/* PROJEKT  : TTCUT 2007                                                      */
+/* FILE     : ttstepby.h                                                      */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 02/19/2006 */
-/* MODIFIED: b. altendorf                                    DATE: 03/21/2007 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/01/2007 */
+/* MODIFIED: b. altendorf                                    DATE:            */
 /*----------------------------------------------------------------------------*/
  
 // ----------------------------------------------------------------------------
-// TTVIDEOFILEINFO
+// TTSTEPBY
 // ----------------------------------------------------------------------------
   
 /*----------------------------------------------------------------------------*/
@@ -30,43 +29,44 @@
 /*----------------------------------------------------------------------------*/
   
 
-#ifndef TTVIDEOFILEINFO_H
-#define TTVIDEOFILEINFO_H
+#ifndef TTSTEPBY_H
+#define TTSTEPBY_H
 
-#include "ui_videofileinfowidget.h"
-#include "../common/ttcut.h"
-#include "../avstream/ttavtypes.h"
-#include "../avstream/ttmpeg2videostream.h"
+#include "ui_stepbywidget.h"
 
-class TTVideoFileInfo : public QWidget, Ui::TTVideoFileInfoWidget
+class TTStepBy : public QWidget, Ui::StepByWidget
 {
   Q_OBJECT
 
   public:
-    TTVideoFileInfo( QWidget* parent=0 );
+    TTStepBy( QWidget* parent=0 );
 
-    void setTitle (const QString & title);
+    void setTitle ( const QString & title );
     void enableControl(bool value);
-    void resetVideoInfo();
-    void clearControl();
-    void setVideoInfo(TTMpeg2VideoStream* mpeg2Stream);
-    void setFileName(QString fName);
-    void setLength(QString length);
-    void setLength(QTime total, int numFrames);
-    void setResolution(QString resolution);
-    void setResolution(int width, int height);
-    void setAspect(QString aspect);
-    void setFrameRate(QString frameRate);
-    void setBitRate(QString bitRate);
-    void setBitRate(float bitRate);
-    void setVBVBuffer(QString vbvBuffer);
-    void setVBVBuffer(int buffSize);
-    
+    int  getCurrentFrameType();
+    int  getCurrentOrder();
+
   public slots:
-    void onFileOpen();
+    void onFrameTypeI();
+    void onFrameTypeP();
+    void onFrameTypeB();
+    void onOrderStream();
+    void onOrderDisplay();
+    void onNextFrame();
+    void onPrevFrame();
 
   signals:
-    void fileOpened( QString fileName );
+    void gotoNextFrame(int frameType, int order);
+    void gotoPrevFrame(int frameType, int order);
+    void stepByIFrame();
+    void stepByPFrame();
+    void stepByBFrame();
+    void orderDisplay();
+    void orderStream();
+  
+  private:
+    int  currentFrameType;
+    int  currentOrder;
 };
 
 #endif
