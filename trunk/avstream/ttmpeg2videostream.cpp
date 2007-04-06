@@ -1788,12 +1788,12 @@ void TTMpeg2VideoStream::encodePart(int start, int end,
   }
 
   // remove temporary file
-  log->infoMsg(c_name, "avi-file: %s", new_file_info.absolutePath().toAscii().data());
-  //QString rm_cmd  = "rm ";
-  //rm_cmd         += new_file_info.absolutePath();
-  //rm_cmd         += "/encode.*";
+  //log->infoMsg(c_name, "avi-file: %s", new_file_info.absolutePath().toAscii().data());
+  QString rm_cmd  = "rm ";
+  rm_cmd         += new_file_info.absolutePath();
+  rm_cmd         += "/encode.*";
 
-  //system( rm_cmd.toAscii().data() );
+  system( rm_cmd.toAscii().data() );
 
   delete avi_writer;
   delete transcode_prov;

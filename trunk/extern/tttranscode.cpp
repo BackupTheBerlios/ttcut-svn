@@ -33,7 +33,7 @@
 #include <QTimer>
 #include <QTextStream>
 
-//#define TTTRANSCODE_DEBUG
+#define TTTRANSCODE_DEBUG
 
 #define EVENT_LOOP_INTERVALL 100000
 
@@ -72,8 +72,8 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
   log->debugMsg( c_name, "----------------------------------------------------" );
   log->debugMsg( c_name, "transcode parameter:" );
   log->debugMsg( c_name, "----------------------------------------------------" );
-  log->debugMsg( c_name, "avi-file    : %s",enc_par.avi_input_finfo.absoluteFilePath().ascii() );
-  log->debugMsg( c_name, "mpeg-file   : %s",enc_par.mpeg2_output_finfo.absoluteFilePath().ascii() );
+  //log->debugMsg( c_name, "avi-file    : %s",enc_par.avi_input_finfo.absoluteFilePath().ascii() );
+  //log->debugMsg( c_name, "mpeg-file   : %s",enc_par.mpeg2_output_finfo.absoluteFilePath().ascii() );
   log->debugMsg( c_name, "widhtxheight: %dx%d",enc_par.video_width,enc_par.video_height );
   log->debugMsg( c_name, "aspect-code : %d",enc_par.video_aspect_code );
   log->debugMsg( c_name, "bitrate     : %f",enc_par.video_bitrate );
@@ -84,6 +84,12 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
   QString str_aspect;
   str_aspect.sprintf("%d",enc_par.video_aspect_code );
 
+  QString str_format;
+  str_format.sprintf("%dx%d", enc_par.video_width, enc_par.video_height);
+
+  QString str_bitrate;
+  str_bitrate.sprintf("%f", enc_par.video_bitrate);
+
   strl_command_line.clear();
 
   strl_command_line << "-i"
@@ -91,7 +97,9 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 		    << "--pre_clip"
 		    << "0"
 		    << "-y"
-		    << "ffmpeg"
+		    << "mpeg2enc"
+        << "-F"
+        << "8,\"-v 1 -q 3\""
 		    << "--export_prof"
 		    << "dvd-pal"
 		    << "--export_asr"
