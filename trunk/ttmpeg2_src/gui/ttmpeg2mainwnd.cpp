@@ -1,4 +1,4 @@
-
+/*----------------------------------------------------------------------------*/
 /* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/01/2007 */
 /* MODIFIED: b. altendorf                                    DATE: 04/02/2007 */
+/* MODIFIED: b. altendrof                                    DATE: 04/10/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -114,11 +115,19 @@ void TTMpeg2MainWnd::onExit()
  */
 void TTMpeg2MainWnd::onWriteHeaderList()
 {
-  qDebug("Writing header list to file...");
+  QString fn = QFileDialog::getSaveFileName( this,
+      tr("Export header index list"),
+      TTCut::lastDirPath,
+      "Headerlist (*.txt)" );
 
+  if (fn.isEmpty())
+    return;
+
+  QFileInfo fInfo( fn );
+  TTCut::lastDirPath     = fInfo.absolutePath();
   TTHeaderWriter* writer = new TTHeaderWriter(videoIndexList, videoHeaderList);
 
-  writer->writeHeaderListToFile("testheader.txt");
+  writer->writeHeaderListToFile(fn);
 
   delete writer;
 }
