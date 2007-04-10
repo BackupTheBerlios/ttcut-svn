@@ -180,6 +180,8 @@ class TTCut
    // --------------------------------------------------------------
    static float        frameRate;
    static QWidget*     mainWindow;
+
+   static const char* toAscii(QString string);
 };
 
 

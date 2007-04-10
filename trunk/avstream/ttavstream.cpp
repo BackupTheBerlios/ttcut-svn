@@ -143,7 +143,7 @@ bool TTAVStream::openStream()
   if ( ttAssigned(stream_info) )
   {
     // Create the file buffer read_only
-    stream_buffer = new TTFileBuffer( stream_info->filePath().toAscii(), fm_open_read );
+    stream_buffer = new TTFileBuffer( qPrintable(stream_info->filePath()), fm_open_read );
 
     if ( ttAssigned( stream_buffer ) )
     {

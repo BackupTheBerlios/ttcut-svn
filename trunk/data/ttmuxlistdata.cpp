@@ -205,10 +205,10 @@ void TTMuxListData::print()
 
   for(int i=0; i < data.count(); i++) {
     log->infoMsg(oName, "--------------------------------");
-    log->infoMsg(oName, "video-file: %s", qPrintable(data[i].getVideoName()));
+    log->infoMsg(oName, "video-file: %s", data[i].getVideoName().toAscii().constData());
     QStringList audioNames = data[i].getAudioNames();
     for (int j=0; j < audioNames.size(); j++) {
-      log->infoMsg(oName, "audio-file: %s", qPrintable(audioNames.at(j)));
+      log->infoMsg(oName, "audio-file: %s", audioNames.at(j).toAscii().constData());
     }
     log->infoMsg(oName, "--------------------------------");
   }

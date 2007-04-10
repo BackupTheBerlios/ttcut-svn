@@ -284,7 +284,7 @@ void TTCutMainWindow::onFileSave()
   try {
     projectFile = new TTCutProject(TTCut::projectFileName, QIODevice::WriteOnly);
   } catch (TTCutProjectOpenException) {
-    log->errorMsg(oName, "error open save project file: %s", qPrintable(TTCut::projectFileName));
+    log->errorMsg(oName, "error open save project file: %s", TTCut::toAscii(TTCut::projectFileName));
     return;
   }
 
@@ -333,7 +333,7 @@ void TTCutMainWindow::onFileRecent()
   QAction* action = qobject_cast<QAction*>(sender());
 
   if (action) {
-    log->infoMsg(oName, "open recent project file: %s", qPrintable(action->data().toString()));
+    log->infoMsg(oName, "open recent project file: %s", TTCut::toAscii(action->data().toString()));
     openProjectFile(action->data().toString());
   }
 }
@@ -545,7 +545,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   // if file exists delete it
   if (video_cut_file_info.exists()) {
     // TODO: User warning about deleting file
-    log->warningMsg(oName, "deleting existing video cut file: %s", qPrintable(videoCutName));
+    log->warningMsg(oName, "deleting existing video cut file: %s", TTCut::toAscii(videoCutName));
     QFile tempFile(videoCutName);
     tempFile.remove();
     tempFile.close();
@@ -564,7 +564,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     progress_bar->show();
     qApp->processEvents();
 
-    video_cut_stream = new TTFileBuffer(qPrintable(videoCutName), fm_open_write );
+    video_cut_stream = new TTFileBuffer(TTCut::toAscii(videoCutName), fm_open_write );
 
     mpegStream->setProgressBar( progress_bar );
 
@@ -612,7 +612,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     // audio file exists
     if (audio_cut_file_info.exists()) {
       // TODO: Warning about deleting file
-      log->warningMsg(oName, "deleting existing audio cut file: %s", qPrintable(audio_cut_name));
+      log->warningMsg(oName, "deleting existing audio cut file: %s", TTCut::toAscii(audio_cut_name));
       QFile tempFile(audio_cut_name);
       tempFile.remove();
       tempFile.close();
@@ -624,7 +624,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
     current_audio_stream->setProgressBar( progress_bar );
 
-    audio_cut_stream = new TTFileBuffer(qPrintable(audio_cut_name), fm_open_write );
+    audio_cut_stream = new TTFileBuffer(TTCut::toAscii(audio_cut_name), fm_open_write );
 
     current_audio_stream->cut( audio_cut_stream, cutListData );
 
@@ -656,8 +656,8 @@ void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
 // -----------------------------------------------------------------------------
 void TTCutMainWindow::createAVStreams(QString videoFile, QString audioFile)
 {
-  log->infoMsg(oName, "Create video stream: %s", qPrintable(videoFile));
-  log->infoMsg(oName, "Create audio stream: %s", qPrintable(audioFile));
+  log->infoMsg(oName, "Create video stream: %s", TTCut::toAscii(videoFile));
+  log->infoMsg(oName, "Create audio stream: %s", TTCut::toAscii(audioFile));
 }
 
 //! Search a audiofile corresponding to videofile name
@@ -730,7 +730,7 @@ bool TTCutMainWindow::openProjectFile(QString fName)
   try {
     projectFile = new TTCutProject(fName, QIODevice::ReadOnly);
   } catch (TTCutProjectOpenException) {
-    log->errorMsg(oName, "error open project file: %s", qPrintable(fName));
+    log->errorMsg(oName, "error open project file: %s", TTCut::toAscii(fName));
     return result;
   }
 
@@ -742,7 +742,7 @@ bool TTCutMainWindow::openProjectFile(QString fName)
   }
 
   if (!TTCut::isVideoOpen) {
-    log->errorMsg(oName, "error open video file: %s", qPrintable(videoFileName));
+    log->errorMsg(oName, "error open video file: %s", TTCut::toAscii(videoFileName));
     return result;
   }
 
@@ -754,7 +754,7 @@ bool TTCutMainWindow::openProjectFile(QString fName)
   }
 
   if (audioList->count() == 0) {
-    log->warningMsg(oName, "no audio files in project: %s", qPrintable(fName));
+    log->warningMsg(oName, "no audio files in project: %s", TTCut::toAscii(fName));
     audioFileInfo->onFileOpen();
   }
 
@@ -790,11 +790,11 @@ int TTCutMainWindow::openVideoStream(QString fName)
   QFileInfo fInfo(fName);
 
   if (!fInfo.exists()) {
-    log->errorMsg(oName, "Video file doesn't exists: %s", qPrintable(fName));
+    log->errorMsg(oName, "Video file doesn't exists: %s", TTCut::toAscii(fName));
     return result;
   }
 
-  log->infoMsg(oName, "Read video stream: %s", qPrintable(fName));
+  log->infoMsg(oName, "Read video stream: %s", TTCut::toAscii(fName));
 
   // Close current project
   if(TTCut::isVideoOpen){
@@ -805,7 +805,7 @@ int TTCutMainWindow::openVideoStream(QString fName)
 
   // MPEG2 video
   if(!videoType->avStreamType() == TTAVTypes::mpeg2_demuxed_video) {
-    log->errorMsg(oName, "wrong video type: %s", qPrintable(fName));
+    log->errorMsg(oName, "wrong video type: %s", TTCut::toAscii(fName));
     return result;
   }
 
@@ -870,7 +870,7 @@ int TTCutMainWindow::openAudioStream(QString fName)
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
 
-  log->infoMsg(oName, "Read audio stream: %s", qPrintable(fName));
+  log->infoMsg(oName, "Read audio stream: %s", TTCut::toAscii(fName));
 
   // get the strem type and create according stream-object
   audio_type   = new TTAudioType( fName );
@@ -917,7 +917,7 @@ int TTCutMainWindow::openAudioStream(QString fName)
     current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
 
   } else {
-    log->errorMsg(oName, "wrong audio type for file: %s", qPrintable(fName));
+    log->errorMsg(oName, "wrong audio type for file: %s", TTCut::toAscii(fName));
   }
 
   delete audio_type;

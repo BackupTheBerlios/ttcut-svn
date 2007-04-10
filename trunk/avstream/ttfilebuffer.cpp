@@ -91,6 +91,8 @@ TTFileBuffer::TTFileBuffer( const char* f_name, int f_mode )
   fill_count       = 0;
   read_count       = 0;
 
+  printf("TTFileBuffer::openFile: %s\n", f_name);
+
   openFile( f_name, f_mode );
 
   initTSearch();

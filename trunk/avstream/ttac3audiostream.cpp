@@ -240,7 +240,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   float   audio_start_time;
   float   audio_end_time;
   float   local_audio_offset = 0.0;
-
+  
   //qDebug( "%s-----------------------------------------------",c_name );
   //qDebug( "%s>>> cut audio stream                           ",c_name );
   //qDebug( "%s-----------------------------------------------",c_name );

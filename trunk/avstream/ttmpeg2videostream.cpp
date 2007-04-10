@@ -127,14 +127,14 @@ int TTMpeg2VideoStream::createHeaderList()
   {
     idd_stream_name = ttChangeFileExt( stream_info->filePath(), "idd" );
 
-    log->infoMsg(c_name, "look for idd-file: %s",idd_stream_name.toAscii().data());
+    log->infoMsg(c_name, "look for idd-file: %s",idd_stream_name.toAscii().constData());
 
     // check for Mpeg2Schnitt idd-stream in current directory
     idd_stream_info.setFile( idd_stream_name );
 
     if ( idd_stream_info.exists() )
     {
-      idd_stream         = new TTFileBuffer( idd_stream_name.toAscii().data(), fm_open_read );
+      idd_stream         = new TTFileBuffer( idd_stream_name.toAscii().constData(), fm_open_read );
 
       header_list_exists = createHeaderListFromIdd();
 
@@ -530,8 +530,11 @@ bool TTMpeg2VideoStream::openStream()
   // open the stream
   if ( ttAssigned(stream_info) )
   {
+    // toAscii() does not work here with german umlauts!
+    //qDebug("openSream: %s", qPrintable(stream_info->filePath()));//.toAscii().constData());
+
     // Create the file buffer read_only
-    mpeg2_stream = new TTFileBuffer( stream_info->filePath().toAscii().data(), fm_open_read );
+    mpeg2_stream = new TTFileBuffer( qPrintable(stream_info->filePath()), fm_open_read );
 
     if ( ttAssigned( mpeg2_stream ) )
     {
@@ -729,7 +732,7 @@ void TTMpeg2VideoStream::writeIDDFile( )
   // create Mpeg2Schnitt idd-stream name
   idd_stream_name = ttChangeFileExt( stream_info->filePath(), "idd" );
 
-  //qDebug( "%screate idd-file: %s",c_name,idd_stream_name.ascii() );
+  //qDebug( "%screate idd-file: %s",c_name,idd_stream_name.toAscii().constData() );
 
   // check for Mpeg2Schnitt idd-stream in current directory
   idd_stream_info.setFile( idd_stream_name );
@@ -1788,7 +1791,7 @@ void TTMpeg2VideoStream::encodePart(int start, int end,
   }
 
   // remove temporary file
-  //log->infoMsg(c_name, "avi-file: %s", new_file_info.absolutePath().toAscii().data());
+  log->infoMsg(c_name, "avi-file: %s", new_file_info.absolutePath().toAscii().data());
   QString rm_cmd  = "rm ";
   rm_cmd         += new_file_info.absolutePath();
   rm_cmd         += "/encode.*";

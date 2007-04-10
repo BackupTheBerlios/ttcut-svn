@@ -191,3 +191,8 @@ TTCut::~TTCut()
 
 }
 
+
+const char* TTCut::toAscii(QString string)
+{
+  return string.toAscii().constData();
+}

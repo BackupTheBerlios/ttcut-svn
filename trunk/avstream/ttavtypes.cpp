@@ -80,7 +80,7 @@ TTAVTypes::TTAVTypes( QString f_name )
 #if defined(TTAVTYPES_DEBUG)
   if ( !av_stream_exists )
   {
-    qDebug( "%saudio stream %s doesn't exist (!)",c_name,f_name.ascii() );
+    qDebug( "%saudio stream %s doesn't exist (!)",c_name,f_name.toAscii().constData());
   }
 #endif
 }
@@ -214,7 +214,7 @@ void TTAudioType::getAudioStreamType()
   start_pos       = 0;
 
   // open audio-stream for reading
-  av_stream = new TTFileBuffer( av_stream_info->filePath().toAscii(), fm_open_read );
+  av_stream = new TTFileBuffer( qPrintable(av_stream_info->filePath()), fm_open_read );
 
   // read buffer from stream
   count = av_stream->readBuffer( buffer, 65536 );
