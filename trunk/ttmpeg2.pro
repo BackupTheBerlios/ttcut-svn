@@ -23,10 +23,12 @@ MOC_DIR     = ttmpeg2_moc
 UI_DIR      = ui_h 
 RCC_DIR     = res
 RESOURCES   = ui/videofileinfowidget.qrc\
+              ui/processviewwidget.qrc\
               ttmpeg2_src/ui/stepbywidget.qrc\
               ttmpeg2_src/ui/frameinfowidget.qrc\
               ttmpeg2_src/ui/ttmpeg2_mainwnd.qrc
 FORMS       = ui/videofileinfowidget.ui\
+              ui/processviewwidget.ui\
               ttmpeg2_src/ui/stepbywidget.ui\
               ttmpeg2_src/ui/frameinfowidget.ui\
               ttmpeg2_src/ui/ttmpeg2_mainwnd.ui
