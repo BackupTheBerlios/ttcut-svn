@@ -24,3 +24,5 @@ TODO list for project TTCut
 * Find solution for chapter marks
 * Cut audio only
 * Find a logo (!!!!!) 
+* Remove hard coded frame rate setting in ttaviwriter (!!)
+* Read previous sequence before current start position in ttaviwriter (!!)
