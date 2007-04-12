@@ -114,7 +114,9 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
     progress_bar->setActionText( "Search equal frame..." );
   //else
     //qDebug("ProgessBar not assigned (!)");
-  
+
+  //TODO: go back to previous sequence to ensure correct encoding of
+  //      open GOP's
   // move decode position to "ref_frame_pos"
   current_frame = decoder->moveToFrameIndex( start_frame_pos );
   
@@ -123,6 +125,7 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
 
   qDebug( "%sAVI frame info: width: %d x height: %d",c_name,frameInfo->width,frameInfo->height );
 
+  //TODO: avoid setting hard coded frame rate!
   AVI_set_video(avi_file, frameInfo->width, frameInfo->height, 25.0, "YV12");
   
   ref_data = new uint8_t [frameInfo->size+2*frameInfo->chroma_size];
