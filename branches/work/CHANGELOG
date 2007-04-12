@@ -1,0 +1,15 @@
+--------------------------------------------------------------------------------
+TTCut-Changelog
+--------------------------------------------------------------------------------
+
+Version 0.11.x (just in alpha state)
+------------------------------------
+
+0.11.2: * Qt3 support completely removed
+        * GUI exists now in ui files for easier editing
+        * GUI looks nicer
+        * Append stream navigator for cut visualisation
+          (will later be used for setting the chapters)
+        * Fixed cut list bug: When insert a new cut-range while a cut entry in
+          cut-list is selected, the selected cut-out position changed to the
+          newly added cut entry
