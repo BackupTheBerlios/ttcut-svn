@@ -121,11 +121,11 @@ void TTCutSettings::readSettings()
   // Muxer settings
   // ---------------------------------------------------------------------------
   beginGroup( "/Muxer" );
-  TTCut::muxMode       = value( "MuxMode/", TTCut::muxMode ).toInt();
-  TTCut::mpeg2Target   = value( "Mpeg2Target/", TTCut::mpeg2Target ).toInt();
-  TTCut::muxProg       = value( "MuxProg/", TTCut::muxProg ).toString();
-  TTCut::muxProgPath   = value( "MuxProgPath/", TTCut::muxProgPath ).toString();
-  TTCut::muxProgCmd    = value( "MuxProgCmd/", TTCut::muxProgCmd ).toString();
+  TTCut::muxMode       = value( "MuxMode/",      TTCut::muxMode ).toInt();
+  TTCut::mpeg2Target   = value( "Mpeg2Target/",  TTCut::mpeg2Target ).toInt();
+  TTCut::muxProg       = value( "MuxProg/",      TTCut::muxProg ).toString();
+  TTCut::muxProgPath   = value( "MuxProgPath/",  TTCut::muxProgPath ).toString();
+  TTCut::muxProgCmd    = value( "MuxProgCmd/",   TTCut::muxProgCmd ).toString();
   TTCut::muxOutputPath = value( "MuxOutputDir/", TTCut::muxOutputPath ).toString();
   endGroup();
 
@@ -175,14 +175,14 @@ void TTCutSettings::writeSettings()
   // Navigation settings
   // ---------------------------------------------------------------------------
   beginGroup( "/Navigation" );
-  setValue( "FastSlider/", TTCut::fastSlider );
+  setValue( "FastSlider/",      TTCut::fastSlider );
   setValue( "StepSliderClick/", TTCut::stepSliderClick );
-  setValue( "StepPgUpDown/", TTCut::stepPgUpDown );
-  setValue( "StepArrowKeys/", TTCut::stepArrowKeys );
-  setValue( "StepPlusAlt/", TTCut::stepPlusAlt );
-  setValue( "StepPlusCtrl/",TTCut::stepPlusCtrl );
-  setValue( "StepQuickJump/", TTCut::stepQuickJump );
-  setValue( "StepMouseWheel/", TTCut::stepMouseWheel );
+  setValue( "StepPgUpDown/",    TTCut::stepPgUpDown );
+  setValue( "StepArrowKeys/",   TTCut::stepArrowKeys );
+  setValue( "StepPlusAlt/",     TTCut::stepPlusAlt );
+  setValue( "StepPlusCtrl/",    TTCut::stepPlusCtrl );
+  setValue( "StepQuickJump/",   TTCut::stepQuickJump );
+  setValue( "StepMouseWheel/",  TTCut::stepMouseWheel );
   endGroup();
 
   // Common options

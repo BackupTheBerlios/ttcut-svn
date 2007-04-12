@@ -31,22 +31,49 @@
 #ifndef TTMPLEXPROVIDER_H
 #define TTMPLEXPROVIDER_H
 
+#include "../common/ttmessagelogger.h"
+#include "../common/ttcut.h"
+#include "../data/ttmuxlistdata.h"
+#include "../gui/ttprocessform.h"
+
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QProcess>
 #include <QHash>
 
 class TTMuxListData;
 
-class TTMplexProvider
+class TTMplexProvider : public QObject
 {
+  Q_OBJECT
+
   public:
     TTMplexProvider();
     ~TTMplexProvider();
 
     void writeMuxScript(TTMuxListData* muxData);
+    bool mplexPart(TTMuxListData* muxData, int index);
 
+  protected:
     int createVerboseHash();
     int createFormatHash();
 
+  public slots:
+    void onProcError(QProcess::ProcessError procError);
+    void onProcReadOut();
+    void onProcStarted();
+    void onProcFinished(int exitCode, QProcess::ExitStatus);
+    void onProcStateChanged(QProcess::ProcessState procState);
+    void onProcKill();
+
   private:
+    TTMessageLogger*    log;
+    QProcess*           proc;
+    QString             commandStr;
+    QStringList         commandStrList;
+    int                 exitCode;
+    bool                mplexSuccess;
     QHash<QString, int> verbose;
     QHash<QString, int> format;
 };

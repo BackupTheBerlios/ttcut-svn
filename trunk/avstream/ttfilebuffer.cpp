@@ -107,7 +107,8 @@ TTFileBuffer::~TTFileBuffer()
 
   if ( file_handle > -1 )
   {
-    //printf("%sclose file: %s\n",c_name,file_name);
+    printf("%sclose file: %s\n",c_name,file_name);
+    fsync( file_handle );
     close( file_handle );
   }
 }

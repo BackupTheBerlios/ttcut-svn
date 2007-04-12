@@ -5,7 +5,7 @@
 /* FILE     : ttmplexprovider.cpp                                             */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2006 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/11/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -30,15 +30,12 @@
 
 #include "ttmplexprovider.h"
 
-#include "../common/ttcut.h"
-#include "../data/ttmuxlistdata.h"
-
-#include <QString>
-#include <QStringList>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
+
+#define EVENT_LOOP_INTERVALL 1
 
 /**
  *Usage: mplex [params] -o <output filename pattern> <input file>... 
@@ -78,18 +75,39 @@
  *  Print this lot out!
  */
 
-TTMplexProvider::TTMplexProvider()
+const char cName[] = "TTMplexProvider";
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Constructor
+ */
+TTMplexProvider::TTMplexProvider() : QObject()
 {
+  // message logger instance
+  log = TTMessageLogger::getInstance();
+  log->infoMsg(cName, "start mplex");
+
+  mplexSuccess = false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Clean up
+ */
 TTMplexProvider::~TTMplexProvider()
 {
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write mux data in muxscript
+ * Theire should be only one muxscript for one session. Purpose of the muxscript
+ * is batch-muxing all cutted videos from the current session, after(!) quitting
+ * TTCut.
+ */
 void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
 {
   QStringList mplexCmd;
-  QString     mpegFileName;
+  QString     outputFile;
+  QString     videoFile;
+  QString     audioFile;
   QFileInfo   muxInfo(QDir(TTCut::cutDirPath), "muxscript.sh" );
   QFile       muxFile(muxInfo.absoluteFilePath());
 
@@ -100,7 +118,7 @@ void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
 
   QTextStream muxOutStream(&muxFile);
 
-  muxOutStream << "# TTCut - Mplex script ver. 0.10.1" << "\n";
+  muxOutStream << "# TTCut - Mplex script ver. 0.10.2" << "\n";
   muxOutStream << "#!/bin/sh" << "\n";
   muxOutStream << "#\n";
 
@@ -108,25 +126,217 @@ void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
 
     mplexCmd.clear();
 
+    mplexCmd   << "mplex"
+               << "-f8"
+               << "-o";
+
     // video output file name
-    mpegFileName = ttChangeFileExt(muxData->videoFileAt(i), "mpg");
+    outputFile = "\""
+               + ttChangeFileExt(muxData->videoFileAt(i), "mpg")
+               + "\"";
 
-    mplexCmd << "mplex"
-      << "-f8"
-      << "-o"
-      << mpegFileName
-      << muxData->videoFileAt(i);
+    mplexCmd   << outputFile;
+    
+    // video input file name
+    videoFile  = "\""
+               + muxData->videoFileAt(i)
+               + "\"";
 
-    for (int j=0; j < muxData->numAudioFilesAt(i); j++) {
-      mplexCmd << muxData->audioFileAt(i, j);
+    mplexCmd   << videoFile;
+
+    // audio file names
+    for (int j=0; j < muxData->numAudioFilesAt(i); j++) 
+    {
+      mplexCmd << "\""
+                + muxData->audioFileAt(i, j)
+                + "\"";
     }
+
+    // join all items in string list together separated by spaces and write
+    // the resulting string to the output buffer
     muxOutStream << mplexCmd.join(" ") << "\n";
     muxOutStream << "#\n";
   }
+
   muxFile.flush();
   muxFile.close();
+
+  // make muxscript executeable by the owner
+  bool result = muxFile.setPermissions(
+        QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|
+        QFile::ReadUser |QFile::WriteUser |QFile::ExeUser |
+        QFile::ReadGroup|QFile::ExeGroup);
+
+  if (!result)
+    log->errorMsg(cName, "Cannot modify permissions of the muxscript!");
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Call mplex to mux current stream.
+ * Pupose is to mux the current (cutted) video after finishing the cut.
+ */
+bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
+{
+  QString        mplexCmd;
+  QStringList    mplexArgs;
+  QString        outputFile;
+  QString        videoFile;
+  QString        audioFile;
+  int  update  = EVENT_LOOP_INTERVALL;
+  mplexSuccess = false;
+  proc         = new QProcess();
+  proc->setReadChannelMode( QProcess::MergedChannels );
+
+
+  // signal and slot connection for QProcess
+  connect(proc, SIGNAL(error(QProcess::ProcessError)),        SLOT(onProcError(QProcess::ProcessError)));
+  connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)),  SLOT(onProcFinished(int, QProcess::ExitStatus)));
+  connect(proc, SIGNAL(readyRead()),                          SLOT(onProcReadOut()));
+  connect(proc, SIGNAL(started()),                            SLOT(onProcStarted()));
+  connect(proc, SIGNAL(stateChanged(QProcess::ProcessState)), SLOT(onProcStateChanged(QProcess::ProcessState)));
+
+  mplexCmd   = "mplex";
+
+  // initialize  mplex argument string list
+  mplexArgs.clear();
+  mplexArgs  << "-f8"
+             << "-o";
+
+  // video output file name
+  outputFile = "\""
+             + ttChangeFileExt(muxData->videoFileAt(index), "mpg")
+             + "\"";
+
+  mplexArgs  << outputFile;
+    
+  // video input file name
+  videoFile  = "\""
+             + muxData->videoFileAt(index)
+             + "\"";
+
+  mplexArgs  << videoFile;
+  // audio file names
+  for (int i=0; i < muxData->numAudioFilesAt(index); i++)
+  {
+    mplexArgs << "\""
+              + muxData->audioFileAt(index, i)
+              + "\"";
+  }
+
+  // info message in logfile
+  log->infoMsg(cName, "Mplex command string: %s", mplexArgs.join(" ").toAscii().constData());
+  log->infoMsg(cName, "Starting mplex process...");
+
+  qDebug("start mplex ...");
+  proc->start(mplexCmd, mplexArgs);
+
+  //proc->waitForStarted();
+
+  // just a very simple event loop ;-)
+  // we have to wait until the process has finished
+  while (proc->state() == QProcess::Starting ||
+         proc->state() == QProcess::Running     ) 
+  {
+    //update--;
+    //if ( update == 0 ) 
+    //{
+      qApp->processEvents();
+      update = EVENT_LOOP_INTERVALL;
+    //}
+  }
+
+  return mplexSuccess;
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Event Processing
+// /////////////////////////////////////////////////////////////////////////////
+//
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted when an error occurs with the process
+ */
+void TTMplexProvider::onProcError(QProcess::ProcessError procError)
+{
+  qDebug("proc error: %d", procError);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted once every time new data is available for reading from
+ * the device
+ */
+void TTMplexProvider::onProcReadOut()
+{
+  QString    line;
+  QByteArray ba;
+
+  ba = proc->readAll();
+
+  log->debugMsg(cName, "onProcReadOut: %d", ba.size());
+
+  QTextStream out(&ba);
+
+  while (!out.atEnd()) 
+  {
+    line = out.readLine();
+    log->infoMsg(cName, "* %s", qPrintable(line));
+  }
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted when the process has started;
+ * state() returns running
+ */
+void TTMplexProvider::onProcStarted()
+{
+  qDebug("mplex started...");
+  QString    line;
+  QByteArray ba;
+
+  ba = proc->readAll();
+
+  log->debugMsg(cName, "onProcReadOut: %d", ba.size());
+
+  QTextStream out(&ba);
+
+  while (!out.atEnd()) 
+  {
+    line = out.readLine();
+    log->infoMsg(cName, "* %s", qPrintable(line));
+  }
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted when the process finishes
+ */
+void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus)
+{
+  mplexSuccess  = true;
+  this->exitCode = exitCode;
+  qDebug("mplex finished");
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted whenever the state changed
+ */
+void TTMplexProvider::onProcStateChanged(QProcess::ProcessState procState)
+{
+  qDebug("state changed: %d", procState);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Kills the current process, causing it to exit immediately
+ */
+void TTMplexProvider::onProcKill()
+{
+  mplexSuccess = false;
+  proc->kill();
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Settings
+// /////////////////////////////////////////////////////////////////////////////
+//
 //! Level of verbosity (--verbose|-v num)
 int TTMplexProvider::createVerboseHash()
 {

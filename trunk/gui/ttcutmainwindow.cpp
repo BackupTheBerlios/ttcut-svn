@@ -642,6 +642,8 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   muxListData->print();
   TTMplexProvider mplexProvider;
   mplexProvider.writeMuxScript(muxListData);
+
+  mplexProvider.mplexPart(muxListData, muxListData->count()-1);
 }
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
