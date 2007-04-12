@@ -105,12 +105,10 @@ TTFileBuffer::~TTFileBuffer()
 {
   releaseBuffer();
 
-  if ( file_handle > -1 )
-  {
-    printf("%sclose file: %s\n",c_name,file_name);
-    fsync( file_handle );
-    close( file_handle );
-  }
+  if ( file_handle <= -1)
+    return;
+
+  closeFile(true);
 }
   
 /* Open file*/
@@ -118,7 +116,6 @@ TTFileBuffer::~TTFileBuffer()
 bool TTFileBuffer::openFile( const char* f_name, int f_mode)
 {
   bool     b_result;
-  // UNUSED: uint64_t offset;
 
   buffer_read_size = 0;
   buffer_start     = 0;
@@ -182,9 +179,9 @@ bool TTFileBuffer::openFile( const char* f_name, int f_mode)
 
 /* Close file*/
 /* -----------------------------------------------------------------------------*/
-void TTFileBuffer::closeFile()
+void TTFileBuffer::closeFile( bool sync )
 {
-  //printf("%sclose file: %s\n",c_name,file_name);
+  printf("%sclose file: %s with sync?%d\n",c_name,file_name, sync);
 
   buffer_read_size = 0;
   buffer_start     = 0;
@@ -200,7 +197,13 @@ void TTFileBuffer::closeFile()
   file_mode        = -1;
 
   if ( file_handle > -1 )
+  { 
+    // close with snyc write to disk
+    if ((file_mode == fm_create || file_mode == fm_open_write) && sync)
+      fsync(file_handle);
+
     close( file_handle );
+  }
 
   file_handle = -1;
 }

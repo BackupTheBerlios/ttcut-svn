@@ -30,6 +30,9 @@
  
 #include "ttstepby.h"
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Constructor
+ */
 TTStepBy::TTStepBy(QWidget* parent)
   :QWidget(parent)
 {
@@ -47,12 +50,15 @@ TTStepBy::TTStepBy(QWidget* parent)
   connect(btnNext,        SIGNAL(clicked()), SLOT(onNextFrame()));
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Widget title (is that needed anymore?) IMHO this is legacy Qt3 stuff
+ */
 void TTStepBy::setTitle( __attribute__((unused))const QString & title )
 {
 
 }
 
-/*!
+/* /////////////////////////////////////////////////////////////////////////////
  * Enable / disable the control and his child controls
  */
 void TTStepBy::enableControl(bool value)
@@ -66,7 +72,7 @@ void TTStepBy::enableControl(bool value)
   btnNext->setEnabled(value);
 }
 
-/*
+/* ////////////////////////////////////////////////////////////////////////////
  * Returns the current selected "step by frame-type" value.
  */
 int TTStepBy::getCurrentFrameType()
@@ -74,7 +80,7 @@ int TTStepBy::getCurrentFrameType()
   return currentFrameType;
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////  
  * Return the current selected "order by" value.
  */
 int TTStepBy::getCurrentOrder()
@@ -82,7 +88,7 @@ int TTStepBy::getCurrentOrder()
   return currentOrder;
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  * Signal: Goto next frame
  */
 void TTStepBy::onNextFrame()
@@ -90,7 +96,7 @@ void TTStepBy::onNextFrame()
   emit gotoNextFrame(currentFrameType, currentOrder);
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  * Signal: Goto previous frame
  */
 void TTStepBy::onPrevFrame()
@@ -98,7 +104,7 @@ void TTStepBy::onPrevFrame()
   emit gotoPrevFrame(currentFrameType, currentOrder);
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  * Signal: Step by I-frame
  */
 void TTStepBy::onFrameTypeI()
@@ -107,7 +113,7 @@ void TTStepBy::onFrameTypeI()
   emit stepByIFrame();
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  * Signal: Step by P-frame
  */
 void TTStepBy::onFrameTypeP()
@@ -116,7 +122,7 @@ void TTStepBy::onFrameTypeP()
   emit stepByPFrame();
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  * Signal: Step by B-frame
  */
 void TTStepBy::onFrameTypeB()
@@ -125,7 +131,7 @@ void TTStepBy::onFrameTypeB()
   emit stepByBFrame();
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  * Signal: Order display
  */
 void TTStepBy::onOrderDisplay()
@@ -134,7 +140,7 @@ void TTStepBy::onOrderDisplay()
   emit orderDisplay();
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  * Signal: Order stream
  */
 void TTStepBy::onOrderStream()
