@@ -2,9 +2,26 @@
 TTCut-Changelog
 --------------------------------------------------------------------------------
 
+Version 0.19.x (RC's for release 0.20.0)
+----------------------------------------
+
+0.19.1: * Removed QT3-Support depencies from TTMpeg2 (the whole project should
+          now compile without the need for any Qt3-support libs
+        * Fixed wrong handling of aspect-ratio changes (4:3 -> 16:9) at closed 
+          GOP's
+        * Fixed german umlaut handling
+        * Fixed handling of spaces in filenames with muxscript
+        * Make muxscript executeable by owner/user
+        * Implement direct mplexing after cut
+        * Implement basic mplex options in settings dialog
+
+
+
 Version 0.11.x (just in alpha state)
 ------------------------------------
 
+0.11.4: * minor bugfixes
+0.11.3: * minor bugfixes
 0.11.2: * Qt3 support completely removed
         * GUI exists now in ui files for easier editing
         * GUI looks nicer
@@ -13,3 +30,5 @@ Version 0.11.x (just in alpha state)
         * Fixed cut list bug: When insert a new cut-range while a cut entry in
           cut-list is selected, the selected cut-out position changed to the
           newly added cut entry
+
+

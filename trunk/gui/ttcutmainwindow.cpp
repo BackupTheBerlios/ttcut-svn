@@ -636,7 +636,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     list_pos++;
     AudioAnzahl--;
   }
-  // Ende Audioschnitta
+  // Ende Audioschnitt
 
   // mux list
   muxListData->print();

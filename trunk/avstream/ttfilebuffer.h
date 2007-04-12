@@ -61,7 +61,7 @@ public:
 
   // file stream
   bool    openFile( const char* f_name, int f_mode );
-  void    closeFile();
+  void    closeFile(bool sync=false);
   off64_t streamLength();
   bool    streamEOF();
   off64_t currentOffset();
