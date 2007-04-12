@@ -12,12 +12,6 @@
 // TTMESSAGELOGGER
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-// TODO
-// -----------------------------------------------------------------------------
-// *
-// -----------------------------------------------------------------------------
-
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
 /* under the terms of the GNU General Public License as published by the Free */
@@ -147,7 +141,7 @@ void TTMessageLogger::infoMsg(QString caller, QString msgString)
  */
 void TTMessageLogger::warningMsg(QString caller, QString msgString)
 {
-logMsg(WARNING, caller, msgString);
+  logMsg(WARNING, caller, msgString);
 }
 
 
@@ -156,7 +150,7 @@ logMsg(WARNING, caller, msgString);
  */
 void TTMessageLogger::errorMsg(QString caller, QString msgString)
 {
-logMsg(ERROR, caller, msgString);
+  logMsg(ERROR, caller, msgString);
 }
 
 
@@ -165,7 +159,7 @@ logMsg(ERROR, caller, msgString);
  */
 void TTMessageLogger::debugMsg(QString caller, QString msgString)
 {
-logMsg(DEBUG, caller, msgString); 
+  logMsg(DEBUG, caller, msgString); 
 }
 
 

@@ -122,8 +122,8 @@ void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
   muxOutStream << "#!/bin/sh" << "\n";
   muxOutStream << "#\n";
 
-  for (int i=0; i < muxData->count(); i++) {
-
+  for (int i=0; i < muxData->count(); i++) 
+  {
     mplexCmd.clear();
 
     mplexCmd   << "mplex"
@@ -161,7 +161,7 @@ void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
   muxFile.flush();
   muxFile.close();
 
-  // make muxscript executeable by the owner
+  // make muxscript executeable by the owner/user
   bool result = muxFile.setPermissions(
         QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|
         QFile::ReadUser |QFile::WriteUser |QFile::ExeUser |
@@ -186,7 +186,6 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
   mplexSuccess = false;
   proc         = new QProcess();
   proc->setReadChannelMode( QProcess::MergedChannels );
-
 
   // signal and slot connection for QProcess
   connect(proc, SIGNAL(error(QProcess::ProcessError)),        SLOT(onProcError(QProcess::ProcessError)));
@@ -229,8 +228,6 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
 
   qDebug("start mplex ...");
   proc->start(mplexCmd, mplexArgs);
-
-  //proc->waitForStarted();
 
   // just a very simple event loop ;-)
   // we have to wait until the process has finished
