@@ -450,7 +450,7 @@ TTPicturesHeader* TTMpeg2VideoStream::pictureHeaderAt(int index)
   }
   else
   {
-    log->warningMsg(c_namem, "No picture header found for index: %d", index);
+    log->warningMsg(c_name, "No picture header found for index: %d", index);
     return NULL;
   }
 }
@@ -522,7 +522,7 @@ bool TTMpeg2VideoStream::openStream()
  */
 bool TTMpeg2VideoStream::closeStream()
 {
-  if (ttAssigned(mpeg_stream))
+  if (ttAssigned(mpeg2_stream))
     return false;
 
   if (!stream_open)
@@ -1396,7 +1396,7 @@ void TTMpeg2VideoStream::transferMpegObjects(TTFileBuffer* fs,
                 temp_ref_delta = 0;
             }
 
-            log->infoMsg( c_name, "Close next GOP: %d / tempRefDelta: %d", close_next_GOP, temp_ref_delta);
+//            log->infoMsg( c_name, "Close next GOP: %d / tempRefDelta: %d", close_next_GOP, temp_ref_delta);
 
             // Müssen neue temporärere Referenzen geschrieben werden?
             if ( temp_ref_delta != 0) 
@@ -1550,7 +1550,7 @@ void TTMpeg2VideoStream::encodePart(int start, int end,
     int index_count  = new_mpeg_stream->createIndexList();
     new_mpeg_stream->indexList()->sortDisplayOrder();
 
-#if defined(ENCODE_INFO=
+#if defined(ENCODE_INFO)
     log->infoMsg(c_name, "header list created: header: %d / index: %d", header_count, index_count);
     log->infoMsg(c_name, "cut: 0 - %d",end-start );
 #endif

@@ -91,7 +91,7 @@ TTFileBuffer::TTFileBuffer( const char* f_name, int f_mode )
   fill_count       = 0;
   read_count       = 0;
 
-  printf("TTFileBuffer::openFile: %s\n", f_name);
+  //printf("TTFileBuffer::openFile: %s\n", f_name);
 
   openFile( f_name, f_mode );
 
@@ -181,7 +181,7 @@ bool TTFileBuffer::openFile( const char* f_name, int f_mode)
 /* -----------------------------------------------------------------------------*/
 void TTFileBuffer::closeFile( bool sync )
 {
-  printf("%sclose file: %s with sync?%d\n",c_name,file_name, sync);
+  //printf("%sclose file: %s with sync?%d\n",c_name,file_name, sync);
 
   buffer_read_size = 0;
   buffer_start     = 0;

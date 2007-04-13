@@ -135,21 +135,22 @@ void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
                + ttChangeFileExt(muxData->videoFileAt(i), "mpg")
                + "\"";
 
-    mplexCmd   << outputFile;
+    mplexCmd   << outputFile.toLatin1().constData();
     
     // video input file name
     videoFile  = "\""
                + muxData->videoFileAt(i)
                + "\"";
 
-    mplexCmd   << videoFile;
+    mplexCmd   << videoFile.toLatin1().constData();
 
     // audio file names
     for (int j=0; j < muxData->numAudioFilesAt(i); j++) 
     {
-      mplexCmd << "\""
+      audioFile = "\""
                 + muxData->audioFileAt(i, j)
                 + "\"";
+      mplexCmd  << audioFile.toLatin1().constData();
     }
 
     // join all items in string list together separated by spaces and write
@@ -202,31 +203,26 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
              << "-o";
 
   // video output file name
-  outputFile = "\""
-             + ttChangeFileExt(muxData->videoFileAt(index), "mpg")
-             + "\"";
+  outputFile =  ttChangeFileExt(muxData->videoFileAt(index), "mpg");
 
-  mplexArgs  << outputFile;
+  mplexArgs  << outputFile.toLatin1().constData();
     
   // video input file name
-  videoFile  = "\""
-             + muxData->videoFileAt(index)
-             + "\"";
+  videoFile  = muxData->videoFileAt(index);
 
-  mplexArgs  << videoFile;
+  mplexArgs  << videoFile.toLatin1().constData();
+
   // audio file names
   for (int i=0; i < muxData->numAudioFilesAt(index); i++)
   {
-    mplexArgs << "\""
-              + muxData->audioFileAt(index, i)
-              + "\"";
+    audioFile = muxData->audioFileAt(index, i);
+    mplexArgs << audioFile.toLatin1().constData();
   }
 
   // info message in logfile
-  log->infoMsg(cName, "Mplex command string: %s", mplexArgs.join(" ").toAscii().constData());
+  log->infoMsg(cName, "Mplex command string: %s", mplexArgs.join(" ").toLatin1().constData());
   log->infoMsg(cName, "Starting mplex process...");
 
-  qDebug("start mplex ...");
   proc->start(mplexCmd, mplexArgs);
 
   // just a very simple event loop ;-)
@@ -234,12 +230,12 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
   while (proc->state() == QProcess::Starting ||
          proc->state() == QProcess::Running     ) 
   {
-    //update--;
-    //if ( update == 0 ) 
-    //{
+    update--;
+    if ( update == 0 ) 
+    {
       qApp->processEvents();
       update = EVENT_LOOP_INTERVALL;
-    //}
+    }
   }
 
   return mplexSuccess;
@@ -286,7 +282,6 @@ void TTMplexProvider::onProcReadOut()
  */
 void TTMplexProvider::onProcStarted()
 {
-  qDebug("mplex started...");
   QString    line;
   QByteArray ba;
 
@@ -310,7 +305,6 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus)
 {
   mplexSuccess  = true;
   this->exitCode = exitCode;
-  qDebug("mplex finished");
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -318,7 +312,20 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus)
  */
 void TTMplexProvider::onProcStateChanged(QProcess::ProcessState procState)
 {
-  qDebug("state changed: %d", procState);
+  switch (procState) {
+    case QProcess::NotRunning:
+      log->debugMsg(cName, "The process is not running.");
+      break;
+    case QProcess::Starting:
+      log->debugMsg(cName, "The process is starting, but program has not yet been invoked.");
+      break;
+    case QProcess::Running:
+      log->debugMsg(cName, "The process is running and is ready for reading and writing.");
+      break;
+    default:
+      log->debugMsg(cName, "Unknown process state: %d", procState);
+      break;
+  }
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
