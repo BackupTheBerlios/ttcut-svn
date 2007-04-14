@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTSettingsDialog</class>
  <widget class="QDialog" name="TTSettingsDialog" >
   <property name="geometry" >
@@ -26,6 +23,9 @@
     <widget class="QTabWidget" name="settingsTab" >
      <property name="tabShape" >
       <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabCommon" >
       <attribute name="title" >
@@ -183,42 +183,31 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>TTCutSettingsFiles</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutsettingsfiles.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTCutSettingsEncoder</class>
-   <extends>QGroupBox</extends>
-   <header>../gui/ttcutsettingsencoder.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTCutSettingsMuxer</class>
-   <extends>QGroupBox</extends>
-   <header>../gui/ttcutsettingsmuxer.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>TTCutSettingsChapter</class>
-   <extends>QGroupBox</extends>
-   <header>../gui/ttcutsettingschapter.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>TTCutSettingsCommon</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutsettingscommon.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>TTCutSettingsMuxer</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcutsettingsmuxer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TTCutSettingsChapter</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcutsettingschapter.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TTCutSettingsEncoder</class>
+   <extends>QGroupBox</extends>
+   <header>../gui/ttcutsettingsencoder.h</header>
   </customwidget>
  </customwidgets>
  <resources>

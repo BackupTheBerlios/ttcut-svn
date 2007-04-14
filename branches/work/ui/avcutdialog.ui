@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTCutAVCutDlg</class>
  <widget class="QDialog" name="TTCutAVCutDlg" >
   <property name="geometry" >
@@ -63,6 +60,9 @@
     <widget class="QTabWidget" name="tabWidget" >
      <property name="enabled" >
       <bool>true</bool>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabCommon" >
       <attribute name="title" >
@@ -234,7 +234,7 @@
      </widget>
      <widget class="QWidget" name="tabMuxing" >
       <property name="enabled" >
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <attribute name="title" >
        <string>Muxing</string>
@@ -291,28 +291,21 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>TTCutSettingsMuxer</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutsettingsmuxer.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>TTCutSettingsChapter</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutsettingschapter.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>TTCutSettingsEncoder</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutsettingsencoder.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <resources>

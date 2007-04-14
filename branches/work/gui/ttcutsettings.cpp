@@ -127,6 +127,8 @@ void TTCutSettings::readSettings()
   TTCut::muxProgPath   = value( "MuxProgPath/",  TTCut::muxProgPath ).toString();
   TTCut::muxProgCmd    = value( "MuxProgCmd/",   TTCut::muxProgCmd ).toString();
   TTCut::muxOutputPath = value( "MuxOutputDir/", TTCut::muxOutputPath ).toString();
+  TTCut::muxDeleteES   = value( "MuxDeleteES/",  TTCut::muxDeleteES ).toBool();
+  TTCut::muxPause      = value( "MuxPause/",     TTCut::muxPause ).toBool();
   endGroup();
 
   // Chapter settings
@@ -243,6 +245,8 @@ void TTCutSettings::writeSettings()
   setValue( "MuxProgPath/",     TTCut::muxProgPath );
   setValue( "MuxProgCmd/",      TTCut::muxProgCmd );
   setValue( "MuxOutputDir/",    TTCut::muxOutputPath );
+  setValue( "MuxDeleteES/",     TTCut::muxDeleteES );
+  setValue( "MuxPause/",        TTCut::muxPause );
   endGroup();
 
   // Chapter settings

@@ -47,6 +47,9 @@ TTCutAVCutDlg::TTCutAVCutDlg(QWidget* parent)
 {
   setupUi(this);
 
+  // not implemented yet
+  tabWidget->removeTab(3);
+
   // message logger instance
   log = TTMessageLogger::getInstance();
 
@@ -61,8 +64,7 @@ TTCutAVCutDlg::TTCutAVCutDlg(QWidget* parent)
   setCommonData();
   encodingPage->setTabData();
   muxingPage->setTabData();
-  chaptersPage->setTabData();
-
+  //chaptersPage->setTabData();
 }
 
 // destruct object
@@ -79,7 +81,7 @@ void TTCutAVCutDlg::setGlobalData()
   getCommonData();
   encodingPage->getTabData();
   muxingPage->getTabData();
-  chaptersPage->getTabData();
+  //chaptersPage->getTabData();
 }
 
 
@@ -103,8 +105,6 @@ void TTCutAVCutDlg::onDlgCancel()
 // select a directory for the cut result
 void TTCutAVCutDlg::onDirectoryOpen()
 {
-  QStringList df_cmd_list;
-
   QString str_dir = QFileDialog::getExistingDirectory( this,
       "Select cut-result directory",
       TTCut::cutDirPath,
@@ -125,8 +125,6 @@ void TTCutAVCutDlg::onDirectoryOpen()
 // -----------------------------------------------------------------------------
 void TTCutAVCutDlg::setCommonData()
 {
-  QStringList df_cmd_list;
-
   if ( !QDir(TTCut::cutDirPath).exists() )
     TTCut::cutDirPath = QDir::currentPath();
 
