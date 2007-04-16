@@ -122,12 +122,12 @@ int TTMpeg2VideoStream::createHeaderList()
   QFileInfo idd_stream_info;
   bool      header_list_exists = false;
 
-  log->debugMsg(c_name, "Create header list for stream: %s", qPrintable(stream_info->filePath()));
+  log->debugMsg(c_name, "Create header list for stream: %s", stream_info->filePath().toLatin1().constData());
 
   // open the mpeg2 stream
   if ( !openStream() )
   {
-    log->errorMsg(c_name, "Could not open video stream: %s", qPrintable(stream_info->filePath()));
+    log->errorMsg(c_name, "Could not open video stream: %s", stream_info->filePath().toLatin1().constData());
 
     num_header = 0;
     return num_header;
