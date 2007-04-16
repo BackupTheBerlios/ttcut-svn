@@ -47,4 +47,4 @@ Aktuelle stabile svn Version:
 svn checkout http://svn.berlios.de/svnroot/repos/ttcut/trunk
 
 Arbeitsversion (eventuell nicht stabil!)
-svn checkout http://svn.berlios.de/svnroot/repos/ttcut/work
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/branches/work
