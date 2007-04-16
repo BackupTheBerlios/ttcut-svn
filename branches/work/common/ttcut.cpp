@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+
 /* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
@@ -196,5 +196,6 @@ TTCut::~TTCut()
 
 const char* TTCut::toAscii(QString string)
 {
-  return string.toAscii().constData();
+  //return string.toAscii().constData();
+  return string.toLatin1().constData();
 }
