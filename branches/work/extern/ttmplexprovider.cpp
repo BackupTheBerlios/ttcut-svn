@@ -80,13 +80,14 @@ const char cName[] = "TTMplexProvider";
 /* /////////////////////////////////////////////////////////////////////////////
  * Constructor
  */
-TTMplexProvider::TTMplexProvider() : QObject()
+TTMplexProvider::TTMplexProvider() : TTProcessForm(TTCut::mainWindow)
 {
   // message logger instance
   log = TTMessageLogger::getInstance();
-  log->infoMsg(cName, "start mplex");
 
   mplexSuccess = false;
+
+  setModal(false);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -200,6 +201,9 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
   proc         = new QProcess();
   proc->setReadChannelMode( QProcess::MergedChannels );
 
+  show();
+  qApp->processEvents();
+  
   // signal and slot connection for QProcess
   connect(proc, SIGNAL(error(QProcess::ProcessError)),        SLOT(onProcError(QProcess::ProcessError)));
   connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)),  SLOT(onProcFinished(int, QProcess::ExitStatus)));
@@ -291,6 +295,7 @@ void TTMplexProvider::onProcReadOut()
   {
     line = out.readLine();
     log->infoMsg(cName, "* %s", qPrintable(line));
+    addLine(line);
   }
 }
 
@@ -313,6 +318,7 @@ void TTMplexProvider::onProcStarted()
   {
     line = out.readLine();
     log->infoMsg(cName, "* %s", qPrintable(line));
+    addLine(line);
   }
 }
 
@@ -324,10 +330,10 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus exitStat
   if (exitStatus == QProcess::NormalExit)
   {
     if (TTCut::muxDeleteES)
-      qDebug("Delete ES");
+      qDebug("Delete ES not implemented");
 
     if (TTCut::muxPause)
-      qDebug("Pause after mux");
+      qDebug("Pause after mux not implemented");
   }
 
   mplexSuccess  = true;

@@ -44,7 +44,7 @@
 
 class TTMuxListData;
 
-class TTMplexProvider : public QObject
+class TTMplexProvider : public TTProcessForm
 {
   Q_OBJECT
 
