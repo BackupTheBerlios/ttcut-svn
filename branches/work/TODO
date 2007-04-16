@@ -26,3 +26,4 @@ TODO list for project TTCut
 * Find a logo (!!!!!) 
 * Remove hard coded frame rate setting in ttaviwriter (!!)
 * Read previous sequence before current start position in ttaviwriter (!!)
+* Make text in 'About' scroollable
