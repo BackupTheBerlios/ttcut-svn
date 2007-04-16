@@ -2,7 +2,8 @@
 TTCut-Buglist (Known issues)
 -------------------------------------------------------------------------------
 
-* Sometimes TTCut crashed while executing transcode and forces the xserver
-  to shut down
-* German umlaut handling may not work correct
+* Under unknown cirumstances TTCut crashed while executing transcode and forces 
+  the xserver to shut down
+* German Umlaut handling may not work correct (hopefully fixed, try it out and
+  send me some feedback)
 
