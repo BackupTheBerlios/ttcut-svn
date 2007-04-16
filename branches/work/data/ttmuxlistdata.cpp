@@ -162,6 +162,25 @@ QString TTMuxListData::videoFileAt(int index)
   return data[index].videoFileName;
 }
 
+QString TTMuxListData::videoFileNameAt(int index)
+{
+  QFileInfo fInfo(data[index].videoFileName);
+
+  return fInfo.fileName();
+}
+
+QString TTMuxListData::videoFilePathAt(int index)
+{
+  return data[index].videoFileName;
+}
+
+QString TTMuxListData::videoFileAbsPathAt(int index)
+{
+  QFileInfo fInfo(data[index].videoFileName);
+
+  return fInfo.absolutePath();
+}
+
 int TTMuxListData::numAudioFilesAt(int index)
 {
   return data[index].audioFileNames.size();
