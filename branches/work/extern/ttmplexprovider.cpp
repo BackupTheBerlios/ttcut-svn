@@ -105,7 +105,9 @@ TTMplexProvider::~TTMplexProvider()
 void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
 {
   QStringList mplexCmd;
+  QString     outputPath;
   QString     outputFile;
+  QFileInfo   outputFileInfo;
   QString     videoFile;
   QString     audioFile;
   QFileInfo   muxInfo(QDir(TTCut::cutDirPath), "muxscript.sh" );
@@ -130,9 +132,17 @@ void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
                << "-f8"
                << "-o";
 
+    outputFileInfo.setFile(muxData->videoFileAt(i));
+
+    outputPath = TTCut::muxOutputPath;
+
+    if (outputPath.isNull() || outputPath.isEmpty())
+      outputPath = outputFileInfo.absolutePath();
+
     // video output file name
     outputFile = "\""
-               + ttChangeFileExt(muxData->videoFileAt(i), "mpg")
+               + outputPath
+               + ttChangeFileExt(muxData->videoFileNameAt(i), "mpg")
                + "\"";
 
     mplexCmd   << outputFile.toLatin1().constData();
@@ -181,6 +191,8 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
   QString        mplexCmd;
   QStringList    mplexArgs;
   QString        outputFile;
+  QFileInfo      outputFileInfo;
+  QString        outputPath;
   QString        videoFile;
   QString        audioFile;
   int  update  = EVENT_LOOP_INTERVALL;
@@ -203,7 +215,13 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
              << "-o";
 
   // video output file name
-  outputFile =  ttChangeFileExt(muxData->videoFileAt(index), "mpg");
+  outputFileInfo.setFile(muxData->videoFileAt(index));
+  outputPath = TTCut::muxOutputPath;
+
+  if (outputPath.isNull() || outputPath.isEmpty())
+     outputPath = outputFileInfo.absolutePath();
+
+  outputFile = outputPath + ttChangeFileExt(muxData->videoFileNameAt(index), "mpg");
 
   mplexArgs  << outputFile.toLatin1().constData();
     
@@ -301,8 +319,17 @@ void TTMplexProvider::onProcStarted()
 /* /////////////////////////////////////////////////////////////////////////////
  * This signal is emitted when the process finishes
  */
-void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus)
+void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+  if (exitStatus == QProcess::NormalExit)
+  {
+    if (TTCut::muxDeleteES)
+      qDebug("Delete ES");
+
+    if (TTCut::muxPause)
+      qDebug("Pause after mux");
+  }
+
   mplexSuccess  = true;
   this->exitCode = exitCode;
 }
