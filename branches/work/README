@@ -44,7 +44,7 @@ SVN:
 Die svn Repositories sind in der Regel auf einem neueren Stand, als die tar-Archive.
 
 Aktuelle stabile svn Version:
-svn export http://svn.berlios.de/svnroot/repos/ttcut/trunk
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/trunk
 
 Arbeitsversion (eventuell nicht stabil!)
-svn export http://svn.berlios.de/svnroot/repos/ttcut/branches/work
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/branches/work
