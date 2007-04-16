@@ -639,12 +639,19 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   }
   // Ende Audioschnitt
 
-  // mux list
+  // mux list / direct mux
   muxListData->print();
-  TTMplexProvider mplexProvider;
-  mplexProvider.writeMuxScript(muxListData);
 
-  mplexProvider.mplexPart(muxListData, muxListData->count()-1);
+  TTMplexProvider mplexProvider;
+
+  if (TTCut::muxMode == 1)
+  {
+    mplexProvider.writeMuxScript(muxListData);
+  }
+  else
+  {
+    mplexProvider.mplexPart(muxListData, muxListData->count()-1);
+  }
 }
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
