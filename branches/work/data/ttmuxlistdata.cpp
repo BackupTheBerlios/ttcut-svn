@@ -219,8 +219,7 @@ void TTMuxListData::removeAt(int index)
 //! Print the data list for debug purpose
 void TTMuxListData::print()
 {
-  log->infoMsg(oName, "mux-list data");
-  log->infoMsg(oName, "----------------------------------------");
+  log->infoMsg(oName, "mux-list data:");
 
   for(int i=0; i < data.count(); i++) {
     log->infoMsg(oName, "--------------------------------");

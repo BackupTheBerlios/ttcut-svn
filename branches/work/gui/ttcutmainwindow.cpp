@@ -879,7 +879,7 @@ int TTCutMainWindow::openAudioStream(QString fName)
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
 
-  log->infoMsg(oName, "Read audio stream: %s", TTCut::toAscii(fName));
+  log->infoMsg(oName, "Read audio stream: %s", qPrintable(fName));
 
   // get the stream type and create according stream-object
   audio_type   = new TTAudioType( fName );
