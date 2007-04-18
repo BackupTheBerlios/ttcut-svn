@@ -5,7 +5,7 @@
 /* FILE     : ttcutproject.cpp                                                */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/14/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/18/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -38,10 +38,13 @@
 
 const char c_name[] = "TTCUTPROJECT  : ";
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Constructor
+ */
 TTCutProject::TTCutProject( QString& prj_file_name, QIODevice::OpenModeFlag mode )
 {
 #if defined(TTCUTPROJECT_DEBUG)
-  qDebug( "%sopen project file: %s",c_name,prj_file_name.ascii() );
+  qDebug( "%sopen project file: %s", c_name, prj_file_name.toLatin1().constData() );
 #endif
 
   project_file = new QFile( prj_file_name );
@@ -61,6 +64,9 @@ TTCutProject::TTCutProject( QString& prj_file_name, QIODevice::OpenModeFlag mode
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Destructor
+ */
 TTCutProject::~TTCutProject()
 {
   project_file->flush();
@@ -70,14 +76,18 @@ TTCutProject::~TTCutProject()
   delete project_file;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Clear the project file
+ */
 void TTCutProject::clearFile()
 {
   if ( project_file->exists() )
-  {
     project_file->resize( 0 );
-  }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write the video file section header
+ */
 void TTCutProject::writeVideoSection( bool start )
 {
   if ( start )
@@ -86,10 +96,17 @@ void TTCutProject::writeVideoSection( bool start )
     *io_stream << "\n";
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write the video file entry
+ */
 void TTCutProject::writeVideoFileName( const QString& video_file_name )
 {
   *io_stream << video_file_name << "\n";
 }
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write the audio section header
+ */
 void TTCutProject::writeAudioSection( bool start )
 {
   if ( start )
@@ -98,11 +115,17 @@ void TTCutProject::writeAudioSection( bool start )
     *io_stream << "\n";
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write the audio file entry
+ */
 void TTCutProject::writeAudioFileName( const QString& audio_file_name )
 {
   *io_stream << audio_file_name << "\n";
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write the cut section header
+ */
 void TTCutProject::writeCutSection( bool start )
 {
   if ( start )
@@ -111,11 +134,17 @@ void TTCutProject::writeCutSection( bool start )
     *io_stream << "\n";
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write an cut entry
+ */
 void TTCutProject::writeCutEntry( int cut_in, int cut_out )
 {
   *io_stream << cut_in << ";" << cut_out << "\n";
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Go to the version section
+ */
 bool TTCutProject::seekToVersionSection()
 {
   if ( !project_file->seek( 0 ) )
@@ -135,6 +164,9 @@ bool TTCutProject::seekToVersionSection()
     return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read the project file version
+ */
 bool TTCutProject::readFileVersion( int& version )
 {
   QString line;
@@ -156,6 +188,9 @@ bool TTCutProject::readFileVersion( int& version )
   return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Go to the video section
+ */
 bool TTCutProject::seekToVideoSection()
 {
   if ( !project_file->seek( 0 ) )
@@ -175,6 +210,9 @@ bool TTCutProject::seekToVideoSection()
     return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read the video file name
+ */
 bool TTCutProject::readVideoFileName( QString& video_file_name )
 {
   QString line;
@@ -188,7 +226,7 @@ bool TTCutProject::readVideoFileName( QString& video_file_name )
       video_file_name = line;
       
 #if defined(TTCUTPROJECT_DEBUG)
-      qDebug( "%sfound video file: %s",c_name,video_file_name.ascii() );
+      qDebug( "%sfound video file: %s", c_name, qPrintable(video_file_name) );
 #endif
       return true;
     }
@@ -196,6 +234,9 @@ bool TTCutProject::readVideoFileName( QString& video_file_name )
   return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Go to the audio section
+ */
 bool TTCutProject::seekToAudioSection()
 {
   if ( !project_file->seek( 0 ) )
@@ -215,6 +256,9 @@ bool TTCutProject::seekToAudioSection()
     return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read the audio file name
+ */
 bool TTCutProject::readAudioFileName( QString& audio_file_name )
 {
   QString line;
@@ -228,7 +272,7 @@ bool TTCutProject::readAudioFileName( QString& audio_file_name )
       audio_file_name = line;
       
 #if defined(TTCUTPROJECT_DEBUG)
-      qDebug( "%sfound audio file: %s",c_name,audio_file_name.ascii() );
+      qDebug( "%sfound audio file: %s", c_name, qPrintable(audio_file_name) );
 #endif      
       return true;
     }
@@ -236,6 +280,9 @@ bool TTCutProject::readAudioFileName( QString& audio_file_name )
   return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Go to the cut section
+ */
 bool TTCutProject::seekToCutSection()
 {
   if ( !project_file->seek( 0 ) )
@@ -255,6 +302,9 @@ bool TTCutProject::seekToCutSection()
     return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read an cut entry
+ */
 bool TTCutProject::readCutEntry( int& cut_in, int& cut_out )
 {
   QString     line;

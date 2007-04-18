@@ -1550,6 +1550,11 @@ void TTMpeg2VideoStream::encodePart(int start, int end,
     int index_count  = new_mpeg_stream->createIndexList();
     new_mpeg_stream->indexList()->sortDisplayOrder();
 
+    // just to supress compiler warning about unused variables
+#if not defined(ENCODE_INFO)
+    header_count = 0;
+    index_count  = 0;
+#endif
 #if defined(ENCODE_INFO)
     log->infoMsg(c_name, "header list created: header: %d / index: %d", header_count, index_count);
     log->infoMsg(c_name, "cut: 0 - %d",end-start );

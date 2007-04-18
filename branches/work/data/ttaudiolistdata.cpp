@@ -187,7 +187,7 @@ void TTAudioListData::writeToProject(TTCutProject* prj)
   prj->writeAudioSection( true );
 
   for (int i=0; i < data.count(); i++) {
-    prj->writeAudioFileName( (QString)data[i].audioFileInfo.absoluteFilePath() );
+    prj->writeAudioFileName( data[i].audioFileInfo.absoluteFilePath() );
   }
 
   prj->writeAudioSection( false );

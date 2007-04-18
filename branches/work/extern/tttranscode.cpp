@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/07/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 03/18/2006 */
+/* MODIFIED: b. altendorf                                    DATE: 04/18/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -35,11 +36,13 @@
 
 //#define TTTRANSCODE_DEBUG
 
-#define EVENT_LOOP_INTERVALL 100000
+#define EVENT_LOOP_INTERVALL 1
 
 const char c_name[] = "TTTranscodeProvider";
 
-//! Create the process form for displaying the output of the encode
+/* ////////////////////////////////////////////////////////////////////////////
+ * Create the process form for displaying the output of the encode
+ */
 TTTranscodeProvider::TTTranscodeProvider( )
   : TTProcessForm( TTCut::mainWindow )
 {
@@ -57,25 +60,29 @@ TTTranscodeProvider::TTTranscodeProvider( )
   qApp->processEvents();
 }
 
-//! Clean up used resources
+/* /////////////////////////////////////////////////////////////////////////////
+ * Clean up used resources
+ */
 TTTranscodeProvider::~TTTranscodeProvider()
 {
   close();
   qApp->processEvents();
 }
 
-//! Parameter for the encoder
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parameter for the encoder
+ */
 void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 {
 #if defined (TTTRANSCODE_DEBUG)
   log->debugMsg( c_name, "----------------------------------------------------" );
   log->debugMsg( c_name, "transcode parameter:" );
   log->debugMsg( c_name, "----------------------------------------------------" );
-  //log->debugMsg( c_name, "avi-file    : %s",enc_par.avi_input_finfo.absoluteFilePath().ascii() );
-  //log->debugMsg( c_name, "mpeg-file   : %s",enc_par.mpeg2_output_finfo.absoluteFilePath().ascii() );
-  log->debugMsg( c_name, "widhtxheight: %dx%d",enc_par.video_width,enc_par.video_height );
-  log->debugMsg( c_name, "aspect-code : %d",enc_par.video_aspect_code );
-  log->debugMsg( c_name, "bitrate     : %f",enc_par.video_bitrate );
+  log->debugMsg( c_name, "avi-file    : %s",    qPrintable(enc_par.avi_input_finfo.absoluteFilePath()) );
+  log->debugMsg( c_name, "mpeg-file   : %s",    qPrintable(enc_par.mpeg2_output_finfo.absoluteFilePath()) );
+  log->debugMsg( c_name, "widhtxheight: %dx%d", enc_par.video_width,enc_par.video_height );
+  log->debugMsg( c_name, "aspect-code : %d",    enc_par.video_aspect_code );
+  log->debugMsg( c_name, "bitrate     : %f",    enc_par.video_bitrate );
   log->debugMsg( c_name, "----------------------------------------------------" );
 #endif
 
@@ -109,7 +116,9 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
   //log->infoMsg(c_name, strl_command_line.join(" "));
 }
 
-//! Create encoder process and start it
+/* /////////////////////////////////////////////////////////////////////////////
+ * Create encoder process and start it
+ */
 bool TTTranscodeProvider::encodePart( )    
 {
   int update        = EVENT_LOOP_INTERVALL;     //update intervall for local event loop
@@ -144,6 +153,7 @@ bool TTTranscodeProvider::encodePart( )
   qApp->processEvents();
   
   delete proc;
+  proc = NULL;
 
   return transcode_success;
 }
@@ -160,8 +170,10 @@ void TTTranscodeProvider::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
-
-//! This signal is emitted once every time new data is available for reading from the device.
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted once every time new data is available for reading from 
+ * the device.
+ */
 void TTTranscodeProvider::onProcReadOut()
 {
   QString    line;
@@ -178,7 +190,9 @@ void TTTranscodeProvider::onProcReadOut()
   }
 }
 
-//! This signal is emitted when the process has started; state() returns Running
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted when the process has started; state() returns Running
+ */
 void TTTranscodeProvider::onProcStarted()
 {
   QString    line;
@@ -192,7 +206,9 @@ void TTTranscodeProvider::onProcStarted()
   addLine( line );
 }
 
-//! This signal is emitted when the process finishes
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted when the process finishes
+ */
 void TTTranscodeProvider::onProcFinished(int e_code, QProcess::ExitStatus e_status)
 {
   QString procMsg;
@@ -218,7 +234,9 @@ void TTTranscodeProvider::onProcFinished(int e_code, QProcess::ExitStatus e_stat
   exit_code = e_code;
 }
 
-//! This signal is emitted when an error occurs with the process
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted when an error occurs with the process
+ */
 void TTTranscodeProvider::onProcError(QProcess::ProcessError proc_error)
 {
   QString errorMsg;
@@ -249,7 +267,9 @@ void TTTranscodeProvider::onProcError(QProcess::ProcessError proc_error)
   transcode_success = false;
 }
 
-//! This signal is emitted whenever the state changed
+/* /////////////////////////////////////////////////////////////////////////////
+ * This signal is emitted whenever the state changed
+ */
 void TTTranscodeProvider::onProcStateChanged(QProcess::ProcessState proc_state)
 {
   QString stateMsg;
@@ -273,7 +293,9 @@ void TTTranscodeProvider::onProcStateChanged(QProcess::ProcessState proc_state)
   addLine(stateMsg);
 }
 
-//! Kills the current process, causing it to exit immediately
+/* /////////////////////////////////////////////////////////////////////////////
+ * Kills the current process, causing it to exit immediately
+ */
 void TTTranscodeProvider::onProcKill( )
 {
   //log->debugMsg(c_name, "Kill the current process, causing it to exit immediately.");

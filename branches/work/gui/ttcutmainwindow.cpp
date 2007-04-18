@@ -613,7 +613,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     // audio file exists
     if (audio_cut_file_info.exists()) {
       // TODO: Warning about deleting file
-      log->warningMsg(oName, "deleting existing audio cut file: %s", qPrintable(audio_cut_name));
+      log->warningMsg(oName, "deleting existing audio cut file: %s", audio_cut_name.toLatin1().constData());
       QFile tempFile(audio_cut_name);
       tempFile.remove();
       tempFile.close();
@@ -879,7 +879,7 @@ int TTCutMainWindow::openAudioStream(QString fName)
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
 
-  log->infoMsg(oName, "Read audio stream: %s", qPrintable(fName));
+  log->infoMsg(oName, "Read audio stream: %s", fName.toLatin1().constData());
 
   // get the stream type and create according stream-object
   audio_type   = new TTAudioType( fName );
