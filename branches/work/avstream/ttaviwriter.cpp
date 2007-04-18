@@ -107,7 +107,7 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   //qDebug( "%s------------------------------------------------",c_name );
 
   QFileInfo avi_finfo( QDir(TTCut::tempDirPath), "encode.avi" );
-  avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().toAscii() );
+  avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().toLatin1().data() );
 
   // Progressbar action text 
   if ( ttAssigned(progress_bar) )

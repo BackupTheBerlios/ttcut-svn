@@ -35,7 +35,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 
-#define EVENT_LOOP_INTERVALL 1
+#define EVENT_LOOP_INTERVALL 10
 
 /**
  *Usage: mplex [params] -o <output filename pattern> <input file>... 
@@ -306,19 +306,7 @@ void TTMplexProvider::onProcError(QProcess::ProcessError procError)
  */
 void TTMplexProvider::onProcReadOut()
 {
-  QString    line;
-  QByteArray ba;
-
-  ba = proc->readAll();
-
-  QTextStream out(&ba);
-
-  while (!out.atEnd()) 
-  {
-    line = out.readLine();
-    //log->infoMsg(cName, "* %s", TTCut::toAscii(line));
-    addLine(line);
-  }
+  procOutput();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -327,19 +315,7 @@ void TTMplexProvider::onProcReadOut()
  */
 void TTMplexProvider::onProcStarted()
 {
-  QString    line;
-  QByteArray ba;
-
-  ba = proc->readAll();
-
-  QTextStream out(&ba);
-
-  while (!out.atEnd()) 
-  {
-    line = out.readLine();
-    //log->infoMsg(cName, "* %s", TTCut::toAscii(line));
-    addLine(line);
-  }
+  procOutput();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -393,6 +369,29 @@ void TTMplexProvider::onProcKill()
   mplexSuccess = false;
   proc->kill();
 }
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write the process output to process form
+ */
+void TTMplexProvider::procOutput()
+{
+  if (proc == NULL)
+    return;
+
+  QString    line;
+  QByteArray ba;
+
+  ba = proc->readAll();
+
+  QTextStream out(&ba);
+
+  while (!out.atEnd()) 
+  {
+    line = out.readLine();
+    //log->infoMsg(cName, "* %s", TTCut::toAscii(line));
+    addLine(line);
+  }
+} 
 
 // /////////////////////////////////////////////////////////////////////////////
 // Settings

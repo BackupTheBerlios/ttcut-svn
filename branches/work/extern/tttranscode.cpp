@@ -34,9 +34,9 @@
 #include <QTimer>
 #include <QTextStream>
 
-//#define TTTRANSCODE_DEBUG
+#define TTTRANSCODE_DEBUG
 
-#define EVENT_LOOP_INTERVALL 1
+#define EVENT_LOOP_INTERVALL 100
 
 const char c_name[] = "TTTranscodeProvider";
 
@@ -176,18 +176,7 @@ void TTTranscodeProvider::closeEvent(QCloseEvent *event)
  */
 void TTTranscodeProvider::onProcReadOut()
 {
-  QString    line;
-  QByteArray ba;
-
-  ba = proc->readAll();
-
-  QTextStream out(&ba);
-
-  while (!out.atEnd()) {
-    line = out.readLine();
-    //log->infoMsg(c_name, "* %s", qPrintable(line));
-    addLine(line);
-  }
+  procOutput();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -195,15 +184,7 @@ void TTTranscodeProvider::onProcReadOut()
  */
 void TTTranscodeProvider::onProcStarted()
 {
-  QString    line;
-  QByteArray ba;
-
-  ba = proc->readAll();
-  QTextStream out(&ba);
-
-  line = out.readLine();
-  //log->infoMsg(c_name, line);
-  addLine( line );
+  procOutput();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -301,4 +282,23 @@ void TTTranscodeProvider::onProcKill( )
   //log->debugMsg(c_name, "Kill the current process, causing it to exit immediately.");
   transcode_success = false;
   proc->kill();
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write process output to process window
+ */
+void TTTranscodeProvider::procOutput()
+{
+  QString    line;
+  QByteArray ba;
+
+  ba = proc->readAll();
+  QTextStream out(&ba);
+
+  while (!out.atEnd())
+  {
+    line = out.readLine();
+    //log->infoMsg(c_name, line);
+    addLine( line );
+  }
 }

@@ -5,11 +5,11 @@
 /* FILE     : ttmplexprovider.h                                               */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2006 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/18/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTMPLEXPROVIDER
+// TTMPLEXPROVIDER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -57,8 +57,9 @@ class TTMplexProvider : public TTProcessForm
     bool mplexPart(TTMuxListData* muxData, int index);
 
   protected:
-    int createVerboseHash();
-    int createFormatHash();
+    void procOutput();
+    int  createVerboseHash();
+    int  createFormatHash();
 
   public slots:
     void closeEvent(QCloseEvent *event);
