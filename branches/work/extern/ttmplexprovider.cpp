@@ -87,7 +87,18 @@ TTMplexProvider::TTMplexProvider() : TTProcessForm(TTCut::mainWindow)
 
   mplexSuccess = false;
 
-  setModal(false);
+  if (TTCut::muxPause)
+  {
+    setModal(true);
+    connect(this, SIGNAL(btnCancelClicked()), this, SLOT(onButtonOkClicked()));
+  }
+  else
+    setModal(false);
+}
+
+void TTMplexProvider::onButtonOkClicked()
+{
+  close();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -201,6 +212,8 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
   proc         = new QProcess();
   proc->setReadChannelMode( QProcess::MergedChannels );
 
+  showOkButton(true);
+  enableButton(false);
   show();
   qApp->processEvents();
   
@@ -243,7 +256,6 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
 
   // info message in logfile
   log->infoMsg(cName, "Mplex command string: %s", mplexArgs.join(" ").toLatin1().constData());
-  log->infoMsg(cName, "Starting mplex process...");
 
   proc->start(mplexCmd, mplexArgs);
 
@@ -269,6 +281,18 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
 //
 
 /* /////////////////////////////////////////////////////////////////////////////
+ * Reimplement the closeEvent to avoid closing the process window while the
+ * process is in running state
+ */
+void TTMplexProvider::closeEvent(QCloseEvent *event)
+{
+  if (proc != NULL && proc->state() == QProcess::Running)
+    event->ignore();
+  else
+    event->accept();
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
  * This signal is emitted when an error occurs with the process
  */
 void TTMplexProvider::onProcError(QProcess::ProcessError procError)
@@ -287,14 +311,12 @@ void TTMplexProvider::onProcReadOut()
 
   ba = proc->readAll();
 
-  log->debugMsg(cName, "onProcReadOut: %d", ba.size());
-
   QTextStream out(&ba);
 
   while (!out.atEnd()) 
   {
     line = out.readLine();
-    log->infoMsg(cName, "* %s", qPrintable(line));
+    //log->infoMsg(cName, "* %s", TTCut::toAscii(line));
     addLine(line);
   }
 }
@@ -310,14 +332,12 @@ void TTMplexProvider::onProcStarted()
 
   ba = proc->readAll();
 
-  log->debugMsg(cName, "onProcReadOut: %d", ba.size());
-
   QTextStream out(&ba);
 
   while (!out.atEnd()) 
   {
     line = out.readLine();
-    log->infoMsg(cName, "* %s", qPrintable(line));
+    //log->infoMsg(cName, "* %s", TTCut::toAscii(line));
     addLine(line);
   }
 }
@@ -331,11 +351,9 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus exitStat
   {
     if (TTCut::muxDeleteES)
       qDebug("Delete ES not implemented");
-
-    if (TTCut::muxPause)
-      qDebug("Pause after mux not implemented");
   }
 
+  enableButton(true);
   mplexSuccess  = true;
   this->exitCode = exitCode;
 }
@@ -345,20 +363,25 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus exitStat
  */
 void TTMplexProvider::onProcStateChanged(QProcess::ProcessState procState)
 {
+  QString stateMsg;
+
   switch (procState) {
     case QProcess::NotRunning:
-      log->debugMsg(cName, "The process is not running.");
+      stateMsg = "The process is not running.";
       break;
     case QProcess::Starting:
-      log->debugMsg(cName, "The process is starting, but program has not yet been invoked.");
+      stateMsg = "The process is starting, but program has not yet been invoked.";
       break;
     case QProcess::Running:
-      log->debugMsg(cName, "The process is running and is ready for reading and writing.");
+      stateMsg = "The process is running and is ready for reading and writing.";
       break;
     default:
-      log->debugMsg(cName, "Unknown process state: %d", procState);
+      stateMsg = "Unknown process state!";
       break;
   }
+
+  //log->debugMsg(cName, stateMsg);
+  addLine(stateMsg);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -366,6 +389,7 @@ void TTMplexProvider::onProcStateChanged(QProcess::ProcessState procState)
  */
 void TTMplexProvider::onProcKill()
 {
+  enableButton(true);
   mplexSuccess = false;
   proc->kill();
 }

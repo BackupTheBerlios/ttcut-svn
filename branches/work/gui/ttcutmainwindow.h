@@ -39,6 +39,7 @@
 #include "../data/ttmuxlistdata.h"
 #include "../avstream/ttavtypes.h"
 #include "../avstream/ttmpeg2videostream.h"
+#include "../extern/ttmplexprovider.h"
 #include "ttcutpreview.h"
 #include "ttcutsettings.h"
 #include "ttcutsettingsdlg.h"
@@ -98,6 +99,7 @@ void keyPressEvent(QKeyEvent* e);
    TTCutListData*      cutListData;
    TTMuxListData*      muxListData;
    TTMessageLogger*    log;
+   TTMplexProvider*    mplexProvider;
    TTMpeg2VideoStream* mpegStream;
    bool                sliderUpdateFrame;
 

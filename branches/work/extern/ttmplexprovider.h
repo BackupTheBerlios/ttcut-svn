@@ -36,6 +36,7 @@
 #include "../data/ttmuxlistdata.h"
 #include "../gui/ttprocessform.h"
 
+#include <QCloseEvent>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -60,6 +61,8 @@ class TTMplexProvider : public TTProcessForm
     int createFormatHash();
 
   public slots:
+    void closeEvent(QCloseEvent *event);
+    void onButtonOkClicked();
     void onProcError(QProcess::ProcessError procError);
     void onProcReadOut();
     void onProcStarted();

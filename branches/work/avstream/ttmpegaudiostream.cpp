@@ -308,8 +308,8 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   log->infoMsg(c_name, "-----------------------------------------------");
   log->infoMsg(c_name, ">>> cut audio stream                           ");
   log->infoMsg(c_name, "-----------------------------------------------");
-  log->infoMsg(c_name, "entries in cut list: %d",cut_list->count());
-  log->infoMsg(c_name, "target stream      : %s",cut_stream->fileName());
+  log->infoMsg(c_name, "entries in cut list: %d", cut_list->count());
+  log->infoMsg(c_name, "target stream      : %s", QString::fromUtf8(cut_stream->fileName()).toLatin1().constData());
 
   for ( i = 0; i < cut_list->count(); i++ )
   {

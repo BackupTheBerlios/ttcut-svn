@@ -5,7 +5,7 @@
 /* FILE     : ttprocessform.cpp                                               */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/07/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/18/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ TTProcessForm::TTProcessForm(QWidget* parent)
   : QDialog(parent)
 {
   setupUi(this);
-
+  
   btnCancel->setAutoDefault(false);
   btnCancel->hide();
 
@@ -55,8 +55,27 @@ void TTProcessForm::setFrameCaption(QString& caption)
   gbProcessView->setTitle(caption);
 }
 
+void TTProcessForm::enableList(bool value)
+{
+  procOutputList->setEnabled(value);
+}
+
+void TTProcessForm::enableButton(bool value)
+{
+  btnCancel->setEnabled(value);
+}
+
 void TTProcessForm::showCancelButton(bool show)
 {
+  btnCancel->setText(tr("Cancel"));
+  btnCancel->setIcon(QIcon(":/pixmaps/pixmaps/messagebox_critical.png"));
+  btnCancel->setVisible(show);
+}
+
+void TTProcessForm::showOkButton(bool show)
+{
+  btnCancel->setText(tr("Ok"));
+  btnCancel->setIcon(QIcon(":/pixmaps/pixmaps/button_ok.png"));
   btnCancel->setVisible(show);
 }
 

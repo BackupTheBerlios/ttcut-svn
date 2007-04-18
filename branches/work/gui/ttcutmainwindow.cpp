@@ -35,7 +35,6 @@
 #include "ttcutavcutdlg.h"
 #include "ttprogressbar.h"
 #include "ttcutaboutdlg.h"
-#include "../extern/ttmplexprovider.h"
 
 #include "../ui//pixmaps/downarrow_18.xpm"
 #include "../ui/pixmaps/uparrow_18.xpm"
@@ -128,8 +127,9 @@ TTCutMainWindow::TTCutMainWindow()
   audioList = new TTAudioListData();
   audioFileInfo->setListData(audioList);
 
-  // Mux list
-  muxListData = new TTMuxListData();
+  // Mux list and mplex provider (later by plugin)
+  muxListData   = new TTMuxListData();
+  mplexProvider = new TTMplexProvider();
 
   // no navigation
   navigationEnabled( false );
@@ -593,7 +593,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   {
     current_audio_stream = audioList->audioStreamAt( list_pos );
 
-    //qDebug( "%scurrent audio stream: %s",c_name,current_audio_stream->fileName().ascii() );
+    //qDebug( "%s: current audio stream: %s", oName, qPrintable(current_audio_stream->fileName()));
 
     // Quick and ugly: make it better ;-)
     // ------------------------------------------------------------------------
@@ -608,12 +608,12 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     audio_cut_name = audio_cut_file_info.absoluteFilePath();
     // ------------------------------------------------------------------------
 
-    //qDebug( "%saudio cut file: %s",c_name,audio_cut_name.ascii() );
+    //qDebug( "%s: audio cut file: %s", oName, qPrintable(audio_cut_name));
 
     // audio file exists
     if (audio_cut_file_info.exists()) {
       // TODO: Warning about deleting file
-      log->warningMsg(oName, "deleting existing audio cut file: %s", TTCut::toAscii(audio_cut_name));
+      log->warningMsg(oName, "deleting existing audio cut file: %s", qPrintable(audio_cut_name));
       QFile tempFile(audio_cut_name);
       tempFile.remove();
       tempFile.close();
@@ -625,7 +625,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
     current_audio_stream->setProgressBar( progress_bar );
 
-    audio_cut_stream = new TTFileBuffer(audio_cut_name.toUtf8().constData(), fm_open_write );
+    audio_cut_stream = new TTFileBuffer(qPrintable(audio_cut_name), fm_open_write );
 
     current_audio_stream->cut( audio_cut_stream, cutListData );
 
@@ -642,15 +642,14 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   // mux list / direct mux
   muxListData->print();
 
-  TTMplexProvider mplexProvider;
 
   if (TTCut::muxMode == 1)
   {
-    mplexProvider.writeMuxScript(muxListData);
+    mplexProvider->writeMuxScript(muxListData);
   }
   else
   {
-    mplexProvider.mplexPart(muxListData, muxListData->count()-1);
+    mplexProvider->mplexPart(muxListData, muxListData->count()-1);
   }
 }
 
@@ -882,7 +881,7 @@ int TTCutMainWindow::openAudioStream(QString fName)
 
   log->infoMsg(oName, "Read audio stream: %s", TTCut::toAscii(fName));
 
-  // get the strem type and create according stream-object
+  // get the stream type and create according stream-object
   audio_type   = new TTAudioType( fName );
 
   // create the audio stream object for the first audio file

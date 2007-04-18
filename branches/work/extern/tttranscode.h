@@ -37,6 +37,7 @@
 
 #include <QFileInfo>
 #include <QProcess>
+#include <QCloseEvent>
 
 class TTEncodeParameter;
 
@@ -52,7 +53,8 @@ class TTTranscodeProvider : public TTProcessForm
   bool encodePart( );
 
   public slots:
-  void onProcReadOut();
+    void closeEvent(QCloseEvent *event);
+   void onProcReadOut();
   void onProcStarted();
   void onProcFinished(int exit_code, QProcess::ExitStatus );
   void onProcError(QProcess::ProcessError proc_error);

@@ -123,7 +123,7 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   // decode the current slice
   frameInfo = decoder->decodeMPEG2Frame( formatYV12 );
 
-  qDebug( "%sAVI frame info: width: %d x height: %d",c_name,frameInfo->width,frameInfo->height );
+  //qDebug( "%sAVI frame info: width: %d x height: %d",c_name,frameInfo->width,frameInfo->height );
 
   //TODO: avoid setting hard coded frame rate!
   AVI_set_video(avi_file, frameInfo->width, frameInfo->height, 25.0, "YV12");

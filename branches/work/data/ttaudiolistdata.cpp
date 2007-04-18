@@ -177,7 +177,7 @@ void TTAudioListData::print()
   log->infoMsg(oName, "----------------------------------------");
 
   for(int i=0; i < data.count(); i++) {
-    log->infoMsg(oName, "audio-File: %s", qPrintable(data[i].audioStream->fileName()));
+    log->infoMsg(oName, "audio-File: %s", TTCut::toAscii(data[i].audioStream->fileName()));
   }
 }
 
