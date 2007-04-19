@@ -212,6 +212,9 @@ int TTAC3AudioStream::createHeaderList()
   return header_list->count();
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Cut method
+ */
 void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, int start, int end, __attribute__ ((unused))TTCutParameter* cp )
 {
   off64_t start_offset;
@@ -220,13 +223,16 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, int start, int end, __attr
   start_offset = header_list->audioHeaderAt(start)->headerOffset();
   end_offset   = header_list->audioHeaderAt(end)->headerOffset()-1;
 
-  //qDebug( "%scopy segment: %lld - %lld",c_name,start_offset,end_offset );
+  //log->debugMsg(c_name, "copy segment: %lld - %lld", start_offset,end_offset );
 
   openStream();
   copySegment( cut_stream, start_offset, end_offset );
   closeStream();
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Cut AC3 audio stream
+ */
 void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 {
   int i;
@@ -240,12 +246,14 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   float   audio_start_time;
   float   audio_end_time;
   float   local_audio_offset = 0.0;
-  
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%s>>> cut audio stream                           ",c_name );
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%sentries in cut list: %d",c_name,cut_list->count() );
-  //qDebug( "%starget stream      : %s",c_name,cut_stream->fileName() );
+ 
+#if defined(AC3STREAM_DEBUG)
+  log->debugMsg(c_name, "-----------------------------------------------");
+  log->debugMsg(c_name, ">>> cut audio stream                           ");
+  log->debugMsg(c_name, "-----------------------------------------------");
+  log->debugMsg(c_name, "entries in cut list: %d", cut_list->count());
+  log->debugMsg(c_name, "target stream      : %s", cut_stream->fileName());
+#endif
 
   for ( i = 0; i < cut_list->count(); i++ )
   {
@@ -284,20 +292,23 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     audio_end_time   = (((float)(end_pos+1)*video_frame_length-local_audio_offset)/frame_time-1.0);
     audio_end_index  = (long)round(audio_end_time);
 
+    if (audio_end_index > header_list->count())
+      audio_end_index = header_list->count()-1;
+
     local_audio_offset = ((float)(audio_end_index+1)*frame_time)-
       ((float)(end_pos+1)*video_frame_length)+local_audio_offset;
 
-    //qDebug( "%saudio frame length: %d",c_name,frame_length );
-    //qDebug( "%saudio frame time  : %f",c_name,frame_time );
-    //qDebug( "%sstart - end       : %d | %d - %d",c_name,i+1,audio_start_index,audio_end_index );
-
-    //qDebug( "%saudio start/end   : %f/%f",c_name,audio_start_time,audio_end_time );
-    //qDebug( "%svideo length      : %f",c_name,(end_pos-start_pos+1)*video_frame_length );
-    //qDebug( "%saudio length      : %f",c_name,(audio_end_index-audio_start_index+1)*frame_time );
+#if defined(AC3STREAM_DEBUG)
+    log->debugMsg(c_name, "audio frame length: %d", frame_length );
+    log->debugMsg(c_name, "audio frame time  : %f", frame_time );
+    log->debugMsg(c_name, "start - end       : %d | %d - %d",i+1, audio_start_index,audio_end_index );
+    log->debugMsg(c_name, "saudio start/end   : %f/%f", audio_start_time,audio_end_time );
+    log->debugMsg(c_name, "video length      : %f", (end_pos-start_pos+1)*video_frame_length );
+    log->debugMsg(c_name, "audio length      : %f", (audio_end_index-audio_start_index+1)*frame_time );
+#endif
 
     cut( cut_stream, audio_start_index, audio_end_index, cut_param );
   }
-  //qDebug( "%s-----------------------------------------------",c_name );
   delete cut_param;
 }
 

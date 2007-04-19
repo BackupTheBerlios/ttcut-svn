@@ -62,6 +62,8 @@ TTAudioHeader* TTAudioHeaderList::audioHeaderAt( int index )
   }
   catch ( TTListIndexException )
   {
+    qDebug("IndexListException!");
+    qDebug("Count %d CurrentIndex: %d", count(), index);
     return NULL;
   }
 }
