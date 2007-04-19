@@ -15,3 +15,4 @@ ttcut-0.19.1 April/2007
 * Removed the Qt-3 support dependence in ttmpeg2. The whole project
   should now compile without any Qt-3 support libraries needs.
 * TTMpeg2 get's a more nicer gui
+* libavi updated to current version from transcode source
