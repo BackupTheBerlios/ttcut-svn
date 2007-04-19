@@ -1,0 +1,17 @@
+ttcut-0.19.1 April/2007
+-----------------------
+
+* Fixed German Umlaut handling in video and audio file names
+  (not shure that these fixes work correct with all locales,
+   please send me a mail if you encounter problems with the
+   German Umlaut handling and append a copy of the locale command
+   output)
+* Fixed the white character escaping in video and audio file names.
+  The muxlist and the direct mux (mplex) option should now work
+  fine with file- and directorienames containing white characters (spaces).
+* Fixed wrong ascpect ratio display on open GOP's
+* Fixed cropped text in the about dialog
+* Added a copy of the GPL ver. 2 (see COPYING)
+* Removed the Qt-3 support dependence in ttmpeg2. The whole project
+  should now compile without any Qt-3 support libraries needs.
+* TTMpeg2 get's a more nicer gui

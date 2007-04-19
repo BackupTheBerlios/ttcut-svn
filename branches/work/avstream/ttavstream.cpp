@@ -79,8 +79,9 @@
 
 const char c_name[] = "TTAVStream    : ";
 
-// construct TTAVStream object
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Default constructor
+ */
 TTAVStream::TTAVStream()
 {
   stream_info   = (QFileInfo*)NULL;
