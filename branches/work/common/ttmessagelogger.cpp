@@ -244,7 +244,7 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString)
   write.append(msgString);
 
   if(logMode & CONSOLE || msgType == ERROR)
-    qDebug(write.toAscii().data());
+    qDebug(write.toUtf8().data());
 
   writeMsg(write);
 }
