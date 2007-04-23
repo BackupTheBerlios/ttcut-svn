@@ -234,8 +234,10 @@ void TTCutMainWindow::keyPressEvent(QKeyEvent* e)
 //! Menu "File new" action
 void TTCutMainWindow::onFileNew()
 {
-  if (TTCut::isVideoOpen) {
-    if (ttAssigned(cutListData) && cutListData->count() > 0) {
+  if (TTCut::isVideoOpen) 
+  {
+    if (ttAssigned(cutListData) && cutListData->count() > 0) 
+    {
       //TODO: Ask for saving changes
       log->infoMsg(oName, "TODO: Ask for saving changes in project");
     }
@@ -324,7 +326,12 @@ void TTCutMainWindow::onFileSaveAs()
       "Project(*.prj)" );
 
   if (!TTCut::projectFileName.isEmpty())
+  {
+    QFileInfo fInfo(TTCut::projectFileName);
+    TTCut::lastDirPath = fInfo.absolutePath();
+ 
     onFileSave();
+  }
 }
 
 
@@ -736,9 +743,14 @@ bool TTCutMainWindow::openProjectFile(QString fName)
   TTCut::projectFileName = fName;
 
   // error opening project file
-  try {
+  try 
+  {
     projectFile = new TTCutProject(fName, QIODevice::ReadOnly);
-  } catch (TTCutProjectOpenException) {
+
+    QFileInfo fInfo(fName );
+    TTCut::lastDirPath = fInfo.absolutePath();
+  } catch (TTCutProjectOpenException) 
+  {
     log->errorMsg(oName, "error open project file: %s", TTCut::toAscii(fName));
     return result;
   }
