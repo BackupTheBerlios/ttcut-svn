@@ -6,7 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/24/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -60,18 +60,18 @@ const char c_name [] = "AC3STREAM";
 
 // constructor
 // -----------------------------------------------------------------------------
-TTAC3AudioStream::TTAC3AudioStream()
-  : TTAudioStream()
+  TTAC3AudioStream::TTAC3AudioStream()
+: TTAudioStream()
 {
-log = TTMessageLogger::getInstance();
+  log = TTMessageLogger::getInstance();
 }
 
 // constructor with file info and start position
 // -----------------------------------------------------------------------------
-TTAC3AudioStream::TTAC3AudioStream( const QFileInfo &f_info, int s_pos )
-  : TTAudioStream( f_info, s_pos )
+  TTAC3AudioStream::TTAC3AudioStream( const QFileInfo &f_info, int s_pos )
+: TTAudioStream( f_info, s_pos )
 {
-log = TTMessageLogger::getInstance();
+  log = TTMessageLogger::getInstance();
 }
 
 // search the next sync byte in stream
@@ -103,7 +103,7 @@ void TTAC3AudioStream::readAudioHeader( TTAC3AudioHeader* audio_header)
 {
   uint8_t* daten = new uint8_t[6];
   uint16_t stuff;
-  
+
   stream_buffer->readArray( daten, 6 );
 
   audio_header->setHeaderOffset( stream_buffer->currentOffset() - 8 ); // +Syncwort
@@ -135,7 +135,7 @@ void TTAC3AudioStream::readAudioHeader( TTAC3AudioHeader* audio_header)
 
   audio_header->lfeon=(stuff&0x8000)!=0;
 
-  
+
 }
 
 // create the header list
@@ -169,32 +169,42 @@ int TTAC3AudioStream::createHeaderList()
 
   // seek to start pos for corrupt streams  
   stream_buffer->seekRelative( start_pos );
-    
+
+  if (ttAssigned(progress_bar))
+  {
+    progress_bar->setActionText("Create audio header list.");
+    progress_bar->setTotalSteps(stream_buffer->streamLength());
+  }
+
   try
   {
     while (!stream_buffer->streamEOF())
     {
       searchNextSyncByte();
-      
+
       audio_header = new TTAC3AudioHeader();
-      
+
       readAudioHeader( audio_header );
-      
+
       if ( header_list->count() == 0 )
-	audio_header->abs_frame_time = 0.0;
+        audio_header->abs_frame_time = 0.0;
       else
       {
-	prev_audio_header = (TTAC3AudioHeader*)header_list->at(header_list->count()-1);
-	audio_header->abs_frame_time = prev_audio_header->abs_frame_time
-	  +prev_audio_header->frame_time;
+        prev_audio_header = (TTAC3AudioHeader*)header_list->at(header_list->count()-1);
+        audio_header->abs_frame_time = prev_audio_header->abs_frame_time
+          +prev_audio_header->frame_time;
       }
 
       //qDebug( "%sabs frame time: %lf - %lf",c_name,audio_header->frame_time,audio_header->abs_frame_time );
 
       header_list->add( audio_header );
-      
+
       stream_buffer->seekRelative(audio_header->syncframe_words*2-8);
+
+      if (ttAssigned(progress_bar))
+        progress_bar->setProgress(stream_buffer->currentOffset());
     }
+    progress_bar->setComplete();
   }
   catch ( TTStreamEOFException )
   {
@@ -246,7 +256,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   float   audio_start_time;
   float   audio_end_time;
   float   local_audio_offset = 0.0;
- 
+
 #if defined(AC3STREAM_DEBUG)
   log->debugMsg(c_name, "-----------------------------------------------");
   log->debugMsg(c_name, ">>> cut audio stream                           ");
@@ -282,7 +292,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 
     audio_start_time = ((float)start_pos*video_frame_length+local_audio_offset)/frame_time;
     audio_start_index = (long)round(audio_start_time);
-    
+
     if ( (int)audio_start_index < 0 )
       audio_start_index = 0;
 

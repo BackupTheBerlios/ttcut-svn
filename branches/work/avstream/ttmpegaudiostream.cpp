@@ -255,10 +255,12 @@ int TTMPEGAudioStream::createHeaderList( )
       stream_buffer->seekRelative( audio_header->frame_length-4 );
 
       if ( ttAssigned(progress_bar) )
-	progress_bar->setProgress( stream_buffer->currentOffset() );
+        progress_bar->setProgress( stream_buffer->currentOffset() );
 
     }
-    progress_bar->setComplete();
+
+    if (ttAssigned(progress_bar))
+      progress_bar->setComplete();
   }
   catch ( TTStreamEOFException )
   {
