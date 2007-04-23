@@ -51,11 +51,7 @@ TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
   // initialize variables
   userCancel = false;
 
-  //QT3: if ( !name )
-	//QT3: setName( "TTProgressBar" );
-    
     resize( 640, 100 );
-    //setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, sizePolicy().hasHeightForWidth() ) );
     setMinimumSize( QSize( 640, 100 ) );
     setMaximumSize( QSize( 640, 100 ) );
     setBaseSize( QSize( 640, 100 ) );
@@ -75,7 +71,6 @@ TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
     Layout1->addWidget( laAction );
 
     actionString = new QLabel( this );
-    //actionString->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)1, actionString->sizePolicy().hasHeightForWidth() ) );
     actionString->setMinimumSize( QSize( 250, 0 ) );
     actionString->setText( tr( "TextLabel2" ) );
     Layout1->addWidget( actionString );
@@ -105,10 +100,6 @@ TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
     Layout2->setMargin( 0 );
 
     progressBar = new QProgressBar( this );
-    //QT3: progressBar->setFrameShape( QFrame::Panel );
-    //QT3: progressBar->setFrameShadow( QFrame::Sunken );
-    //QT3: progressBar->setCenterIndicator( true );
-    //QT3: progressBar->setPercentageVisible( false );
     progressBar->setTextVisible( false );
     Layout2->addWidget( progressBar );
 
@@ -190,10 +181,8 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
       
   refresh = refresh_intervall;
 
-  //qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
+  qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
 
-  //QT3: progressBar->setTotalSteps( normTotalSteps );
-  //QT3: progressBar->setProgress( -1 );
   progressBar->setMinimum( 0 );
   progressBar->setMaximum( normTotalSteps );
 

@@ -125,6 +125,7 @@ int TTAudioListData::addItem(QString fName, TTAudioStream* aStream)
   item.audioBitrate    = header->bitRateString();
   item.audioSamplerate = header->sampleRateString();
   item.audioMode       = header->modeString();
+  
   // FIXME: use real delay value for audio delay
   item.audioDelay      = "0";
   

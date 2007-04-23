@@ -1,7 +1,12 @@
 -------------------------------------------------------------------------------
-TODO list for project TTCut
+TODO list for project TTCut (04/24/2007)
 -------------------------------------------------------------------------------
 
+* Enable free diskspace info in cut dialog
+* Implement WriteMaxBitrate in cut dialog
+* Implement WriteSequenceEndCode in cut dialog
+* More option setting for mplex
+* Implement transcode- and mplex-provider as plugin
 * Check warning about type conversion in ttfilebuffer
 * Check IDD file handling and improve speed while reading header from IDD
 * Find a solution for realtime playback demuxed video stream (play-button)
