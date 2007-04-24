@@ -59,7 +59,6 @@ class TTCutAVCutDlg : public QDialog, Ui::TTCutAVCutDlg
     void onDlgStart();
     void onDlgCancel();
     void onDirectoryOpen();
-    void onTabChanged(int index);
     void readFromStdout();
     void exitProcess(int e_code, QProcess::ExitStatus);
 

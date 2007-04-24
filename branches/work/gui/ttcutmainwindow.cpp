@@ -580,6 +580,20 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
     // TODO: cancel cut action
     //
+    if (progress_bar->isCanceled())
+    {
+      qDebug("Video-cut was canceled");
+
+      QFile videoFile(videoCutName);
+      videoFile.remove();
+
+      // clean up
+      delete progress_bar;
+      delete video_cut_stream;
+
+      return;
+    }
+
     muxIndex = muxListData->addItem(QString::fromUtf8(video_cut_stream->fileName()));
 
     //qDebug("Meldung128: Das Schneiden der Datei %s ist beendet.",HString.ascii());
@@ -640,6 +654,20 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
     // TODO: cancel cut action
     //
+    if (progress_bar->isCanceled())
+    {
+      qDebug("Audio-cut was canceled");
+
+      QFile audioFile(audio_cut_name);
+      audioFile.remove();
+
+      // clean up
+      delete progress_bar;
+      delete current_audio_stream;
+
+      return;
+    }
+
     muxListData->appendAudioName(muxIndex, QString::fromUtf8(audio_cut_stream->fileName()));
 
     delete progress_bar;

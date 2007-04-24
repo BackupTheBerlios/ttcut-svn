@@ -7,7 +7,7 @@
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/02/2006 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/24/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -45,6 +45,9 @@
 
 const char c_name[] = "TTPROGRESSBAR : ";
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * COnstructor
+ */
 TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
     : QDialog( parent, fl )
 {
@@ -117,7 +120,7 @@ TTProgressBar::TTProgressBar( QWidget* parent, Qt::WFlags fl )
     elapsedTime.start();
 }
 
-/*
+/* /////////////////////////////////////////////////////////////////////////////
  *  Destroys the object and frees any allocated resources
  */
 TTProgressBar::~TTProgressBar()
@@ -125,25 +128,34 @@ TTProgressBar::~TTProgressBar()
   elapsedTime.elapsed();
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set the displayed action text
+ */
 void TTProgressBar::setActionText( QString action )
 {
   actionString->setText( action );
   qApp->processEvents();
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set the displayed elapsed time
+ */
 void TTProgressBar::setElapsedTime( __attribute__ ((unused))QTime time )
 {
 
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set the displayed percent value
+ */
 void TTProgressBar::setPercentages( __attribute__ ((unused))float percent )
 {
 
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Initialize the progress bar with the total number of steps
+ */
 void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
 {
   totalSteps        = t_steps;
@@ -189,7 +201,9 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
   qApp->processEvents();
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set the current progress
+ */
 bool TTProgressBar::setProgress( uint64_t progress )
 {
   refresh--;
@@ -224,26 +238,37 @@ bool TTProgressBar::setProgress( uint64_t progress )
   return userCancel;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set the progress bar to 100%
+ */
 void TTProgressBar::setComplete()
 {
   refresh = 1;
   setProgress( totalSteps );
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Reset the progress bar
+ */
 void TTProgressBar::resetProgress()
 {
   progressBar->reset();
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Button cancel clicked
+ */
 void TTProgressBar::slotCancel()
 {
   qDebug( "%scancel button pressed: %d",c_name,userCancel );
   userCancel = true;
+  emit cancel();
   qApp->processEvents();
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Hide the progress bar
+ */
 void TTProgressBar::hideBar()
 {
   if ( isVisible() )
@@ -259,6 +284,9 @@ void TTProgressBar::hideBar()
   qApp->processEvents();
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Show the progress bar
+ */
 void TTProgressBar::showBar()
 {
   if ( !isVisible() )
@@ -272,4 +300,12 @@ void TTProgressBar::showBar()
     setModal( true );
   }
   qApp->processEvents();
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Property for user cancel action
+ */
+bool TTProgressBar::isCanceled()
+{
+  return userCancel;
 }

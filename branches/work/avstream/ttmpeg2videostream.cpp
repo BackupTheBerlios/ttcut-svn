@@ -926,6 +926,12 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list 
     // cut the mpeg2 video stream according to start and end positon of
     // current cut list entry
     cut( cut_stream, start_pos, end_pos, cut_param );
+
+    if (ttAssigned(progress_bar))
+    {
+      if (progress_bar->isCanceled())
+        return;
+    }
   }
 
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
@@ -1093,6 +1099,12 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* targetStream,
                      startObjectVideoHeader, startObjectHeaderPos,
                      endObjectVideoHeader,   endObjectHeaderPos,
                      cutParams);
+
+ if (ttAssigned(progress_bar))
+ {
+   if (progress_bar->isCanceled())
+     return;
+ }
 
  // something to encode: cut-out isn't lies on a B-frame?
  if (tempEndIndexPos != endIndex)
@@ -1434,7 +1446,11 @@ void TTMpeg2VideoStream::transferMpegObjects(TTFileBuffer* fs,
     if ( ttAssigned(progress_bar) )
     {
       process += bytes_processed;
-      progress_bar->setProgress( process );
+      if (progress_bar->setProgress( process ))
+      {
+        qDebug("cancel in transfer objects");
+        return;
+      }
     }
 
 

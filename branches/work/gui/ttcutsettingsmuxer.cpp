@@ -116,6 +116,11 @@ void TTCutSettingsMuxer::getTabData()
 {
   TTCut::mpeg2Target   = cbMuxTarget->currentIndex();
   TTCut::muxOutputPath = leOutputPath->text();
+
+  QFileInfo fInfo(TTCut::muxOutputPath);
+
+  if (!fInfo.exists())
+    TTCut::muxOutputPath = TTCut::cutDirPath;
 }
 
 void TTCutSettingsMuxer::onCreateMuxStreams()

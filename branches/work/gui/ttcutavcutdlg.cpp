@@ -57,7 +57,6 @@ TTCutAVCutDlg::TTCutAVCutDlg(QWidget* parent)
   connect(btnDirOpen,   SIGNAL(clicked()),           SLOT(onDirectoryOpen()));
   connect(okButton,     SIGNAL(clicked()),           SLOT( onDlgStart()));
   connect(cancelButton, SIGNAL(clicked()),           SLOT( onDlgCancel()));
-  connect(tabWidget,    SIGNAL(currentChanged(int)), SLOT(onTabChanged(int)));
 
   // set the tabs data
   // ------------------------------------------------------------------
@@ -130,21 +129,6 @@ void TTCutAVCutDlg::onDirectoryOpen()
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Selected tab changed
- */
-void TTCutAVCutDlg::onTabChanged(__attribute__ ((unused))int index)
-{
-  //qDebug("current index: %d", tabWidget->indexOf(tabWidget->currentWidget()));
-  //qDebug("index:         %d", index);
-
-  if (tabWidget->indexOf(tabWidget->currentWidget()) == 2)
-  {
-    TTCut::muxOutputPath = leOutputPath->text();
-    muxingPage->setTabData();
-  }
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
  * Set the tab data from global parameter
  */
 void TTCutAVCutDlg::setCommonData()
@@ -174,13 +158,9 @@ void TTCutAVCutDlg::getCommonData()
   // cut output filename and output path
   TTCut::cutVideoName  = leOutputFile->text();
   TTCut::cutDirPath    = leOutputPath->text();
-  TTCut::muxOutputPath = leOutputPath->text();
 
   if ( !QDir(TTCut::cutDirPath).exists() )
-  {
     TTCut::cutDirPath    = QDir::currentPath();
-    TTCut::muxOutputPath = QDir::currentPath();
-  }
 
   // Check for video file extension
   QFileInfo cutFile(TTCut::cutVideoName);
