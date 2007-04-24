@@ -210,11 +210,12 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
   QString        outputPath;
   QString        videoFile;
   QString        audioFile;
-  int  update  = EVENT_LOOP_INTERVALL;
-  mplexSuccess = false;
-  proc         = new QProcess();
-  proc->setReadChannelMode( QProcess::MergedChannels );
 
+  int  update      = EVENT_LOOP_INTERVALL;
+  mplexSuccess     = false;
+  proc             = new QProcess();
+
+  proc->setReadChannelMode( QProcess::MergedChannels );
   showOkButton(true);
   enableButton(false);
   show();
@@ -332,7 +333,7 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus exitStat
   if (exitStatus == QProcess::NormalExit)
   {
     if (TTCut::muxDeleteES)
-      qDebug("Delete ES not implemented");
+      qDebug("Delete elementary streams not implemented yet!");
   }
 
   enableButton(true);
