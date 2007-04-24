@@ -2,6 +2,7 @@
 TODO list for project TTCut (04/24/2007)
 -------------------------------------------------------------------------------
 
+* Implement delete elementary stream after mplex action
 * Enable free diskspace info in cut dialog
 * Implement WriteMaxBitrate in cut dialog
 * Implement WriteSequenceEndCode in cut dialog
