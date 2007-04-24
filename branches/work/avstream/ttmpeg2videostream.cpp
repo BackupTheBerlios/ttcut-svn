@@ -922,7 +922,7 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list 
       action_string.sprintf( "Video cut: %d/%d-%d",i+1,start_pos,end_pos );
       progress_bar->setActionText( action_string );
     }
-
+    
     // cut the mpeg2 video stream according to start and end positon of
     // current cut list entry
     cut( cut_stream, start_pos, end_pos, cut_param );
@@ -1430,6 +1430,7 @@ void TTMpeg2VideoStream::transferMpegObjects(TTFileBuffer* fs,
     //qDebug( "%swrite data: processed: %d",c_name,bytes_processed );
     fs->directWrite( buffer, bytes_processed );
 
+    // TODO: cancel action
     if ( ttAssigned(progress_bar) )
     {
       process += bytes_processed;
