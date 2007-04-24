@@ -151,6 +151,9 @@ void TTMplexProvider::writeMuxScript(TTMuxListData* muxData)
     if (outputPath.isNull() || outputPath.isEmpty())
       outputPath = outputFileInfo.absolutePath();
 
+    if (outputPath.lastIndexOf("/") < outputPath.length())
+      outputPath += "/";
+
     // video output file name
     outputFile = "\""
                + outputPath
@@ -237,6 +240,9 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
 
   if (outputPath.isNull() || outputPath.isEmpty())
      outputPath = outputFileInfo.absolutePath();
+
+  if (outputPath.lastIndexOf("/") < outputPath.length())
+    outputPath += "/";
 
   outputFile = outputPath + ttChangeFileExt(muxData->videoFileNameAt(index), "mpg");
 
