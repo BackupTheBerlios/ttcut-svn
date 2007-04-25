@@ -904,6 +904,7 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list 
   log->debugMsg(c_name, "Target stream: %s", TTCut::toAscii(cut_stream->fileName())); 
 #endif
 
+  // cut each cut in cut list
   for (int i = 0; i < cut_list->count(); i++)
   {
     if ( i == 0 )
@@ -1149,7 +1150,7 @@ void TTMpeg2VideoStream::transferMpegObjects(TTFileBuffer* fs,
   uint8_t*          buffer  = new uint8_t[65536];
   off64_t           count   = end_object->headerOffset()-start_object->headerOffset();
   off64_t           abs_pos = start_object->headerOffset();
-  int               process = 0;
+  off64_t           process = 0;
   int               bytes_processed;
   TTVideoHeader*    current_object = start_object;
   TTPicturesHeader* current_picture = NULL;
@@ -1442,13 +1443,16 @@ void TTMpeg2VideoStream::transferMpegObjects(TTFileBuffer* fs,
     //qDebug( "%swrite data: processed: %d",c_name,bytes_processed );
     fs->directWrite( buffer, bytes_processed );
 
-    // TODO: cancel action
+    // cancel action
     if ( ttAssigned(progress_bar) )
     {
       process += bytes_processed;
       if (progress_bar->setProgress( process ))
       {
-        qDebug("cancel in transfer objects");
+        delete [] buffer;
+        delete break_objects;
+        delete [] time_code;
+
         return;
       }
     }

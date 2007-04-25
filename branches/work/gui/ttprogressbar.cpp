@@ -193,7 +193,7 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
       
   refresh = refresh_intervall;
 
-  qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
+  //qDebug( "%stotal steps/refresh intervall: %lld/%d",c_name,t_steps,refresh_intervall );
 
   progressBar->setMinimum( 0 );
   progressBar->setMaximum( normTotalSteps );
@@ -206,6 +206,8 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
  */
 bool TTProgressBar::setProgress( uint64_t progress )
 {
+  off64_t abProgress;
+
   refresh--;
   if ( refresh == 0 )
   {
@@ -215,22 +217,20 @@ bool TTProgressBar::setProgress( uint64_t progress )
     // TODO: Warning: Stoerendes letztes % in Format
     strPercentage.sprintf( "%02.0lf%%",progressPercent );
     percentageString->setText( strPercentage );
-    //percentageString->update();
 
     progressPercent = (double)progress / (double)totalSteps * 100.0;
 
     // normalized progress value for the progress bar
     normProgress = (int)(progressPercent*1000.0);
 
-    //printf("norm_progress: %d\n",normProgress);
+    //qDebug("Progress: %lld", progress);
+    //qDebug("Percent:  %lf / %ld", progressPercent, normProgress);
 
-    //QT3: progressBar->setProgress( normProgress );
     progressBar->setValue( normProgress );
 
     elapsedMsec += elapsedTime.restart();
     elapsedTimeString->setText( ttMsecToTime( elapsedMsec ).toString( "hh:mm:ss" ));
-    //elapsedTimeString->update();
-    // process events
+    
     qApp->processEvents();
     refresh = refresh_intervall;
   }
@@ -260,7 +260,7 @@ void TTProgressBar::resetProgress()
  */
 void TTProgressBar::slotCancel()
 {
-  qDebug( "%scancel button pressed: %d",c_name,userCancel );
+  //qDebug( "%scancel button pressed: %d",c_name,userCancel );
   userCancel = true;
   emit cancel();
   qApp->processEvents();
