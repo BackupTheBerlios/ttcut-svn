@@ -10,6 +10,9 @@ TODO list for project TTCut (04/24/2007)
 * Implement transcode- and mplex-provider as plugin
 * Check warning about type conversion in ttfilebuffer
 * Check IDD file handling and improve speed while reading header from IDD
+  Theire's to much analyzing work in these method. We must split the analyzing
+  in one part for ttcut and another, more complex, part for ttmpeg to make
+  stream analyzing faster!
 * Find a solution for realtime playback demuxed video stream (play-button)
 * Add option settings for transcode
 * Implement plugin interface for external tools (transcode, mplex, mplayer)
