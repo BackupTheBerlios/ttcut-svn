@@ -206,8 +206,6 @@ void TTProgressBar::setTotalSteps( uint64_t t_steps, int r_int )
  */
 bool TTProgressBar::setProgress( uint64_t progress )
 {
-  off64_t abProgress;
-
   refresh--;
   if ( refresh == 0 )
   {
