@@ -58,6 +58,7 @@ class TTMplexProvider : public TTProcessForm
 
   protected:
     void procOutput();
+    void deleteElementaryStreams();
     int  createVerboseHash();
     int  createFormatHash();
 
@@ -78,6 +79,8 @@ class TTMplexProvider : public TTProcessForm
     QStringList         commandStrList;
     int                 exitCode;
     bool                mplexSuccess;
+    TTMuxListData*      currentMuxList;
+    int                 currentIndex;
     QHash<QString, int> verbose;
     QHash<QString, int> format;
 };

@@ -211,6 +211,8 @@ bool TTMplexProvider::mplexPart(TTMuxListData* muxData, int index)
   QString        videoFile;
   QString        audioFile;
 
+  currentMuxList   = muxData;
+  currentIndex     = index;
   int  update      = EVENT_LOOP_INTERVALL;
   mplexSuccess     = false;
   proc             = new QProcess();
@@ -333,12 +335,35 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus exitStat
   if (exitStatus == QProcess::NormalExit)
   {
     if (TTCut::muxDeleteES)
-      qDebug("Delete elementary streams not implemented yet!");
+      deleteElementaryStreams();
   }
 
   enableButton(true);
   mplexSuccess  = true;
   this->exitCode = exitCode;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Delete the elementary streams (m2v, mpa, mp2, ac3...)
+ */
+void TTMplexProvider::deleteElementaryStreams()
+{
+  // remove video file
+  QFile videoFile(currentMuxList->videoFileAt(currentIndex));
+  
+  if (videoFile.exists())
+    //qDebug("Remove video stream: %s", videoFile.fileName().toLatin1().data());
+    videoFile.remove();
+
+  // remove audio files
+  for (int i=0; i < currentMuxList->numAudioFilesAt(currentIndex); i++)
+  {
+    QFile audioFile(currentMuxList->audioFileAt(currentIndex, i));
+    
+    if (audioFile.exists())
+      //qDebug("Remove audio stream: %s", audioFile.fileName().toLatin1().data());
+      audioFile.remove();
+  }
 }
 
 /* /////////////////////////////////////////////////////////////////////////////

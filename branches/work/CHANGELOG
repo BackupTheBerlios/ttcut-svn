@@ -14,6 +14,7 @@ Version 0.19.x (RC's for release 0.20.0)
         * Fixed: Append trailing / at cut/mplex output path
         * Implement user abort during video cut
         * Fixed: Broken percent and progress reporting while cutting large files
+        * Delete elementary cut stream after mplex action
 
 
 0.19.1: * Removed QT3-Support depencies from TTMpeg2 (the whole project should
