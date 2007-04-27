@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ProcessViewWidget</class>
  <widget class="QDialog" name="ProcessViewWidget" >
   <property name="geometry" >
@@ -51,13 +48,16 @@
       <item row="0" column="0" >
        <widget class="QListWidget" name="procOutputList" >
         <property name="enabled" >
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="frameShape" >
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow" >
          <enum>QFrame::Plain</enum>
+        </property>
+        <property name="selectionMode" >
+         <enum>QAbstractItemView::NoSelection</enum>
         </property>
        </widget>
       </item>
@@ -112,7 +112,6 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <resources>
   <include location="processviewwidget.qrc" />
  </resources>

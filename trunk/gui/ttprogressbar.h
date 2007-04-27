@@ -6,7 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/24/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -32,17 +32,13 @@
 #ifndef TTPROGRESSBAR_H
 #define TTPROGRESSBAR_H
 
-//#include <qvariant.h>
 #include <QDialog>
-//#include <qdatetime.h>
-//Added by qt3to4:
 #include <QDateTime>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
 
-//#include "ttmpeg2.h"
 #include "../common/ttcut.h"
 
 #ifndef _WIN32
@@ -77,8 +73,13 @@ public:
     void showBar();
     void hideBar();
 
+    bool isCanceled();
+
     public slots:
     void slotCancel();
+
+    signals:
+      void cancel();
 
 protected:
     void updateProgressBar();

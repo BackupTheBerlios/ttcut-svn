@@ -1,26 +1,35 @@
 -------------------------------------------------------------------------------
-TODO list for project TTCut
+TODO list for project TTCut (04/27/2007)
 -------------------------------------------------------------------------------
 
+* Read all audiofiles for a given videofile, use the ProjectX naming 
+  convention for audio names
+* Enable single audio cut
+* Enable free diskspace info in cut dialog
+* Implement WriteMaxBitrate in cut dialog
+* Implement WriteSequenceEndCode in cut dialog
+* More option setting for mplex
+* Implement transcode- and mplex-provider as plugin
 * Check warning about type conversion in ttfilebuffer
 * Check IDD file handling and improve speed while reading header from IDD
+  Theire's to much analyzing work in these method. We must split the analyzing
+  in one part for ttcut and another, more complex, part for ttmpeg to make
+  stream analyzing faster!
 * Find a solution for realtime playback demuxed video stream (play-button)
-* Add option settings for transcode and mplex
+* Add option settings for transcode
 * Implement plugin interface for external tools (transcode, mplex, mplayer)
 * Write a FAQ
   1) If mplayer don't work properly check your default -vo settings. 
      TTCut assumes that you use -vo x11.
      Also check that you have the right permissons to /dev/dsp
-* Check strange QProcess behavior: under some circumstances transcode crashed and
-  may force the x-server to shutdown
 * Check cut quality in conjunction with transcode -> ttmpeg2
-* Implement mux options: mux-list, mux after cut
 * Make the current frame position clickable (enter current frame positon)
-* Write the mux list and support direct muxing after cut (first step is done)
 * More keyboard short cuts
 * Internationalisation (!!!)
 * User warning when click "New Project" an video stream is loaded (!)
 * Display the resulting stream lengths after cut
-* Find solution for chapter marks
+* Implement chapter marks
 * Cut audio only
-* Find a logo (!!!!!) 
+* Logo (!!!!!) 
+* Remove hard coded frame rate setting in ttaviwriter (!!)
+

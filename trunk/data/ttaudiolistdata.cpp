@@ -125,6 +125,7 @@ int TTAudioListData::addItem(QString fName, TTAudioStream* aStream)
   item.audioBitrate    = header->bitRateString();
   item.audioSamplerate = header->sampleRateString();
   item.audioMode       = header->modeString();
+  
   // FIXME: use real delay value for audio delay
   item.audioDelay      = "0";
   
@@ -177,7 +178,7 @@ void TTAudioListData::print()
   log->infoMsg(oName, "----------------------------------------");
 
   for(int i=0; i < data.count(); i++) {
-    log->infoMsg(oName, "audio-File: %s", qPrintable(data[i].audioStream->fileName()));
+    log->infoMsg(oName, "audio-File: %s", TTCut::toAscii(data[i].audioStream->fileName()));
   }
 }
 
@@ -187,7 +188,7 @@ void TTAudioListData::writeToProject(TTCutProject* prj)
   prj->writeAudioSection( true );
 
   for (int i=0; i < data.count(); i++) {
-    prj->writeAudioFileName( (QString)data[i].audioFileInfo.absoluteFilePath() );
+    prj->writeAudioFileName( data[i].audioFileInfo.absoluteFilePath() );
   }
 
   prj->writeAudioSection( false );

@@ -97,6 +97,12 @@ int TTDTSAudioStream::createHeaderList( )
   // for corrupt stream seek to calculated start position
   stream_buffer->seekRelative( start_pos);
 
+  if (ttAssigned(progress_bar))
+  {
+    progress_bar->setActionText("Create audio header list.");
+    progress_bar->setTotalSteps(stream_buffer->streamLength());
+  }
+
   while ( !stream_buffer->streamEOF() )
   {
     searchNextSyncWord();
@@ -111,11 +117,17 @@ int TTDTSAudioStream::createHeaderList( )
     {
       prev_audio_header = (TTDTSAudioHeader*)header_list->at(header_list->count()-1);
       audio_header->abs_frame_time = prev_audio_header->abs_frame_time
-	+prev_audio_header->frame_time;
+        +prev_audio_header->frame_time;
     }
 
     header_list->add( audio_header);
+
+    if (ttAssigned(progress_bar))
+      progress_bar->setProgress(stream_buffer->currentOffset());
   }
+
+  if (ttAssigned(progress_bar))
+    progress_bar->setComplete();
 
   // den Stream nach interessanten Punkten absuchen lassen:
   // base.CreateIndex(FileName);

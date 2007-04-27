@@ -68,6 +68,9 @@ class TTMuxListData
     void appendAudioName(int index, QString audio);
     TTMuxListDataItem& itemAt(int index);
     QString videoFileAt(int index);
+    QString videoFileNameAt(int index);
+    QString videoFilePathAt(int index);
+    QString videoFileAbsPathAt(int index);
     int     numAudioFilesAt(int index);
     QString audioFileAt(int index, int nr);
     int  count();

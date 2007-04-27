@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+
 /* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
@@ -131,7 +131,7 @@ QStringList TTCut::recentFileList;
 // encoder settings
 // --------------------------------------------------------------
 // Version
-QString TTCut::versionString = "TTCut - 0.19.1";
+QString TTCut::versionString = "TTCut - 0.19.2";
 
 // Options
 bool TTCut::encoderMode = false;
@@ -140,12 +140,14 @@ bool TTCut::encoderMode = false;
 // muxer settings
 // --------------------------------------------------------------
 // Options
-int     TTCut::muxMode       = 2;
-int     TTCut::mpeg2Target   = 2;
+int     TTCut::muxMode       = 1;
+int     TTCut::mpeg2Target   = 7;
 QString TTCut::muxProg       = "mplex";
 QString TTCut::muxProgPath   = "/usr/local/bin/";
 QString TTCut::muxProgCmd    = "-f 8";
-QString TTCut::muxOutputPath = "/var/tmp";
+QString TTCut::muxOutputPath = QDir::homePath();
+bool    TTCut::muxDeleteES   = false;
+bool    TTCut::muxPause      = true;
 
 // --------------------------------------------------------------
 // chapter settings
@@ -194,5 +196,6 @@ TTCut::~TTCut()
 
 const char* TTCut::toAscii(QString string)
 {
-  return string.toAscii().constData();
+  //return string.toAscii().constData();
+  return string.toLatin1().constData();
 }

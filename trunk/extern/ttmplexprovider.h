@@ -5,11 +5,11 @@
 /* FILE     : ttmplexprovider.h                                               */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/11/2006 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 04/18/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTMPLEXPROVIDER
+// TTMPLEXPROVIDER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -36,6 +36,7 @@
 #include "../data/ttmuxlistdata.h"
 #include "../gui/ttprocessform.h"
 
+#include <QCloseEvent>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -44,7 +45,7 @@
 
 class TTMuxListData;
 
-class TTMplexProvider : public QObject
+class TTMplexProvider : public TTProcessForm
 {
   Q_OBJECT
 
@@ -56,10 +57,14 @@ class TTMplexProvider : public QObject
     bool mplexPart(TTMuxListData* muxData, int index);
 
   protected:
-    int createVerboseHash();
-    int createFormatHash();
+    void procOutput();
+    void deleteElementaryStreams();
+    int  createVerboseHash();
+    int  createFormatHash();
 
   public slots:
+    void closeEvent(QCloseEvent *event);
+    void onButtonOkClicked();
     void onProcError(QProcess::ProcessError procError);
     void onProcReadOut();
     void onProcStarted();
@@ -74,6 +79,8 @@ class TTMplexProvider : public QObject
     QStringList         commandStrList;
     int                 exitCode;
     bool                mplexSuccess;
+    TTMuxListData*      currentMuxList;
+    int                 currentIndex;
     QHash<QString, int> verbose;
     QHash<QString, int> format;
 };

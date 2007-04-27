@@ -5,6 +5,7 @@
 /* FILE     : ttcutmainwindow.cpp                                             */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/26/2006 */
+/* MODIFIED: b. altendorf                                    DATE: 04/12/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -34,7 +35,6 @@
 #include "ttcutavcutdlg.h"
 #include "ttprogressbar.h"
 #include "ttcutaboutdlg.h"
-#include "../extern/ttmplexprovider.h"
 
 #include "../ui//pixmaps/downarrow_18.xpm"
 #include "../ui/pixmaps/uparrow_18.xpm"
@@ -67,6 +67,9 @@
 
 const char oName[] = "TTCutMainWindow";
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Application main window constructor
+ */
 TTCutMainWindow::TTCutMainWindow() 
 : QMainWindow()
 {
@@ -107,10 +110,12 @@ TTCutMainWindow::TTCutMainWindow()
   // Message logger instance
   log = TTMessageLogger::getInstance();
   
-  // Qt version at runtime
+  // Get the current Qt version at runtime
   log->infoMsg(oName, "TTCut-Version: %s", qPrintable(TTCut::versionString));
   log->infoMsg(oName, "Qt-Version:    %s", qVersion());
+
 #if QT_VERSION < 0x040100
+  // TODO: Show message box and abort session
   log->errorMsg(oName, "Qt-Version >= 4.1.0 required");
 #endif
 
@@ -127,8 +132,9 @@ TTCutMainWindow::TTCutMainWindow()
   audioList = new TTAudioListData();
   audioFileInfo->setListData(audioList);
 
-  // Mux list
-  muxListData = new TTMuxListData();
+  // Mux list and mplex provider (later by plugin)
+  muxListData   = new TTMuxListData();
+  mplexProvider = new TTMplexProvider();
 
   // no navigation
   navigationEnabled( false );
@@ -203,17 +209,20 @@ TTCutMainWindow::TTCutMainWindow()
 
   // Connect signals from cut list widget
   // --------------------------------------------------------------------------
-  connect(cutList, SIGNAL(entrySelected(int)), cutOutFrame, SLOT(onGotoCutOut(int)));
-  connect(cutList, SIGNAL(entryEdit(const TTCutListDataItem&)), navigation, SLOT(onEditCut(const TTCutListDataItem&)));
-  connect(cutList, SIGNAL(gotoCutIn(int)),     currentFrame, SLOT(onGotoFrame(int)));
-  connect(cutList, SIGNAL(gotoCutOut(int)),    currentFrame, SLOT(onGotoFrame(int)));
+  connect(cutList, SIGNAL(entrySelected(int)), cutOutFrame,     SLOT(onGotoCutOut(int)));
+  connect(cutList, SIGNAL(entryEdit(const TTCutListDataItem&)), 
+                                              navigation,       SLOT(onEditCut(const TTCutListDataItem&)));
+  connect(cutList, SIGNAL(gotoCutIn(int)),     currentFrame,    SLOT(onGotoFrame(int)));
+  connect(cutList, SIGNAL(gotoCutOut(int)),    currentFrame,    SLOT(onGotoFrame(int)));
   connect(cutList, SIGNAL(refreshDisplay()),   streamNavigator, SLOT(onRefreshDisplay()));
-  connect(cutList, SIGNAL(previewCut(int)),    SLOT(onPreviewCut(int)));
-  connect(cutList, SIGNAL(audioVideoCut(int)), SLOT(onAudioVideoCut(int)));
-  connect(cutList, SIGNAL(audioCut(int)),      SLOT(onAudioCut(int)));
+  connect(cutList, SIGNAL(previewCut(int)),                     SLOT(onPreviewCut(int)));
+  connect(cutList, SIGNAL(audioVideoCut(int)),                  SLOT(onAudioVideoCut(int)));
+  connect(cutList, SIGNAL(audioCut(int)),                       SLOT(onAudioCut(int)));
 }
 
-//! Destructor: Clean up used resources
+/* /////////////////////////////////////////////////////////////////////////////
+ * Destructor
+ */
 TTCutMainWindow::~TTCutMainWindow()
 {
   delete settings;
@@ -222,9 +231,9 @@ TTCutMainWindow::~TTCutMainWindow()
   delete cutListData;
 }
 
-// Signals from the application menu
-// ----------------------------------------------------------------------------
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Signals from the application menu
+ */
 void TTCutMainWindow::keyPressEvent(QKeyEvent* e)
 {
   navigation->keyPressEvent(e);
@@ -233,8 +242,10 @@ void TTCutMainWindow::keyPressEvent(QKeyEvent* e)
 //! Menu "File new" action
 void TTCutMainWindow::onFileNew()
 {
-  if (TTCut::isVideoOpen) {
-    if (ttAssigned(cutListData) && cutListData->count() > 0) {
+  if (TTCut::isVideoOpen) 
+  {
+    if (ttAssigned(cutListData) && cutListData->count() > 0) 
+    {
       //TODO: Ask for saving changes
       log->infoMsg(oName, "TODO: Ask for saving changes in project");
     }
@@ -323,7 +334,12 @@ void TTCutMainWindow::onFileSaveAs()
       "Project(*.prj)" );
 
   if (!TTCut::projectFileName.isEmpty())
+  {
+    QFileInfo fInfo(TTCut::projectFileName);
+    TTCut::lastDirPath = fInfo.absolutePath();
+ 
     onFileSave();
+  }
 }
 
 
@@ -448,8 +464,13 @@ void TTCutMainWindow::onNewFramePos(int newPos)
   navigation->checkCutPosition( mpegStream );
 }
 
-// Signals from the cut list widget
-// ----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Signals from the cut list widget
+ */
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Create cut preview for current cut list
+ */
 void TTCutMainWindow::onPreviewCut(int index)
 {
   TTAudioStream* audioStream = NULL;
@@ -472,22 +493,25 @@ void TTCutMainWindow::onPreviewCut(int index)
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Do video and audio cut
+ */
 void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 {
   QString        AudioDateiEndung;
   QString        HString;
   int            AudioAnzahl;
   int            muxIndex = 0;
-  int list_pos = 0;
+  int            list_pos = 0;
   bool           nurAudioSchneiden;
   QString        videoCutName;
   QString        audio_cut_name;
   QString        audio_number;
   QFileInfo      video_cut_file_info;
   QFileInfo      audio_cut_file_info;
-  uint len1, len2, len;
-  TTFileBuffer* video_cut_stream;
-  TTFileBuffer* audio_cut_stream;
+  uint           len1, len2, len;
+  TTFileBuffer*  video_cut_stream;
+  TTFileBuffer*  audio_cut_stream;
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
 
@@ -564,19 +588,30 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     progress_bar->show();
     qApp->processEvents();
 
-    video_cut_stream = new TTFileBuffer(TTCut::toAscii(videoCutName), fm_open_write );
+     video_cut_stream = new TTFileBuffer(videoCutName.toUtf8().constData(), fm_open_write );
 
     mpegStream->setProgressBar( progress_bar );
 
     mpegStream->cut( video_cut_stream, cutListData );
 
-    muxIndex = muxListData->addItem(video_cut_stream->fileName());
+    // video cut canceled
+    if (progress_bar->isCanceled())
+    {
+      QFile videoFile(videoCutName);
+      videoFile.remove();
 
-    //qDebug("Meldung128: Das Schneiden der Datei %s ist beendet.",HString.ascii());
+      // clean up
+      delete progress_bar;
+      delete video_cut_stream;
+
+      return;
+    }
+
+    muxIndex = muxListData->addItem(QString::fromUtf8(video_cut_stream->fileName()));
+
     delete progress_bar;
     delete video_cut_stream;
-  }
-  // Ende Videoschnitt
+  } // Ende Videoschnitt
 
   // --------------------------------------------------------------------------
   // Cut audio-file
@@ -592,7 +627,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   {
     current_audio_stream = audioList->audioStreamAt( list_pos );
 
-    //qDebug( "%scurrent audio stream: %s",c_name,current_audio_stream->fileName().ascii() );
+    //qDebug( "%s: current audio stream: %s", oName, qPrintable(current_audio_stream->fileName()));
 
     // Quick and ugly: make it better ;-)
     // ------------------------------------------------------------------------
@@ -607,12 +642,12 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
     audio_cut_name = audio_cut_file_info.absoluteFilePath();
     // ------------------------------------------------------------------------
 
-    //qDebug( "%saudio cut file: %s",c_name,audio_cut_name.ascii() );
+    //qDebug( "%s: audio cut file: %s", oName, qPrintable(audio_cut_name));
 
     // audio file exists
     if (audio_cut_file_info.exists()) {
       // TODO: Warning about deleting file
-      log->warningMsg(oName, "deleting existing audio cut file: %s", TTCut::toAscii(audio_cut_name));
+      log->warningMsg(oName, "deleting existing audio cut file: %s", audio_cut_name.toLatin1().constData());
       QFile tempFile(audio_cut_name);
       tempFile.remove();
       tempFile.close();
@@ -624,11 +659,24 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
     current_audio_stream->setProgressBar( progress_bar );
 
-    audio_cut_stream = new TTFileBuffer(TTCut::toAscii(audio_cut_name), fm_open_write );
+    audio_cut_stream = new TTFileBuffer(qPrintable(audio_cut_name), fm_open_write );
 
     current_audio_stream->cut( audio_cut_stream, cutListData );
 
-    muxListData->appendAudioName(muxIndex, audio_cut_stream->fileName());
+    // audio cut canceled
+    if (progress_bar->isCanceled())
+    {
+      QFile audioFile(audio_cut_name);
+      audioFile.remove();
+
+      // clean up
+      delete progress_bar;
+      delete current_audio_stream;
+
+      return;
+    }
+
+    muxListData->appendAudioName(muxIndex, QString::fromUtf8(audio_cut_stream->fileName()));
 
     delete progress_bar;
     delete audio_cut_stream;
@@ -638,12 +686,18 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   }
   // Ende Audioschnitt
 
-  // mux list
+  // mux list / direct mux
   muxListData->print();
-  TTMplexProvider mplexProvider;
-  mplexProvider.writeMuxScript(muxListData);
 
-  mplexProvider.mplexPart(muxListData, muxListData->count()-1);
+
+  if (TTCut::muxMode == 1)
+  {
+    mplexProvider->writeMuxScript(muxListData);
+  }
+  else
+  {
+    mplexProvider->mplexPart(muxListData, muxListData->count()-1);
+  }
 }
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
@@ -729,9 +783,14 @@ bool TTCutMainWindow::openProjectFile(QString fName)
   TTCut::projectFileName = fName;
 
   // error opening project file
-  try {
+  try 
+  {
     projectFile = new TTCutProject(fName, QIODevice::ReadOnly);
-  } catch (TTCutProjectOpenException) {
+
+    QFileInfo fInfo(fName );
+    TTCut::lastDirPath = fInfo.absolutePath();
+  } catch (TTCutProjectOpenException) 
+  {
     log->errorMsg(oName, "error open project file: %s", TTCut::toAscii(fName));
     return result;
   }
@@ -872,9 +931,9 @@ int TTCutMainWindow::openAudioStream(QString fName)
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
 
-  log->infoMsg(oName, "Read audio stream: %s", TTCut::toAscii(fName));
+  log->infoMsg(oName, "Read audio stream: %s", fName.toLatin1().constData());
 
-  // get the strem type and create according stream-object
+  // get the stream type and create according stream-object
   audio_type   = new TTAudioType( fName );
 
   // create the audio stream object for the first audio file

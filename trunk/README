@@ -33,3 +33,18 @@ Features:
 -Editierbare Schnittliste
 -Vorschau der definierten Schnitte
 
+Download:
+---------
+
+http://developer.berlios.de/project/showfiles.php?group_id=4403
+
+SVN:
+---
+
+Die svn Repositories sind in der Regel auf einem neueren Stand, als die tar-Archive.
+
+Aktuelle stabile svn Version:
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/trunk
+
+Arbeitsversion (eventuell nicht stabil!)
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/branches/work

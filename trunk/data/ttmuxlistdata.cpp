@@ -162,6 +162,25 @@ QString TTMuxListData::videoFileAt(int index)
   return data[index].videoFileName;
 }
 
+QString TTMuxListData::videoFileNameAt(int index)
+{
+  QFileInfo fInfo(data[index].videoFileName);
+
+  return fInfo.fileName();
+}
+
+QString TTMuxListData::videoFilePathAt(int index)
+{
+  return data[index].videoFileName;
+}
+
+QString TTMuxListData::videoFileAbsPathAt(int index)
+{
+  QFileInfo fInfo(data[index].videoFileName);
+
+  return fInfo.absolutePath();
+}
+
 int TTMuxListData::numAudioFilesAt(int index)
 {
   return data[index].audioFileNames.size();
@@ -200,15 +219,14 @@ void TTMuxListData::removeAt(int index)
 //! Print the data list for debug purpose
 void TTMuxListData::print()
 {
-  log->infoMsg(oName, "mux-list data");
-  log->infoMsg(oName, "----------------------------------------");
+  log->infoMsg(oName, "mux-list data:");
 
   for(int i=0; i < data.count(); i++) {
     log->infoMsg(oName, "--------------------------------");
-    log->infoMsg(oName, "video-file: %s", data[i].getVideoName().toAscii().constData());
+    log->infoMsg(oName, "video-file: %s", data[i].getVideoName().toLatin1().constData());
     QStringList audioNames = data[i].getAudioNames();
     for (int j=0; j < audioNames.size(); j++) {
-      log->infoMsg(oName, "audio-file: %s", audioNames.at(j).toAscii().constData());
+      log->infoMsg(oName, "audio-file: %s", audioNames.at(j).toLatin1().constData());
     }
     log->infoMsg(oName, "--------------------------------");
   }

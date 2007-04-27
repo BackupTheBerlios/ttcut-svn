@@ -107,22 +107,25 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   //qDebug( "%s------------------------------------------------",c_name );
 
   QFileInfo avi_finfo( QDir(TTCut::tempDirPath), "encode.avi" );
-  avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().toAscii() );
+  avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().toLatin1().data() );
 
   // Progressbar action text 
   if ( ttAssigned(progress_bar) )
     progress_bar->setActionText( "Search equal frame..." );
   //else
     //qDebug("ProgessBar not assigned (!)");
-  
+
+  //TODO: go back to previous sequence to ensure correct encoding of
+  //      open GOP's
   // move decode position to "ref_frame_pos"
   current_frame = decoder->moveToFrameIndex( start_frame_pos );
   
   // decode the current slice
   frameInfo = decoder->decodeMPEG2Frame( formatYV12 );
 
-  qDebug( "%sAVI frame info: width: %d x height: %d",c_name,frameInfo->width,frameInfo->height );
+  //qDebug( "%sAVI frame info: width: %d x height: %d",c_name,frameInfo->width,frameInfo->height );
 
+  //TODO: avoid setting hard coded frame rate!
   AVI_set_video(avi_file, frameInfo->width, frameInfo->height, 25.0, "YV12");
   
   ref_data = new uint8_t [frameInfo->size+2*frameInfo->chroma_size];

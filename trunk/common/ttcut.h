@@ -146,6 +146,8 @@ class TTCut
    static QString muxProgPath;
    static QString muxProgCmd;
    static QString muxOutputPath;
+   static bool    muxDeleteES;
+   static bool    muxPause;
 
    // --------------------------------------------------------------
    // chapter settings

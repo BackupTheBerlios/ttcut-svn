@@ -80,7 +80,7 @@ TTAVTypes::TTAVTypes( QString f_name )
 #if defined(TTAVTYPES_DEBUG)
   if ( !av_stream_exists )
   {
-    qDebug( "%saudio stream %s doesn't exist (!)",c_name,f_name.toAscii().constData());
+    qDebug("%saudio stream %s doesn't exist (!)", c_name, TTCut::toAscii(f_name));
   }
 #endif
 }

@@ -53,7 +53,6 @@
 #include "ttaviwriter.h"
 
 #include "../common/ttmessagelogger.h"
-//#include "../data/ttcutlistdata.h"
 #include "../extern/tttranscode.h"
 
 #include <QString>
@@ -66,52 +65,51 @@ class TTCutListData;
 // -----------------------------------------------------------------------------
 class TTMpeg2VideoStream : public TTVideoStream
 {
- public:
-  TTMpeg2VideoStream();
-  TTMpeg2VideoStream( const QFileInfo &f_info );
+  public:
+    TTMpeg2VideoStream();
+    TTMpeg2VideoStream( const QFileInfo &f_info );
 
-  void makeSharedCopy( TTMpeg2VideoStream* v_stream );
+    void makeSharedCopy( TTMpeg2VideoStream* v_stream );
 
-  int createHeaderList();
-  int createIndexList();
+    int createHeaderList();
+    int createIndexList();
 
-  TTSequenceHeader* currentSequenceHeader();
-  TTGOPHeader*      currentGOPHeader();
-  TTPicturesHeader* currentPictureHeader();
-  TTSequenceHeader* sequenceHeaderAt( int index );
-  TTGOPHeader*      GOPHeaderAt( int index );
-  TTPicturesHeader* pictureHeaderAt( int index );
-  TTVideoHeader*    getPrevMpeg2Object( TTVideoHeader* current );
-  TTVideoHeader*    getNextMpeg2Object( TTVideoHeader* current );
+    TTSequenceHeader* currentSequenceHeader();
+    TTGOPHeader*      currentGOPHeader();
+    TTPicturesHeader* currentPictureHeader();
+    TTSequenceHeader* sequenceHeaderAt( int index );
+    TTGOPHeader*      GOPHeaderAt( int index );
+    TTPicturesHeader* pictureHeaderAt( int index );
+    TTVideoHeader*    getPrevMpeg2Object( TTVideoHeader* current );
+    TTVideoHeader*    getNextMpeg2Object( TTVideoHeader* current );
 
-  bool isCutInPoint( int pos );
-  bool isCutOutPoint( int pos );
+    bool isCutInPoint( int pos );
+    bool isCutOutPoint( int pos );
 
-  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cutNew( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-   void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
-  void transferMpegObjects( TTFileBuffer* fs,
-			    TTVideoHeader* start_object,
-			    int start_object_index,
-			    TTVideoHeader* end_object,
-			    int end_object_index,
-			    TTCutParameter* cr );
+    void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
+    void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
+    void transferMpegObjects( TTFileBuffer* fs,
+        TTVideoHeader* start_object,
+        int start_object_index,
+        TTVideoHeader* end_object,
+        int end_object_index,
+        TTCutParameter* cr );
+    void encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream );
 
-  void encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream );
- protected:
-  bool openStream();
-  bool closeStream();
-  bool createHeaderListFromIdd();
-  bool createHeaderListFromMpeg2();
-  void writeIDDFile( );
-  void readIDDHeader();
+  protected:
+    bool openStream();
+    bool closeStream();
+    bool createHeaderListFromIdd();
+    bool createHeaderListFromMpeg2();
+    void writeIDDFile( );
+    void readIDDHeader();
 
- protected:
-  TTMessageLogger* log;
-  TTFileBuffer*    mpeg2_stream;
-  TTFileBuffer*    idd_stream;
-  long*            stream_order_list;
-  int              idd_file_version;
+  protected:
+    TTMessageLogger* log;
+    TTFileBuffer*    mpeg2_stream;
+    TTFileBuffer*    idd_stream;
+    long*            stream_order_list;
+    int              idd_file_version;
 };
 
-#endif //TTDTSAUDIOSTREAM_H
+#endif //TTMPEG2VIDEOSTREAM_H

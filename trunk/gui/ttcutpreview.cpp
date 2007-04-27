@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/13/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 03/12/2006 */
+/* MODIFIED: b. altendorf                                    DATE: 04/19/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -296,7 +297,7 @@ void TTCutPreview::createPreview( int c_index )
 
       system( qPrintable(mplex_command) );
     }
-    log->infoMsg(c_name, "mplex command: %s", qPrintable(mplex_command));
+    log->infoMsg(c_name, "mplex command: %s", mplex_command.toLatin1().constData());
     progress_bar->setProgress( i+1 );
   }
   progress_bar->setComplete();
@@ -411,7 +412,7 @@ void TTCutPreview::playPreview()
 {
   if ( !isPlaying )
   {
-    log->debugMsg( c_name, "Start playing preview: %s",current_video_file.toAscii().data() );
+    log->debugMsg( c_name, "Start playing preview: %s", current_video_file.toLatin1().constData() );
 
     // try to grab the keyboard, prevents mplayer from receiving keyboard input
     grabKeyboard();
@@ -496,7 +497,7 @@ void TTCutPreview::readFromStdout()
       {
         temp_str[i_pos] = '\0';
         line = temp_str;
-        log->infoMsg(c_name, line);
+        log->infoMsg(c_name, line.toLatin1().data());
         i_pos = 0;
       }
     }
@@ -505,7 +506,7 @@ void TTCutPreview::readFromStdout()
   {
     line = "mplayer finished... done(0)";
     isPlaying = false;
-    log->infoMsg(c_name, line);
+    log->infoMsg(c_name, line.toLatin1().data());
   }
 }
 
@@ -571,7 +572,7 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
     }
     else
     {
-      log->infoMsg(c_name, "mplayer command: %s", mplayer_cmd.join(" ").toAscii().data());
+      log->infoMsg(c_name, "mplayer command: %s", mplayer_cmd.join(" ").toLatin1().data());
       log->errorMsg(c_name, "error starting mplayer (!)");
     }
   }

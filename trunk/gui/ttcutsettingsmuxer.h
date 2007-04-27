@@ -45,6 +45,18 @@ class TTCutSettingsMuxer : public QWidget, Ui::TTCutSettingsMuxer
     void setTitle( const QString& title );
     void setTabData();
     void getTabData();
+
+  private:
+    void initMuxProgList();
+    void initMuxTargetList();
+
+  protected slots:
+    void onCreateMuxScript();
+    void onCreateMuxStreams();
+    void onConfigureMuxer();
+    void onOpenOutputPath();
+    void onStateDeleteES(int state);
+    void onStatePause(int state);
 };
 
 #endif

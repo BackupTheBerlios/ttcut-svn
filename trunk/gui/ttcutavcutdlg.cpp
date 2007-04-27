@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 04/01/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 03/05/2006 */
+/* MODIFIED: b. altendorf                                    DATE: 04/24/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -37,54 +38,58 @@
 
 const char c_name[] = "TTCutAVCutDlg";
 
-// /////////////////////////////////////////////////////////////////////////////
-// -----------------------------------------------------------------------------
-// TTCut A/V cut dialog
-// -----------------------------------------------------------------------------
-// /////////////////////////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////////////////////////////
+ * Constructor
+ */
 TTCutAVCutDlg::TTCutAVCutDlg(QWidget* parent)
     : QDialog(parent)
 {
   setupUi(this);
+
+  // not implemented yet
+  tabWidget->removeTab(3);
 
   // message logger instance
   log = TTMessageLogger::getInstance();
 
   // signals and slot connection
   // ------------------------------------------------------------------
-  connect(btnDirOpen,   SIGNAL(clicked()), SLOT(onDirectoryOpen()));
-  connect(okButton,     SIGNAL(clicked()), SLOT( onDlgStart()));
-  connect(cancelButton, SIGNAL(clicked()), SLOT( onDlgCancel()));
+  connect(btnDirOpen,   SIGNAL(clicked()),           SLOT(onDirectoryOpen()));
+  connect(okButton,     SIGNAL(clicked()),           SLOT( onDlgStart()));
+  connect(cancelButton, SIGNAL(clicked()),           SLOT( onDlgCancel()));
 
   // set the tabs data
   // ------------------------------------------------------------------
   setCommonData();
   encodingPage->setTabData();
   muxingPage->setTabData();
-  chaptersPage->setTabData();
-
+  //chaptersPage->setTabData();
 }
 
-// destruct object
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Destructor
+ */
 TTCutAVCutDlg::~TTCutAVCutDlg()
 {
-
+  // nothing to do
 }
 
 
-// save the tabs data
+/* /////////////////////////////////////////////////////////////////////////////
+ * Save the tabs data
+ */
 void TTCutAVCutDlg::setGlobalData()
 {
   getCommonData();
   encodingPage->getTabData();
   muxingPage->getTabData();
-  chaptersPage->getTabData();
+  //chaptersPage->getTabData();
 }
 
 
-// exit, saving changes; start A/V cut
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Exit, saving changes; start A/V cut
+ */
 void TTCutAVCutDlg::onDlgStart()
 {
   setGlobalData();
@@ -93,26 +98,29 @@ void TTCutAVCutDlg::onDlgStart()
 }
 
 
-// exit, discard changes
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Exit, discard changes
+ */
 void TTCutAVCutDlg::onDlgCancel()
 {
   done( 1 );
 }
 
-// select a directory for the cut result
+/* /////////////////////////////////////////////////////////////////////////////
+ * Select a directory for the cut result
+ */
 void TTCutAVCutDlg::onDirectoryOpen()
 {
-  QStringList df_cmd_list;
-
   QString str_dir = QFileDialog::getExistingDirectory( this,
       "Select cut-result directory",
       TTCut::cutDirPath,
       (QFileDialog::DontResolveSymlinks |
        QFileDialog::ShowDirsOnly) );
 
-  if ( !str_dir.isEmpty() ) {
-    TTCut::cutDirPath = str_dir;
+  if ( !str_dir.isEmpty() ) 
+  {
+    TTCut::cutDirPath    = str_dir;
+    TTCut::muxOutputPath = str_dir;
     leOutputPath->setText( TTCut::cutDirPath );
     qApp->processEvents();
   }
@@ -120,13 +128,11 @@ void TTCutAVCutDlg::onDirectoryOpen()
   //getFreeDiskSpace();
 }
 
-
-// set the tab data from global parameter
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set the tab data from global parameter
+ */
 void TTCutAVCutDlg::setCommonData()
 {
-  QStringList df_cmd_list;
-
   if ( !QDir(TTCut::cutDirPath).exists() )
     TTCut::cutDirPath = QDir::currentPath();
 
@@ -144,16 +150,24 @@ void TTCutAVCutDlg::setCommonData()
   //getFreeDiskSpace();
  }
 
-// get tab data and set global parameter
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Get tab data and set global parameter
+ */
 void TTCutAVCutDlg::getCommonData()
 {
   // cut output filename and output path
-  TTCut::cutVideoName = leOutputFile->text();
-  TTCut::cutDirPath   = leOutputPath->text();
+  TTCut::cutVideoName  = leOutputFile->text();
+  TTCut::cutDirPath    = leOutputPath->text();
 
   if ( !QDir(TTCut::cutDirPath).exists() )
-    TTCut::cutDirPath = QDir::currentPath();
+    TTCut::cutDirPath    = QDir::currentPath();
+
+  // Check for video file extension
+  QFileInfo cutFile(TTCut::cutVideoName);
+  QString ext = cutFile.suffix();
+
+  if (ext.isEmpty() || ext != "m2v")
+    TTCut::cutVideoName += ".m2v";
 
   // cut options
   // write max bittrate tp first sequence
@@ -163,6 +177,9 @@ void TTCutAVCutDlg::getCommonData()
   TTCut::cutWriteSeqEnd = cbEndCode->isChecked();
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Calculate the available diskspace
+ */
 void TTCutAVCutDlg::getFreeDiskSpace()
 {
   QStringList df_cmd_list;

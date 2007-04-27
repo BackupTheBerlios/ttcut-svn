@@ -37,6 +37,7 @@
 
 #include <QFileInfo>
 #include <QProcess>
+#include <QCloseEvent>
 
 class TTEncodeParameter;
 
@@ -44,28 +45,32 @@ class TTTranscodeProvider : public TTProcessForm
 {
   Q_OBJECT
 
- public:
-  TTTranscodeProvider();
-  ~TTTranscodeProvider();
+  public:
+    TTTranscodeProvider();
+    ~TTTranscodeProvider();
 
-  void setParameter( TTEncodeParameter& enc_par );
-  bool encodePart( );
+    void setParameter( TTEncodeParameter& enc_par );
+    bool encodePart( );
 
   public slots:
-  void onProcReadOut();
-  void onProcStarted();
-  void onProcFinished(int exit_code, QProcess::ExitStatus );
-  void onProcError(QProcess::ProcessError proc_error);
-  void onProcStateChanged(QProcess::ProcessState proc_state);
-  void onProcKill();
+    void closeEvent(QCloseEvent *event);
+    void onProcReadOut();
+    void onProcStarted();
+    void onProcFinished(int exit_code, QProcess::ExitStatus );
+    void onProcError(QProcess::ProcessError proc_error);
+    void onProcStateChanged(QProcess::ProcessState proc_state);
+    void onProcKill();
 
- private:
-  TTMessageLogger* log;
-  QProcess*        proc;
-  QString          str_command;
-  QStringList      strl_command_line;
-  int              exit_code;
-  bool             transcode_success;
+  protected:
+    void procOutput();
+
+  private:
+    TTMessageLogger* log;
+    QProcess*        proc;
+    QString          str_command;
+    QStringList      strl_command_line;
+    int              exit_code;
+    bool             transcode_success;
 };
 
 
