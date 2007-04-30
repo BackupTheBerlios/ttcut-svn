@@ -4,6 +4,10 @@ TTCut-Buglist (Known issues)
 
 * Under unknown cirumstances TTCut crashed while executing transcode and forces 
   the xserver to shut down
-* German Umlaut handling may not work correct (hopefully fixed, try it out and
-  send me some feedback)
-
+* Crash: 1) open small video with sound
+         2) Do Preview
+         3) open small video without sound
+         4) Do Preview
+         5) open large video
+         6) add range to cutlist
+         7) crash! -> TTListIndexException
