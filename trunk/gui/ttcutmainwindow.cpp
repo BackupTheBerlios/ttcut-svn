@@ -443,6 +443,7 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
 
   if (audioInfoList.count() == 0)
   {
+    TTCut::numAudioTracks = 0;
     audioFileInfo->onFileOpen();
     return;
   }
@@ -704,7 +705,8 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
       return;
     }
 
-    muxListData->appendAudioName(muxIndex, QString::fromUtf8(audio_cut_stream->fileName()));
+    if (!cutAudioOnly)
+      muxListData->appendAudioName(muxIndex, QString::fromUtf8(audio_cut_stream->fileName()));
 
     delete progress_bar;
     delete audio_cut_stream;
@@ -714,18 +716,15 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
   }
   // Ende Audioschnitt
 
+  if (cutAudioOnly)
+    return;
+
   // mux list / direct mux
-  muxListData->print();
-
-
+  // muxListData->print();
   if (TTCut::muxMode == 1)
-  {
     mplexProvider->writeMuxScript(muxListData);
-  }
   else
-  {
     mplexProvider->mplexPart(muxListData, muxListData->count()-1);
-  }
 }
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
@@ -780,6 +779,7 @@ void TTCutMainWindow::closeProject()
   {
     videoFileInfo->resetVideoInfo();
     audioFileInfo->clearList();
+    cutListData->deleteAll();
     cutList->clearList();
     streamNavigator->slider()->setValue(0);
     navigationEnabled(false);

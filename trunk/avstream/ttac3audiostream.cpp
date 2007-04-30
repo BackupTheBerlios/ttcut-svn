@@ -302,7 +302,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     audio_end_time   = (((float)(end_pos+1)*video_frame_length-local_audio_offset)/frame_time-1.0);
     audio_end_index  = (long)round(audio_end_time);
 
-    if (audio_end_index > header_list->count())
+    if (audio_end_index >= header_list->count())
       audio_end_index = header_list->count()-1;
 
     local_audio_offset = ((float)(audio_end_index+1)*frame_time)-

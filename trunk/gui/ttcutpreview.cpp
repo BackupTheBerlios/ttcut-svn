@@ -117,10 +117,11 @@ void TTCutPreview::createPreview( int c_index )
   preview_time   = preview_time.addSecs( TTCut::cutPreviewSeconds );
   preview_frames = ttTimeToFrames( preview_time, video_stream->frameRate() ) / 2;
 
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%s>>> create cut preview",c_name );
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%scut index    : %d",c_name,c_index);
+#if defined PREVIEW_DEBUG
+  log->debugMsg(c_name, "------------------------------------------------");
+  log->debugMsg(c_name, "create cut preview");
+  log->debugMsg(c_name, "cut index  : %d", c_index);
+#endif
 
   // create the cut list for the preview clips
   createCutPreviewList();
@@ -129,15 +130,19 @@ void TTCutPreview::createPreview( int c_index )
   num_cut_list = preview_cut_list->count();
   num_preview  = num_cut_list/2+1;
 
-  //qDebug( "%snum preview  : %d",c_name,num_preview);
+#if defined PREVIEW_DEBUG
+  log->debugMsg(c_name, "num preview: %d", num_preview);
+#endif
 
   // ---------------------------------------------------------------------
   // Create video and audio preview clips
   // ---------------------------------------------------------------------
   for ( i = 0; i < num_preview; i++ )
   {
-    //qDebug( "%s-----------------------------------------------",c_name );
-    //qDebug( "%scut index  : %d / %d",c_name,i,cut_index);
+#if defined PREVIEW_DEBUG
+    log->debugMsg(c_name, "cut index: %d / %d", i, cut_index);
+#endif
+
     temp_cut_list = new TTCutListData(avcut_list->videoStream());
 
     if ( c_index > 0 )
@@ -161,8 +166,6 @@ void TTCutPreview::createPreview( int c_index )
     // first cut-in
     if ( i == 0 )
     {
-      //qDebug( "%s(A)first cut %d      : %d",c_name,i,i);
-
       temp_cut_list->deleteAll();
 
       temp_cut_list->addCutPosition( preview_cut_list->cutInPosAt(i), preview_cut_list->cutOutPosAt(i), i );
@@ -179,7 +182,6 @@ void TTCutPreview::createPreview( int c_index )
     if ( num_preview > 1 && i > 0 && i < num_preview-1 )
     {
       iPos = (i-1)*2+1;
-      //qDebug("%s(X)cut %d-%d, i pos   : %d",c_name,i,i+1,iPos);
 
       temp_cut_list->deleteAll();
 
@@ -201,7 +203,7 @@ void TTCutPreview::createPreview( int c_index )
     if ( i == num_preview-1 )
     {
       iPos = (i-1)*2+1;
-      //qDebug("%s(E)last cut, i pos    : %d",c_name,iPos);
+
       temp_cut_list->deleteAll();
 
       temp_cut_list->addCutPosition( preview_cut_list->cutInPosAt(iPos), preview_cut_list->cutOutPosAt(iPos), i );
@@ -297,7 +299,11 @@ void TTCutPreview::createPreview( int c_index )
 
       system( qPrintable(mplex_command) );
     }
+
+#if defined PREVIEW_DEBUG
     log->infoMsg(c_name, "mplex command: %s", mplex_command.toLatin1().constData());
+#endif
+
     progress_bar->setProgress( i+1 );
   }
   progress_bar->setComplete();
@@ -312,7 +318,6 @@ void TTCutPreview::createPreview( int c_index )
 
   current_video_file = preview_video_info.absoluteFilePath();
 }
-
 
 void TTCutPreview::createCutPreviewList( )
 {
@@ -412,7 +417,9 @@ void TTCutPreview::playPreview()
 {
   if ( !isPlaying )
   {
+#if defined PREVIEW_DEBUG
     log->debugMsg( c_name, "Start playing preview: %s", current_video_file.toLatin1().constData() );
+#endif
 
     // try to grab the keyboard, prevents mplayer from receiving keyboard input
     grabKeyboard();

@@ -271,9 +271,11 @@ int TTMPEGAudioStream::createHeaderList( )
 
   // TODO: looking for interesting stream points, like mode changes etc.  
   
+#if defined MPEGAUDIO_DEBUG
   log->infoMsg(c_name, "header list created: %d",header_list->count());
   log->infoMsg(c_name, "abs stream length:   %s",absStreamTime().toAscii().data());
-  
+#endif
+
   return header_list->count();
 }
 
@@ -307,11 +309,13 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   float   audio_end_time;
   float   local_audio_offset = 0.0;
 
+#if defined MPEGAUDIO_DEBUG
   log->infoMsg(c_name, "-----------------------------------------------");
   log->infoMsg(c_name, ">>> cut audio stream                           ");
   log->infoMsg(c_name, "-----------------------------------------------");
   log->infoMsg(c_name, "entries in cut list: %d", cut_list->count());
   log->infoMsg(c_name, "target stream      : %s", QString::fromUtf8(cut_stream->fileName()).toLatin1().constData());
+#endif
 
   for ( i = 0; i < cut_list->count(); i++ )
   {
@@ -350,9 +354,13 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     audio_end_time   = (((float)(end_pos+1)*video_frame_length-local_audio_offset)/frame_time-1.0);
     audio_end_index  = (long)round(audio_end_time);
 
+    if (audio_end_index >= header_list->count())
+      audio_end_index = header_list->count()-1;
+
     local_audio_offset = ((float)(audio_end_index+1)*frame_time)-
       ((float)(end_pos+1)*video_frame_length)+local_audio_offset;
 
+#if defined MPEGAUDIO_DEBUG
     log->infoMsg( c_name, "audio frame length: %d",frame_length );
     log->infoMsg( c_name, "audio frame time  : %f",frame_time );
     log->infoMsg( c_name, "start - end       : %d | %d - %d",i+1,audio_start_index,audio_end_index );
@@ -360,10 +368,10 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     log->infoMsg( c_name, "audio start/end   : %f/%f",audio_start_time,audio_end_time );
     log->infoMsg( c_name, "video length      : %f",(end_pos-start_pos+1)*video_frame_length );
     log->infoMsg( c_name, "audio length      : %f",(audio_end_index-audio_start_index+1)*frame_time );
+#endif
 
     cut( cut_stream, audio_start_index, audio_end_index, cut_param );
   }
-  log->infoMsg(c_name, "-----------------------------------------------");
   delete cut_param;
 }
 

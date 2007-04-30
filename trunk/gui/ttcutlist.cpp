@@ -41,7 +41,7 @@ TTCutList::TTCutList(QWidget* parent)
   setupUi( this );
 
   // not implemented
-  pbCutAudio->setEnabled(false);
+  //pbCutAudio->setEnabled(false);
   
   // set list view header (column) width
   videoCutList->setRootIsDecorated( false );
