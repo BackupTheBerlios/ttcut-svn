@@ -779,6 +779,7 @@ void TTCutMainWindow::closeProject()
   {
     videoFileInfo->resetVideoInfo();
     audioFileInfo->clearList();
+    audioList->deleteAll();
     cutListData->deleteAll();
     cutList->clearList();
     streamNavigator->slider()->setValue(0);

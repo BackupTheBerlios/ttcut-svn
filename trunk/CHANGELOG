@@ -5,6 +5,12 @@ TTCut-Changelog
 Version 0.19.x (RC's for release 0.20.0)
 ----------------------------------------
 
+0.19.3: * Delete elementary cut stream after mplex action
+        * Read all audiofiles to a given videofile (videofile_name*.mpa, 
+          videofile_name*.m2v, videofile_name*.ac3)
+        * Implement cut audio only feature
+        * Fixed: TTCut crashed after reading video without sound
+ 
 0.19.2: * Fixed German Umlaut handling in console output
         * Fixed spelling and implement a nicer look in about-dialog
         * Set the video output directory as default directory for mplex
@@ -14,10 +20,6 @@ Version 0.19.x (RC's for release 0.20.0)
         * Fixed: Append trailing / at cut/mplex output path
         * Implement user abort during video cut
         * Fixed: Broken percent and progress reporting while cutting large files
-        * Delete elementary cut stream after mplex action
-        * Read all audiofiles to a given videofile (videofile_name*.mpa, 
-          videofile_name*.m2v, videofile_name*.ac3)
-
 
 0.19.1: * Removed QT3-Support depencies from TTMpeg2 (the whole project should
           now compile without the need for any Qt3-support libs

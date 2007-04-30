@@ -2,7 +2,6 @@
 TODO list for project TTCut (04/27/2007)
 -------------------------------------------------------------------------------
 
-* Enable single audio cut
 * Enable free diskspace info in cut dialog
 * Implement WriteMaxBitrate in cut dialog
 * Implement WriteSequenceEndCode in cut dialog
