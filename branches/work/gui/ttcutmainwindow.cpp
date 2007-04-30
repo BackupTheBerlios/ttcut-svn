@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/26/2006 */
 /* MODIFIED: b. altendorf                                    DATE: 04/12/2007 */
+/* MODIFIED: b. altendorf                                    DATE: 04/30/2007 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -239,7 +240,9 @@ void TTCutMainWindow::keyPressEvent(QKeyEvent* e)
   navigation->keyPressEvent(e);
 }
 
-//! Menu "File new" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "File new" action
+ */
 void TTCutMainWindow::onFileNew()
 {
   if (TTCut::isVideoOpen) 
@@ -253,7 +256,9 @@ void TTCutMainWindow::onFileNew()
   }
 }
 
-//! Menu "File open" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "File open" action
+ */
 void TTCutMainWindow::onFileOpen()
 {
   QString fn = QFileDialog::getOpenFileName(this,
@@ -266,7 +271,9 @@ void TTCutMainWindow::onFileOpen()
   }
 }
 
-//! Menu "File save" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "File save" action
+ */
 void TTCutMainWindow::onFileSave()
 {
   TTCutProject* projectFile;
@@ -317,11 +324,11 @@ void TTCutMainWindow::onFileSave()
 }
 
 
-//! Menu "File save as" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "File save as" action
+ */
 void TTCutMainWindow::onFileSaveAs()
 {
-  qDebug("save project file as");
-
   if (!TTCut::isVideoOpen)
     return;
 
@@ -343,24 +350,31 @@ void TTCutMainWindow::onFileSaveAs()
 }
 
 
-//! Menu "Recent files..." action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "Recent files..." action
+ */
 void TTCutMainWindow::onFileRecent()
 {
   QAction* action = qobject_cast<QAction*>(sender());
 
-  if (action) {
-    log->infoMsg(oName, "open recent project file: %s", TTCut::toAscii(action->data().toString()));
+  if (action) 
+  {
+    //log->infoMsg(oName, "open recent project file: %s", TTCut::toAscii(action->data().toString()));
     openProjectFile(action->data().toString());
   }
 }
 
 
-//! Menu "Exit" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "Exit" action
+ */
 void TTCutMainWindow::onFileExit()
 {
   // If project file open and has changes ask for save changes
-  if (TTCut::isVideoOpen) {
-    if (ttAssigned(cutListData) && cutListData->count() > 0) {
+  if (TTCut::isVideoOpen) 
+  {
+    if (ttAssigned(cutListData) && cutListData->count() > 0) 
+    {
       log->infoMsg(oName, "TODO: Ask for saving changes in project");
     }
   }
@@ -376,13 +390,17 @@ void TTCutMainWindow::onFileExit()
 }
 
 
-//! Menu "Save current frame" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "Save current frame" action
+ */
 void TTCutMainWindow::onActionSave()
 {
   currentFrame->saveCurrentFrame();
 }
 
-//! Menu "Settings" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "Settings" action
+ */
 void TTCutMainWindow::onActionSettings()
 {
   TTCutSettingsDlg* settingsDlg = new TTCutSettingsDlg( this );
@@ -396,48 +414,60 @@ void TTCutMainWindow::onActionSettings()
   delete settingsDlg;
 }
 
-//! Menu "About" action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Menu "About" action
+ */
 void TTCutMainWindow::onHelpAbout()
 {
   TTCutAboutDlg about(this);
   about.exec();
 }
 
-// Signals from the video info widget
-// ----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Signals from the video info widget
+ */
 
-//! Signal from open video action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Signal from open video action
+ */
 void TTCutMainWindow::onReadVideoStream(QString fName)
 {
-  if (openVideoStream(fName) > 0) {
-    initStreamNavigator();
+  if (openVideoStream(fName) <= 0) 
+  {
+    return;
+  }
 
-    QString audioName = audioFromVideoName(fName);
+  initStreamNavigator();
 
-    if (!audioName.isEmpty()) {
-      onReadAudioStream(audioName);
+  QFileInfoList audioInfoList = audioFromVideoName(fName);
 
-      if ( TTCut::numAudioTracks ==  0 ) {      
-        audioFileInfo->onFileOpen();
-      }
-    }
-  }    
+  if (audioInfoList.count() == 0)
+  {
+    TTCut::numAudioTracks = 0;
+    audioFileInfo->onFileOpen();
+    return;
+  }
+
+  for (int i = 0; i < audioInfoList.count(); i++)
+    onReadAudioStream(audioInfoList.at(i).absoluteFilePath());
 }
 
-// Signals from the audio list view widget
-// ----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Signals from the audio list view widget
+ */
 
-//! Signal from open audio action
+/* /////////////////////////////////////////////////////////////////////////////
+ * Signal from open audio action
+ */
 void TTCutMainWindow::onReadAudioStream(QString fName)
 {
   openAudioStream(fName);
 }
 
 
-// Video slider position changed signal
-// ----------------------------------------------------------------------------
-
-//! Video slider position changed
+/* /////////////////////////////////////////////////////////////////////////////
+ * Video slider position changed signal
+ */
 void TTCutMainWindow::onVideoSliderChanged(int sPos)
 {
   if( sliderUpdateFrame && TTCut::isVideoOpen ) {
@@ -452,10 +482,13 @@ void TTCutMainWindow::onVideoSliderChanged(int sPos)
   sliderUpdateFrame = true;
 }
 
-// Signals from the current frame widget
-// ----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Signals from the current frame widget
+ */
 
-//! New current frame position
+/* /////////////////////////////////////////////////////////////////////////////
+ * New current frame position
+ */
 void TTCutMainWindow::onNewFramePos(int newPos)
 {
   sliderUpdateFrame = false;
@@ -496,14 +529,13 @@ void TTCutMainWindow::onPreviewCut(int index)
 /* /////////////////////////////////////////////////////////////////////////////
  * Do video and audio cut
  */
-void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
+void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cutAudioOnly)
 {
   QString        AudioDateiEndung;
   QString        HString;
   int            AudioAnzahl;
   int            muxIndex = 0;
   int            list_pos = 0;
-  bool           nurAudioSchneiden;
   QString        videoCutName;
   QString        audio_cut_name;
   QString        audio_number;
@@ -539,9 +571,6 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
 
   // set global cut video name
   TTCut::cutVideoName = videoCutName;
-
-  // cut video and audio
-  nurAudioSchneiden = false;
 
   // --------------------------------------------------------------------------
   // start dialog for cut options
@@ -580,7 +609,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   // --------------------------------------------------------------------------
 
   // cut only audio ???
-  if ( !nurAudioSchneiden )
+  if ( !cutAudioOnly )
   {
     //qDebug("Meldung125: Die Videodaten werden in der Datei %s gespeichert.",videoCutName.ascii());
 
@@ -676,7 +705,8 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
       return;
     }
 
-    muxListData->appendAudioName(muxIndex, QString::fromUtf8(audio_cut_stream->fileName()));
+    if (!cutAudioOnly)
+      muxListData->appendAudioName(muxIndex, QString::fromUtf8(audio_cut_stream->fileName()));
 
     delete progress_bar;
     delete audio_cut_stream;
@@ -686,75 +716,71 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index)
   }
   // Ende Audioschnitt
 
+  if (cutAudioOnly)
+    return;
+
   // mux list / direct mux
-  muxListData->print();
-
-
+  // muxListData->print();
   if (TTCut::muxMode == 1)
-  {
     mplexProvider->writeMuxScript(muxListData);
-  }
   else
-  {
     mplexProvider->mplexPart(muxListData, muxListData->count()-1);
-  }
 }
 
 void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
 {
-  //#warning "not implemented"
+  onAudioVideoCut(index, true);
 }
 
-// Service methods
-// ----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Service methods
+ */
 
-//! open video and audio stream and create according index and header lists
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * open video and audio stream and create according index and header lists
+ */
 void TTCutMainWindow::createAVStreams(QString videoFile, QString audioFile)
 {
   log->infoMsg(oName, "Create video stream: %s", TTCut::toAscii(videoFile));
   log->infoMsg(oName, "Create audio stream: %s", TTCut::toAscii(audioFile));
 }
 
-//! Search a audiofile corresponding to videofile name
-QString TTCutMainWindow::audioFromVideoName(QString videoFile)
+/* /////////////////////////////////////////////////////////////////////////////
+ * Search for audiofiles acording to the video file name
+ * Valid audio extensions are: mpa, mp2, ac3
+ */
+QFileInfoList TTCutMainWindow::audioFromVideoName(QString videoFile)
 {
-  QString result = "";
+  QString       videoBaseName; 
+  QFileInfo     videoFileInfo(videoFile);
+  QStringList   audioFilters;
+  QDir          audioDir(videoFileInfo.absoluteDir());
+  QFileInfoList audioInfoList;
 
-  // look for extension mpa
-  result = ttChangeFileExt( videoFile, "mpa" );
-  QFileInfo fInfo( result );
+  //  video file name without extension
+  videoBaseName = videoFileInfo.completeBaseName();
 
-  if( fInfo.exists() ){
-    return result;
-  }
+  audioFilters << videoBaseName+"*"+".mpa"
+               << videoBaseName+"*"+".mp2"
+               << videoBaseName+"*"+".ac3";
 
-  // look for extension mp2
-  result = ttChangeFileExt( videoFile, "mp2" );
-  fInfo.setFile( result );
+  audioDir.setNameFilters(audioFilters);
+  audioDir.setFilter(QDir::Files);
 
-  if( fInfo.exists() ){
-    return result;
-  }
-
-  // look for extension ac3
-  result = ttChangeFileExt( videoFile, "ac3" );
-  fInfo.setFile( result );
-
-  if( fInfo.exists() ){
-    return result;
-  }
-
-  // no corresponding audio file found
-  return result;
+  return audioDir.entryInfoList();
 }
 
-//! Close current project or video file
+/* /////////////////////////////////////////////////////////////////////////////
+ * Close current project or video file
+ */
 void TTCutMainWindow::closeProject()
 {
-  if (TTCut::isVideoOpen) {
+  if (TTCut::isVideoOpen) 
+  {
     videoFileInfo->resetVideoInfo();
     audioFileInfo->clearList();
+    audioList->deleteAll();
+    cutListData->deleteAll();
     cutList->clearList();
     streamNavigator->slider()->setValue(0);
     navigationEnabled(false);
@@ -765,7 +791,9 @@ void TTCutMainWindow::closeProject()
   }
 }
 
-//! Enable or disable navigation
+/* /////////////////////////////////////////////////////////////////////////////
+ * Enable or disable navigation
+ */
 void TTCutMainWindow::navigationEnabled( bool enabled )
 {
   cutOutFrame->controlEnabled( enabled );
@@ -774,7 +802,9 @@ void TTCutMainWindow::navigationEnabled( bool enabled )
   streamNavigator->controlEnabled( enabled );
 }
 
-//! Open project file
+/* /////////////////////////////////////////////////////////////////////////////
+ * Open project file
+ */
 bool TTCutMainWindow::openProjectFile(QString fName)
 {
   bool result = false;
@@ -842,7 +872,9 @@ bool TTCutMainWindow::openProjectFile(QString fName)
   return result;
 }
 
-//! Open video stream and create video index and header lists
+/* /////////////////////////////////////////////////////////////////////////////
+ * Open video stream and create video index and header lists
+ */
 int TTCutMainWindow::openVideoStream(QString fName)
 {
   int result = -1;
@@ -923,7 +955,9 @@ int TTCutMainWindow::openVideoStream(QString fName)
   return result;
 }
 
-//! Open audio stream
+/* /////////////////////////////////////////////////////////////////////////////
+ * Open audio stream
+ */
 int TTCutMainWindow::openAudioStream(QString fName)
 {
   int result = -1;
@@ -985,7 +1019,9 @@ int TTCutMainWindow::openAudioStream(QString fName)
   return result;
 }
 
-//! Intitialize stream navigator display and cut list data
+/* /////////////////////////////////////////////////////////////////////////////
+ * Intitialize stream navigator display and cut list data
+ */
 void TTCutMainWindow::initStreamNavigator()
 {
   if (!ttAssigned(cutListData)) {
@@ -1000,7 +1036,9 @@ void TTCutMainWindow::initStreamNavigator()
   navigationEnabled( true );
 }
 
-//! Update recent file menu actions
+/* /////////////////////////////////////////////////////////////////////////////
+ * Update recent file menu actions
+ */
 void TTCutMainWindow::updateRecentFileActions()
 {
   int numRecentFiles = qMin(TTCut::recentFileList.size(), (int)MaxRecentFiles);
@@ -1018,7 +1056,9 @@ void TTCutMainWindow::updateRecentFileActions()
   }
 }
 
-//! Insert new file in recent file list
+/* /////////////////////////////////////////////////////////////////////////////
+ * Insert new file in recent file list
+ */
 void TTCutMainWindow::insertRecentFile(const QString& fName)
 {
   TTCut::recentFileList.removeAll(fName);
