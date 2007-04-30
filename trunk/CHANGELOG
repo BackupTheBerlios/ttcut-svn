@@ -15,6 +15,8 @@ Version 0.19.x (RC's for release 0.20.0)
         * Implement user abort during video cut
         * Fixed: Broken percent and progress reporting while cutting large files
         * Delete elementary cut stream after mplex action
+        * Read all audiofiles to a given videofile (videofile_name*.mpa, 
+          videofile_name*.m2v, videofile_name*.ac3)
 
 
 0.19.1: * Removed QT3-Support depencies from TTMpeg2 (the whole project should

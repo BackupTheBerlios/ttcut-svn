@@ -78,13 +78,13 @@ void keyPressEvent(QKeyEvent* e);
     void onNewFramePos(int);
 
     void onPreviewCut(int index);
-    void onAudioVideoCut(int index);
+    void onAudioVideoCut(int index, bool cutAudioOnly=false);
     void onAudioCut(int index);
 
   private:
     void closeProject();
     void createAVStreams( QString videoFile, QString audioFile );
-    QString audioFromVideoName(QString videoFile); 
+    QFileInfoList audioFromVideoName(QString videoFile); 
     void navigationEnabled( bool enabled );
     bool openProjectFile(QString fName);
     int openVideoStream(QString fName);
