@@ -1,0 +1,50 @@
+--------------------------------------------------------------------------------
+TTCut - Readme
+--------------------------------------------------------------------------------
+
+TTCut ist ein einfaches Schnittprogramm für harte Schnitte an mpeg2-Material.
+Hauptverwendungszweck ist das Entfernen von Werbeeinblendungen z.B. aus DVB-
+Mittschnitten.
+
+Das MPEG2-2 Video muss zuvor demuxt werden (Audio und Video in getrennten 
+Dateien). Dazu kann z.B. ProjectX 
+(http://www.lucike.info/index.htm?http://www.lucike.info/page_projectx.htm)
+verwendet werden.
+
+Aufgrund der mpeg2-Struktur ist ein Schnitt ohne Neukodieren nur an bestimmten 
+Frames möglich:
+cut-in:  Nur an einem I-Frame
+cut-out: An einem P- oder einem I-Frame
+
+Ist transcode installiert ist der Schnitt an jedem Frame möglich. Dazu wird die 
+Umgebung um den Schnittpunkt (i.d.R 2 bis 4 Frames) dekodiert und anschliessend 
+neuencodiert.
+
+Die Entwicklung ist im Gange (wenn auch etwas zögerlich).
+Ich kann leider nicht so viel Zeit, wie ich gerne wollte, auf dieses Projekt 
+verwenden. Dennoch bin ich bemüht, auf Fragen, Kritik oder Anregungen zeitnah 
+einzugehen (b.altendorf@tritime.de oder ttcut@tritime.org).
+
+Features:
+--------
+-Framegenauer Schnitt an jedem beliebigen Frame mit bereichsweisem Neuencodieren
+-Gleichzeitiger Schnitt mehrerer Audiodateien
+-Der letzte cut-out Frame wird parallel zum aktuellen Frame angezeigt
+-Editierbare Schnittliste
+-Vorschau der definierten Schnitte
+
+Download:
+---------
+
+http://developer.berlios.de/project/showfiles.php?group_id=4403
+
+SVN:
+---
+
+Die svn Repositories sind in der Regel auf einem neueren Stand, als die tar-Archive.
+
+Aktuelle stabile svn Version:
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/trunk
+
+Arbeitsversion (eventuell nicht stabil!)
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/branches/work
