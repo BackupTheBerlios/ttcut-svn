@@ -9,10 +9,10 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTSEQUENCEHEADER
-// *** TTSEQUENCEENDHEADER
-// *** TTGOPHEADER
-// *** TTPICTURESHEADER
+// TTSEQUENCEHEADER
+// TTSEQUENCEENDHEADER
+// TTGOPHEADER
+// TTPICTURESHEADER
 // ----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -358,14 +358,15 @@ void TTSequenceEndHeader::printHeader( )
 
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read the GOP header from given stream
+ */
 bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
   uint8_t header_data[4];
 
   try
   {
-      //qDebug("GOP start offset: %lld", mpeg2_stream->currentOffset());
-
     mpeg2_stream->readArray( header_data,4 );
 
     header_start_code = group_start_code;
@@ -381,6 +382,9 @@ bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream )
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read the GOP header at given offset
+ */
 bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
@@ -388,6 +392,9 @@ bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
   return readHeader( mpeg2_stream );
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse the basic GOP header data
+ */
 void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
 {
   time_code.drop_frame_flag = (data[offset+0] >> 7) == 1;
@@ -400,14 +407,18 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
   broken_link               = ((data[offset+3] & 0x20) >> 5) == 1;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse extended GOP header data, not basicly necessary for processing
+ */
 void TTGOPHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
-
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Print GOP header data for debug and logfile usage
+ */
 void TTGOPHeader::printHeader( )
 {
-
 }
 
 
@@ -422,6 +433,9 @@ void TTGOPHeader::printHeader( )
 
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read picture header from stream
+ */
 bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
   uint8_t header_data[5];
@@ -436,6 +450,11 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 
     parseBasicData( header_data );
 
+    parseExtendedData( header_data );
+    
+    // The code below have to be moved to the parseExtendedData method!
+    // Theese data objects arent neccessary for further processing
+    // save time !
     mpeg2_stream->nextStartCodeTS();
 
     mpeg2_stream->readArray( header_data, 1 );
@@ -503,25 +522,35 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read picture header at given offset.
+ */
 bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
   return readHeader( mpeg2_stream );
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse basic picture header data.
+ */
 void TTPicturesHeader::parseBasicData( uint8_t* data, int offset )
 {
   picture_coding_type = (int)((data[offset+1] & 0x38) >> 3);
   temporal_reference  = (int)((data[offset+0] << 2) + ((data[offset+1] & 0xC0) >> 6));
   vbv_delay           = ((data[offset+1] & 0x07) << 13) + (data[offset+2] << 5) + ((data[offset+3] & 0xF8) >> 3);
-
-  //qDebug("coding type: %d",picture_coding_type);
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse extended picture header data
+ */
 void TTPicturesHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Form an string representing the picture coding type.
+ */
 QString TTPicturesHeader::codingTypeString()
 {
   switch (picture_coding_type)
@@ -540,6 +569,9 @@ QString TTPicturesHeader::codingTypeString()
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Print the header informations for debug purpose
+ */
 void TTPicturesHeader::printHeader( )
 {
 
