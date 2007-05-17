@@ -370,6 +370,8 @@ void TTCutMainWindow::onFileRecent()
  */
 void TTCutMainWindow::onFileExit()
 {
+  close();
+
   qApp->quit();
 }
 
@@ -381,6 +383,8 @@ void TTCutMainWindow::onFileExit()
  */
 void TTCutMainWindow::closeEvent(QCloseEvent* event)
 {
+
+  qDebug("Close..");
   // If project file open and has changes ask for save changes
   if (TTCut::isVideoOpen) 
   {
@@ -805,6 +809,9 @@ void TTCutMainWindow::closeProject()
     TTCut::isVideoOpen     = false;
     TTCut::projectFileName = "";
 
+    delete cutListData;
+    cutListData = 0;
+
     if (mpegStream != 0)
     {
       delete mpegStream;
@@ -1049,14 +1056,11 @@ int TTCutMainWindow::openAudioStream(QString fName)
  */
 void TTCutMainWindow::initStreamNavigator()
 {
-  if (cutListData != 0)
+  if (cutListData == 0)
   {
-    cutList->setListData(0);
-    delete cutListData;
+    cutListData = new TTCutListData(mpegStream);
+    cutList->setListData(cutListData);
   }
-
-  cutListData = new TTCutListData(mpegStream);
-  cutList->setListData(cutListData);
 
   streamNavigator->setMinValue(0);
   streamNavigator->setMaxValue(mpegStream->frameCount()-1);
