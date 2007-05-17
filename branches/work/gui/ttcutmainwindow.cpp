@@ -841,6 +841,8 @@ bool TTCutMainWindow::openProjectFile(QString fName)
 
   TTCut::projectFileName = fName;
 
+  closeProject();
+
   // error opening project file
   try 
   {
