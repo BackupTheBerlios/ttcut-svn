@@ -101,7 +101,7 @@ class TTCutListData
 
   private:
     QList<TTCutListDataItem> data;
-    TTMessageLogger*    log;
-    TTMpeg2VideoStream* mpegStream;
+    TTMessageLogger*         log;
+    TTMpeg2VideoStream*      mpegStream;
 };
 #endif

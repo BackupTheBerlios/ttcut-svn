@@ -818,7 +818,12 @@ void TTMpeg2VideoStream::readIDDHeader( )
       }
 
       if ( ttAssigned(progress_bar) )
+      {
         progress_bar->setProgress( idd_stream->currentOffset() );
+
+        if (progress_bar->isCanceled())
+          return;
+      }
 
       // old idd version; not tested (!)
       // full index-list

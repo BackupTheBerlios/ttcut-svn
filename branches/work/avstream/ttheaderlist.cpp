@@ -35,20 +35,26 @@
 
 const char c_name[] = "TTHEADERLIST  : ";
 
+static int number = 0;
+
 // construct a header list object
 TTHeaderList::TTHeaderList( int size )
 {
   initial_size = size;
   actual_size  = size;
+
+  qDebug("create Header list: %d",number);
+  number++;
 }
 
 TTHeaderList::~TTHeaderList()
 {
   int i;
 
-#if defined(TTHEADERLIST_DEBUG)
-  qDebug( "%sdelete header list: %d",c_name,size() );
-#endif
+//#if defined(TTHEADERLIST_DEBUG)
+  qDebug( "%sdelete header list: %d / number: %d",c_name,size(), number );
+  number--;
+//#endif
 
   for ( i = 0; i < size(); i++ )
   {
@@ -72,6 +78,8 @@ void TTHeaderList::add( TTAVHeader* header )
 void TTHeaderList::deleteAll()
 {
   int i;
+
+  qDebug("delete all: %d", number);
 
   for ( i = 0; i < size(); i++ )
   {

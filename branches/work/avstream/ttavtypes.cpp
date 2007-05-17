@@ -274,6 +274,9 @@ void TTAudioType::getAudioStreamType()
       {
         //qDebug( "%sfound MPEG audio...",c_name );
         av_stream_type = mpeg_audio;
+
+        delete mpeg_stream;
+        delete mpeg_header;
         break;
       }
     }
@@ -365,6 +368,16 @@ void TTAudioType::getAudioStreamType()
   }
 
   // close audio stream
+  delete pcm_audio_stream;
+  delete dts_audio_stream;
+
+  // check the destructor !!!!
+  //if (mem_buffer != 0)
+  //{
+    //delete mem_buffer;
+    //mem_buffer = 0;
+  //}
+
   av_stream->closeFile();
   delete av_stream;
   delete [] buffer;

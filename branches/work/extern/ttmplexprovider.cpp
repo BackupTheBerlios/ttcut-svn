@@ -341,6 +341,9 @@ void TTMplexProvider::onProcFinished(int exitCode, QProcess::ExitStatus exitStat
   enableButton(true);
   mplexSuccess  = true;
   this->exitCode = exitCode;
+
+  if (!TTCut::muxPause)
+    this->close();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////

@@ -64,7 +64,7 @@ void keyPressEvent(QKeyEvent* e);
     void onFileSaveAs();
     void onFileRecent();
     void onFileExit();
-
+    void closeEvent(QCloseEvent* event);
     void onActionSave();
     void onActionSettings();
 

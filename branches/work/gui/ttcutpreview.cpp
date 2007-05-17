@@ -79,7 +79,7 @@ TTCutPreview::TTCutPreview(QWidget* parent, int prevW, int prevH)
 // -----------------------------------------------------------------------------
 TTCutPreview::~TTCutPreview()
 {
-  if ( ttAssigned( preview_cut_list ) )
+  if (preview_cut_list != 0)
     delete preview_cut_list;
 }
 
@@ -240,12 +240,17 @@ void TTCutPreview::createPreview( int c_index )
       if ( TTCut::numAudioTracks > 0 )
         audio_stream->cut( audio_cut_stream, temp_cut_list );
 
-      delete progress_bar;
-
+      video_stream->setProgressBar(0);
       delete video_cut_stream;  
 
       if ( TTCut::numAudioTracks > 0 )
+      {
+        audio_stream->setProgressBar(0);
         delete audio_cut_stream;
+      }
+      delete progress_bar;
+      progress_bar = 0;
+
     }
     delete temp_cut_list;
     // next video preview clip
@@ -306,11 +311,12 @@ void TTCutPreview::createPreview( int c_index )
 
     progress_bar->setProgress( i+1 );
   }
+
   progress_bar->setComplete();
   delete progress_bar;
+  progress_bar = 0;
   delete preview_cut_list;
-
-  //qDebug( "%s-----------------------------------------------",c_name );
+  preview_cut_list = 0;
 
   // set the current cut preview to the first cut clip
   preview_video_name.sprintf("preview_001.mpg");

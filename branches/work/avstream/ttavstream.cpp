@@ -70,6 +70,7 @@
 #include <QString>
 #include <qfileinfo.h>
 
+static int number = 0;
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -84,6 +85,9 @@ const char c_name[] = "TTAVStream    : ";
  */
 TTAVStream::TTAVStream()
 {
+  qDebug("Create stream-1: %d", number);
+  number++;
+
   stream_info   = (QFileInfo*)NULL;
   stream_buffer = (TTFileBuffer*)NULL;
   stream_mode   = 0;
@@ -97,6 +101,9 @@ TTAVStream::TTAVStream()
 // -----------------------------------------------------------------------------
 TTAVStream::TTAVStream( const QFileInfo &f_info )
 {
+  qDebug("Create stream-2: %d", number);
+  number++;
+
   stream_info   = new QFileInfo( f_info );
 
   // check if stream exists
@@ -118,6 +125,9 @@ TTAVStream::TTAVStream( const QFileInfo &f_info )
 // -----------------------------------------------------------------------------
 TTAVStream::~TTAVStream()
 {
+  number--;
+  qDebug("TTAVStream destructor call: %d", number);
+
   if ( ttAssigned(stream_info) )
     delete stream_info;
 
@@ -395,7 +405,9 @@ long TTAVStream::calculateLength( __attribute__ ((unused))int start, __attribute
 TTAudioStream::TTAudioStream()
   : TTAVStream()
 {
-  start_pos = 0;
+  start_pos   = 0;
+  index_list  = 0;
+  header_list = 0;
 }
 
 
@@ -404,21 +416,18 @@ TTAudioStream::TTAudioStream()
 TTAudioStream::TTAudioStream( const QFileInfo &f_info, int s_pos )
   : TTAVStream( f_info )
 {
-  start_pos = s_pos;
-
-  index_list  = NULL;
-  header_list = NULL;
+  start_pos   = s_pos;
+  index_list  = 0;
+  header_list = 0;
 }
 
 TTAudioStream::~TTAudioStream()
 {
-  //qDebug( "TTAUDIOSTREAM : destructor call" );
+  if (header_list != 0)
+    delete header_list;
 
-  if ( ttAssigned( header_list ) )
-  delete header_list;
-
-  if( ttAssigned( index_list ) )
-  delete index_list;
+  if (index_list != 0)
+    delete index_list;
 }
 
 // cut-in always possible; video 
@@ -522,7 +531,7 @@ TTVideoStream::TTVideoStream( const QFileInfo &f_info )
 
 TTVideoStream::~TTVideoStream()
 {
-  //qDebug( "TTVIDEOSTREAM : destructor call" );
+  qDebug( "TTVIDEOSTREAM : destructor call" );
 
   if ( ttAssigned( header_list ) )
     delete header_list;

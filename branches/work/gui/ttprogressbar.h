@@ -57,7 +57,7 @@ class TTProgressBar : public QDialog
     Q_OBJECT
 
 public:
-    TTProgressBar( QWidget* parent = 0, Qt::WFlags fl = 0 );
+    TTProgressBar( QWidget* parent = 0, Qt::WFlags f = 0 );
     ~TTProgressBar();
 
     // public methods

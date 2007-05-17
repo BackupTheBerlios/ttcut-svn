@@ -70,6 +70,7 @@
 #define TTAVHEADER_H
 
 #include "ttcommon.h"
+#include "../common/ttmessagelogger.h"
 
 #ifdef __WIN32
 #include "ttwfilebuffer.h"
@@ -99,12 +100,13 @@ public:
   virtual void     setHeaderOffset( off64_t h_offset ){header_offset = h_offset;}
 
 protected:
-  off64_t  header_offset;
-  uint8_t  header_start_code;
-  QString* str_description;
-  QString* str_mode;
-  QString* str_bit_rate;
-  QString* str_sample_rate;
+  off64_t          header_offset;
+  uint8_t          header_start_code;
+  QString*         str_description;
+  QString*         str_mode;
+  QString*         str_bit_rate;
+  QString*         str_sample_rate;
+  TTMessageLogger* log;
 };
 
 

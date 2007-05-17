@@ -117,6 +117,7 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
   bool writeDisplayExtension(TTFileBuffer* mpeg2_stream, off64_t offset);
   void parseBasicData( uint8_t* data, int offset=0);
   void parseExtendedData( uint8_t* data, int offset=0 );
+  void parseExtendedData(TTFileBuffer* mpeg_stream);
   void printHeader( );
 
   int     horizontalSize();
