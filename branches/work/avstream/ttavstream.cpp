@@ -109,6 +109,7 @@ TTAVStream::TTAVStream( const QFileInfo &f_info )
   // check if stream exists
   if ( !stream_info->exists() )
   {
+    qDebug("No Stream!");    
     delete stream_info;
     stream_info = (QFileInfo*)NULL;
   }

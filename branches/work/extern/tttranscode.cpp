@@ -113,7 +113,7 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 		    << "-o"
 		    << enc_par.mpeg2_output_finfo.absoluteFilePath();
 
-  //log->infoMsg(c_name, strl_command_line.join(" "));
+  log->infoMsg(c_name, strl_command_line.join(" "));
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -244,7 +244,7 @@ void TTTranscodeProvider::onProcError(QProcess::ProcessError proc_error)
       break;
   }
   addLine(errorMsg);
-  //log->errorMsg(c_name, qPrintable(errorMsg));
+  log->errorMsg(c_name, qPrintable(errorMsg));
   transcode_success = false;
 }
 
@@ -270,7 +270,7 @@ void TTTranscodeProvider::onProcStateChanged(QProcess::ProcessState proc_state)
       break;
   }
 
-  //log->debugMsg(c_name, stateMsg);
+  log->debugMsg(c_name, stateMsg);
   addLine(stateMsg);
 }
 
@@ -298,7 +298,7 @@ void TTTranscodeProvider::procOutput()
   while (!out.atEnd())
   {
     line = out.readLine();
-    //log->infoMsg(c_name, line);
+    log->infoMsg(c_name, line);
     addLine( line );
   }
 }

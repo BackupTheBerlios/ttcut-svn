@@ -16,12 +16,6 @@
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// TODO
-// -----------------------------------------------------------------------------
-// * cut method, encodePart and transferObejct needs refactoring!
-// * compare B-frame handling from old cut method with this new one
-
-// -----------------------------------------------------------------------------
 // Overview
 // -----------------------------------------------------------------------------
 //
@@ -53,8 +47,8 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-//#define TTMPEG2VIDEOSTREAM_DEBUG
-//#define ENCODE_INFO
+#define TTMPEG2VIDEOSTREAM_DEBUG
+#define ENCODE_INFO
 
 #include "ttmpeg2videostream.h"
 
@@ -905,8 +899,9 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list 
 
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
   log->debugMsg(c_name, "--------------------------------------------------");
-  log->debugMsg(c_name, "Cut stream   : %s", TTCut::toAscii(mpeg2_stream->fileName()));
-  log->debugMsg(c_name, "Target stream: %s", TTCut::toAscii(cut_stream->fileName())); 
+  log->debugMsg(c_name, "Cut stream   :  %s", TTCut::toAscii(mpeg2_stream->fileName()));
+  log->debugMsg(c_name, "Target stream:  %s", TTCut::toAscii(cut_stream->fileName())); 
+  log->debugMsg(c_name, "Cut list count: %d", cut_list->count());
 #endif
 
   // cut each cut in cut list
@@ -975,8 +970,10 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* targetStream,
 
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
   log->debugMsg(c_name, ">>> cut video stream");
-  log->debugMsg(c_name, "target stream: %s", TTCut::toAscii(targetStream->fileName()));
-  log->debugMsg(c_name, "startIndex: %d  |  endIndex: %d", startIndex, endIndex);
+  log->debugMsg(c_name, "--------------------------------------------------");
+  log->debugMsg(c_name, "target stream:    %s", TTCut::toAscii(targetStream->fileName()));
+  log->debugMsg(c_name, "startIndex:       %d  |  endIndex: %d", startIndex, endIndex);
+  log->debugMsg(c_name, "Index list count: %d", index_list->count());
 #endif
 
   // open the source stream
@@ -1001,9 +998,13 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* targetStream,
   {
     tempEndIndexPos = currentIndexListPos+1;
 
+    log->debugMsg(c_name, "Search next I-frame from pos: %d", tempEndIndexPos);
+
     // search the next I-frame in index list
-    while(index_list->pictureCodingType(tempEndIndexPos) != 1)
+    while(tempEndIndexPos < index_list->count()-1 && index_list->pictureCodingType(tempEndIndexPos) != 1)
       tempEndIndexPos++;
+
+    log->debugMsg(c_name, "Found next I-frame at pos:    %d", tempEndIndexPos);
 
     // encode (without the founded I-frame!)
     encodePart(currentIndexListPos, tempEndIndexPos, cutParams, targetStream);
@@ -1016,6 +1017,12 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* targetStream,
   // this must be the picture header from the current I-frame!
   // transfer must begin with sequence!
   currentHeaderListPos = index_list->headerListIndex(currentIndexListPos) - 2;
+
+  if (currentHeaderListPos < 0)
+  {
+    log->errorMsg(c_name, "wrong header list pos: %d", currentHeaderListPos);
+    currentHeaderListPos = 0;
+  }
 
   // frame coding type at currentIndexListPos is I-frame
   // check if we have an sequence header at this position
@@ -1077,16 +1084,22 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* targetStream,
   startObjectHeaderPos   = currentHeaderListPos;
   startObjectVideoHeader = header_list->headerAt(startObjectHeaderPos);
 
-
+  log->debugMsg(c_name, "Start object pos: %d",     startObjectHeaderPos);
+  log->debugMsg(c_name, "Start object:     0x%02x", startObjectVideoHeader->headerType());
+ 
   // cut-out
   // --------------------------------------------------------------------------
   //
   currentIndexListPos = endIndex;
   tempEndIndexPos     = endIndex;
 
+  log->debugMsg(c_name, "Search P- or I-frame from pos; %d", currentIndexListPos);
+
   // cut-out position without reencoding mus P- or I-frame
-  while (index_list->pictureCodingType(tempEndIndexPos) == 3)
+  while (tempEndIndexPos > 0 && index_list->pictureCodingType(tempEndIndexPos) == 3)
     tempEndIndexPos--;
+
+  log->debugMsg(c_name, "Found P- or I-frame at pos: %d", tempEndIndexPos);
 
  // now the current end index is at P- or I-frame
  currentIndexListPos  = tempEndIndexPos;
@@ -1554,7 +1567,7 @@ void TTMpeg2VideoStream::encodePart(int start, int end,
   log->infoMsg(c_name, "current sequence information:");
   log->infoMsg(c_name, "---------------------------------------");
   log->infoMsg(c_name, "width: %d x height: %d", enc_par.video_width,       enc_par.video_height);
-  log->infoMsg(c_name, "aspect code: %d/%s",     enc_par.video_aspect_code, TTCut::toAsci(seq_head->aspectRatioText()));
+  log->infoMsg(c_name, "aspect code: %d/%s",     enc_par.video_aspect_code, TTCut::toAscii(seq_head->aspectRatioText()));
   log->infoMsg(c_name, "frame rate : %s",        TTCut::toAscii(seq_head->frameRateText()));
   log->infoMsg(c_name, "bitrate    : %f Kbit",   seq_head->bitRateKbit());
   log->infoMsg(c_name, "---------------------------------------");
