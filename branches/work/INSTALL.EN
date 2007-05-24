@@ -18,6 +18,9 @@ libmpeg2				http://libmpeg2.sourceforge.net		(>= 0.4.0)
 mplayer       for cut preview
 mplex         for cut preview
 transcode     for frame-accurate cutting
+              Remark: If you build transode from source take care, that you 
+                      configure transcode with option --enable-mjpegtools.
+                      This options build the required mpeg2enc export plugin.
 ffmpeg        for frame-accurate cutting
 
 3. Compilation
