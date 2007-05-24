@@ -40,6 +40,7 @@
  */
 
 #include "ttmessagelogger.h"
+#include "ttmessagewindow.h"
 //#include <sys/stdarg.h>
 
 
@@ -199,6 +200,18 @@ void TTMessageLogger::errorMsg(QString caller, const char* msg, ...)
   logMsg(ERROR, caller, buf);
 }
 
+void TTMessageLogger::showErrorMsg(QString caller, const char* msg, ...)
+{
+  char buf[1024];
+  va_list ap;
+
+  va_start( ap, msg );
+  vsprintf( buf, msg, ap );
+  va_end( ap );
+
+  logMsg(ERROR, caller, buf, true);
+}
+
 void TTMessageLogger::debugMsg(QString caller, const char* msg, ...)
 {
   char buf[1024];
@@ -217,7 +230,7 @@ void TTMessageLogger::debugMsg(QString caller, const char* msg, ...)
  * This method finally writes the message to the logfile.
  * You must set the message type.  
  */
-void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString)
+void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString, bool show)
 {
   QString write;
   
@@ -243,8 +256,17 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString)
   write.append("] ");
   write.append(msgString);
 
-  if(logMode & CONSOLE || msgType == ERROR)
+  if (logMode & CONSOLE || msgType == ERROR)
     qDebug(write.toUtf8().data());
+
+  if (show)
+  {
+    TTMessageWindow* msgWnd = new TTMessageWindow(0);
+    msgWnd->setCallerText(caller);
+    msgWnd->setMessageText(msgString);
+
+    msgWnd->exec();
+  }
 
   writeMsg(write);
 }
