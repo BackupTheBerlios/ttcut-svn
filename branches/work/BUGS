@@ -11,3 +11,4 @@ TTCut-Buglist (Known issues)
          5) open large video
          6) add range to cutlist
          7) crash! -> TTListIndexException
+  Remark: With latest Version of TTcut this bug should be fixed!
