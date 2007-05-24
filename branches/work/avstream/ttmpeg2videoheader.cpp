@@ -190,7 +190,7 @@ void TTSequenceHeader::parseBasicData( uint8_t* data, int offset )
 /* /////////////////////////////////////////////////////////////////////////////
  * Parse extended header data
  */
-void TTSequenceHeader::parseExtendedData(uint8_t* data, int offset )
+void TTSequenceHeader::parseExtendedData(uint8_t*, int )
 {
 }
 
@@ -491,7 +491,7 @@ void TTGOPHeader::printHeader( )
 bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
   uint8_t header_data[5];
-  uint8_t byte1;
+  //unused: uint8_t byte1;
 
   try
   {

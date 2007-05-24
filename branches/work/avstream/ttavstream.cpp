@@ -8,6 +8,7 @@
 /* MODIFIED: b. altendorf                                    DATE: 06/02/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 06/10/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 05/24/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -16,13 +17,6 @@
 // TTAUDIOSTREAM
 // TTVIDEOSTREAM
 // ----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// TODO
-// -----------------------------------------------------------------------------
-// * Make TTAVStream abstract
-// -----------------------------------------------------------------------------
-
 
 // -----------------------------------------------------------------------------
 // Overview
@@ -56,21 +50,10 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#if defined(__INTEL_COMPILER)
-#pragma warning(disable:981) // operands are evaluated in unspecified order
-#pragma warning(disable:177) // variable "..." was declared but never referenced
-#pragma warning(disable:869) // parameter "..." was never referenced
-#pragma warning(disable:186) // pointless comparison...
-#endif
-
-#include "ttavstream.h"
 #include "../data/ttcutlistdata.h"
-//#include "../data//ttcutparameter.h"
 
 #include <QString>
 #include <qfileinfo.h>
-
-static int number = 0;
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -85,9 +68,7 @@ const char c_name[] = "TTAVStream    : ";
  */
 TTAVStream::TTAVStream()
 {
-  qDebug("Create stream-1: %d", number);
-  number++;
-
+  log           = TTMessageLogger::getInstance();
   stream_info   = (QFileInfo*)NULL;
   stream_buffer = (TTFileBuffer*)NULL;
   stream_mode   = 0;
@@ -97,19 +78,21 @@ TTAVStream::TTAVStream()
   progress_bar  = (TTProgressBar*)NULL;
 }
 
-// construct TTAVStream object with file info
-// -----------------------------------------------------------------------------
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Construct TTAVStream object with file info
+ * The file given by f_info must exist!
+ */
 TTAVStream::TTAVStream( const QFileInfo &f_info )
 {
-  qDebug("Create stream-2: %d", number);
-  number++;
-
-  stream_info   = new QFileInfo( f_info );
+  log         = TTMessageLogger::getInstance();
+  stream_info = new QFileInfo( f_info );
 
   // check if stream exists
-  if ( !stream_info->exists() )
+  if (!stream_info->exists())
   {
-    qDebug("No Stream!");    
+    log->showErrorMsg("TTAVStream", "Stream does not exists: %s", stream_info->filePath().toLatin1().constData());
+
     delete stream_info;
     stream_info = (QFileInfo*)NULL;
   }
@@ -126,9 +109,6 @@ TTAVStream::TTAVStream( const QFileInfo &f_info )
 // -----------------------------------------------------------------------------
 TTAVStream::~TTAVStream()
 {
-  number--;
-  qDebug("TTAVStream destructor call: %d", number);
-
   if ( ttAssigned(stream_info) )
     delete stream_info;
 
@@ -532,8 +512,6 @@ TTVideoStream::TTVideoStream( const QFileInfo &f_info )
 
 TTVideoStream::~TTVideoStream()
 {
-  qDebug( "TTVIDEOSTREAM : destructor call" );
-
   if ( ttAssigned( header_list ) )
     delete header_list;
 
