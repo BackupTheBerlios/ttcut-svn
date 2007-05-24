@@ -383,8 +383,6 @@ void TTCutMainWindow::onFileExit()
  */
 void TTCutMainWindow::closeEvent(QCloseEvent* event)
 {
-
-  qDebug("Close..");
   // If project file open and has changes ask for save changes
   if (TTCut::isVideoOpen) 
   {
@@ -837,7 +835,7 @@ void TTCutMainWindow::navigationEnabled( bool enabled )
 bool TTCutMainWindow::openProjectFile(QString fName)
 {
   bool result = false;
-  TTCutProject* projectFile;
+  TTCutProject* projectFile = 0;
 
   TTCut::projectFileName = fName;
 

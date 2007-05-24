@@ -59,8 +59,9 @@ void TTCutOutFrame::controlEnabled( bool enabled )
 void TTCutOutFrame::initVideoStream(TTMpeg2VideoStream *vs)
 {
   currentMpeg2Stream = vs;
+  QFileInfo fInfo(vs->filePath());
 
-  mpeg2Stream = new TTMpeg2VideoStream( QFileInfo(vs->fileName()) );
+  mpeg2Stream = new TTMpeg2VideoStream(fInfo);
   mpeg2Stream->makeSharedCopy( vs );
 
   mpegWindow->openVideoStream( mpeg2Stream );
