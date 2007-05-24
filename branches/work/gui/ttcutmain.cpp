@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/01/2005 */
 /* MODIFIED: b. altendorf                                    DATE: 02/23/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 05/25/2007 */
 /*----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
@@ -33,33 +34,44 @@
 // class declaration for the main window class
 #include "ttcutmainwindow.h"
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * TTCut main
+ */
 int main( int argc, char **argv )
 {
-  QT_REQUIRE_VERSION(argc, argv, "4.1.0");
+  try
+  {
+    QT_REQUIRE_VERSION(argc, argv, "4.1.0");
 
-   QApplication::setColorSpec( QApplication::CustomColor );
-   QApplication a( argc, argv );
-   
-   // OpenGL is required for the MPEG2 window
-   if ( !QGLFormat::hasOpenGL() ) {
+    QApplication::setColorSpec( QApplication::CustomColor );
+    QApplication a( argc, argv );
+
+    // OpenGL is required for the MPEG2 window
+    if ( !QGLFormat::hasOpenGL() ) {
       qWarning( "This system has no OpenGL support. Exiting." );
       return -1;
-   }
-   
-   // Application main widget
-   TTCutMainWindow* mainWnd = new TTCutMainWindow();
-   
-   QPlastiqueStyle* style = new QPlastiqueStyle();
-   a.setStyle(style);
-   
-   // Caption text in applications title bar
-   mainWnd->setWindowTitle( TTCut::versionString );
-   mainWnd->show();
-   
-   // set initial size of applications main window
-   mainWnd->resize( 800, 600 );
-   
-   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
-   // Execute application and start event loop
-   return a.exec();	    
+    }
+
+    // Application main widget
+    TTCutMainWindow* mainWnd = new TTCutMainWindow();
+
+    QPlastiqueStyle* style = new QPlastiqueStyle();
+    a.setStyle(style);
+
+    // Caption text in applications title bar
+    mainWnd->setWindowTitle( TTCut::versionString );
+    mainWnd->show();
+
+    // set initial size of applications main window
+    mainWnd->resize( 800, 600 );
+
+    a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
+    // Execute application and start event loop
+    return a.exec();	   
+  } 
+  catch (...)
+  {
+    qWarning("Unhandled exception occurred!");
+    qWarning("TTCut closed unexpectedly!");
+  }
 }
