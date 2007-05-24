@@ -301,7 +301,7 @@ QString TTSequenceHeader::aspectRatioText()
   if ( aspect_ratio_information == 1 ) szTemp = "1:1";
   if ( aspect_ratio_information == 2 ) szTemp = "4:3";
   if ( aspect_ratio_information == 3 ) szTemp = "16:9";
-  if ( aspect_ratio_information == 4 ) szTemp = "1:2";
+  if ( aspect_ratio_information == 4 ) szTemp = "2.21:1";
 
   return szTemp;
 }
