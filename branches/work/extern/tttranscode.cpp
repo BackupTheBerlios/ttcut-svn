@@ -102,12 +102,12 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 		    << enc_par.avi_input_finfo.absoluteFilePath()
 		    << "--pre_clip"
 		    << "0"
-		    << "-y"
-		    << "mpeg2enc"
-        << "-F"
-        << "8,\"-v 1 -q 3\""
+		    //<< "-y"               // isn't neccessary unless --export_prof is specified!
+		    //<< "mpeg2enc,mp2enc"  // mpeg2enc->video, mp2enc->audio!
+        //<< "-F"
+        //<< "8,\"-v 1 -q 3\""
 		    << "--export_prof"
-		    << "dvd-pal"
+		    << "dvd"            // dvd-pal
 		    << "--export_asr"
 		    << str_aspect
 		    << "-o"
