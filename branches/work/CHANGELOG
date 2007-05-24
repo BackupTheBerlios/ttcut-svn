@@ -11,6 +11,9 @@ Version 0.19.x (RC's for release 0.20.0)
           the menu exit or the window close button
         * May fixed broken preview button ???
         * Fixed: setting for "Create cut video index file" wasn't saved
+        * Fixed: Segmentation fault during preview and cut with enabled encoder;
+          caused by an invalid mpeg2enc command line
+          Attention: please make sure, that you build transcode with --enable-mjpegtools!
 
 0.19.3: * Delete elementary cut stream after mplex action
         * Read all audiofiles to a given videofile (videofile_name*.mpa, 
