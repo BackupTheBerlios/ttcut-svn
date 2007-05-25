@@ -315,7 +315,7 @@ int TTMpeg2VideoStream::createIndexList()
   num_index = index_list->count();
 
 #if defined(TTMPEG2VIDEOSTREAM_DEBUG)
-  log->infoMsg("%sindex list created: %d/%d",c_name,num_index,index_list->size());
+  log->infoMsg(c_name, "index list created: %d/%d", num_index, index_list->size());
 #endif
 
 #ifdef __TTMPEG2
@@ -1257,7 +1257,7 @@ void TTMpeg2VideoStream::transferMpegObjects(TTFileBuffer* fs,
           if ( break_objects->count() > 0 )
           {
 #if defined (TTMPEG2VIDEOSTREAM_DEBUG)
-            log->infoMsg( "%s>>> remove unwanted objects: %d",c_name, break_objects->count() );
+            log->infoMsg(c_name, ">>> remove unwanted objects: %d", break_objects->count());
 #endif
             TTBreakObject* current_break = (TTBreakObject*)break_objects->top();
 
