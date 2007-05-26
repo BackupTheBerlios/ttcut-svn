@@ -67,6 +67,7 @@ TTMuxListData::TTMuxListData()
 //! Destruct object
 TTMuxListData::~TTMuxListData()
 {
+  data.clear();
 }
 
 int TTMuxListData::addItem(QString video)

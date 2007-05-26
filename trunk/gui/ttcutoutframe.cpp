@@ -59,8 +59,11 @@ void TTCutOutFrame::controlEnabled( bool enabled )
 void TTCutOutFrame::initVideoStream(TTMpeg2VideoStream *vs)
 {
   currentMpeg2Stream = vs;
-  mpeg2Stream = new TTMpeg2VideoStream( QFileInfo(vs->fileName()) );
+  QFileInfo fInfo(vs->filePath());
+
+  mpeg2Stream = new TTMpeg2VideoStream(fInfo);
   mpeg2Stream->makeSharedCopy( vs );
+
   mpegWindow->openVideoStream( mpeg2Stream );
   mpegWindow->moveToFirstFrame( false );
 }
@@ -74,6 +77,8 @@ int TTCutOutFrame::currentFramePos()
 void TTCutOutFrame::closeVideoStream()
 {
   mpegWindow->closeVideoStream();
+
+  //TODO: clean up shared stream copy!!!!
 }
 
 //! Goto specified cut out position

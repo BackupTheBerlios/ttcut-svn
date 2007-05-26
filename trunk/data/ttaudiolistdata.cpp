@@ -156,6 +156,15 @@ int  TTAudioListData::count()
 //! Delete all item from list
 void TTAudioListData::deleteAll()
 {
+  for (int i = 0; i < data.count(); i++)
+  {
+    if (data[i].audioStream != 0)
+    {
+      delete data[i].audioStream;
+      data[i].audioStream = 0;
+    }
+  }
+
   data.clear();
 }
 

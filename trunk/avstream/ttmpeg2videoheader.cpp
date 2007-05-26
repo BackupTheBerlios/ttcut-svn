@@ -9,10 +9,10 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTSEQUENCEHEADER
-// *** TTSEQUENCEENDHEADER
-// *** TTGOPHEADER
-// *** TTPICTURESHEADER
+// TTSEQUENCEHEADER
+// TTSEQUENCEENDHEADER
+// TTGOPHEADER
+// TTPICTURESHEADER
 // ----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -58,36 +58,52 @@
 
 #include "ttmpeg2videoheader.h"
 
-// -----------------------------------------------------------------------------
-// TTMpeg2VideoHeader
-// -----------------------------------------------------------------------------
+const char cName[] = "MPEGVIDEOHEADER";
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * TTMpeg2VideoHeader
+ * Base class for all MPEG2 video header
+ */
 TTMpeg2VideoHeader::TTMpeg2VideoHeader()
 {
-
+  log = TTMessageLogger::getInstance();
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read header from given stream
+ */
 bool TTMpeg2VideoHeader::readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream )
 {
   return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read header at given offset
+ */
 bool TTMpeg2VideoHeader::readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream, __attribute__ ((unused))off64_t offset )
 {
   return false;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse basic header data
+ */
 void TTMpeg2VideoHeader::parseBasicData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse extended header data
+ */
 void TTMpeg2VideoHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Print header date for debug/logfile usage
+ */
 void TTMpeg2VideoHeader::printHeader( )
 {
 
@@ -95,21 +111,21 @@ void TTMpeg2VideoHeader::printHeader( )
 
 
 
-// /////////////////////////////////////////////////////////////////////////////
-// -----------------------------------------------------------------------------
-// TTSequenceHeader: Sequence header [0x000001B3]
-// -----------------------------------------------------------------------------
-// /////////////////////////////////////////////////////////////////////////////
-  TTSequenceHeader::TTSequenceHeader()
-:TTMpeg2VideoHeader()
+/* /////////////////////////////////////////////////////////////////////////////
+ * TTSequenceHeader: Sequence header [0x000001B3]
+ * Default constructor, extends TTMpeg2VideoHeader
+ */
+TTSequenceHeader::TTSequenceHeader() : TTMpeg2VideoHeader()
 {
 
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read sequence header from stream
+ */
 bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
   uint8_t  header_data[8];
-  uint8_t  start_code;
 
   try
   {
@@ -130,70 +146,8 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
     if ( (header_data[7] & 0x01) == 1 )
       mpeg2_stream->seekRelative( 64 ); //Seek Exception
 
-    do
-    {
-      // read next start code
-      mpeg2_stream->nextStartCodeTS();
-      mpeg2_stream->readByte( start_code );
+    //parseExtendedData(mpeg2_stream);
 
-      //sequence_extension_code [0xB5]
-      if ( start_code  == sequence_extension_code )
-      {
-        is_sequence_extension = true;
-
-        mpeg2_stream->readArray( header_data, 6 );
-
-        // sequence_extension_id
-        switch ((header_data[0] & 0xF0) >> 4)
-        {
-          // sequence extension header length is fixed 6 byte
-          case sequence_extension_id:
-            profile_and_level_indication = ((header_data[0] & 0x0F) << 4) + ((header_data[1] & 0xF0) >> 4);
-            progressive_sequence         = ((header_data[1] & 0x08) >> 3) == 1;
-            chroma_format                = (header_data[1] & 0x06) >> 1;
-            horizontal_size_value       += ((header_data[1] & 0x01) << 13) + ((header_data[2] & 0x80) << 5);
-            vertical_size_value         += ((header_data[2] & 0x60) << 7);
-            bit_rate_value              += ((header_data[2] & 0x1F) << 25) + ((header_data[3] & 0xFE) << 18);
-            vbv_buffer_size_value       += (header_data[4] << 10);
-            low_delay                   = ((header_data[5] & 0x80) >> 7) == 1;
-            break;
-
-          // sequence display extension length is variabel
-          case sequence_display_extension_id:
-            //int headerData     = ((header_data[0] & 0xF0) >> 4);
-            video_format       = ((header_data[0] & 0x0e)>>1);
-            colour_description = ((header_data[0] & 0x01));
-  
-            if (colour_description)
-            {
-              colour_primaries             = (header_data[1] );
-              transfer_characteristics     = (header_data[2] );
-              matrix_coefficients          = (header_data[3] );
-              display_horizontal_size      = (header_data[4] << 6) + ((header_data[5] & 0xFC) >> 2);
-              display_extension_marker_bit = ((header_data[5] & 0x02) >> 1);
-              display_vertical_size        = ((header_data[5] & 0x01) << 13);
-
-              mpeg2_stream->readArray(header_data, 2);
-
-              display_vertical_size       += (header_data[0] << 5) + ((header_data[1] & 0xF8) >> 3);
-
-              //qDebug("colour  : %d",  colour_primaries);
-              //qDebug("transfer: %d", transfer_characteristics);
-              //qDebug("matrix  : %d", matrix_coefficients);
-              //qDebug("h-size  : %d", display_horizontal_size);
-              //qDebug("marker  : %d", display_extension_marker_bit);
-              //qDebug("v-size  : %d", display_vertical_size);
-            }
-            else
-            {
-              mpeg2_stream->seekRelative( -4 );
-            }
-            break;
-        }
-      }
-    } while ( start_code == sequence_extension_code );
-
-    mpeg2_stream->seekRelative( -4 );
   }
   catch ( TTStreamSeekException )
   {
@@ -206,7 +160,9 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
   return true;
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read sequence header at given offset
+ */
 bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
@@ -214,6 +170,9 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
   return readHeader( mpeg2_stream );
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse basic header data
+ */
 void TTSequenceHeader::parseBasicData( uint8_t* data, int offset )
 {
   horizontal_size_value        = (data[offset+0] << 4) + ((data[1] & 0xF0) >> 4);
@@ -228,29 +187,113 @@ void TTSequenceHeader::parseBasicData( uint8_t* data, int offset )
   low_delay                    = false;
 }
 
-void TTSequenceHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse extended header data
+ */
+void TTSequenceHeader::parseExtendedData(uint8_t*, int )
 {
-
 }
 
+void TTSequenceHeader::parseExtendedData(TTFileBuffer* mpeg2_stream)
+{
+  uint8_t header_data[8];
+  uint8_t start_code;
+
+  do
+  {
+    // read next start code
+    mpeg2_stream->nextStartCodeTS();
+    mpeg2_stream->readByte( start_code );
+
+    //sequence_extension_code [0xB5]
+    if ( start_code  == sequence_extension_code )
+    {
+      is_sequence_extension = true;
+
+      mpeg2_stream->readArray( header_data, 6 );
+
+
+      // sequence_extension_id
+      switch ((header_data[0] & 0xF0) >> 4)
+      {
+        // sequence extension header length is fixed 6 byte
+        case sequence_extension_id:
+          profile_and_level_indication = ((header_data[0] & 0x0F) << 4) + ((header_data[1] & 0xF0) >> 4);
+          progressive_sequence         = ((header_data[1] & 0x08) >> 3) == 1;
+          chroma_format                = (header_data[1] & 0x06) >> 1;
+          horizontal_size_value       += ((header_data[1] & 0x01) << 13) + ((header_data[2] & 0x80) << 5);
+          vertical_size_value         += ((header_data[2] & 0x60) << 7);
+          bit_rate_value              += ((header_data[2] & 0x1F) << 25) + ((header_data[3] & 0xFE) << 18);
+          vbv_buffer_size_value       += (header_data[4] << 10);
+          low_delay                   = ((header_data[5] & 0x80) >> 7) == 1;
+          break;
+
+          // sequence display extension length is variabel
+        case sequence_display_extension_id:
+          //int headerData     = ((header_data[0] & 0xF0) >> 4);
+          video_format       = ((header_data[0] & 0x0e)>>1);
+          colour_description = ((header_data[0] & 0x01));
+
+          if (colour_description)
+          {
+            colour_primaries             = (header_data[1] );
+            transfer_characteristics     = (header_data[2] );
+            matrix_coefficients          = (header_data[3] );
+            display_horizontal_size      = (header_data[4] << 6) + ((header_data[5] & 0xFC) >> 2);
+            display_extension_marker_bit = ((header_data[5] & 0x02) >> 1);
+            display_vertical_size        = ((header_data[5] & 0x01) << 13);
+
+            mpeg2_stream->readArray(header_data, 2);
+
+            display_vertical_size       += (header_data[0] << 5) + ((header_data[1] & 0xF8) >> 3);
+          }
+          else
+          {
+            mpeg2_stream->seekRelative( -4 );
+          }
+          break;
+      }
+    }
+  } while ( start_code == sequence_extension_code );
+
+  mpeg2_stream->seekRelative( -4 );
+}
+
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Print header data for debug/logfile usage
+ */
 void TTSequenceHeader::printHeader( )
 {
-
+  log->debugMsg(cName, "Sequence header data");
+  log->debugMsg(cName, "----------------------------------------------");
+  log->debugMsg(cName, "horizontal size:  %d", horizontal_size_value);
+  log->debugMsg(cName, "vertical size  :  %d", vertical_size_value);
+  log->debugMsg(cName, "aspect ratio   :  %d", aspect_ratio_information);
+  log->debugMsg(cName, "frame rate     :  %d", frame_rate_code);
+  log->debugMsg(cName, "bit rate code  :  %d", bit_rate_value);
+  log->debugMsg(cName, "vbv buffer     :  %d", vbv_buffer_size_value);
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the horizontal size value
+ */
 int TTSequenceHeader::horizontalSize()
 {
   return horizontal_size_value;
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the vertical size value
+ */
 int TTSequenceHeader::verticalSize()
 {
   return vertical_size_value;
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the aspect ration as string value
+ */
 QString TTSequenceHeader::aspectRatioText()
 {
   QString szTemp;
@@ -258,12 +301,14 @@ QString TTSequenceHeader::aspectRatioText()
   if ( aspect_ratio_information == 1 ) szTemp = "1:1";
   if ( aspect_ratio_information == 2 ) szTemp = "4:3";
   if ( aspect_ratio_information == 3 ) szTemp = "16:9";
-  if ( aspect_ratio_information == 4 ) szTemp = "1:2";
+  if ( aspect_ratio_information == 4 ) szTemp = "2.21:1";
 
   return szTemp;
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the frame rate as string value
+ */
 QString TTSequenceHeader::frameRateText()
 {
   QString szTemp;
@@ -275,7 +320,9 @@ QString TTSequenceHeader::frameRateText()
   return szTemp;
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the frame rate value
+ */
 float TTSequenceHeader::frameRateValue()
 {
   float value = 25.0;
@@ -286,19 +333,24 @@ float TTSequenceHeader::frameRateValue()
 
   if ( frame_rate_code < 2 || frame_rate_code > 5 )
   {
-    //qDebug("Error frame_rate_code (!): %d",frame_rate_code);
+    log->errorMsg(cName, "Couldn't determine the correct frame rate: aussume 25 fps!");
     value = 25.0;
   }
 
   return value;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the bit rate value in Kbit
+ */
 float TTSequenceHeader::bitRateKbit()
 {
   return (float)bit_rate_value / 1000.0;
 }
 
-
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the vbv buffer size value
+ */
 int TTSequenceHeader::vbvBufferSize()
 {
   return vbv_buffer_size_value;
@@ -358,14 +410,15 @@ void TTSequenceEndHeader::printHeader( )
 
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read the GOP header from given stream
+ */
 bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
   uint8_t header_data[4];
 
   try
   {
-      //qDebug("GOP start offset: %lld", mpeg2_stream->currentOffset());
-
     mpeg2_stream->readArray( header_data,4 );
 
     header_start_code = group_start_code;
@@ -381,6 +434,9 @@ bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream )
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read the GOP header at given offset
+ */
 bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
@@ -388,6 +444,9 @@ bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
   return readHeader( mpeg2_stream );
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse the basic GOP header data
+ */
 void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
 {
   time_code.drop_frame_flag = (data[offset+0] >> 7) == 1;
@@ -400,14 +459,18 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
   broken_link               = ((data[offset+3] & 0x20) >> 5) == 1;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse extended GOP header data, not basicly necessary for processing
+ */
 void TTGOPHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
-
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Print GOP header data for debug and logfile usage
+ */
 void TTGOPHeader::printHeader( )
 {
-
 }
 
 
@@ -422,10 +485,13 @@ void TTGOPHeader::printHeader( )
 
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read picture header from stream
+ */
 bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
   uint8_t header_data[5];
-  uint8_t byte1;
+  //unused: uint8_t byte1;
 
   try
   {
@@ -436,6 +502,12 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 
     parseBasicData( header_data );
 
+    /*
+    parseExtendedData( header_data );
+    
+    // The code below have to be moved to the parseExtendedData method!
+    // Theese data objects arent neccessary for further processing
+    // save time !
     mpeg2_stream->nextStartCodeTS();
 
     mpeg2_stream->readArray( header_data, 1 );
@@ -491,6 +563,7 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
         mpeg2_stream->seekRelative( -4 );
       }
     }
+    */
     return true;
   }
   catch ( TTStreamSeekException )
@@ -503,25 +576,35 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Read picture header at given offset.
+ */
 bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
   return readHeader( mpeg2_stream );
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse basic picture header data.
+ */
 void TTPicturesHeader::parseBasicData( uint8_t* data, int offset )
 {
   picture_coding_type = (int)((data[offset+1] & 0x38) >> 3);
   temporal_reference  = (int)((data[offset+0] << 2) + ((data[offset+1] & 0xC0) >> 6));
   vbv_delay           = ((data[offset+1] & 0x07) << 13) + (data[offset+2] << 5) + ((data[offset+3] & 0xF8) >> 3);
-
-  //qDebug("coding type: %d",picture_coding_type);
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Parse extended picture header data
+ */
 void TTPicturesHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
 {
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Form an string representing the picture coding type.
+ */
 QString TTPicturesHeader::codingTypeString()
 {
   switch (picture_coding_type)
@@ -540,6 +623,9 @@ QString TTPicturesHeader::codingTypeString()
   }
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Print the header informations for debug purpose
+ */
 void TTPicturesHeader::printHeader( )
 {
 

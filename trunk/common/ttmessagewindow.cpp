@@ -2,15 +2,14 @@
 /* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttheaderlist.cpp                                                */
+/* FILE     : ttmessagewindow.cpp                                             */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/24/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTHEADERLIST
+// TTMESSAGEWINDOW
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -29,69 +28,49 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#include "ttheaderlist.h"
+#include "ttmessagewindow.h"
 
-//#define TTHEADERLIST_DEBUG
-
-const char c_name[] = "TTHEADERLIST  : ";
-
-// construct a header list object
-TTHeaderList::TTHeaderList( int size )
+/* /////////////////////////////////////////////////////////////////////////////
+ * Constructor
+ */
+TTMessageWindow::TTMessageWindow(QWidget* parent)
+    : QDialog(parent)
 {
-  initial_size = size;
-  actual_size  = size;
+
+  setupUi( this );
+  
+  // signals and slot connection
+  connect( acceptBtn, SIGNAL( clicked() ),  SLOT( onDlgClose() ) );
 }
 
-TTHeaderList::~TTHeaderList()
+/* /////////////////////////////////////////////////////////////////////////////
+ * Destructor
+ */
+TTMessageWindow::~TTMessageWindow()
 {
-  int i;
 
-#if defined(TTHEADERLIST_DEBUG)
-  qDebug( "%sdelete header list: %d / number: %d",c_name,size(), number );
-#endif
-
-  for ( i = 0; i < size(); i++ )
-  {
-    TTAVHeader* av_header = at(i);
-    //qDebug("delete: %ld",at(i));
-    delete av_header;
-  }
-  clear();
 }
 
-// ad an header to the header list
-void TTHeaderList::add( TTAVHeader* header )
+/* /////////////////////////////////////////////////////////////////////////////
+ * Dialog close event
+ */
+void TTMessageWindow::onDlgClose()
 {
-  //#if defined(TTHEADERLIST_DEBUG)
-  //qDebug("%sadd header: %ld",c_name,header);
-  //#endif
-  append( header );
+  done( 0 );
 }
 
-// remove all items from the header list
-void TTHeaderList::deleteAll()
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set caller label text property
+ */
+void TTMessageWindow::setCallerText(QString text)
 {
-  int i;
-
-  for ( i = 0; i < size(); i++ )
-  {
-    TTAVHeader* av_header = at(i);
-    delete av_header;
-  }
-  clear();
+  laCallerText->setText(text);
 }
 
-void TTHeaderList::sort()
+/* /////////////////////////////////////////////////////////////////////////////
+ * Set message label text property
+ */
+void TTMessageWindow::setMessageText(QString text)
 {
-  qSort( begin(), end() );
+  laMessageText->setText(text);
 }
-
-void TTHeaderList::checkIndexRange( int index )
-{
-  //qDebug("check index: %d / %d",index,count() );
-  if ( index < 0 || index >= size() )
-    throw TTListIndexException(index);
-}
-
-
-

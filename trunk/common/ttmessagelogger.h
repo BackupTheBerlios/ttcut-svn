@@ -42,7 +42,7 @@ class TTMessageLogger
 {
   private:
     TTMessageLogger(int mode = STD_LOG_MODE);
-~TTMessageLogger();
+    ~TTMessageLogger();
 
   public:
     static TTMessageLogger* getInstance(int mode = STD_LOG_MODE);
@@ -62,24 +62,26 @@ class TTMessageLogger
     void warningMsg(QString caller, const char* msg, ...);
     void errorMsg(QString caller, const char* msg, ...);
     void debugMsg(QString caller, const char* msg, ...);
+    void showErrorMsg(QString caller, const char* msg, ...);
 
-enum MsgType
-{
-  INFO,
-  WARNING,
-  ERROR,
-  DEBUG
-};
+    enum MsgType
+    {
+      INFO,
+      WARNING,
+      ERROR,
+      DEBUG
+    };
 
-enum LogMode
-{
-  INDIVIDUAL = 0x01,
-  SUMMARIZE  = 0x02,
-  CONSOLE    = 0x04
-};
+    enum LogMode
+    {
+      INDIVIDUAL = 0x01,
+      SUMMARIZE  = 0x02,
+      CONSOLE    = 0x04
+    };
 
-void logMsg( MsgType type, QString caller, QString msgString);
-void writeMsg(QString msgString);
+    void logMsg( MsgType type, QString caller, QString msgString, bool show=false);
+    void writeMsg(QString msgString);
+
   private:
     QFile* logfile;
     static TTMessageLogger* loggerInstance;

@@ -24,11 +24,13 @@ UI_DIR      = ui_h
 RCC_DIR     = res
 RESOURCES   = ui/videofileinfowidget.qrc\
               ui/processviewwidget.qrc\
+              ui/ttmessagewindow.qrc\
               ttmpeg2_src/ui/stepbywidget.qrc\
               ttmpeg2_src/ui/frameinfowidget.qrc\
               ttmpeg2_src/ui/ttmpeg2_mainwnd.qrc
 FORMS       = ui/videofileinfowidget.ui\
               ui/processviewwidget.ui\
+              ui/ttmessagewindow.ui\
               ttmpeg2_src/ui/stepbywidget.ui\
               ttmpeg2_src/ui/frameinfowidget.ui\
               ttmpeg2_src/ui/ttmpeg2_mainwnd.ui
@@ -38,6 +40,7 @@ SOURCES     = \
               ttmpeg2_src/gui/ttmpeg2main.cpp\
 #              
               common/ttmessagelogger.cpp\
+              common/ttmessagewindow.cpp\
               common/ttcut.cpp\
 #
               data/ttcutlistdata.cpp\
@@ -105,6 +108,7 @@ SOURCES     = \
 HEADERS     = \
 #
               common/ttmessagelogger.h \
+              common/ttmessagewindow.h\
               common/ttcut.h\
               data/ttcutlistdata.h\
               data/ttaudiolistdata.h\

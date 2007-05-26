@@ -78,7 +78,7 @@ TTMPEGAudioStream::TTMPEGAudioStream()
 TTMPEGAudioStream::TTMPEGAudioStream( const QFileInfo &f_info, int s_pos )
   : TTAudioStream( f_info, s_pos)
 {
-log = TTMessageLogger::getInstance();
+  log = TTMessageLogger::getInstance();
 }
 
 // search next sync byte in stream

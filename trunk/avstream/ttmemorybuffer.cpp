@@ -7,7 +7,7 @@ TTMemoryBuffer::TTMemoryBuffer( int size )
   byte_stream = new QDataStream( (QByteArray*)this, QIODevice::ReadWrite );
   buffer_size = byte_stream->device()->size();
 
-  temp_buffer = NULL;
+  temp_buffer = 0;
 }
 
 TTMemoryBuffer::TTMemoryBuffer( uint8_t* buffer )
@@ -19,7 +19,7 @@ TTMemoryBuffer::TTMemoryBuffer( uint8_t* buffer )
   byte_stream = new QDataStream( (QByteArray*)this, QIODevice::ReadOnly );
   buffer_size = byte_stream->device()->size();
 
-  temp_buffer = NULL;
+  temp_buffer = 0;
 }
 
 TTMemoryBuffer::TTMemoryBuffer( uint8_t* buffer, int start, int size )
@@ -42,15 +42,14 @@ TTMemoryBuffer::TTMemoryBuffer( uint8_t* buffer, int start, int size )
 
 TTMemoryBuffer::~TTMemoryBuffer()
 {
-  if ( temp_buffer != NULL )
-  {
-    //resetRawData( (char*)temp_buffer, sizeof(temp_buffer) );
-    clear();
-    delete [] temp_buffer;
-  }
-  else
-    //resetRawData( (char*)byte_buffer, sizeof(byte_buffer) );
-    clear();
+  //Wie geht das ????
+// clear();
+
+  //if (byte_stream != 0)
+    //delete byte_stream;
+
+   //if (temp_buffer != 0)
+    //delete [] temp_buffer;
 }
 
 int TTMemoryBuffer::currentPosition()

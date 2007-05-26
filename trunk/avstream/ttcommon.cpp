@@ -25,7 +25,6 @@ bool ttAssigned( const void* pointer )
     return false;
 }
 
-
 // change file extension from fName to cExt
 QString ttChangeFileExt( QString fName, const char* cExt )
 {

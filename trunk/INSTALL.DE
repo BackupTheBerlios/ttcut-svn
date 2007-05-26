@@ -18,6 +18,10 @@ libmpeg-dec               (>= 0.4.0)
 mplayer       fuer die Schnitt-Vorschau
 mplex         fuer die Schnitt-Vorschau
 transcode     fuer frame-genauen Schnitt
+              Achtung: Wird transode aus den Quellen übersetzt ist unbedingt 
+                       die configure Option --enable-mjpegtools anzugeben, da
+                       ansonsten das für die mpeg2-Ausgabe benötigte Export
+                       Plugin mpeg2enc.so nicht erstellt wird!
 ffmpeg        fuer frame-genauen Schnitt
 
 3. Uebersetzung

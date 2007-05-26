@@ -85,6 +85,8 @@ void TTCutList::clearList()
 {
   videoCutList->clear();
 
+  editItemIndex = -1;
+
   if (ttAssigned(cutListData)) {
     cutListData->deleteAll();
     emit refreshDisplay();
