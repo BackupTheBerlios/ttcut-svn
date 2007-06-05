@@ -8,20 +8,19 @@ A short introduction for compiling ttcut under Linux.
 1. Needed libraries (dev- and runtime-packages)
 -----------------------------------------------
 
-Trolltech's Qt		http://www.trolltech.com				(>= 4.1 und OpenGL Support) 
+Trolltech's Qt	http://www.trolltech.com				(>= 4.1 and OpenGL Support) 
 libmpeg2				http://libmpeg2.sourceforge.net		(>= 0.4.0)                      
 
 
 2. Additional dependencies
--------------------------
+--------------------------
 
-mplayer       for cut preview
-mplex         for cut preview
-transcode     for frame-accurate cutting
-              Remark: If you build transode from source take care, that you 
-                      configure transcode with option --enable-mjpegtools.
-                      This options build the required mpeg2enc export plugin.
-ffmpeg        for frame-accurate cutting
+mplayer				for cut preview
+mplex					for cut preview
+transcode			for frame-accurate cutting
+						  Remark: If you build transode from source take care, that you 
+						  configure transcode with option --enable-mjpegtools.
+						  This options build the required mpeg2enc export plugin.
 
 3. Compilation
 --------------
@@ -34,15 +33,6 @@ Compiling ttcut with make
 
 >$ make -f Makefile.ttcut
 
-
-If you want to build ttmpeg2
-
->$ qmake ttmpeg2.pro -o Makefile.ttmpeg2
-
-Compiling ttcut with make 
-
->$ make -f Makefile.ttmpeg2
-
 This should be enough.
 
 3. Execution
@@ -52,7 +42,7 @@ Just fire up ttcut in your local install directory or copy it somewhere e. g. to
 /usr/local/bin.
 
 4. Usage
-------------
+--------
 
 See http://ttcut.tritime.org
 
@@ -60,7 +50,7 @@ See http://ttcut.tritime.org
 -----------
 
 If anything is not working as it should, please don`t hesitate to contact me at:
-ttcut@tritime.org oder b.altendorf@tritime.de
+ttcut@tritime.org or b.altendorf@tritime.de
 
 5. Updates
 ----------

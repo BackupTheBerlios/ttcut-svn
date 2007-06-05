@@ -2,57 +2,48 @@
 TTCut - Installation
 -------------------------------------------------------------------------------
 
-Eine kurze Anleitung um TTCut unter LINUX zu uebersetzen.
+Eine kurze Anleitung um TTCut unter Linux zu übersetzen.
 
 
-1. Benoetigte Bibliotheken (dev- und runtime-Packete)
+1. Benötigte Bibliotheken (dev- und runtime-Packete)
 -----------------------------------------------------
 
-Trolltech's Qt-Bibliothek (4.1 und OpenGL Unterstuetzung) 
-libmpeg-dec               (>= 0.4.0)                      
+Trolltech's Qt	http://www.trolltech.com				(>= 4.1 and OpenGL Unterstützung) 
+libmpeg2				http://libmpeg2.sourceforge.net		(>= 0.4.0)            
 
 
-2. Benoetigte Hilfsprogramme
-----------------------------
+2. Benötigte Hilfsprogramme
+---------------------------
 
-mplayer       fuer die Schnitt-Vorschau
-mplex         fuer die Schnitt-Vorschau
-transcode     fuer frame-genauen Schnitt
-              Achtung: Wird transode aus den Quellen Ã¼bersetzt ist unbedingt 
-                       die configure Option --enable-mjpegtools anzugeben, da
-                       ansonsten das fÃ¼r die mpeg2-Ausgabe benÃ¶tigte Export
-                       Plugin mpeg2enc.so nicht erstellt wird!
-ffmpeg        fuer frame-genauen Schnitt
+mplayer				für die Schnitt-Vorschau
+mplex					für die Schnitt-Vorschau
+transcode			für frame-genauen Schnitt
+						  Achtung: Wird transode aus den Quellen übersetzt ist unbedingt 
+						  die configure Option --enable-mjpegtools anzugeben, da
+						  ansonsten das für die mpeg2-Ausgabe benötigte Export
+						  Plugin mpeg2enc.so nicht erstellt wird!
 
-3. Uebersetzung
----------------
+3. Übersetzung
+--------------
 
 Mit qmake aus der Projektdatei "ttcut.pro" mit
 
 >$ qmake ttcut.pro -o Makefile.ttcut
 
-das makefile fuer TTCut erstellen.
-
+das makefile für TTCut erstellen.
 
 Anschliessend mit 
 
 >$ make -f Makefile.ttcut
 
-TTCut uebersetzen.
-
+TTCut übersetzen.
 
 Das sollte alles sein.
-
-Eventuell habe ich vergessen in der Datei "ttcut.pro" unter CONFIG
-debug gegen release zu tauschen. Das ist nicht weiter tragisch.
-Die Quellen werden dann mit der Option -g (Debug) uebersetz. Jedoch
-erreicht TTCut mit der Standard-Optimierung -O2 des g++ eine etwas hoehere
-Geschwindigkeit beim Analysieren des Videos.
 
 3. Installation
 ---------------
 
-TTCut entweder im lokalen Verzeichnis ausfuehren oder z.B nach
+TTCut entweder im lokalen Verzeichnis ausführen oder z.B nach
 /usr/local/bin kopieren.
 
 4. Bedienung
@@ -63,13 +54,17 @@ http://ttcut.tritime.org
 4. Probleme
 -----------
 
-Sollte etwas nicht funktionieren bitte kurze Problembeschreibung an
-
+Sollte etwas nicht funktionieren bitte kurze Problembeschreibung an:
 ttcut@tritime.org oder b.altendorf@tritime.de
 
 5. Update
 ---------
 
-Letzte Release:       https://developer.berlios.de/projects/ttcut/
+Letztes Release:
+http://developer.berlios.de/project/showfiles.php?group_id=4403
 
-Aktuelle Entwicklung: svn checkout svn://svn.berlios.de/trunk/trunk 
+Aktuelle stabile svn Version:
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/trunk
+
+Arbeitsversion (eventuell nicht stabil!)
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/branches/work
