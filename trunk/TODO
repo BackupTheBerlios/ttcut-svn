@@ -2,6 +2,7 @@
 TODO list for project TTCut (04/27/2007)
 -------------------------------------------------------------------------------
 
+* New feature: Timeline during preview
 * Enable free diskspace info in cut dialog
 * Implement WriteMaxBitrate in cut dialog
 * Implement WriteSequenceEndCode in cut dialog
