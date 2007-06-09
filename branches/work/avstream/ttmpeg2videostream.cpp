@@ -926,7 +926,10 @@ void TTMpeg2VideoStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list 
     
     // cut the mpeg2 video stream according to start and end positon of
     // current cut list entry
+    picturesWritten = 0;
     cut( cut_stream, start_pos, end_pos, cut_param );
+
+    log->debugMsg(c_name,">>>>> Pictures written: %ld", picturesWritten);
 
     if (ttAssigned(progress_bar))
     {
@@ -973,6 +976,7 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* targetStream,
   log->debugMsg(c_name, "--------------------------------------------------");
   log->debugMsg(c_name, "target stream:    %s", TTCut::toAscii(targetStream->fileName()));
   log->debugMsg(c_name, "startIndex:       %d  |  endIndex: %d", startIndex, endIndex);
+  log->debugMsg(c_name, "cut count :       %d", endIndex-startIndex+1);
   log->debugMsg(c_name, "Index list count: %d", index_list->count());
 #endif
 
@@ -1105,9 +1109,18 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* targetStream,
  currentIndexListPos  = tempEndIndexPos;
  currentHeaderListPos = index_list->headerListIndex(currentIndexListPos);
 
- // what's about the following B-frames ??? see old version of cut method
- // imho the proceeding theire is wrong
- // ...
+ // what's about the following B-frames ???
+ if (currentHeaderListPos < header_list->count()-2)
+ {
+   do
+   {
+     currentHeaderListPos++;
+     currentVideoHeader = header_list->headerAt(currentHeaderListPos);     
+   }
+   while(currentVideoHeader->headerType() == TTMpeg2VideoHeader::picture_start_code &&
+         ((TTPicturesHeader*)currentVideoHeader)->picture_coding_type == 3 &&
+         currentHeaderListPos < header_list->count()-1);
+ }
  
  // now we have hopefully a valid end object ;-)
  endObjectHeaderPos   = currentHeaderListPos;
@@ -1418,6 +1431,7 @@ void TTMpeg2VideoStream::transferMpegObjects(TTFileBuffer* fs,
 
             // Bildchen zählen ;-)
             cr->pictures_written++;
+            picturesWritten++;
 
             if ( current_picture->picture_coding_type == 1 )
             {
