@@ -5,6 +5,9 @@ TTCut-Changelog
 Version 0.19.x (RC's for release 0.20.0)
 ----------------------------------------
 
+0.19.5: * Fixed: Audio and video are asynchron after a few cut's
+        * Fixed: Append project  file extension if missing
+
 0.19.4: * Fixed: freeing resources after loading new video/project
         * Fixed: crash while loading a long video file after a short one
         * User-Setting will now be saved on window close regardeless of using

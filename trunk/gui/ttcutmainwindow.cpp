@@ -285,7 +285,8 @@ void TTCutMainWindow::onFileSave()
   }
 
   // Ask for file name
-  if (TTCut::projectFileName.isEmpty()) {
+  if (TTCut::projectFileName.isEmpty()) 
+  {
 
     TTCut::projectFileName = ttChangeFileExt(mpegStream->fileName(), "prj");
     QFileInfo prjFileInfo(QDir(TTCut::lastDirPath), TTCut::projectFileName);
@@ -299,10 +300,18 @@ void TTCutMainWindow::onFileSave()
       return;
   }
 
+  // append project file extension
+  QFileInfo fInfo(TTCut::projectFileName);
+
+  if (fInfo.suffix().isEmpty())
+  {
+    TTCut::projectFileName.append(".prj");
+  }
+
   try {
     projectFile = new TTCutProject(TTCut::projectFileName, QIODevice::WriteOnly);
   } catch (TTCutProjectOpenException) {
-    log->errorMsg(oName, "error open save project file: %s", TTCut::toAscii(TTCut::projectFileName));
+    log->errorMsg(oName, "error save project file: %s", TTCut::toAscii(TTCut::projectFileName));
     return;
   }
 
