@@ -1,0 +1,51 @@
+TODO for TTMpeg2 / 2007
+-----------------------
+
+Thinks todo up to next TTCut release on begin april 2007
+
+Next Version is 0.20!
+
+Most important is to get rid of the QT3 support in the whole project! (should
+already done)
+So, a rewrite of TTMpeg2 is neccessary ;-)
+
+* Nicer GUI (already theire, i hope)
+* Open and analyze video stream
+* Remove button and menu entry for analyze stream! (not neccessary anymore)
+  Stream should be analyzed direct after opening
+* Close current stream (remove index and header list, do some cleanups)
+* Disable GUI operations (navigation, etc.) if no stream is loaded
+* Implement buffer information tab-page (tree-view, mvp)
+* Implement header information tab-page (tree-view, mvp)
+* Think about graphical stream display (like elecards stream eye ;-))
+* Clear the video preview window on start up (specialy an ati problem?)
+
+Most importend is to implement the basic functionality:
+* Open, analyze and close the stream 
+* Make GUI robust (i.e no navigation if theire is no stream loaded)
+* Navigation 
+* Display stream and buffer informations
+* Display header information (sequenz, gop, picture)
+* Fileopen dialog for header list writing
+
+This should be done in the next two weeks ;-)
+
+
+// snippet for buffer information
+// ----------------------------------------------------------------------------
+   setReadTime( diffTime( seconds_start, seconds_end ) );
+
+    // print out statistic informations
+    // get stream length and set label text
+    setFileLength( mpeg2_stream->streamLength() );
+
+    read_percent = (double)mpeg2_stream->readCount()/(double)mpeg2_stream->streamLength()*100.0;
+
+    setReadOps( mpeg2_stream->readCount(), read_percent );
+    setFillOps( mpeg2_stream->fillCount() );
+
+    // print out the number of frames in stream
+    num_frames = index_list->count();
+    total_time = ttFramesToTime( num_frames, 25.0 );
+// ----------------------------------------------------------------------------
+
