@@ -1,21 +1,16 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTCurrentFrameWidget</class>
  <widget class="QWidget" name="TTCurrentFrameWidget" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>466</height>
+    <width>456</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>1</horstretch>
     <verstretch>4</verstretch>
    </sizepolicy>
@@ -30,18 +25,28 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>0</number>
    </property>
    <item row="0" column="0" >
     <widget class="QGroupBox" name="gbCurrentFrame" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>5</vsizetype>
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
        <horstretch>4</horstretch>
        <verstretch>10</verstretch>
       </sizepolicy>
@@ -56,19 +61,40 @@
       <string>Current frame</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>4</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>4</number>
+      </property>
+      <property name="rightMargin" >
+       <number>4</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>4</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>4</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>4</number>
       </property>
       <item row="1" column="0" >
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="QPushButton" name="pbPlayVideo" >
@@ -76,9 +102,7 @@
            <bool>false</bool>
           </property>
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>1</hsizetype>
-            <vsizetype>0</vsizetype>
+           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
             <horstretch>0</horstretch>
             <verstretch>1</verstretch>
            </sizepolicy>
@@ -105,6 +129,12 @@
         </item>
         <item>
          <widget class="QLabel" name="laCurrentPosition" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text" >
            <string>00:00:00,000 (000000)</string>
           </property>
@@ -114,6 +144,12 @@
       </item>
       <item row="0" column="0" >
        <widget class="TTMPEG2Window" name="mpegWindow" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize" >
          <size>
           <width>16</width>
@@ -136,14 +172,12 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>TTMPEG2Window</class>
    <extends>QFrame</extends>
    <header>../mpeg2window/ttmpeg2window.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
