@@ -131,7 +131,7 @@ QStringList TTCut::recentFileList;
 // encoder settings
 // --------------------------------------------------------------
 // Version
-QString TTCut::versionString = "TTCut - 0.19.5";
+QString TTCut::versionString = "TTCut - 0.19.6";
 
 // Options
 bool TTCut::encoderMode = false;

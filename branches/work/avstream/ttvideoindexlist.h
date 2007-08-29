@@ -5,7 +5,7 @@
 /* FILE     : ttvideoindexlist.h                                              */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/29/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -61,10 +61,8 @@ class TTVideoIndexList : public TTHeaderList
 
   void sortStreamOrder();
   void sortDisplayOrder();
-  void setStreamOrder();
-  void setDisplayOrder();
-  bool streamOrder();
-  bool displayOrder();
+  bool isStreamOrder();
+  bool isDisplayOrder();
 
   int     streamOrder( int index );
   int     displayOrder( int index );
@@ -73,16 +71,7 @@ class TTVideoIndexList : public TTHeaderList
   int     sequenceIndex( int index );
   long    gopNumber( int index );
   off64_t frameSize( int index );
-  //int   streamOrderIndex( int index );
-
-  void numIFramesPlus();
-  void numPFramesPlus();
-  void numBFramesPlus();
-  long numIFrames();
-  long numPFrames();
-  long numBFrames();
-
-  int* stream_order_list;
+  int*    stream_order_list;
 
  protected:
   void swapOrder();
@@ -90,8 +79,5 @@ class TTVideoIndexList : public TTHeaderList
 
  protected:
   int  current_order;
-  long num_i_frames;
-  long num_p_frames;
-  long num_b_frames;
 };
 #endif //TTVIDEOINDEXLIST_H

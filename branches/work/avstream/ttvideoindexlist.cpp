@@ -5,7 +5,7 @@
 /* FILE     : ttvideoindexlist.h                                              */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/29/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -48,6 +48,9 @@
 
 const char c_name[] = "TTVIDEOINDEX  : ";
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Compare function for sorting the video index list by display order
+ */
 bool compareFunc( TTAVHeader* index_1, TTAVHeader* index_2 )
 {
   if ( ((TTVideoIndex*)index_1)->display_order < ((TTVideoIndex*)index_2)->display_order )
@@ -56,25 +59,23 @@ bool compareFunc( TTAVHeader* index_1, TTAVHeader* index_2 )
     return false;
 }
 
-// construct a index list object
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Construct a index list object
+ */
 TTVideoIndexList::TTVideoIndexList( int size )
   :TTHeaderList( size )
 {
-  current_order  = 0;  //0: stream order; 1: display order
-
-  // initialize number of frames
-  num_i_frames = 0;
-  num_p_frames = 0;
-  num_b_frames = 0;
-
+  current_order     = 0;  //0: stream order; 1: display order
   stream_order_list = NULL;
 }
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the TTVideoIndex object at index list position index
+ */
 TTVideoIndex* TTVideoIndexList::videoIndexAt( int index )
 {
   try
   {
-    //qDebug( "%svideo index at: %ld",c_name,index );
     checkIndexRange( index );
     return (TTVideoIndex*)at( index );
   }
@@ -85,14 +86,14 @@ TTVideoIndex* TTVideoIndexList::videoIndexAt( int index )
   }
 }
 
-// sort list items in stream order (default)
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Sort list items in stream order (default)
+ */
 void TTVideoIndexList::sortStreamOrder()
 {
   // list has to be in display order
   if ( current_order == 1 )
   {
-    //qDebug("%ssort stream order...",c_name);
-
     // swap display and stream order
     swapOrder();
     // sort contents
@@ -105,14 +106,15 @@ void TTVideoIndexList::sortStreamOrder()
   }
 }
 
-// sort list items in display order
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Sort list items in display order
+ */
 void TTVideoIndexList::sortDisplayOrder()
 {
   //list has to be in stream order (the default)
   if ( current_order == 0 )
   {
     // sort contents
-    //qDebug("%ssort display order...",c_name);
     sort();
 
     // current order is display order
@@ -120,20 +122,10 @@ void TTVideoIndexList::sortDisplayOrder()
   }
 }
 
-void TTVideoIndexList::setStreamOrder()
-{
-  // current order is stream order
-  current_order = 0;
-}
-
-
-void TTVideoIndexList::setDisplayOrder()
-{
-  // current order is display order
-  current_order = 1;
-}
-
-bool TTVideoIndexList::streamOrder()
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns true if the index list is sorted in stream order
+ */
+bool TTVideoIndexList::isStreamOrder()
 {
   if ( current_order == 0 )
     return true;
@@ -141,7 +133,10 @@ bool TTVideoIndexList::streamOrder()
     return false;
 }
 
-bool TTVideoIndexList::displayOrder()
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns true if the index list is sorted in display order
+ */
+bool TTVideoIndexList::isDisplayOrder()
 {
   if ( current_order == 1 )
     return true;
@@ -149,7 +144,9 @@ bool TTVideoIndexList::displayOrder()
     return false;
 }
 
-// return the stream order of picture at index
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the stream order of the picture at index position
+ */
 int TTVideoIndexList::streamOrder( int index )
 {
   try
@@ -162,7 +159,9 @@ int TTVideoIndexList::streamOrder( int index )
   }
 }
 
-// return the display order of picture at index
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the display order of the picture at index positon
+ */
 int TTVideoIndexList::displayOrder( int index )
 {
   try
@@ -175,14 +174,13 @@ int TTVideoIndexList::displayOrder( int index )
   }
 }
 
-// return the index in the header list of picture at index
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the index in video header list of picture at given index
+ */
 int TTVideoIndexList::headerListIndex( int index )
 {
-  //qDebug( "%sheader list index: %ld",c_name,index );
-
   try
   {
-    //qDebug( "%sheader index: %ld",c_name,videoIndexAt(index)->header_list_index );
     return videoIndexAt(index)->header_list_index;
   }
   catch ( TTListIndexException )
@@ -192,11 +190,11 @@ int TTVideoIndexList::headerListIndex( int index )
   }
 }
 
-// return the picture_coding_type (I=1,P=2,B=3)
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the picture_coding_type (I=1,P=2,B=3) at index position
+ */
 int  TTVideoIndexList::pictureCodingType( int index )
 {
-  //qDebug( "%scoding type at: %d",c_name,index );
-
   try
   {
     return videoIndexAt(index)->picture_coding_type;
@@ -207,6 +205,9 @@ int  TTVideoIndexList::pictureCodingType( int index )
   }
 }
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the sequence index of picture at index position
+ */
 int TTVideoIndexList::sequenceIndex( int index )
 {
   try
@@ -219,7 +220,9 @@ int TTVideoIndexList::sequenceIndex( int index )
   }
 }
 
-
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the gop number of picture at index position
+ */
 long TTVideoIndexList::gopNumber( int index )
 {
   try
@@ -232,6 +235,9 @@ long TTVideoIndexList::gopNumber( int index )
   }
 }
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the frame size of picture at index positon
+ */
 off64_t TTVideoIndexList::frameSize( int index )
 {
   try
@@ -244,39 +250,9 @@ off64_t TTVideoIndexList::frameSize( int index )
   }
 }
 
-
-void TTVideoIndexList::numIFramesPlus()
-{
-  num_i_frames++;
-}
-
-void TTVideoIndexList::numPFramesPlus()
-{
-  num_p_frames++;
-}
-
-void TTVideoIndexList::numBFramesPlus()
-{
-  num_b_frames++;
-}
-
-long TTVideoIndexList::numIFrames()
-{
-  return num_i_frames;
-}
-
-long TTVideoIndexList::numPFrames()
-{
-  return num_p_frames;
-}
-
-long TTVideoIndexList::numBFrames()
-{
-  return num_b_frames;
-}
-
-
-// swap display and stream order and vice versa
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Swap display and stream order and vice versa
+ */
 void TTVideoIndexList::swapOrder()
 {
   long temp_order;
@@ -297,7 +273,9 @@ void TTVideoIndexList::swapOrder()
   }
 }
 
-
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Sort the video index list by display order
+ */
 void TTVideoIndexList::sort()
 {
   qSort( begin(), end(), compareFunc );

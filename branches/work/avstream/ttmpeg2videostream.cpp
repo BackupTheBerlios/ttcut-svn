@@ -530,18 +530,13 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
       {
         case TTMpeg2VideoHeader::sequence_start_code:
           new_header = new TTSequenceHeader();
-          header_list->numSequencePlus();
           break;
         case TTMpeg2VideoHeader::picture_start_code:
           new_header = new TTPicturesHeader();
-          header_list->numPicturePlus();
           break;
         case TTMpeg2VideoHeader::group_start_code:
           new_header = new TTGOPHeader();
-          header_list->numGopPlus();
           break;
-        case TTMpeg2VideoHeader::sequence_end_code:
-          header_list->numSequenceEndPlus();
           break;
       }
 
