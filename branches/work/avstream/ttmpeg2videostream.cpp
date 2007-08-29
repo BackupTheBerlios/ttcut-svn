@@ -47,7 +47,7 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#define TTMPEG2VIDEOSTREAM_DEBUG
+//#define TTMPEG2VIDEOSTREAM_DEBUG
 #define ENCODE_INFO
 
 #include "ttmpeg2videostream.h"
@@ -185,7 +185,6 @@ int TTMpeg2VideoStream::createHeaderList()
  */
 int TTMpeg2VideoStream::createIndexList()
 {
-  int               u_result         = 0;
   long              base_number      = 0;
   long              current_picture_number = 0;
   int               index            = 0;
@@ -195,14 +194,6 @@ int TTMpeg2VideoStream::createIndexList()
   TTSequenceHeader* current_sequence = NULL;
   TTGOPHeader*      current_gop      = NULL;
   TTPicturesHeader* current_picture  = NULL;
-
-#if defined(__TTMPEG2)
-  TTVideoIndex*     prev_video_index;
-  TTVideoIndex*     cur_video_index;
-  long              size_index = -1;
-  off64_t           frame_size = 0;
-  long              i;
-#endif
 
   index_list  = new TTVideoIndexList( 2000 );
 
@@ -216,21 +207,6 @@ int TTMpeg2VideoStream::createIndexList()
         current_sequence = (TTSequenceHeader*)header_list->at(index);
         current_sequence->pictures_in_sequence = 0;
         sequence_index = index;
-
-#ifdef __TTMPEG2
-        if ( size_index >= 0 )
-        {
-          frame_size = current_sequence->headerOffset()-frame_size;
-
-          prev_video_index = index_list->videoIndexAt( size_index );
-          prev_video_index->picture_size = frame_size;
-
-          frame_size = current_sequence->headerOffset();
-
-          // I-Frame-size = sequence_size+gop_size+picture_size
-          size_index = -2;
-        }
-#endif
         break;
 
       case TTMpeg2VideoHeader::group_start_code:
@@ -238,13 +214,6 @@ int TTMpeg2VideoStream::createIndexList()
         base_number = current_picture_number;
         current_gop->pictures_in_gop = 0;
         gop_number++;
-
-#ifdef __TTMPEG2
-        // I-Frame-size = picture_size (uncomment size_index = -1 )
-        frame_size = current_gop->headerOffset();
-        //qDebug("%sframe size: %ld",c_name,frame_size);
-        size_index = -1;    
-#endif
         break;
 
       case TTMpeg2VideoHeader::picture_start_code:
@@ -262,42 +231,6 @@ int TTMpeg2VideoStream::createIndexList()
           video_index->sequence_index      = sequence_index;
           video_index->gop_number          = gop_number-1;
 
-#ifdef __TTMPEG2
-          if ( size_index == -1 )
-          {
-            frame_size = current_picture->headerOffset();
-            size_index = current_picture_number;
-          }
-          else if ( size_index == -2 )
-          {
-            size_index = current_picture_number;   
-          }
-          else
-          {
-            frame_size = current_picture->headerOffset()-frame_size;
-            //qDebug("Index_pic: %ld / size: %ld",size_index,frame_size);
-
-            prev_video_index = index_list->videoIndexAt( size_index );
-            prev_video_index->picture_size = frame_size;
-
-            frame_size = current_picture->headerOffset();
-            size_index = current_picture_number;
-          }
-#endif
-
-          switch ( current_picture->picture_coding_type )
-          {
-            case 1:
-              index_list->numIFramesPlus();
-              break;
-            case 2:
-              index_list->numPFramesPlus();
-              break;
-            case 3:
-              index_list->numBFramesPlus();
-              break;
-          }
-
           index_list->add( video_index );
 
           current_picture_number++;
@@ -312,27 +245,14 @@ int TTMpeg2VideoStream::createIndexList()
     index++;
   }
 
+#if defined(TTMPEG2VIDEOSTREAM_DEBUG)
+  log->infoMsg(c_name, "index list created: %d/%d", index_list->count(), index_list->size());
+#endif
+
+  // ist notwendig (!); sollte so nicht sein... refactor
   num_index = index_list->count();
 
-#if defined(TTMPEG2VIDEOSTREAM_DEBUG)
-  log->infoMsg(c_name, "index list created: %d/%d", num_index, index_list->size());
-#endif
-
-#ifdef __TTMPEG2
-  index_list->stream_order_list = new int[num_index];
-  index_list->setDisplayOrder();
-
-  for ( i = 0; i < num_index; i++ )
-  {
-    cur_video_index                  = index_list->videoIndexAt( i );
-    index_list->stream_order_list[i] = cur_video_index->display_order;
-    //qDebug("%sstream-index:%d",c_name,index_list->stream_order_list[i]);
-  }
-  index_list->setStreamOrder();
-#endif
-
-  u_result = num_index;
-  return u_result;
+  return index_list->count();
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -603,7 +523,6 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
         mpeg2_stream->readByte( header_type );
       }
 
-      // header found
       new_header = NULL;
 
       // create the appropriate header object
@@ -781,26 +700,24 @@ void TTMpeg2VideoStream::readIDDHeader( )
         idd_stream->readUInt64( offset );      // Adresse 64 Bit
       }
 
+      new_header = NULL;
+
       // create appropriate header object
       switch ( header_type )
       {
         case TTMpeg2VideoHeader::sequence_start_code:
           new_header = new TTSequenceHeader();
-          header_list->numSequencePlus();
           break;
         case TTMpeg2VideoHeader::picture_start_code:
           new_header = new TTPicturesHeader();
-          header_list->numPicturePlus();
           // skip information about frame coding type and temporal reference
           idd_stream->seekRelative( 3 );
           break;
         case TTMpeg2VideoHeader::group_start_code:
           new_header = new TTGOPHeader();
-          header_list->numGopPlus();
           break;
         case TTMpeg2VideoHeader::sequence_end_code:
           new_header = new TTSequenceEndHeader();
-          header_list->numSequenceEndPlus();
           break;
       }
 

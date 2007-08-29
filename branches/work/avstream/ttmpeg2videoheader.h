@@ -147,23 +147,7 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
   int      profile_and_level_indication;
   bool     progressive_sequence;
   int      chroma_format;
-  int      horizontal_size_extension;
-  int      vertical_size_enxtension;
-  int      bit_rate_extension;
-  int      vbv_buffer_size_extension;
   bool     low_delay;
-  int      frame_rate_extension_n;
-  int      frame_rate_extension_d;
-
-  // from sequence_display_extension
-  int      video_format;
-  bool     colour_description;
-  int      colour_primaries;
-  int      transfer_characteristics;
-  int      matrix_coefficients;
-  int      display_horizontal_size;
-  uint8_t  display_extension_marker_bit;
-  int      display_vertical_size;
 
   // internal:
   int      pictures_in_sequence;          // number of pictures in sequence
@@ -229,33 +213,7 @@ class TTPicturesHeader : public TTMpeg2VideoHeader
   int     temporal_reference;
   int     picture_coding_type;
   int     vbv_delay;
-  //picture_coding_type == 2 || picture_coding_type == 1
-  int     full_pel_forward_vector;
-  uint8_t forward_f_code;
-  //picture_coding_type == 3
-  int     full_pel_backward_vector;
-  uint8_t backward_f_code;
-
-  // from picture_coding_extension [B5]
-  int     f_code[2][2];
-  int     intra_dc_precision;
-  int     picture_structure;
-  bool    top_field_first;
-  bool    frame_pred_frame_dct;
-  int     concealment_motion_vectors;
-  int     q_scale_type;
-  int     intra_vlc_format;
-  bool    alternate_scan;
-  bool    repeat_first_field;
-  bool    chroma_420_type;
   bool    progressive_frame;
-  bool    composite_display_flag;
-  //if(composite_display_flag)
-  int     v_axis;
-  int     field_sequence;
-  int     sub_carrier;
-  int     burst_amplitude;
-  int     sub_carrier_phase;
 
   // internal
   int abs_picture_number;

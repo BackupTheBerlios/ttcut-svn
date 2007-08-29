@@ -230,7 +230,7 @@ void TTVideoFileInfo::onFileOpen()
   QString fn = QFileDialog::getOpenFileName( this,
       tr("Open video file"),
       TTCut::lastDirPath,
-      "Video (*.m2v)" );
+      "Video (*.m2v *.mpv)" );
 
   if( !fn.isEmpty() ){
     QFileInfo fInfo( fn );
