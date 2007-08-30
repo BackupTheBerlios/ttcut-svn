@@ -11,6 +11,7 @@ Version 0.19.x (RC's for release 0.20.0)
           (for the pvastrumento users)
         * Removed TTMpeg2 from project
         * The 'play-button' is temporary hidden
+        * Fixed: Settings aren't saved on exit
 
 0.19.5: * Fixed: Audio and video are asynchron after a few cut's
         * Fixed: Append project  file extension if missing
