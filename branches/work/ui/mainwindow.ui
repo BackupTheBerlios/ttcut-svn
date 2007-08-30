@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTCutMainWindow</class>
  <widget class="QMainWindow" name="TTCutMainWindow" >
   <property name="geometry" >
@@ -23,10 +20,22 @@
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
-    <property name="margin" >
+    <property name="leftMargin" >
      <number>9</number>
     </property>
-    <property name="spacing" >
+    <property name="topMargin" >
+     <number>9</number>
+    </property>
+    <property name="rightMargin" >
+     <number>9</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>9</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>6</number>
+    </property>
+    <property name="verticalSpacing" >
      <number>6</number>
     </property>
     <item row="2" column="0" colspan="3" >
@@ -39,9 +48,7 @@
     <item row="3" column="0" colspan="3" >
      <widget class="QTabWidget" name="ccrTab" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>1</hsizetype>
-        <vsizetype>1</vsizetype>
+       <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
@@ -66,10 +73,22 @@
         <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/cutav_18.xpm</iconset>
        </attribute>
        <layout class="QGridLayout" >
-        <property name="margin" >
+        <property name="leftMargin" >
          <number>9</number>
         </property>
-        <property name="spacing" >
+        <property name="topMargin" >
+         <number>9</number>
+        </property>
+        <property name="rightMargin" >
+         <number>9</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>9</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
          <number>6</number>
         </property>
         <item row="0" column="0" >
@@ -86,9 +105,7 @@
     <item row="1" column="1" >
      <widget class="TTCurrentFrame" name="currentFrame" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>7</hsizetype>
-        <vsizetype>7</vsizetype>
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>1</horstretch>
         <verstretch>4</verstretch>
        </sizepolicy>
@@ -116,9 +133,7 @@
     <item row="1" column="2" >
      <widget class="TTNavigation" name="navigation" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>1</hsizetype>
-        <vsizetype>1</vsizetype>
+       <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
         <horstretch>1</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
@@ -149,9 +164,7 @@
     <item row="1" column="0" >
      <widget class="TTCutOutFrame" name="cutOutFrame" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>7</hsizetype>
-        <vsizetype>7</vsizetype>
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>1</horstretch>
         <verstretch>4</verstretch>
        </sizepolicy>
@@ -176,9 +189,7 @@
     <item row="0" column="0" colspan="3" >
      <widget class="QTabWidget" name="tabVideoAudioInfo" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>1</hsizetype>
-        <vsizetype>1</vsizetype>
+       <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -203,18 +214,28 @@
         <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/tv.png</iconset>
        </attribute>
        <layout class="QGridLayout" >
-        <property name="margin" >
+        <property name="leftMargin" >
          <number>9</number>
         </property>
-        <property name="spacing" >
+        <property name="topMargin" >
+         <number>9</number>
+        </property>
+        <property name="rightMargin" >
+         <number>9</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>9</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
          <number>6</number>
         </property>
         <item row="0" column="0" >
          <widget class="TTVideoFileInfo" name="videoFileInfo" >
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>5</vsizetype>
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
             <horstretch>0</horstretch>
             <verstretch>1</verstretch>
            </sizepolicy>
@@ -246,18 +267,28 @@
         <iconset resource="mainwindow.qrc" >:/pixmaps/pixmaps/cutaudio_18.xpm</iconset>
        </attribute>
        <layout class="QGridLayout" >
-        <property name="margin" >
+        <property name="leftMargin" >
          <number>9</number>
         </property>
-        <property name="spacing" >
+        <property name="topMargin" >
+         <number>9</number>
+        </property>
+        <property name="rightMargin" >
+         <number>9</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>9</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
          <number>6</number>
         </property>
         <item row="0" column="0" >
          <widget class="TTAudioFileList" name="audioFileInfo" >
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>5</vsizetype>
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
             <horstretch>0</horstretch>
             <verstretch>1</verstretch>
            </sizepolicy>
@@ -291,7 +322,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>27</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp" >
@@ -458,56 +489,48 @@
    </property>
   </action>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>TTVideoFileInfo</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttvideofileinfo.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>TTCutList</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutlist.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>TTAudioFileList</class>
    <extends>QGroupBox</extends>
    <header>gui/ttaudiofilelist.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>TTNavigation</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttnavigation.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>TTStreamNavigator</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttstreamnavigator.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>TTCutOutFrame</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcutoutframe.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>TTCurrentFrame</class>
    <extends>QGroupBox</extends>
    <header>../gui/ttcurrentframe.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
