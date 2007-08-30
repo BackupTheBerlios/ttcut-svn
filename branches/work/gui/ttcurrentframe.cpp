@@ -50,6 +50,7 @@ void TTCurrentFrame::controlEnabled( bool enabled )
 {
   isControlEnabled = enabled;
   pbPlayVideo->setEnabled( false );//enabled );
+  pbPlayVideo->hide();
 }
 
 //void TTCurrentFrame::setObject
