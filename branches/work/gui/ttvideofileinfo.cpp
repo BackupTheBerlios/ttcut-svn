@@ -232,7 +232,8 @@ void TTVideoFileInfo::onFileOpen()
       TTCut::lastDirPath,
       "Video (*.m2v *.mpv)" );
 
-  if( !fn.isEmpty() ){
+  if( !fn.isEmpty() )
+  {
     QFileInfo fInfo( fn );
     TTCut::lastDirPath = fInfo.absolutePath();
     emit fileOpened( fn );

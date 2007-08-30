@@ -275,4 +275,6 @@ void TTCutSettings::writeSettings()
   endGroup();
  
   endGroup(); // settings
+
+  sync();
 }
