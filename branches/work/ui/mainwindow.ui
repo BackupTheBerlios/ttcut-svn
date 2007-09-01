@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>750</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -107,7 +107,7 @@
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>1</horstretch>
-        <verstretch>4</verstretch>
+        <verstretch>8</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize" >
@@ -118,8 +118,14 @@
       </property>
       <property name="sizeIncrement" >
        <size>
-        <width>0</width>
+        <width>2</width>
         <height>10</height>
+       </size>
+      </property>
+      <property name="baseSize" >
+       <size>
+        <width>280</width>
+        <height>150</height>
        </size>
       </property>
       <property name="focusPolicy" >
@@ -133,9 +139,9 @@
     <item row="1" column="2" >
      <widget class="TTNavigation" name="navigation" >
       <property name="sizePolicy" >
-       <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Fixed" >
         <horstretch>1</horstretch>
-        <verstretch>1</verstretch>
+        <verstretch>2</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize" >
@@ -156,6 +162,12 @@
         <height>10</height>
        </size>
       </property>
+      <property name="baseSize" >
+       <size>
+        <width>250</width>
+        <height>150</height>
+       </size>
+      </property>
       <property name="title" >
        <string>Navgation</string>
       </property>
@@ -166,7 +178,7 @@
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>1</horstretch>
-        <verstretch>4</verstretch>
+        <verstretch>8</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize" >
@@ -177,8 +189,14 @@
       </property>
       <property name="sizeIncrement" >
        <size>
-        <width>0</width>
+        <width>2</width>
         <height>10</height>
+       </size>
+      </property>
+      <property name="baseSize" >
+       <size>
+        <width>280</width>
+        <height>150</height>
        </size>
       </property>
       <property name="title" >
@@ -505,7 +523,7 @@
   <customwidget>
    <class>TTAudioFileList</class>
    <extends>QGroupBox</extends>
-   <header>gui/ttaudiofilelist.h</header>
+   <header>../gui/ttaudiofilelist.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
