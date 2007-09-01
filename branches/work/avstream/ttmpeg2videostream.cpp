@@ -144,8 +144,13 @@ int TTMpeg2VideoStream::createHeaderList()
 
     if ( idd_stream_info.exists() )
     {
+      int bufferSize = mpeg2_stream->bufferSize();
+      mpeg2_stream->setBufferSize(16);
+
       idd_stream         = new TTFileBuffer( TTCut::toAscii(idd_stream_name), fm_open_read );
       header_list_exists = createHeaderListFromIdd();
+
+      mpeg2_stream->setBufferSize(bufferSize);
 
       // we can delete the idd-stream
       idd_stream->closeFile();
@@ -194,6 +199,10 @@ int TTMpeg2VideoStream::createIndexList()
   TTSequenceHeader* current_sequence = NULL;
   TTGOPHeader*      current_gop      = NULL;
   TTPicturesHeader* current_picture  = NULL;
+
+  qDebug("Create index list");
+  QTime time;
+  time.start();
 
   index_list  = new TTVideoIndexList( 2000 );
 
@@ -244,6 +253,8 @@ int TTMpeg2VideoStream::createIndexList()
     }
     index++;
   }
+
+  qDebug( "time for creating the index list: %d\n", time.elapsed() );
 
 #if defined(TTMPEG2VIDEOSTREAM_DEBUG)
   log->infoMsg(c_name, "index list created: %d/%d", index_list->count(), index_list->size());
@@ -478,7 +489,14 @@ bool TTMpeg2VideoStream::createHeaderListFromIdd()
 
   log->infoMsg(c_name, "Read header list from idd file version: %02x", idd_file_version);
 
+  QTime time;
+  time.start();
+
   readIDDHeader();
+
+  qDebug("time: %d", time.elapsed());
+  qDebug("read_count: %ld", mpeg2_stream->readCount());
+  qDebug("fill_count: %ld", mpeg2_stream->fillCount());
 
   if (header_list->count() > 0)
     return true;
@@ -494,6 +512,10 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
   bool                b_cancel = false;
   uint8_t             header_type;
   TTMpeg2VideoHeader* new_header;
+
+  qDebug("Create header list from mpeg stream\n");
+  QTime time;
+  time.start();
 
   log->infoMsg(c_name, "Create header list from mpeg2");
 
@@ -520,15 +542,19 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
              !mpeg2_stream->streamEOF() )
       {
         mpeg2_stream->nextStartCodeTS();
+        //mpeg2_stream->nextStartCodeBF();
         mpeg2_stream->readByte( header_type );
+        //qDebug("search start code: %x", header_type);
       }
+
+      //qDebug("found start code");
 
       new_header = NULL;
 
       // create the appropriate header object
       switch ( header_type )
       {
-        case TTMpeg2VideoHeader::sequence_start_code:
+        case TTMpeg2VideoHeader::sequence_start_code:        
           new_header = new TTSequenceHeader();
           break;
         case TTMpeg2VideoHeader::picture_start_code:
@@ -560,6 +586,8 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
   catch (...)
   {
   }  
+
+  qDebug("time for creating the header list from mpeg stream: %d\n", time.elapsed());
 
   log->infoMsg(c_name, "Header list created: %d", header_list->count());
 
@@ -669,6 +697,8 @@ void TTMpeg2VideoStream::readIDDHeader( )
   uint64_t            offset;
   TTMpeg2VideoHeader* new_header = NULL;
 
+  qDebug("readIDDHeader..");
+
   // TODO: check idd-file against current mpeg2-stream
 
   if ( ttAssigned( progress_bar ) )
@@ -752,6 +782,7 @@ void TTMpeg2VideoStream::readIDDHeader( )
   catch (...)
   {
   }  
+    qDebug("idd finished: %d", header_list->count());
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////

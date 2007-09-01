@@ -139,12 +139,12 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
     parseBasicData( header_data );
 
     // step over intra quantiser matrix
-    if ( (header_data[7] & 0x02) == 2 )
-      mpeg2_stream->seekRelative( 64 );  //Seek Exception
+    //if ( (header_data[7] & 0x02) == 2 )
+    //  mpeg2_stream->seekRelative( 64 );  //Seek Exception
 
     // step over non intra quantiser matrix
-    if ( (header_data[7] & 0x01) == 1 )
-      mpeg2_stream->seekRelative( 64 ); //Seek Exception
+    //if ( (header_data[7] & 0x01) == 1 )
+    //  mpeg2_stream->seekRelative( 64 ); //Seek Exception
 
     //parseExtendedData(mpeg2_stream);
 
@@ -196,7 +196,7 @@ void TTSequenceHeader::parseExtendedData(uint8_t*, int )
 {
 }
 
-void TTSequenceHeader::parseExtendedData(TTFileBuffer* mpeg2_stream)
+void TTSequenceHeader::parseExtendedData(__attribute__ ((unused))TTFileBuffer* mpeg2_stream)
 {
 }
 
@@ -436,6 +436,7 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 
   try
   {
+
     mpeg2_stream->readArray( header_data, 4 );
 
     header_start_code = picture_start_code;
