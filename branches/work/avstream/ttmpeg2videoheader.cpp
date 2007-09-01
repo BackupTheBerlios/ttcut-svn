@@ -94,24 +94,6 @@ void TTMpeg2VideoHeader::parseBasicData( __attribute__ ((unused))uint8_t* data, 
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Parse extended header data
- */
-void TTMpeg2VideoHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
-{
-
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Print header date for debug/logfile usage
- */
-void TTMpeg2VideoHeader::printHeader( )
-{
-
-}
-
-
-
-/* /////////////////////////////////////////////////////////////////////////////
  * TTSequenceHeader: Sequence header [0x000001B3]
  * Default constructor, extends TTMpeg2VideoHeader
  */
@@ -137,17 +119,6 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
     header_offset     = mpeg2_stream->currentOffset() - 12;
 
     parseBasicData( header_data );
-
-    // step over intra quantiser matrix
-    //if ( (header_data[7] & 0x02) == 2 )
-    //  mpeg2_stream->seekRelative( 64 );  //Seek Exception
-
-    // step over non intra quantiser matrix
-    //if ( (header_data[7] & 0x01) == 1 )
-    //  mpeg2_stream->seekRelative( 64 ); //Seek Exception
-
-    //parseExtendedData(mpeg2_stream);
-
   }
   catch ( TTStreamSeekException )
   {
@@ -181,39 +152,6 @@ void TTSequenceHeader::parseBasicData( uint8_t* data, int offset )
   frame_rate_code              = (data[3] & 0x0F);
   bit_rate_value               = (int)(((data[4] << 10) + (data[5] << 2)+((data[6] & 0xC0) >> 6))*400);
   vbv_buffer_size_value        = ((data[6] & 0x1F) << 5)+((data[7] & 0xF8) >> 3);
-
-  // werden diese Variablen wirklich benötigt???
-  profile_and_level_indication = 0;
-  progressive_sequence         = false;
-  chroma_format                = 0;
-  low_delay                    = false;
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Parse extended header data
- */
-void TTSequenceHeader::parseExtendedData(uint8_t*, int )
-{
-}
-
-void TTSequenceHeader::parseExtendedData(__attribute__ ((unused))TTFileBuffer* mpeg2_stream)
-{
-}
-
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Print header data for debug/logfile usage
- */
-void TTSequenceHeader::printHeader( )
-{
-  log->debugMsg(cName, "Sequence header data");
-  log->debugMsg(cName, "----------------------------------------------");
-  log->debugMsg(cName, "horizontal size:  %d", horizontal_size_value);
-  log->debugMsg(cName, "vertical size  :  %d", vertical_size_value);
-  log->debugMsg(cName, "aspect ratio   :  %d", aspect_ratio_information);
-  log->debugMsg(cName, "frame rate     :  %d", frame_rate_code);
-  log->debugMsg(cName, "bit rate code  :  %d", bit_rate_value);
-  log->debugMsg(cName, "vbv buffer     :  %d", vbv_buffer_size_value);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -329,17 +267,6 @@ void TTSequenceEndHeader::parseBasicData( __attribute__ ((unused))uint8_t* data,
 
 }
 
-void TTSequenceEndHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
-{
-
-}
-
-void TTSequenceEndHeader::printHeader( )
-{
-
-}
-
-
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
 // TTGOPHeader: Group of pictures header [000001B8]
@@ -399,21 +326,6 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
   closed_gop                = ((data[offset+3] & 0x40) >> 6) == 1;
   broken_link               = ((data[offset+3] & 0x20) >> 5) == 1;
 }
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Parse extended GOP header data, not basicly necessary for processing
- */
-void TTGOPHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
-{
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Print GOP header data for debug and logfile usage
- */
-void TTGOPHeader::printHeader( )
-{
-}
-
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -476,13 +388,6 @@ void TTPicturesHeader::parseBasicData( uint8_t* data, int offset )
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Parse extended picture header data
- */
-void TTPicturesHeader::parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
-{
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
  * Form an string representing the picture coding type.
  */
 QString TTPicturesHeader::codingTypeString()
@@ -501,12 +406,4 @@ QString TTPicturesHeader::codingTypeString()
     default:
       return "-";
   }
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Print the header informations for debug purpose
- */
-void TTPicturesHeader::printHeader( )
-{
-
 }

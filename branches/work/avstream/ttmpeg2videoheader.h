@@ -60,16 +60,8 @@
 #define TTMPEG2VIDEOHEADER_H
 
 #include "ttcommon.h"
-
-#ifdef __WIN32
-#include "ttwfilebuffer.h"
-#else
 #include "ttfilebuffer.h"
-#endif
-
 #include "ttavheader.h"
-
-
 
 
 // -----------------------------------------------------------------------------
@@ -83,8 +75,6 @@ public:
   virtual bool readHeader( TTFileBuffer* mpeg2_stream );
   virtual bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
   virtual void parseBasicData( uint8_t* data, int offset=0 );
-  virtual void parseExtendedData( uint8_t* data, int offset=0 );
-  virtual void printHeader( );
 
 enum mpeg2StartCodes
   {
@@ -114,11 +104,7 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
 
   bool readHeader( TTFileBuffer* mpeg2_stream );
   bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
-  bool writeDisplayExtension(TTFileBuffer* mpeg2_stream, off64_t offset);
   void parseBasicData( uint8_t* data, int offset=0);
-  void parseExtendedData( uint8_t* data, int offset=0 );
-  void parseExtendedData(TTFileBuffer* mpeg_stream);
-  void printHeader( );
 
   int     horizontalSize();
   int     verticalSize();
@@ -136,23 +122,9 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
   int      bit_rate_value;
   uint8_t  marker_bit;
   int      vbv_buffer_size_value;
-  uint8_t  constrained_parameters_flag;
-  bool     load_intra_quantiser_matrix;
-  uint8_t* intra_quantiser_matrix;
-  bool     load_non_intra_quantiser_matrix;
-  uint8_t* non_intra_quantiser_matrix;
-
-  //from sequence_extension [B5]
-  bool     sequence_extension_exist;
-  int      profile_and_level_indication;
-  bool     progressive_sequence;
-  int      chroma_format;
-  bool     low_delay;
 
   // internal:
   int      pictures_in_sequence;          // number of pictures in sequence
-  bool     is_sequence_extension;         // sequence has extension
-  bool     is_sequence_diplay_extension;  // sequence has diplay extension
 };
 
 /*! \brief SequenceEndHeader
@@ -166,9 +138,6 @@ class TTSequenceEndHeader : public TTMpeg2VideoHeader
   bool readHeader( TTFileBuffer* mpeg2_stream );
   bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
   void parseBasicData( uint8_t* data, int offset=0);
-  void parseExtendedData( uint8_t* data, int offset=0 );
-  void printHeader( );
-
 };
 
 // -----------------------------------------------------------------------------
@@ -182,8 +151,6 @@ public:
   bool readHeader( TTFileBuffer* mpeg2_stream );
   bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
   void parseBasicData( uint8_t* data, int offset=0 );
-  void parseExtendedData( uint8_t* data, int offset=0 );
-  void printHeader( );
 
    // from group_of_pictures_header [B8]
    TTimeCode time_code;
@@ -205,9 +172,7 @@ class TTPicturesHeader : public TTMpeg2VideoHeader
   bool    readHeader( TTFileBuffer* mpeg2_stream );
   bool    readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
   void    parseBasicData( uint8_t* data, int offset=0 );
-  void    parseExtendedData( uint8_t* data, int offset=0 );
   QString codingTypeString();
-  void    printHeader( );
 
   // from picture_header [00]
   int     temporal_reference;
@@ -218,5 +183,4 @@ class TTPicturesHeader : public TTMpeg2VideoHeader
   // internal
   int abs_picture_number;
 };
-
 #endif //TTMPEG2VIDEOHEADER_H
