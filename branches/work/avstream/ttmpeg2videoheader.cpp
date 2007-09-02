@@ -99,7 +99,7 @@ void TTMpeg2VideoHeader::parseBasicData( __attribute__ ((unused))uint8_t* data, 
  */
 TTSequenceHeader::TTSequenceHeader() : TTMpeg2VideoHeader()
 {
-
+  header_start_code = sequence_start_code;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,6 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
     mpeg2_stream->readArray( header_data, 8 ) ;
 
     // fill sequence header
-    header_start_code = sequence_start_code;
     header_offset     = mpeg2_stream->currentOffset() - 12;
 
     parseBasicData( header_data );
@@ -244,12 +243,11 @@ int TTSequenceHeader::vbvBufferSize()
   TTSequenceEndHeader::TTSequenceEndHeader()
 : TTMpeg2VideoHeader()
 {
-
+  header_start_code = sequence_end_code;
 }
 
 bool TTSequenceEndHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
-  header_start_code = sequence_end_code;
   header_offset     = mpeg2_stream->currentOffset() - 4;
 
   return true;
@@ -275,7 +273,7 @@ void TTSequenceEndHeader::parseBasicData( __attribute__ ((unused))uint8_t* data,
   TTGOPHeader::TTGOPHeader()
 :TTMpeg2VideoHeader()
 {
-
+  header_start_code = group_start_code;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -289,7 +287,6 @@ bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream )
   {
     mpeg2_stream->readArray( header_data,4 );
 
-    header_start_code = group_start_code;
     header_offset     = mpeg2_stream->currentOffset() - 8;
 
     parseBasicData( header_data );
@@ -335,7 +332,7 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
   TTPicturesHeader::TTPicturesHeader()
 :TTMpeg2VideoHeader()
 {
-
+  header_start_code = picture_start_code;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -344,14 +341,12 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
 bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
   uint8_t header_data[5];
-  //unused: uint8_t byte1;
 
   try
   {
 
     mpeg2_stream->readArray( header_data, 4 );
 
-    header_start_code = picture_start_code;
     header_offset     = mpeg2_stream->currentOffset() - 8;
 
     parseBasicData( header_data );

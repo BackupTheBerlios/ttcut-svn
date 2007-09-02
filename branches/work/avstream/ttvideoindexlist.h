@@ -70,7 +70,6 @@ class TTVideoIndexList : public TTHeaderList
   int     pictureCodingType( int index );
   int     sequenceIndex( int index );
   long    gopNumber( int index );
-  off64_t frameSize( int index );
   int*    stream_order_list;
 
  protected:

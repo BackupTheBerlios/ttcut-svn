@@ -236,21 +236,6 @@ long TTVideoIndexList::gopNumber( int index )
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
- * Returns the frame size of picture at index positon
- */
-off64_t TTVideoIndexList::frameSize( int index )
-{
-  try
-  {
-    return videoIndexAt(index)->picture_size;
-  }
-  catch ( TTListIndexException )
-  {
-    return (off64_t)0;
-  }
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
  * Swap display and stream order and vice versa
  */
 void TTVideoIndexList::swapOrder()
