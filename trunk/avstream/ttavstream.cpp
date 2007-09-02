@@ -691,7 +691,7 @@ int TTVideoStream::moveToIndexPos( int index, int f_type )
 {
   int j;
 
-  if ( index_list->streamOrder() )
+  if ( index_list->isStreamOrder() )
     {
       return moveToIndexPosSO( index, f_type );
     }

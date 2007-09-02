@@ -71,12 +71,7 @@
 
 #include "ttcommon.h"
 #include "../common/ttmessagelogger.h"
-
-#ifdef __WIN32
-#include "ttwfilebuffer.h"
-#else
 #include "ttfilebuffer.h"
-#endif
 
 class QString;
 
@@ -144,8 +139,6 @@ public:
   virtual bool readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream ){ return false; };
   virtual bool readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream, __attribute__ ((unused))off64_t offset ){ return false; };
   virtual void parseBasicData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset=0){};
-  virtual void parseExtendedData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset=0 ){};
-  virtual void printHeader( ){};
 
  protected:
   typedef struct
@@ -157,7 +150,6 @@ public:
     int     seconds;
     int     pictures;
   } TTimeCode;
-
 };
 
 // -----------------------------------------------------------------------------
@@ -174,7 +166,6 @@ class TTVideoIndex : public TTAVHeader
   int     picture_coding_type;
   int     sequence_index;
   long    gop_number;
-  off64_t picture_size;
 };
 
 
@@ -206,7 +197,6 @@ class TTBreakObject
   long copy_start;
   long copy_stop;
 };
-
 #endif //TTAVHEADER_H
 
 

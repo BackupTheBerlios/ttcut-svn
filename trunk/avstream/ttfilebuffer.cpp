@@ -36,7 +36,8 @@
 
 #include <stdio.h>
 
-#define MAX_BUFFER_SIZE 1048576
+#define MAX_BUFFER_SIZE 5242880
+#define BUFFER_SIZE     1048576
 
 const char c_name [] = "TTFILEBUFFER  : ";
 
@@ -48,7 +49,7 @@ TTFileBuffer::TTFileBuffer( )
 {
   file_handle      = -1;         /*..no file descriptor.......................*/
   mem_buffer       = NULL;       /*..no memory buffer.........................*/
-  buffer_size      = 1048576;    /*..memory buffer size.......................*/
+  buffer_size      = BUFFER_SIZE;/*..memory buffer size.......................*/
 
   buffer_read_size = 0;
   buffer_start     = 0;
@@ -76,7 +77,7 @@ TTFileBuffer::TTFileBuffer( const char* f_name, int f_mode )
 {
   file_handle      = -1;         /*..no file descriptor.......................*/
   mem_buffer       = NULL;       /*..no memory buffer.........................*/
-  buffer_size      = 1048576;    /*..memory buffer size.......................*/
+  buffer_size      = BUFFER_SIZE;/*..memory buffer size.......................*/
 
   buffer_read_size = 0;
   buffer_start     = 0;
@@ -244,7 +245,7 @@ void TTFileBuffer::setBufferSize( int size )
     releaseBuffer();
 
     if ( size > MAX_BUFFER_SIZE )
-      buffer_size = 1048576;
+      buffer_size = MAX_BUFFER_SIZE;
     else
       buffer_size = size;
 
@@ -396,7 +397,7 @@ void TTFileBuffer::initTSearch()
   {
     if (start_code[t_delta-1] == start_code[t_delta-(look_at+2)])
       break;
-    look_at++;
+    ++look_at;
   }
 }
 
@@ -410,6 +411,7 @@ void TTFileBuffer::nextStartCodeTS()
 
     while ( mem_buffer[buffer_pos+t_index] != start_code[t_index] )
     {
+      //seekRelative(shift[mem_buffer[buffer_pos+t_delta]]);
       if( !seekRelative(shift[mem_buffer[buffer_pos+t_delta]]) )
         return;
     }
@@ -724,6 +726,15 @@ bool TTFileBuffer::readByte( uint8_t &byte1 )
     read_count++;
   }
 
+/*  if (last_buffer_read)
+  {
+    stream_eof = true;
+    throw TTStreamEOFException();
+  }
+
+  return newPosition(stream_pos);
+*/
+
   /* new buffer pos outside memory buffer; fill the buffer*/
   if ( buffer_pos >= buffer_read_size )
   {
@@ -732,7 +743,6 @@ bool TTFileBuffer::readByte( uint8_t &byte1 )
     {
       stream_eof = true;
       b_result   = false;
-      //printf("EOF: %ld / %ld\n",buffer_pos,buffer_read_size);
       throw TTStreamEOFException();
     }
     /* fill the memory buffer*/

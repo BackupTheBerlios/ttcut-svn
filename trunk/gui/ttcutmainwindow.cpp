@@ -402,7 +402,7 @@ void TTCutMainWindow::closeEvent(QCloseEvent* event)
   }
 
   closeProject();
-
+  
   if ( ttAssigned(settings) ) 
     settings->writeSettings();
 

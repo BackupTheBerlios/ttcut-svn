@@ -5,7 +5,7 @@
 /* FILE     : ttvideoheaderlist.cpp                                           */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 08/29/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -45,19 +45,19 @@
 
 #include "ttvideoheaderlist.h"
 
-
 bool videoHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 );
 
-// construct object
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Constructor
+ */
 TTVideoHeaderList::TTVideoHeaderList( int size )
   :TTHeaderList( size )
 {
-  num_sequence_header     = 0;
-  num_picture_header      = 0;
-  num_gop_header          = 0;
-  num_sequence_end_header = 0;
 }
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the header type at header list index position
+ */
 uint8_t TTVideoHeaderList::headerTypeAt( int index )
 {
   try
@@ -72,6 +72,9 @@ uint8_t TTVideoHeaderList::headerTypeAt( int index )
   }
 }
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the TTVideoHeader at header list index position
+ */
 TTVideoHeader* TTVideoHeaderList::headerAt( int index )
 {
   try
@@ -82,18 +85,19 @@ TTVideoHeader* TTVideoHeaderList::headerAt( int index )
   }
   catch ( TTListIndexException )
   {
-    qDebug("headerAt: index exception (!)");
-
     if ( index < 0 )
       return (TTVideoHeader*)at( 0 );
 
-    if ( index > count()-1 )
+    if ( index >= count() )
       return (TTVideoHeader*)at( count()-1 );
 
     return NULL;
   }
 }
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the TTSequenceHeader at header list index position
+ */
 TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( int index )
 {
   int i;
@@ -130,7 +134,9 @@ TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( int index )
   }
 }
 
-
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the TTPicturesHeader at header list index position
+ */
 TTPicturesHeader* TTVideoHeaderList::pictureHeaderAt( int index )
 {
   try
@@ -144,7 +150,9 @@ TTPicturesHeader* TTVideoHeaderList::pictureHeaderAt( int index )
   }
 }
 
-
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the TTGOPHeader at header list index position
+ */
 TTGOPHeader* TTVideoHeaderList::gopHeaderAt( int index )
 {
   try
@@ -158,17 +166,21 @@ TTGOPHeader* TTVideoHeaderList::gopHeaderAt( int index )
   }
 }
 
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Returns the index position of the current TTVideoHeader
+ */
 int TTVideoHeaderList::headerIndex( TTVideoHeader* current )
 {
   return indexOf( (TTVideoHeader*)current );
 }
 
-// Create the header list from mpeg2 stream
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Create the video header list from the given mpeg2 video stream
+ */
 long TTVideoHeaderList::createHeaderList( __attribute__ ((unused))TTFileBuffer* mpeg2_stream )
 {
   return 0;
 }
-
 
 // -----------------------------------------------------------------------------
 // IDD-Index file operations
@@ -196,82 +208,42 @@ long TTVideoHeaderList::createHeaderList( __attribute__ ((unused))TTFileBuffer* 
 //   8 Byte Adresse            (wird zum kopieren des letzten Bildes gebraucht)
 // -----------------------------------------------------------------------------
 
-// Read an idd-index file from idd_stream and create a header list from it
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Read an idd-index file from idd_stream and create a header list from it
+ */
 long TTVideoHeaderList::readIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream )
 {
   return 0;
 }
 
-
-// Write an idd-index file from current header list
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Write an idd-index file from current header list
+ */
 long TTVideoHeaderList::writeIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream )
 {
   return 0;
 }
 
-
-// Check an idd-index file against an mpeg2 stream
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Check an idd-index file against an mpeg2 stream
+ */
 bool TTVideoHeaderList::checkIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream, 
 					__attribute__ ((unused))TTFileBuffer* mpeg2_stream )
 {
   return false;
 }
 
-
-void TTVideoHeaderList::numSequencePlus()
-{
-  num_sequence_header++;
-}
-
-
-void TTVideoHeaderList::numPicturePlus()
-{
-  num_picture_header++;
-}
-
-
-void TTVideoHeaderList::numGopPlus()
-{
-  num_gop_header++;
-}
-
-
-void TTVideoHeaderList::numSequenceEndPlus()
-{
-  num_sequence_end_header++;
-}
-
-
-long TTVideoHeaderList::numSequenceHeader()
-{
-  return num_sequence_header;
-}
-
-
-long TTVideoHeaderList::numPictureHeader()
-{
-  return num_picture_header;
-}
-
-
-long TTVideoHeaderList::numGopHeader()
-{
-  return num_gop_header;
-}
-
-
-long TTVideoHeaderList::numSequenceEndHeader()
-{
-  return num_sequence_end_header;
-}
-
+/*! ///////////////////////////////////////////////////////////////////////////
+ * Sort the header list by header offset
+ */
 void TTVideoHeaderList::sort()
 {
   qSort( begin(), end(), videoHeaderListCompareItems );
 }
 
-
-// compare routine for sort
+/*! ////////////////////////////////////////////////////////////////////////////
+ * compare routine for sort
+ */
 bool videoHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 )
 {
   if ( head_1->headerOffset() < head_2->headerOffset() )
@@ -279,6 +251,3 @@ bool videoHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 )
   else
     return false;
 }
-
-
-

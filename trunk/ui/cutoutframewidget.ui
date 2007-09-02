@@ -1,21 +1,16 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTCutOutFrameWidget</class>
  <widget class="QWidget" name="TTCutOutFrameWidget" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>511</width>
-    <height>434</height>
+    <width>562</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
     <horstretch>1</horstretch>
     <verstretch>4</verstretch>
    </sizepolicy>
@@ -30,18 +25,28 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>0</number>
    </property>
    <item row="0" column="0" >
     <widget class="QGroupBox" name="gbCutOutFrame" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>5</vsizetype>
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
        <horstretch>4</horstretch>
        <verstretch>10</verstretch>
       </sizepolicy>
@@ -56,22 +61,83 @@
       <string>Cut out frame</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>4</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
        <number>4</number>
       </property>
+      <property name="rightMargin" >
+       <number>4</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>4</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>4</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>4</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="TTMPEG2Window" name="mpegWindow" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>4</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize" >
+         <size>
+          <width>100</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="frameShape" >
+         <enum>QFrame::Panel</enum>
+        </property>
+        <property name="frameShadow" >
+         <enum>QFrame::Plain</enum>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0" >
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
         </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
         <item>
          <widget class="QLabel" name="laCutOutFramePosition" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize" >
+           <size>
+            <width>0</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>16777215</width>
+            <height>28</height>
+           </size>
+          </property>
           <property name="text" >
            <string>00:00:00,000 (000000)</string>
           </property>
@@ -83,17 +149,15 @@
            <bool>true</bool>
           </property>
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>1</hsizetype>
-            <vsizetype>0</vsizetype>
+           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
             <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
+            <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize" >
            <size>
             <width>24</width>
-            <height>20</height>
+            <height>28</height>
            </size>
           </property>
           <property name="maximumSize" >
@@ -113,17 +177,15 @@
         <item>
          <widget class="QPushButton" name="pbNextCutOutFrame" >
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>1</hsizetype>
-            <vsizetype>0</vsizetype>
+           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
             <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
+            <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize" >
            <size>
             <width>24</width>
-            <height>20</height>
+            <height>28</height>
            </size>
           </property>
           <property name="maximumSize" >
@@ -143,17 +205,15 @@
         <item>
          <widget class="QPushButton" name="pbSearchFrame" >
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>1</hsizetype>
-            <vsizetype>0</vsizetype>
+           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
             <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
+            <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize" >
            <size>
             <width>52</width>
-            <height>20</height>
+            <height>28</height>
            </size>
           </property>
           <property name="maximumSize" >
@@ -172,35 +232,17 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="0" >
-       <widget class="TTMPEG2Window" name="mpegWindow" >
-        <property name="minimumSize" >
-         <size>
-          <width>100</width>
-          <height>100</height>
-         </size>
-        </property>
-        <property name="frameShape" >
-         <enum>QFrame::Panel</enum>
-        </property>
-        <property name="frameShadow" >
-         <enum>QFrame::Plain</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>TTMPEG2Window</class>
    <extends>QFrame</extends>
    <header>../mpeg2window/ttmpeg2window.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

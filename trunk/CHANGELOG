@@ -5,6 +5,16 @@ TTCut-Changelog
 Version 0.19.x (RC's for release 0.20.0)
 ----------------------------------------
 
+0.19.6: * Fixed: Borken layout under Qt version 4.3.x
+        * Memory usage reduced (memory usage is still high and under construction)
+        * Append extension mpv to the list of valid video extensions 
+          (for the pvastrumento users)
+        * Removed TTMpeg2 from project
+        * The 'play-button' is temporary hidden
+        * Fixed: Settings aren't saved on exit
+        * Increase IDD read performance a litle bit (stil under construction)
+        * Fixed: Save settings after exit via window close
+
 0.19.5: * Fixed: Audio and video are asynchron after a few cut's
         * Fixed: Append project  file extension if missing
 

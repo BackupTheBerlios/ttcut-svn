@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>TTStreamNavigatorWidget</class>
  <widget class="QWidget" name="TTStreamNavigatorWidget" >
   <property name="geometry" >
@@ -16,10 +13,22 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>4</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>4</number>
    </property>
    <item row="0" column="0" >
@@ -34,10 +43,22 @@
       <string>Stream navigator</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>4</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>4</number>
+      </property>
+      <property name="rightMargin" >
+       <number>4</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>4</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>2</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>2</number>
       </property>
       <item row="0" column="0" >
@@ -65,14 +86,12 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>TTNavigatorDisplay</class>
    <extends>QFrame</extends>
    <header>../gui/ttnavigatordisplay.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
