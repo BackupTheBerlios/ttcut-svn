@@ -1,0 +1,23 @@
+-------------------------------------------------------------------------------
+TTCut-Buglist (Known issues)
+-------------------------------------------------------------------------------
+
+* While navigating by keyboard cursor keys it is possible to position the
+  strem pointer before the first (after the last) frame. The result is an
+  index out of bound exception and TTCut crashed
+* The RAM consumption is very high. This isn't realy a bug. More it is the
+  result of some arkward programming at the beginning of TTCut. This will be
+  fixed in further releases ;-)
+* The usage of Mpeg2Schnitt index files (idd-files) doesn't result in
+  increased performance during video processing. This was although a result
+  of arkward programming. I will fixed this in further releases.
+* Under unknown cirumstances TTCut crashed while executing transcode and forces 
+  the xserver to shut down
+* Crash: 1) open small video with sound
+         2) Do Preview
+         3) open small video without sound
+         4) Do Preview
+         5) open large video
+         6) add range to cutlist
+         7) crash! -> TTListIndexException
+  Remark: With latest Version of TTcut this bug should be fixed!
