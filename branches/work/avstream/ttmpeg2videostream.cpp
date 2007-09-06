@@ -5,9 +5,7 @@
 /* FILE     : ttmpeg2videostream.cpp                                          */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/12/2007 */
+/* MODIFIED: b. altendorf                                    DATE: 09/04/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -137,7 +135,7 @@ int TTMpeg2VideoStream::createHeaderList()
   {
     idd_stream_name = ttChangeFileExt( stream_info->filePath(), "idd" );
 
-    log->infoMsg(c_name, "look for idd-file: %s", TTCut::toAscii(idd_stream_name));
+    log->infoMsg(c_name, "look for idd-file: %s", qPrintable(idd_stream_name));
 
     // check for Mpeg2Schnitt idd-stream in current directory
     idd_stream_info.setFile( idd_stream_name );
@@ -147,8 +145,8 @@ int TTMpeg2VideoStream::createHeaderList()
       int bufferSize = mpeg2_stream->bufferSize();
       mpeg2_stream->setBufferSize(16);
 
-      idd_stream         = new TTFileBuffer( TTCut::toAscii(idd_stream_name), fm_open_read );
-      header_list_exists = createHeaderListFromIdd();
+       idd_stream         = new TTFileBuffer(qPrintable(idd_stream_name), fm_open_read );
+       header_list_exists = createHeaderListFromIdd();
 
       mpeg2_stream->setBufferSize(bufferSize);
 
@@ -632,7 +630,7 @@ void TTMpeg2VideoStream::writeIDDFile( )
   }
 
   // create new idd-stream
-  idd_stream = new TTFileBuffer(TTCut::toAscii(idd_stream_name), fm_open_write );
+  idd_stream = new TTFileBuffer(qPrintable(idd_stream_name), fm_open_write );
 
   buffer[0] = int('i'); // Puffer mit 'idd' fuellen
   buffer[1] = int('d');
@@ -687,14 +685,12 @@ void TTMpeg2VideoStream::writeIDDFile( )
  */
 void TTMpeg2VideoStream::readIDDHeader( )
 {
-  uint8_t            pictureCodingType;
-  uint16_t             temporalReference;
+  uint8_t             pictureCodingType;
+  uint16_t            temporalReference;
   uint8_t             header_type;
   uint32_t            offset_32;
   uint64_t            offset;
   TTMpeg2VideoHeader* new_header = NULL;
-
-  //qDebug("readIDDHeader..");
 
   // TODO: check idd-file against current mpeg2-stream
 
@@ -731,17 +727,12 @@ void TTMpeg2VideoStream::readIDDHeader( )
           break;
         case TTMpeg2VideoHeader::picture_start_code:
           new_header = new TTPicturesHeader();
-          // skip information about frame coding type and temporal reference
-          //idd_stream->seekRelative( 3 );
           idd_stream->readUInt16(temporalReference);
           idd_stream->readUInt8(pictureCodingType);
           ((TTPicturesHeader*)new_header)->setHeaderOffset(offset);
           ((TTPicturesHeader*)new_header)->temporal_reference  = temporalReference;
           ((TTPicturesHeader*)new_header)->picture_coding_type = pictureCodingType;
-          //new_header->readHeader(mpeg2_stream, offset);
-          //qDebug("ref/type: %d - %d", temporalReference, pictureCodingType);
-          //qDebug("ref/type: %d - %d", ((TTPicturesHeader*)new_header)->temporal_reference, ((TTPicturesHeader*)new_header)->picture_coding_type);
-            break;
+          break;
         case TTMpeg2VideoHeader::group_start_code:
           new_header = new TTGOPHeader();
           new_header->readHeader(mpeg2_stream, offset);
@@ -752,7 +743,6 @@ void TTMpeg2VideoStream::readIDDHeader( )
           break;
       }
 
-      //new_header->readHeader( mpeg2_stream, offset );
       header_list->add( new_header );
 
       if ( ttAssigned(progress_bar) )
@@ -784,7 +774,6 @@ void TTMpeg2VideoStream::readIDDHeader( )
   catch (...)
   {
   }  
-    //qDebug("idd finished: %d", header_list->count());
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////

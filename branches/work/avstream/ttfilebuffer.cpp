@@ -135,6 +135,7 @@ bool TTFileBuffer::openFile( const char* f_name, int f_mode)
   strcpy( file_name, f_name );
 
   //printf("%sopen file: %s\n",c_name,file_name);
+  //printf("handle: %d\n", file_handle);
 
   /* if a file already open close the open file*/
   if ( file_handle > -1 )

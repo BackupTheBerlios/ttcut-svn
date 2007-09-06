@@ -5,7 +5,7 @@ TTCut-Changelog
 Version 0.19.x (RC's for release 0.20.0)
 ----------------------------------------
 
-0.19.7:
+0.19.7: * Fixed: Wrong german umlaut handling opening idd files
 
 0.19.6: * Fixed: Borken layout under Qt version 4.3.x
         * Memory usage reduced (memory usage is still high and under construction)
