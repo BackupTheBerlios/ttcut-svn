@@ -135,7 +135,7 @@ int TTMpeg2VideoStream::createHeaderList()
   {
     idd_stream_name = ttChangeFileExt( stream_info->filePath(), "idd" );
 
-    log->infoMsg(c_name, "look for idd-file: %s", qPrintable(idd_stream_name));
+    log->infoMsg(c_name, "look for idd-file: %s", TTCut::toAscii(idd_stream_name));
 
     // check for Mpeg2Schnitt idd-stream in current directory
     idd_stream_info.setFile( idd_stream_name );
