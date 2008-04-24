@@ -596,8 +596,6 @@ bool TTCutPreview::playMPlayer( QString videoFile,__attribute__ ((unused)) QStri
 // -----------------------------------------------------------------------------
 bool TTCutPreview::stopMPlayer()
 {
-  const QString strQuit = "quit\n";
-
   if ( isPlaying )
   {
     mplayerProc->write( "quit\n" );
