@@ -1,5 +1,5 @@
 /* XPM */
-static char * note_18_xpm[] = {
+const char * note_18_xpm[] = {
 "18 18 93 2",
 "  	c None",
 ". 	c #C5AD09",

@@ -1,5 +1,5 @@
 /* XPM */
-static char * goto_18_xpm[] = {
+const char * goto_18_xpm[] = {
 "18 18 82 1",
 " 	c None",
 ".	c #127DFF",

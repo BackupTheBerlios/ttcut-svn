@@ -1,5 +1,5 @@
 /* XPM */
-static char * fileopen_16_xpm[] = {
+const char * fileopen_16_xpm[] = {
 "16 16 183 2",
 "  	c None",
 ". 	c #9BA1D9",

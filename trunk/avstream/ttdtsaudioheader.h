@@ -78,7 +78,7 @@ __attribute__ ((unused))static int dts_bitrate_index[32] =
   2048000, 3072000, 3840000, 4096000, 0, 0 
 }; 
 
-__attribute__ ((unused))static char* dts_acmod[64] =
+__attribute__ ((unused))static const char* dts_acmod[64] =
 { 
   "1","DM","2/0","2/0", 
   "2/0","3/0","2.1/0","3.1/0", 

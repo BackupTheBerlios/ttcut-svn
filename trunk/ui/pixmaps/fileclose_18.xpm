@@ -1,5 +1,5 @@
 /* XPM */
-static char * fileclose_18_xpm[] = {
+const char * fileclose_18_xpm[] = {
 "18 18 138 2",
 "  	c None",
 ". 	c #3D3D5D",

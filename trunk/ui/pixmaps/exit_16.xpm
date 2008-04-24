@@ -1,5 +1,5 @@
 /* XPM */
-static char * exit_16_xpm[] = {
+const char * exit_16_xpm[] = {
 "16 16 174 2",
 "  	c None",
 ". 	c #AE3725",

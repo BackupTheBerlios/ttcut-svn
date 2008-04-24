@@ -1,5 +1,5 @@
 /* XPM */
-static char * clock_18_xpm[] = {
+const char * clock_18_xpm[] = {
 "18 18 202 2",
 "  	c None",
 ". 	c #2360BB",
