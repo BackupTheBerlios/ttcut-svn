@@ -1,0 +1,292 @@
+<ui version="4.0" >
+ <class>TTCutListWidget</class>
+ <widget class="QWidget" name="TTCutListWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>911</width>
+    <height>112</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>16</width>
+    <height>104</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>4</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>4</number>
+   </property>
+   <item rowspan="2" row="0" column="1" >
+    <widget class="QTreeWidget" name="videoCutList" >
+     <property name="minimumSize" >
+      <size>
+       <width>25</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="mouseTracking" >
+      <bool>false</bool>
+     </property>
+     <property name="focusPolicy" >
+      <enum>Qt::ClickFocus</enum>
+     </property>
+     <property name="contextMenuPolicy" >
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::Panel</enum>
+     </property>
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Videofile</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Cut-In</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Cut-Out</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Length</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Audiooffset</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>4</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pbPreview" >
+       <property name="minimumSize" >
+        <size>
+         <width>130</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Preview</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="cutlistwidget.qrc" >:/pixmaps/pixmaps/preview_18.xpm</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbCutAudioVideo" >
+       <property name="minimumSize" >
+        <size>
+         <width>130</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Cut Audio/Video</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="cutlistwidget.qrc" >:/pixmaps/pixmaps/cutav_18.xpm</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbCutAudio" >
+       <property name="minimumSize" >
+        <size>
+         <width>130</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Cut Audio only</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="cutlistwidget.qrc" >:/pixmaps/pixmaps/cutaudio_18.xpm</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0" >
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pbEntryUp" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="icon" >
+        <iconset resource="cutlistwidget.qrc" >:/pixmaps/pixmaps/uparrow_18.xpm</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbEntryDelete" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>25</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="icon" >
+        <iconset resource="cutlistwidget.qrc" >:/pixmaps/pixmaps/cancel_18.xpm</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbEntryDown" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="icon" >
+        <iconset resource="cutlistwidget.qrc" >:/pixmaps/pixmaps/downarrow_18.xpm</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>81</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="cutlistwidget.qrc" />
+ </resources>
+ <connections/>
+</ui>
