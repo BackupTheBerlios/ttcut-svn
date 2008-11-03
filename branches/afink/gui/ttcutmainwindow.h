@@ -78,13 +78,14 @@ void keyPressEvent(QKeyEvent* e);
     void onNewFramePos(int);
 
     void onPreviewCut(int index);
-    void onAudioVideoCut(int index, bool cutAudioOnly=false);
+    void onAudioVideoCut(int index, bool cutAudioOnly=false, TTCutListData* cutData=NULL);
     void onAudioCut(int index);
+    void onSelectedAudioVideoCut(QVector<int> selectedItems);
 
   private:
     void closeProject();
     void createAVStreams( QString videoFile, QString audioFile );
-    QFileInfoList audioFromVideoName(QString videoFile); 
+    QFileInfoList audioFromVideoName(QString videoFile);
     void navigationEnabled( bool enabled );
     bool openProjectFile(QString fName);
     int openVideoStream(QString fName);
@@ -102,8 +103,9 @@ void keyPressEvent(QKeyEvent* e);
    TTMplexProvider*    mplexProvider;
    TTMpeg2VideoStream* mpegStream;
    bool                sliderUpdateFrame;
+//    QMap                mpegStreamMap;
 
-   // recent files menu 
+   // recent files menu
    enum {MaxRecentFiles = 5};
    QAction* recentFileAction[MaxRecentFiles];
 };

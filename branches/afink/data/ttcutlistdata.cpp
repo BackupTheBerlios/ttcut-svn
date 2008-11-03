@@ -110,7 +110,7 @@ int TTCutListData::addItem(int cutInIndex, int cutOutIndex)
   QTime cutOutTime    = mpegStream->frameTime(cutOutIndex);
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
-  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
+  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );
   off64_t lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
@@ -142,7 +142,7 @@ int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
   QTime cutOutTime    = mpegStream->frameTime(cutOutIndex);
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
-  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
+  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );
   off64_t lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
@@ -166,7 +166,12 @@ int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
   // return current item count
   return data.count();
 }
- 
+
+void TTCutListData::duplicateItem( int index )
+{
+  data.insert( index+1, data.at(index) );
+}
+
 int TTCutListData::cutInPos(int index)
 {
   return data.at(index).cutInIndex;

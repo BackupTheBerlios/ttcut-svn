@@ -60,6 +60,7 @@ int main( int argc, char **argv )
 
     // Caption text in applications title bar
     mainWnd->setWindowTitle( TTCut::versionString );
+    mainWnd->setAttribute( Qt::WA_DeleteOnClose );
     mainWnd->show();
 
     // set initial size of applications main window
@@ -67,8 +68,8 @@ int main( int argc, char **argv )
 
     a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
     // Execute application and start event loop
-    return a.exec();	   
-  } 
+    return a.exec();
+  }
   catch (...)
   {
     qWarning("Unhandled exception occurred!");

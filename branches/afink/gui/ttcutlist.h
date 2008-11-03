@@ -27,7 +27,7 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTCUTLIST_H 
+#ifndef TTCUTLIST_H
 #define TTCUTLIST_H
 
 #include "ui_cutlistwidget.h"
@@ -48,7 +48,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void setTitle( const QString& title );
     void setListData( TTCutListData* ld );
     void clearList();
-   
+
   public slots:
     void onAddEntry(int cutIn, int cutOut);
     void onEntryUp();
@@ -62,9 +62,11 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void onEntryCut();
     void onPreview();
     void onAVCut();
+    void onAVSelCut();
     void onAudioCut();
     void onEditCutOut(int cutOut);
     void onContextMenuRequest(const QPoint& point);
+    void onEntryDuplicate();
 
   signals:
     void entrySelected(int cutOutIndex );
@@ -73,9 +75,10 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void gotoCutOut(int cutOutIndex);
     void previewCut(int index);
     void audioVideoCut(int index);
+    void selectedAudioVideoCut(QVector<int> selectedItems);
     void audioCut(int index);
     void refreshDisplay();
- 
+
   private:
     void createActions();
 
@@ -90,6 +93,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     QAction*       gotoCutInAction;
     QAction*       gotoCutOutAction;
     QAction*       itemPreviewAction;
+    QAction*       itemDuplicateAction;
 };
 
 #endif

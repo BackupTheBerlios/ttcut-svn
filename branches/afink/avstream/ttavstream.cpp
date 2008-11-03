@@ -288,7 +288,7 @@ void TTAVStream::copySegment( TTFileBuffer* cut_stream, off64_t start_adr, off64
     progress_bar->setTotalSteps( count );
   }
 
-  while( count > 65536 )  
+  while( count > 65536 )
   {
     progress = end_adr-start_adr+1-count;
 
@@ -411,7 +411,7 @@ TTAudioStream::~TTAudioStream()
     delete index_list;
 }
 
-// cut-in always possible; video 
+// cut-in always possible; video
 // -----------------------------------------------------------------------------
 bool TTAudioStream::isCutInPoint(__attribute__ ((unused)) int pos )
 {
@@ -990,47 +990,33 @@ int TTVideoStream::moveToPrevPFrame()
 int TTVideoStream::moveToNextPIFrame()
 {
   long        iPos;
-  long        iFound, iFoundP, iFoundI;
+  long        iFound;
 
-  // search previous P-frame
+  // search next P or I-frame
   iPos    = current_index;
-  iFoundP = -1;
+  iFound = -1;
 
+  // if current position is an I or P-frame, move iPos to the next frame
   video_index = index_list->videoIndexAt(iPos);
-  if ( video_index->picture_coding_type == 2 ) iPos++;
+  if ( video_index->picture_coding_type == 2 ||
+       video_index->picture_coding_type == 1 )
+  {
+    iPos++;
+  }
 
-  while( iPos >= 0 && iFoundP < 0 )
+  while( iPos < (long)num_index && iFound < 0 )
   {
     video_index = index_list->videoIndexAt(iPos);
 
-    if ( video_index->picture_coding_type == 2 )
-      iFoundP = iPos;
+    if ( video_index->picture_coding_type == 2 ||
+         video_index->picture_coding_type == 1 )
+    {
+      iFound = iPos;
+    }
 
     iPos++;
   }
 
-  // search previous I-frame
-  iPos    = current_index;
-  iFoundI = -1;
-
-  // search previous P-frame
-  video_index = index_list->videoIndexAt(iPos);
-  if ( video_index->picture_coding_type == 1 ) iPos++;
-
-  while( iPos >= 0 && iFoundI < 0 )
-  {
-    video_index = index_list->videoIndexAt(iPos);
-
-    if ( video_index->picture_coding_type == 1 )
-      iFoundI = iPos;
-
-    iPos++;
-  }
-
-  if ( iFoundP < iFoundI )
-    iFound = iFoundP;
-  else
-    iFound = iFoundI;
 
   if ( iPos != iFound && iFound >= 0 )
   {

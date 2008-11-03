@@ -48,7 +48,7 @@ class QFileInfo;
 class TTCutListDataItem
 {
   friend class TTCutListData;
-  
+
   public:
     TTCutListDataItem();
     TTCutListDataItem(int cutIn, QTime cutInTime, int cutOut, QTime cutOutTime, QTime lengthTime, off64_t lengthBytes);
@@ -59,7 +59,7 @@ class TTCutListDataItem
     int   getCutOutFrameType() const;
     QTime getCutInTime() const;
     QTime getCutOutTime() const;
-    
+
   private:
     int     cutInIndex;
     int     cutOutIndex;
@@ -82,6 +82,7 @@ class TTCutListData
     int addItem(int cutInIndex, int cutOutIndex);
     int addCutPosition(int cutInIndex, int cutOutIndex, int order);
     int updateItem( int index, int cutInIndex, int cutOutIndex);
+    void duplicateItem( int index );
     int cutInPos(int index);
     int cutInPosAt(int index);
     int cutOutPos(int index);

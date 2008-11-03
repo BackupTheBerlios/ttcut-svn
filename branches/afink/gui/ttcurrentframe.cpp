@@ -59,11 +59,11 @@ void TTCurrentFrame::controlEnabled( bool enabled )
 void TTCurrentFrame::initVideoStream(TTMpeg2VideoStream *vs)
 {
   mpeg2Stream = vs;
-  
+
   mpegWindow->openVideoStream( mpeg2Stream );
   mpegWindow->moveToFirstFrame();
 }
- 
+
 //! Returns the current frame position in stream
 int TTCurrentFrame::currentFramePos()
 {
@@ -85,7 +85,7 @@ void TTCurrentFrame::wheelEvent ( QWheelEvent * e )
 
   if ( e->modifiers() == Qt::ControlModifier )
         wheelDelta += TTCut::stepPlusCtrl;
-    
+
   //wheel was rotated forwards away from the user
   if ( e->delta() > 0 )
     currentPosition -= wheelDelta;
@@ -109,7 +109,7 @@ void TTCurrentFrame::onPrevIFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToPrevIFrame( );  
+  newFramePos = mpeg2Stream->moveToPrevIFrame( );
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -120,7 +120,7 @@ void TTCurrentFrame::onNextIFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToNextIFrame( );  
+  newFramePos = mpeg2Stream->moveToNextIFrame( );
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -131,7 +131,7 @@ void TTCurrentFrame::onPrevPFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToPrevPFrame( );  
+  newFramePos = mpeg2Stream->moveToPrevPIFrame( );
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -142,7 +142,7 @@ void TTCurrentFrame::onNextPFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToNextPFrame( );  
+  newFramePos = mpeg2Stream->moveToNextPIFrame( );
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -153,7 +153,7 @@ void TTCurrentFrame::onPrevBFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToPrevFrame( );  
+  newFramePos = mpeg2Stream->moveToPrevFrame( );
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -164,7 +164,7 @@ void TTCurrentFrame::onNextBFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToNextFrame( );  
+  newFramePos = mpeg2Stream->moveToNextFrame( );
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -223,7 +223,7 @@ void TTCurrentFrame::onGotoFrame(int pos, int fast)
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToIndexPos( pos, fast );  
+  newFramePos = mpeg2Stream->moveToIndexPos( pos, fast );
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
