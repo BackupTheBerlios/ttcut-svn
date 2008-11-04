@@ -28,11 +28,13 @@
 /*----------------------------------------------------------------------------*/
 
 #include "ttcutlist.h"
+#include "data/ttavdata.h"
 
 #include <QMenu>
 #include <QPoint>
 #include <QHeaderView>
 #include <QModelIndex>
+#include <QMessageBox>
 
 //! Construct the cut list object
 TTCutList::TTCutList(QWidget* parent)
@@ -97,24 +99,31 @@ void TTCutList::clearList()
 
 
 //! Add or update an entry in the cut list
-void TTCutList::onAddEntry(int cutIn, int cutOut)
+void TTCutList::onAddEntry(int cutIn, int cutOut, TTAVData* avData)
 {
   int cutIndex;
 
   if ( ttAssigned(cutListData) ) {
 
+    if ( cutListData->count() > 0 ) {
+      if ( cutListData->avData(0)->CanCutWith(avData) == false ) {
+        QMessageBox::critical( this, tr("Cannot add the cutpoint"), tr("The cutpoint cannot be added") );
+        return;
+      }
+    }
+
     if (editItemIndex < 0) {
-      cutIndex = cutListData->addItem( cutIn, cutOut );
+      cutIndex = cutListData->addItem( cutIn, cutOut, avData );
 
       QTreeWidgetItem* treeItem = new QTreeWidgetItem(videoCutList);
-      treeItem->setText(0, cutListData->streamFileName());
+      treeItem->setText(0, cutListData->streamFileName(cutIndex));
       treeItem->setText(1, cutListData->cutInPosString(cutIndex));
       treeItem->setText(2, cutListData->cutOutPosString(cutIndex));
       treeItem->setText(3, cutListData->cutLengthString(cutIndex));
     } else {
       cutListData->updateItem(editItemIndex, cutIn, cutOut);
       QTreeWidgetItem* editItem = videoCutList->topLevelItem(editItemIndex);
-      editItem->setText(0, cutListData->streamFileName());
+      editItem->setText(0, cutListData->streamFileName(editItemIndex));
       editItem->setText(1, cutListData->cutInPosString(editItemIndex));
       editItem->setText(2, cutListData->cutOutPosString(editItemIndex));
       editItem->setText(3, cutListData->cutLengthString(editItemIndex));
@@ -236,6 +245,7 @@ void TTCutList::onEntryEdit()
     videoCutList->setItemSelected(curItem, false);
 
     editItemIndex = index;
+    emit changeVideo(cutListData->avData(index));
     emit entryEdit(cutListData->at(index));
   }
 }
@@ -245,6 +255,7 @@ void TTCutList::onGotoCutIn()
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+    emit changeVideo( cutListData->avData(index) );
     emit gotoCutIn(cutListData->cutInPos(index));
   }
 }
@@ -254,6 +265,7 @@ void TTCutList::onGotoCutOut()
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+    emit changeVideo( cutListData->avData(index) );
     emit gotoCutOut(cutListData->cutOutPos(index));
   }
 }

@@ -110,7 +110,6 @@ class TTMpeg2VideoStream : public TTVideoStream
     TTFileBuffer*    idd_stream;
     long*            stream_order_list;
     int              idd_file_version;
-    long             picturesWritten;
 };
 
 #endif //TTMPEG2VIDEOSTREAM_H

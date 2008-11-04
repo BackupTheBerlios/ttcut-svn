@@ -66,7 +66,7 @@ class TTCutPreview : public QDialog, Ui::TTPreviewWidget
     TTCutPreview( QWidget* parent = 0, int prevW = 640, int prevH = 480);
     ~TTCutPreview();
 
-    void initPreview( TTVideoStream* v_stream, TTAudioStream* a_stream, TTCutListData* c_list );
+    void initPreview( TTCutListData* c_list );
     void createPreview( int cut_index=-1 );
 
  protected:
@@ -87,28 +87,26 @@ protected slots:
     void exitMPlayer( int e_code, QProcess::ExitStatus e_status );
     void errorMplayer( QProcess::ProcessError );
     void stateChangedMplayer( QProcess::ProcessState newState );
-    
+
  private:
     TTMessageLogger*   log;
     TTProgressBar*     progress_bar;
-    TTVideoStream*     video_stream;
-    TTAudioStream*     audio_stream;
-    TTVideoIndexList*  video_index;      
-    TTVideoHeaderList* video_header;     
+    TTVideoIndexList*  video_index;
+    TTVideoHeaderList* video_header;
     TTCutListData*     avcut_list;
     TTCutListData*     preview_cut_list;
     int                cut_index;
     TTFileBuffer*      video_cut_stream;
     TTFileBuffer*      audio_cut_stream;
-    QProcess*          mplayerProc;      
-    QProcess*          mplexProc;        
-    int                previewWidth;        
-    int                previewHeight;       
-    int                num_cut_list;        
-    int                num_preview;         
-    QString            current_video_file;    
-    QString            current_audio_file;    
-    bool               isPlaying;           
+    QProcess*          mplayerProc;
+    QProcess*          mplexProc;
+    int                previewWidth;
+    int                previewHeight;
+    int                num_cut_list;
+    int                num_preview;
+    QString            current_video_file;
+    QString            current_audio_file;
+    bool               isPlaying;
 };
 
 #endif // TTCUTPREVIEW_H

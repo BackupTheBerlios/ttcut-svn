@@ -36,6 +36,7 @@
 #include "ttcutavcutdlg.h"
 #include "ttprogressbar.h"
 #include "ttcutaboutdlg.h"
+#include "data/ttavdata.h"
 
 #include "../ui//pixmaps/downarrow_18.xpm"
 #include "../ui/pixmaps/uparrow_18.xpm"
@@ -189,7 +190,8 @@ TTCutMainWindow::TTCutMainWindow()
   connect(navigation, SIGNAL(setCutIn(int)),     currentFrame, SLOT(onSetCutIn(int)));
   connect(navigation, SIGNAL(gotoCutIn(int)),    currentFrame, SLOT(onGotoCutIn(int)));
   connect(navigation, SIGNAL(gotoCutOut(int)),   currentFrame, SLOT(onGotoCutOut(int)));
-  connect(navigation, SIGNAL(addCutRange(int, int)), cutList,   SLOT(onAddEntry(int, int)));
+  connect(navigation, SIGNAL(addCutRange(int, int, TTAVData*)),
+                                                 cutList,   SLOT(onAddEntry(int, int, TTAVData*)));
   connect(navigation, SIGNAL(gotoMarker(int)),   currentFrame, SLOT(onGotoMarker(int)));
   connect(navigation, SIGNAL(moveNumSteps(int)), currentFrame, SLOT(onMoveNumSteps(int)));
   connect(navigation, SIGNAL(moveToHome()),      currentFrame, SLOT(onMoveToHome()));
@@ -210,16 +212,22 @@ TTCutMainWindow::TTCutMainWindow()
 
   // Connect signals from cut list widget
   // --------------------------------------------------------------------------
-  connect(cutList, SIGNAL(entrySelected(int)), cutOutFrame,     SLOT(onGotoCutOut(int)));
+  connect(cutList, SIGNAL(entrySelected(int)),    cutOutFrame,     SLOT(onGotoCutOut(int)));
+  connect(cutList, SIGNAL(changeVideo(TTAVData*)),                  SLOT(onChangeVideoStream(TTAVData*)));
   connect(cutList, SIGNAL(entryEdit(const TTCutListDataItem&)),
-                                              navigation,       SLOT(onEditCut(const TTCutListDataItem&)));
-  connect(cutList, SIGNAL(gotoCutIn(int)),     currentFrame,    SLOT(onGotoFrame(int)));
-  connect(cutList, SIGNAL(gotoCutOut(int)),    currentFrame,    SLOT(onGotoFrame(int)));
-  connect(cutList, SIGNAL(refreshDisplay()),   streamNavigator, SLOT(onRefreshDisplay()));
-  connect(cutList, SIGNAL(previewCut(int)),                     SLOT(onPreviewCut(int)));
-  connect(cutList, SIGNAL(audioVideoCut(int)),                  SLOT(onAudioVideoCut(int)));
-  connect(cutList, SIGNAL(audioCut(int)),                       SLOT(onAudioCut(int)));
-  connect(cutList, SIGNAL(selectedAudioVideoCut(QVector<int>)), SLOT(onSelectedAudioVideoCut(QVector<int>)));
+                                                  navigation,      SLOT(onEditCut(const TTCutListDataItem&)));
+  connect(cutList, SIGNAL(gotoCutIn(int)),        currentFrame,    SLOT(onGotoFrame(int)));
+  connect(cutList, SIGNAL(gotoCutOut(int)),       currentFrame,    SLOT(onGotoFrame(int)));
+  connect(cutList, SIGNAL(refreshDisplay()),      streamNavigator, SLOT(onRefreshDisplay()));
+  connect(cutList, SIGNAL(previewCut(int)),                        SLOT(onPreviewCut(int)));
+  connect(cutList, SIGNAL(audioVideoCut(int)),                     SLOT(onAudioVideoCut(int)));
+  connect(cutList, SIGNAL(audioCut(int)),                          SLOT(onAudioCut(int)));
+  connect(cutList, SIGNAL(selectedAudioVideoCut(QVector<int>)),    SLOT(onSelectedAudioVideoCut(QVector<int>)));
+
+  // connect signals from cut main window
+  connect( this, SIGNAL(currentVideoChanged(TTAVData*)), navigation,      SLOT(onCurVideoChanged(TTAVData*)) );
+  connect( this, SIGNAL(currentVideoChanged(TTAVData*)), streamNavigator, SLOT(onCurVideoChanged(TTAVData*)) );
+
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -465,7 +473,6 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
 
   if (audioInfoList.count() == 0)
   {
-    TTCut::numAudioTracks = 0;
     audioFileInfo->onFileOpen();
     return;
   }
@@ -528,19 +535,13 @@ void TTCutMainWindow::onNewFramePos(int newPos)
  */
 void TTCutMainWindow::onPreviewCut(int index)
 {
-  TTAudioStream* audioStream = NULL;
-
   if (TTCut::isVideoOpen && cutListData->count() > 0) {
-
-    if (audioList->count() > 0){
-      audioStream = audioList->audioStreamAt(0);
-    }
 
     // create preview dialog frame
     TTCutPreview* cutPreview = new TTCutPreview( this );
 
     // set video/audio index- and header lists
-    cutPreview->initPreview(mpegStream, audioStream, cutListData);
+    cutPreview->initPreview(cutListData);
     cutPreview->createPreview(index);
 
     // execute modal dialog frame
@@ -686,7 +687,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
 
   while ( AudioAnzahl > 0 )
   {
-    current_audio_stream = audioList->audioStreamAt( list_pos );
+    current_audio_stream = cutData->avData(0)->audioStream( list_pos );
 
     //qDebug( "%s: current audio stream: %s", oName, qPrintable(current_audio_stream->fileName()));
 
@@ -767,9 +768,11 @@ void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
 
 void TTCutMainWindow::onSelectedAudioVideoCut(QVector<int> selectedItems)
 {
-  TTCutListData cutData(mpegStream);
-  for ( int i=0; i<selectedItems.count(); ++i )
-    cutData.addItem( cutListData->cutInPos(selectedItems[i]), cutListData->cutOutPos(selectedItems[i]) );
+  TTCutListData cutData;
+  for ( int i=0; i<selectedItems.count(); ++i ) {
+    cutData.addItem( cutListData->cutInPos(selectedItems[i]), cutListData->cutOutPos(selectedItems[i]),
+                     cutListData->avData(i) );
+  }
   onAudioVideoCut(-1, false, &cutData);
 }
 
@@ -905,12 +908,12 @@ bool TTCutMainWindow::openProjectFile(QString fName)
 
   // read cut positions
   projectFile->seekToCutSection();
-  cutListData = new TTCutListData(mpegStream);
+  cutListData = new TTCutListData();
   cutList->setListData(cutListData);
   int cutInPos;
   int cutOutPos;
   while (projectFile->readCutEntry(cutInPos, cutOutPos)) {
-    cutList->onAddEntry(cutInPos, cutOutPos);
+    cutList->onAddEntry(cutInPos, cutOutPos, m_pCurAVData);
   }
 
   initStreamNavigator();
@@ -945,7 +948,10 @@ int TTCutMainWindow::openVideoStream(QString fName)
 
   // Close current project
   if(TTCut::isVideoOpen){
-    closeProject();
+    audioList = new TTAudioListData();
+    audioFileInfo->setListData(audioList);
+    audioFileInfo->clearList();
+//     closeProject();
   }
 
   videoType = new TTVideoType( fName );
@@ -1006,11 +1012,37 @@ int TTCutMainWindow::openVideoStream(QString fName)
   onNewFramePos( 0 );
 
   mpegStream->setProgressBar((TTProgressBar*)NULL);
+  m_pCurAVData = new TTAVData( mpegStream, audioList );
+  m_AVDataList.append( *m_pCurAVData );
+  emit currentVideoChanged( m_pCurAVData );
 
   delete progressBar;
   delete videoType;
 
   return result;
+}
+
+
+void TTCutMainWindow::onChangeVideoStream( TTAVData* pAVData )
+{
+  if ( pAVData == m_pCurAVData )
+    return;
+
+  // video stream specific commands
+  mpegStream = (TTMpeg2VideoStream*) pAVData->videoStream();
+  videoFileInfo->setVideoInfo( mpegStream );
+  currentFrame->initVideoStream( mpegStream );
+  cutOutFrame->initVideoStream( mpegStream );
+  onNewFramePos( 0 );
+  initStreamNavigator();
+
+  // audio stream specific commands
+  audioList = pAVData->audioList();
+  audioFileInfo->setListData( audioList );
+
+  m_pCurAVData = pAVData;
+
+  emit currentVideoChanged( pAVData );
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -1061,9 +1093,6 @@ int TTCutMainWindow::openAudioStream(QString fName)
       audioList->print();
 
       result = curIndex;
-
-      // first audio track loaded
-      TTCut::numAudioTracks = audioList->count();
     }
 
     delete progress_bar;
@@ -1084,7 +1113,7 @@ void TTCutMainWindow::initStreamNavigator()
 {
   if (cutListData == 0)
   {
-    cutListData = new TTCutListData(mpegStream);
+    cutListData = new TTCutListData();
     cutList->setListData(cutListData);
   }
 

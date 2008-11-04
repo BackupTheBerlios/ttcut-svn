@@ -34,6 +34,7 @@
 #include "ui_navigatordisplaywidget.h"
 
 class TTCutListData;
+class TTAVData;
 
 class TTNavigatorDisplay : public QFrame, public Ui::TTNavigatorDisplayWidget
 {
@@ -46,6 +47,7 @@ class TTNavigatorDisplay : public QFrame, public Ui::TTNavigatorDisplayWidget
     void setCutListData(TTCutListData* data);
     void setMinValue(int val);
     void setMaxValue(int val);
+    void setCurrentAVData( TTAVData* pCurAVData );
 
     public slots:
       void onRefreshDisplay();
@@ -61,6 +63,7 @@ class TTNavigatorDisplay : public QFrame, public Ui::TTNavigatorDisplayWidget
     int    minValue;
     int    maxValue;
     double scaleFactor;
+    TTAVData* m_pCurAVData;
 };
 
 #endif //TTNAVIGATORDISPLAY_H

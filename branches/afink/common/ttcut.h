@@ -95,7 +95,7 @@ class TTCut
 
    // Preview
    static int cutPreviewSeconds;
-   static int playSkipFrames;  
+   static int playSkipFrames;
 
    // Frame search
    static int searchLength;
@@ -126,7 +126,7 @@ class TTCut
    static bool logModeExtended;
    static bool logVideoIndexInfo;
    static bool logAudioIndexInfo;
-  
+
    // Recent files
    static QStringList recentFileList;
 
@@ -160,7 +160,6 @@ class TTCut
    // Status variables
    // --------------------------------------------------------------
    static bool isVideoOpen;
-   static int  numAudioTracks;
    static bool isProjektModified;
    static bool isPlaying;
    static bool isWorking;

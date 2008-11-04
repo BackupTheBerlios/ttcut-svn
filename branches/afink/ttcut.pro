@@ -59,6 +59,7 @@ HEADERS     = common/ttcut.h\
               common/ttmessagelogger.h\
               common/ttmessagewindow.h\
               data/ttaudiolistdata.h\
+              data/ttavdata.h\
               data/ttcutlistdata.h\
               data/ttcutparameter.h\
               data/ttmuxlistdata.h\
@@ -116,6 +117,7 @@ SOURCES     = common/ttcut.cpp\
               common/ttmessagelogger.cpp\
               common/ttmessagewindow.cpp\
               data/ttaudiolistdata.cpp \
+              data/ttavdata.cpp\
               data/ttcutlistdata.cpp\
               data/ttcutparameter.cpp\
               data/ttmuxlistdata.cpp\

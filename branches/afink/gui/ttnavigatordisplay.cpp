@@ -65,7 +65,7 @@ void TTNavigatorDisplay::setMaxValue(int val)
 
 void TTNavigatorDisplay::onRefreshDisplay()
 {
-  
+
 }
 
 void TTNavigatorDisplay::resizeEvent(__attribute__((unused))QResizeEvent* event)
@@ -98,14 +98,25 @@ void TTNavigatorDisplay::drawCutList()
 
   for (int i=0; i < cutListData->count(); i++) {
 
-    cutIn    = cutListData->cutInPosAt(i);
-    cutOut   = cutListData->cutOutPosAt(i);
-    cutWidth = cutOut - cutIn;
+    if ( cutListData->avData(i) == m_pCurAVData ) {
 
-    startX = clientRect.x() + (int)(cutIn*scaleFactor);
-    width  = (int)((cutOut-cutIn)*scaleFactor);
+      cutIn    = cutListData->cutInPosAt(i);
+      cutOut   = cutListData->cutOutPosAt(i);
+      cutWidth = cutOut - cutIn;
 
-    painter.fillRect(startX, startY, width, height, QBrush(Qt::green));
+      startX = clientRect.x() + (int)(cutIn*scaleFactor);
+      width  = (int)((cutOut-cutIn)*scaleFactor);
+
+      painter.fillRect(startX, startY, width, height, QBrush(Qt::green));
+    }
   }
 }
+
+
+void TTNavigatorDisplay::setCurrentAVData( TTAVData* pCurAVData )
+{
+  m_pCurAVData = pCurAVData;
+  repaint();
+}
+
 

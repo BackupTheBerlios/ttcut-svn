@@ -49,6 +49,7 @@
 #include "ttac3audiostream.h"
 
 #include "../data/ttcutlistdata.h"
+#include "../data/ttavdata.h"
 
 const char c_name [] = "AC3STREAM";
 
@@ -167,7 +168,7 @@ int TTAC3AudioStream::createHeaderList()
 
   header_list = new TTAudioHeaderList( 1000 );
 
-  // seek to start pos for corrupt streams  
+  // seek to start pos for corrupt streams
   stream_buffer->seekRelative( start_pos );
 
   if (ttAssigned(progress_bar))
@@ -256,6 +257,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   float   audio_start_time;
   float   audio_end_time;
   float   local_audio_offset = 0.0;
+  int     audio_index;
 
 #if defined(AC3STREAM_DEBUG)
   log->debugMsg(c_name, "-----------------------------------------------");
@@ -265,6 +267,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   log->debugMsg(c_name, "target stream      : %s", cut_stream->fileName());
 #endif
 
+  audio_index = cut_list->avData(0)->indexOfAudioStream( this );
   for ( i = 0; i < cut_list->count(); i++ )
   {
     if ( i == 0 )
@@ -277,6 +280,8 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 
     start_pos = cut_list->cutInPosAt( i );
     end_pos   = cut_list->cutOutPosAt( i );
+    TTAudioStream* pAudioStream = cut_list->avData(i)->audioStream(audio_index);
+    pAudioStream->setProgressBar( progress_bar );
 
     if ( ttAssigned( progress_bar ) )
     {
@@ -285,7 +290,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     }
 
     //qDebug( "%sstart / end  : %d / %d",c_name,start_pos,end_pos );
-    //search 
+    //search
     video_frame_length = 1000.0 / 25.0; //TODO: replace with fps
 
     //qDebug( "%slocal audio offset: %f",c_name,local_audio_offset );
@@ -302,8 +307,8 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     audio_end_time   = (((float)(end_pos+1)*video_frame_length-local_audio_offset)/frame_time-1.0);
     audio_end_index  = (long)round(audio_end_time);
 
-    if (audio_end_index >= header_list->count())
-      audio_end_index = header_list->count()-1;
+    if (audio_end_index >= pAudioStream->headerList()->count())
+      audio_end_index = pAudioStream->headerList()->count()-1;
 
     local_audio_offset = ((float)(audio_end_index+1)*frame_time)-
       ((float)(end_pos+1)*video_frame_length)+local_audio_offset;
@@ -317,14 +322,14 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     log->debugMsg(c_name, "audio length      : %f", (audio_end_index-audio_start_index+1)*frame_time );
 #endif
 
-    cut( cut_stream, audio_start_index, audio_end_index, cut_param );
+    pAudioStream->cut( cut_stream, audio_start_index, audio_end_index, cut_param );
   }
   delete cut_param;
 }
 
 
 // return the stream extension
-// -----------------------------------------------------------------------------	
+// -----------------------------------------------------------------------------
 QString TTAC3AudioStream::streamExtension()
 {
   QString extension = ".ac3";
@@ -344,6 +349,6 @@ QString TTAC3AudioStream::absStreamTime()
       return ttMsecToTimeD( audio_header->abs_frame_time ).toString("hh:mm:ss.zzz" );
     }
   }
-  // TODO: Fix default return value 
+  // TODO: Fix default return value
   return "";
 }

@@ -86,3 +86,9 @@ void TTStreamNavigator::onRefreshDisplay()
 {
   navigatorDisplay->repaint();
 }
+
+
+void TTStreamNavigator::onCurVideoChanged( TTAVData* pCurAVData )
+{
+  navigatorDisplay->setCurrentAVData( pCurAVData );
+}

@@ -50,7 +50,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void clearList();
 
   public slots:
-    void onAddEntry(int cutIn, int cutOut);
+    void onAddEntry(int cutIn, int cutOut, TTAVData* avData);
     void onEntryUp();
     void onEntryDown();
     void onEntryDelete();
@@ -70,6 +70,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
 
   signals:
     void entrySelected(int cutOutIndex );
+    void changeVideo( TTAVData* pNewAVData );
     void entryEdit(const TTCutListDataItem& cutData);
     void gotoCutIn(int cutInIndex);
     void gotoCutOut(int cutOutIndex);

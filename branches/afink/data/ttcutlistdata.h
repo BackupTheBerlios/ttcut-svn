@@ -39,7 +39,7 @@
 
 #include <QList>
 
-class TTMpeg2VideoStream;
+class TTAVData;
 class TTCutListData;
 class TTCutProject;
 class QString;
@@ -51,36 +51,39 @@ class TTCutListDataItem
 
   public:
     TTCutListDataItem();
-    TTCutListDataItem(int cutIn, QTime cutInTime, int cutOut, QTime cutOutTime, QTime lengthTime, off64_t lengthBytes);
+    TTCutListDataItem(int cutIn, QTime cutInTime, int cutOut, QTime cutOutTime, QTime lengthTime,
+                      off64_t lengthBytes, TTAVData* avd);
 
-    int   getCutInIndex() const;
-    int   getCutOutIndex() const;
-    int   getCutInFrameType() const;
-    int   getCutOutFrameType() const;
-    QTime getCutInTime() const;
-    QTime getCutOutTime() const;
+    int                 getCutInIndex() const;
+    int                 getCutOutIndex() const;
+    int                 getCutInFrameType() const;
+    int                 getCutOutFrameType() const;
+    QTime               getCutInTime() const;
+    QTime               getCutOutTime() const;
+    TTAVData*           getAVData() const;
 
   private:
-    int     cutInIndex;
-    int     cutOutIndex;
-    int     cutInFrameType;
-    int     cutOutFrameType;
-    QTime   cutInTime;
-    QTime   cutOutTime;
-    QTime   cutLengthTime;
-    off64_t cutLengthBytes;
+    int                 cutInIndex;
+    int                 cutOutIndex;
+    int                 cutInFrameType;
+    int                 cutOutFrameType;
+    QTime               cutInTime;
+    QTime               cutOutTime;
+    QTime               cutLengthTime;
+    off64_t             cutLengthBytes;
+    TTAVData*           avData;
 };
 
 
 class TTCutListData
 {
   public:
-    TTCutListData(TTMpeg2VideoStream* sv);
+    TTCutListData();
     ~TTCutListData();
 
-    TTMpeg2VideoStream* videoStream();
-    int addItem(int cutInIndex, int cutOutIndex);
-    int addCutPosition(int cutInIndex, int cutOutIndex, int order);
+    TTAVData* avData( int index );
+    int addItem(int cutInIndex, int cutOutIndex, TTAVData* avData);
+//     int addCutPosition(int cutInIndex, int cutOutIndex, int order);
     int updateItem( int index, int cutInIndex, int cutOutIndex);
     void duplicateItem( int index );
     int cutInPos(int index);
@@ -88,7 +91,7 @@ class TTCutListData
     int cutOutPos(int index);
     int cutOutPosAt(int index);
     void setCutOutPosAt(int index, int cutOut);
-    QString streamFileName();
+    QString streamFileName(int index);
     QString cutInPosString(int index);
     QString cutOutPosString(int index);
     QString cutLengthString(int index);
@@ -103,6 +106,5 @@ class TTCutListData
   private:
     QList<TTCutListDataItem> data;
     TTMessageLogger*         log;
-    TTMpeg2VideoStream*      mpegStream;
 };
 #endif

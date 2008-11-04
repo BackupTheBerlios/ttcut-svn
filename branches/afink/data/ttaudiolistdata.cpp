@@ -120,15 +120,15 @@ int TTAudioListData::addItem(QString fName, TTAudioStream* aStream)
 
   item.audioLength.sprintf("%s (%lf MB)", qPrintable(aStream->absStreamTime()),
       (double)aStream->streamLengthByte()/1024.0/1024.0);
-  
+
   item.audioVersion    = header->descString();
   item.audioBitrate    = header->bitRateString();
   item.audioSamplerate = header->sampleRateString();
   item.audioMode       = header->modeString();
-  
+
   // FIXME: use real delay value for audio delay
   item.audioDelay      = "0";
-  
+
   data.append(item);
 
   // return current index position in data list
@@ -144,6 +144,8 @@ TTAudioListDataItem& TTAudioListData::itemAt(int index)
 //! Returns the audio stream object at position index
 TTAudioStream* TTAudioListData::audioStreamAt(int index)
 {
+  if ( index < 0 || index >= count() )
+    return 0;  // false index --> return NULL
   return data[index].audioStream;
 }
 

@@ -82,6 +82,11 @@ void keyPressEvent(QKeyEvent* e);
     void onAudioCut(int index);
     void onSelectedAudioVideoCut(QVector<int> selectedItems);
 
+    void onChangeVideoStream( TTAVData* pAVData );
+
+  signals:
+    void currentVideoChanged( TTAVData* pCurAVData );
+
   private:
     void closeProject();
     void createAVStreams( QString videoFile, QString audioFile );
@@ -103,7 +108,8 @@ void keyPressEvent(QKeyEvent* e);
    TTMplexProvider*    mplexProvider;
    TTMpeg2VideoStream* mpegStream;
    bool                sliderUpdateFrame;
-//    QMap                mpegStreamMap;
+   QList<TTAVData>     m_AVDataList;
+   TTAVData*           m_pCurAVData;
 
    // recent files menu
    enum {MaxRecentFiles = 5};

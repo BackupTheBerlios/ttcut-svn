@@ -28,7 +28,7 @@
 /*----------------------------------------------------------------------------*/
 
 #ifndef TTNAVIGATION_H
-#define TTNAVIGATION_H 
+#define TTNAVIGATION_H
 
 #include "ui_framenavigationwidget.h"
 
@@ -66,6 +66,7 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     void onGotoMarker();
     void onQuickJump();
     void onEditCut(const TTCutListDataItem& cutData);
+    void onCurVideoChanged( TTAVData* pAVData );
 
   signals:
     void prevIFrame();
@@ -78,7 +79,7 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     void setCutOut(int);
     void gotoCutIn(int);
     void gotoCutOut(int);
-    void addCutRange(int, int);
+    void addCutRange(int, int, TTAVData*);
     void gotoMarker(int);
     void moveNumSteps(int);
     void moveToHome();
@@ -87,17 +88,18 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
   protected:
 
   private:
-    TTMessageLogger* log;
-    bool    isControlEnabled;
-    bool    isEditCut;
-    bool    isCutInPosition;
-    bool    isCutOutPosition;
-    int     currentPosition;
-    int     currentFrameType;
-    QString currentTime;
-    int     cutInPosition;
-    int     cutOutPosition;
-    int     markerPosition;
+    TTMessageLogger*    log;
+    bool                isControlEnabled;
+    bool                isEditCut;
+    bool                isCutInPosition;
+    bool                isCutOutPosition;
+    int                 currentPosition;
+    int                 currentFrameType;
+    QString             currentTime;
+    int                 cutInPosition;
+    int                 cutOutPosition;
+    int                 markerPosition;
+    TTAVData*           m_pAVData;
 };
 
 #endif

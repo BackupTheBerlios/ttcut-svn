@@ -49,7 +49,7 @@ TTNavigation::TTNavigation(QWidget* parent)
   cutInPosition  = -1;
   cutOutPosition = -1;
   markerPosition = -1;
-  
+
   connect(pbNextIFrame,   SIGNAL(clicked()), SLOT(onNextIFrame()));
   connect(pbPrevIFrame,   SIGNAL(clicked()), SLOT(onPrevIFrame()));
   connect(pbNextPFrame,   SIGNAL(clicked()), SLOT(onNextPFrame()));
@@ -95,7 +95,7 @@ void TTNavigation::checkCutPosition( TTVideoStream* vs )
   currentPosition  = vs->currentIndex();
   currentTime      = vs->currentFrameTime().toString("hh:mm:ss.zzz");
   currentFrameType = vs->currentFrameType();
-  
+
   // cut in possible
   if ( vs->isCutInPoint( -1 ) )
     pbSetCutIn->setEnabled( true );
@@ -287,7 +287,7 @@ void TTNavigation::onSetCutIn()
 void TTNavigation::onSetCutOut()
 {
   QString szTemp1, szTemp2;
-  
+
   isCutOutPosition = true;
   cutOutPosition = currentPosition;
 
@@ -332,7 +332,7 @@ void TTNavigation::onAddCutRange()
       isEditCut = false;
     }
 
-    emit addCutRange(cutInPosition, cutOutPosition);
+    emit addCutRange(cutInPosition, cutOutPosition, m_pAVData);
   }
 }
 
@@ -407,3 +407,7 @@ void TTNavigation::onEditCut(const TTCutListDataItem& cutData)
   emit gotoCutIn(cutInPosition);
 }
 
+void TTNavigation::onCurVideoChanged( TTAVData* pAVData )
+{
+  m_pAVData = pAVData;
+}

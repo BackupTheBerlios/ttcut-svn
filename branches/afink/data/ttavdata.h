@@ -1,14 +1,15 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
+/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttstreamnavigator.h                                             */
+/* PROJEKT  : TTCUT 2008                                                      */
+/* FILE     : ttavdata.h                                                      */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/03/2006 */
+/* AUTHOR  : a.fink (E-Mail: andreas.fink85@gmail.com)       DATE: 03/11/2008 */
+/* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTSTREAMNAVIGATOR
+// TTAVDATA
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -27,39 +28,37 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTSTREAMNAVIGATOR_H
-#define TTSTREAMNAVIGATOR_H
+/******************************************************************************/
+/**                         TTAVData                                          */
+/** class which manages the composition of a video stream with its            */
+/** audio files. Before deleting you can call deleteAll() to clear            */
+/** the data.                                                                 */
+/******************************************************************************/
 
-#include "ui_streamnavigationwidget.h"
+#ifndef TTAVDATA_H
+#define TTAVDATA_H
 
-class TTCutListData;
+class TTVideoStream;
+class TTAudioListData;
+class TTAudioStream;
+class TTAudioListDataItem;
 
-class TTStreamNavigator : public QWidget, public Ui::TTStreamNavigatorWidget
+class TTAVData
 {
-  Q_OBJECT
-
   public:
-    TTStreamNavigator(QWidget* parent);
+    TTAVData( TTVideoStream* pVideoStream, TTAudioListData* pAudioList );
 
-    void setTitle(const QString& title);
-    void controlEnabled(bool enabled);
-    void setCutListData(TTCutListData* data);
-    void setMinValue(int val);
-    void setMaxValue(int val);
-
-    QSlider* slider();
-
-  public slots:
-    void onNewSliderValue(int value);
-    void onSliderMoved(int value);
-    void onRefreshDisplay();
-    void onCurVideoChanged( TTAVData* pCurAVData );
-
-  signals:
-    void sliderValueChanged(int value);
+    void                 deleteAll();
+    TTVideoStream*       videoStream();
+    TTAudioStream*       audioStream( int index );
+    TTAudioListData*     audioList();
+    int                  audioCount();
+    TTAudioListDataItem& audioItem( int index );
+    int                  indexOfAudioStream( TTAudioStream* pCompareStream );
+    bool                 CanCutWith( TTAVData* pOther );
 
   private:
-    TTCutListData* cutListData;
+    TTVideoStream*   m_pVideoStream;
+    TTAudioListData* m_pAudioList;
 };
-
-#endif //TTSTREAMNAVIGATOR_H
+#endif
