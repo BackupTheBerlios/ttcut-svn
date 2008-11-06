@@ -1,31 +1,17 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2005/2010 / www.tritime.org                    */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttvideoindexlist.h                                              */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/29/2007 */
+/* MODIFIED: b. altendorf                                    DATE: 06/01/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTVIDEOINDEXLIST
+// TTVIDEOINDEXLIST
 // ----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Overview
-// -----------------------------------------------------------------------------
-//
-//               +- TTAudioHeaderList 
-//               | 
-//               +- TTAudioIndexList
-// TTHeaderList -|
-//               +- TTVideoHeaderList
-//               |
-//               +- TTVideoIndexList
-//
-// -----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
@@ -46,37 +32,45 @@
 #ifndef TTVIDEOINDEXLIST_H
 #define TTVIDEOINDEXLIST_H
 
-#include "ttheaderlist.h"
+#include <QVector>
+
 #include "ttmpeg2videoheader.h"
+#include "../common/ttmessagelogger.h"
 
 // -----------------------------------------------------------------------------
 // TTVideoIndexList: List of pointers to TTFrameIndex 
 // -----------------------------------------------------------------------------
-class TTVideoIndexList : public TTHeaderList
+class TTVideoIndexList : public QVector<TTVideoIndex*>
 {
  public:
-  TTVideoIndexList( int size );
+  TTVideoIndexList();
+  virtual ~TTVideoIndexList();
 
-  TTVideoIndex* videoIndexAt( int index );
+  void add(TTVideoIndex* index);
+  void deleteAll();
 
-  void sortStreamOrder();
+  TTVideoIndex* videoIndexAt(int index);
+
   void sortDisplayOrder();
   bool isStreamOrder();
   bool isDisplayOrder();
 
-  int     streamOrder( int index );
-  int     displayOrder( int index );
-  int     headerListIndex( int index );
-  int     pictureCodingType( int index );
-  int     sequenceIndex( int index );
-  long    gopNumber( int index );
-  int*    stream_order_list;
+  int moveToNextIndexPos(int start_pos, int frame_type=0);
+  int moveToPrevIndexPos(int start_pos, int frame_type=0);
+  int moveToIndexPos(int index, int frame_type=0);
+
+  int  displayOrder(int index);
+  int  headerListIndex(int index);
+  int  pictureCodingType(int index);
+ 
+ protected:
+  virtual void sort();
+  void checkIndexRange(int index);
 
  protected:
-  void swapOrder();
-  void sort();
-
- protected:
-  int  current_order;
+  TTMessageLogger* log;
+  int current_order;
 };
 #endif //TTVIDEOINDEXLIST_H
+
+

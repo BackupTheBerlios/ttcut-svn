@@ -10,20 +10,17 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTAC3AUDIOSTREAM
+// TTAC3AUDIOSTREAM
 // ----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioStream
-//                               |
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
+//             +- TTAudioStream -|                   
+//             |                 +- TTAC3AudioStream 
+// TTAVStream -|                 
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -58,21 +55,21 @@
 class TTAC3AudioStream : public TTAudioStream
 {
  public:
-  TTAC3AudioStream();
-  TTAC3AudioStream( const QFileInfo &f_info, int s_pos=0 );
+  TTAC3AudioStream(const QFileInfo &f_info, int s_pos=0);
+  virtual ~TTAC3AudioStream();
+
+  virtual TTAVTypes::AVStreamType streamType() const;
 
   void searchNextSyncByte();
-  void readAudioHeader( TTAC3AudioHeader* audio_header );
+  void readAudioHeader(TTAC3AudioHeader* audio_header);
 
-  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
+  virtual void cut(int start, int end, TTCutParameter* cp);
+  virtual void cut(TTFileBuffer* cut_stream, TTCutListData* cut_list);
 
-  int     createHeaderList();
-  QString streamExtension();
-  QString absStreamTime();
-
- private:
-  TTMessageLogger* log;
+  virtual int  createHeaderList();
+  virtual int  createIndexList(){return 0;};
+  QString      streamExtension();
+  QTime        streamLengthTime(); 
 };
 
 #endif //TTAC3AUDIOSTREAM_H

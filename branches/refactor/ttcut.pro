@@ -10,12 +10,22 @@
 #
 #
 PROJECT     = TTCUT
-CONFIG      += qt warn_on release
+CONFIG      += qt warn_on debug
 QT          += opengl
 DEFINES     += _FILE_OFFSET_BITS=64
 DIST        = TTCut
-TARGET      = ttcut
+TARGET      = TTCut
 LIBS        = -lmpeg2 -lmpeg2convert
+
+#macx {
+  LIBS     += -framework QuickTime -framework Carbon
+  DEFINES  += MACX
+#}
+
+#unix {
+# DEFINES   += UNIX
+#}
+
 OBJECTS_DIR = obj
 MOC_DIR     = moc
 UI_DIR      = ui_h 
@@ -58,29 +68,25 @@ FORMS       = ui/videofileinfowidget.ui\
 HEADERS     = common/ttcut.h\
               common/ttmessagelogger.h\
               common/ttmessagewindow.h\
+              common/ttexception.h\
               data/ttaudiolistdata.h\
+              data/ttavdata.h\
               data/ttcutlistdata.h\
               data/ttcutparameter.h\
               data/ttmuxlistdata.h\
               avstream/ttcommon.h\
-              avstream/ttmemorybuffer.h\
               avstream/ttac3audioheader.h\
               avstream/ttac3audiostream.h\
               avstream/ttaudioheaderlist.h\
-              avstream/ttaudioindexlist.h\
               avstream/ttavheader.h\
               avstream/ttavstream.h\
               avstream/ttavtypes.h\
-              avstream/ttdtsaudioheader.h\
-              avstream/ttdtsaudiostream.h\     
               avstream/ttfilebuffer.h\ 
               avstream/ttheaderlist.h\ 
               avstream/ttmpeg2videoheader.h\
               avstream/ttmpeg2videostream.h\   
               avstream/ttmpegaudioheader.h\    
               avstream/ttmpegaudiostream.h\    
-              avstream/ttpcmaudioheader.h\     
-              avstream/ttpcmaudiostream.h\     
               avstream/ttvideoheaderlist.h\    
               avstream/ttvideoindexlist.h\
               avstream/ttaviwriter.h\
@@ -107,37 +113,42 @@ HEADERS     = common/ttcut.h\
               gui/ttprogressbar.h\
               gui/ttprocessform.h\
               gui/ttcutpreview.h\
+              gui/ttmoviewidget.h\
               gui/ttcutproject.h\
               gui/ttcutaboutdlg.h\
               gui/ttsearchframe.h\
               gui/ttcutavcutdlg.h\
               gui/ttcutmainwindow.h
+#macx {
+  HEADERS += gui/tthimoviewidget.h
+#}
+
+#unix {
+#  HEADERS += gui/ttmplayerwidget.h
+#}
+              
 SOURCES     = common/ttcut.cpp\
               common/ttmessagelogger.cpp\
               common/ttmessagewindow.cpp\
+              common/ttexception.cpp\
               data/ttaudiolistdata.cpp \
+              data/ttavdata.cpp\
               data/ttcutlistdata.cpp\
               data/ttcutparameter.cpp\
               data/ttmuxlistdata.cpp\
               avstream/ttcommon.cpp\
-              avstream/ttmemorybuffer.cpp\
               avstream/ttac3audioheader.cpp\
               avstream/ttac3audiostream.cpp\
               avstream/ttaudioheaderlist.cpp\
-              avstream/ttaudioindexlist.cpp\
               avstream/ttavheader.cpp\
               avstream/ttavstream.cpp\
               avstream/ttavtypes.cpp\
-              avstream/ttdtsaudioheader.cpp\
-              avstream/ttdtsaudiostream.cpp\     
               avstream/ttfilebuffer.cpp\ 
               avstream/ttheaderlist.cpp\ 
               avstream/ttmpeg2videoheader.cpp\
               avstream/ttmpeg2videostream.cpp\   
               avstream/ttmpegaudioheader.cpp\    
               avstream/ttmpegaudiostream.cpp\    
-              avstream/ttpcmaudioheader.cpp\     
-              avstream/ttpcmaudiostream.cpp\     
               avstream/ttvideoheaderlist.cpp\    
               avstream/ttvideoindexlist.cpp\
               avstream/ttaviwriter.cpp\
@@ -164,12 +175,19 @@ SOURCES     = common/ttcut.cpp\
               gui/ttprogressbar.cpp\
               gui/ttprocessform.cpp\
               gui/ttcutpreview.cpp\
+              gui/ttmoviewidget.cpp\
               gui/ttcutproject.cpp\
               gui/ttcutaboutdlg.cpp\
               gui/ttsearchframe.cpp\
               gui/ttcutavcutdlg.cpp\
               gui/ttcutmainwindow.cpp\
               gui/ttcutmain.cpp
+#macx {
+  SOURCES += gui/tthimoviewidget.cpp
+#}
+#unix {
+#  SOURCES += gui/ttmplayerwidget.cpp
+#}
 #
 # -------------------------------------------------------------------------------
 # TTCUT.PRO ENDE

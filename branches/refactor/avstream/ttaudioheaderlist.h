@@ -48,7 +48,6 @@
 
 #include "ttheaderlist.h"
 
-
 class TTAudioHeaderList : public TTHeaderList
 {
  public:
@@ -56,7 +55,7 @@ class TTAudioHeaderList : public TTHeaderList
 
   TTAudioHeader* audioHeaderAt( int index );
 
-  int    searchTimeIndex( double s_time );
+  int searchTimeIndex( double s_time );
 
  protected:
   void sort();

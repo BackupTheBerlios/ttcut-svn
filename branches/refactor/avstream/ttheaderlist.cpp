@@ -1,16 +1,16 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2010 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttheaderlist.cpp                                                */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/20/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTHEADERLIST
+// TTHEADERLIST
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -31,49 +31,49 @@
 
 #include "ttheaderlist.h"
 
-//#define TTHEADERLIST_DEBUG
+#include "../common/ttexception.h"
 
-const char c_name[] = "TTHEADERLIST  : ";
+#include <QString>
 
-// construct a header list object
-TTHeaderList::TTHeaderList( int size )
+const char c_name[] = "TTHEADERLIST: ";
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Create header list instance
+ */
+TTHeaderList::TTHeaderList(int size)
 {
+  log = TTMessageLogger::getInstance();
   initial_size = size;
-  actual_size  = size;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Destructor: delete all header objects in list
+ */
 TTHeaderList::~TTHeaderList()
 {
-  int i;
-
-#if defined(TTHEADERLIST_DEBUG)
-  qDebug( "%sdelete header list: %d / number: %d",c_name,size(), number );
-#endif
-
-  for ( i = 0; i < size(); i++ )
+  for (int i = 0; i < size(); i++)
   {
     TTAVHeader* av_header = at(i);
-    //qDebug("delete: %ld",at(i));
-    delete av_header;
+    if (ttAssigned(av_header))
+      delete av_header;
   }
   clear();
 }
 
-// ad an header to the header list
-void TTHeaderList::add( TTAVHeader* header )
+/* /////////////////////////////////////////////////////////////////////////////
+ * add an header to the header list
+ */
+void TTHeaderList::add(TTAVHeader* header)
 {
-  //#if defined(TTHEADERLIST_DEBUG)
-  //qDebug("%sadd header: %ld",c_name,header);
-  //#endif
   append( header );
 }
 
-// remove all items from the header list
+/* /////////////////////////////////////////////////////////////////////////////
+ * Remove all items from the header list; Pointer to items were deleted!
+ */
 void TTHeaderList::deleteAll()
 {
-  int i;
-
-  for ( i = 0; i < size(); i++ )
+  for (int i = 0; i < size(); i++)
   {
     TTAVHeader* av_header = at(i);
     delete av_header;
@@ -81,17 +81,15 @@ void TTHeaderList::deleteAll()
   clear();
 }
 
-void TTHeaderList::sort()
+/* /////////////////////////////////////////////////////////////////////////////
+ * Check if given index is in list range
+ */
+void TTHeaderList::checkIndexRange(int index)
 {
-  qSort( begin(), end() );
+  if (index < 0 || index >= size())
+  {
+    QString msg = QString("Index %1 exceeds array bounds: %2").arg(index).arg(count());
+    throw TTIndexOutOfRangeException(msg);
+  }
 }
-
-void TTHeaderList::checkIndexRange( int index )
-{
-  //qDebug("check index: %d / %d",index,count() );
-  if ( index < 0 || index >= size() )
-    throw TTListIndexException(index);
-}
-
-
 

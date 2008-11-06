@@ -1,5 +1,5 @@
 /* XPM */
-static char * saveimage_16_xpm[] = {
+const char * saveimage_16_xpm[] = {
 "17 18 80 1",
 " 	c None",
 ".	c #000000",

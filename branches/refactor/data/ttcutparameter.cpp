@@ -1,18 +1,16 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2005/2010 / www.tritime.org                    */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttavcutposition.cpp                                             */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/20/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/18/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTPARAMETER
+// TTCUTPARAMETER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -33,53 +31,131 @@
 
 #include "ttcutparameter.h"
 
-//#define TTAVCUTLIST_DEBUG
-//#define TTCUTPARAMETER_DEBUG
+#include "../avstream/ttmpeg2videoheader.h"
 
 const char c_name[] = "TTCutParameter";
 
-TTCutParameter::TTCutParameter()
+TTCutParameter::TTCutParameter(TTFileBuffer* fBuffer)
 {
-#if defined(TTCUTPARAMETER_DEBUG)
-  qDebug( "%screate cut parameter object",c_name );
-#endif
-  pictures_written            = 0;
-  first_call                  = true;
-  last_call                   = false;
-  write_max_bitrate           = false;
-  write_sequence_end_code     = false;
-  create_dvd_compliant_stream = false;
-
-  result_header_list = (TTVideoHeaderList*)NULL;
+  targetStreamBuffer   = fBuffer;
+  isWriteSequenceEnd   = false;
+  isWriteMaxBitrate    = false;
+  isDVDCompliantStream = false;
+  numPicturesWritten   = 0;
+  resultHeaderList     = new TTVideoHeaderList(1000);
 }
 
 TTCutParameter::~TTCutParameter()
 {
-#if defined(TTCUTPARAMETER_DEBUG)
-  qDebug( "%sdelete cut parameter object",c_name );
-#endif
-  if ( ttAssigned( result_header_list ) )
-  {
-#if defined(TTCUTPARAMETER_DEBUG)
-    qDebug( "%sdelete header list",c_name );
-#endif
-    delete result_header_list;
-  }
+  resultHeaderList->clear();
 }
 
-bool TTCutParameter::writeSequenceEndCode()
+TTFileBuffer* TTCutParameter::getTargetStreamBuffer()
 {
-  return write_sequence_end_code;
+  return targetStreamBuffer;
 }
 
-bool TTCutParameter::writeMaxBitrate()
+bool TTCutParameter::getIsWriteSequenceEnd()
 {
-  return write_max_bitrate;
+  return isWriteSequenceEnd;
 }
 
-
-bool TTCutParameter::createDVDCompilantStream()
+void TTCutParameter::setIsWriteSequenceEnd(bool value)
 {
-  return create_dvd_compliant_stream;
+  isWriteSequenceEnd = value;
+}
+
+bool TTCutParameter::getIsWriteMaxBitrate()
+{
+  return isWriteMaxBitrate;
+}
+
+void TTCutParameter::setIsWriteMaxBitrate(bool value)
+{
+  isWriteMaxBitrate = value;
+}
+
+bool TTCutParameter::getIsDVDCompliantStream()
+{
+  return isDVDCompliantStream;
 }  
 
+void TTCutParameter::setIsDVDCompliantStream(bool value)
+{
+  isDVDCompliantStream = value;
+}
+
+int TTCutParameter::getNumPicturesWritten()
+{
+  return numPicturesWritten;
+}
+
+void TTCutParameter::setNumPicturesWritten(int value)
+{
+  numPicturesWritten = value;
+}
+
+TTVideoHeaderList* TTCutParameter::getResultHeaderList()
+{
+  return resultHeaderList;
+}
+
+int TTCutParameter::getMaxBitrate()
+{
+  return maxBitrateValue;
+}
+
+void TTCutParameter::setMaxBitrate(int value)
+{
+  maxBitrateValue = value;
+}
+
+int TTCutParameter::getCutInIndex()
+{
+  return cutInIndex;
+}
+
+void TTCutParameter::setCutInIndex(int value)
+{
+  cutInIndex = value;
+}
+
+int TTCutParameter::getCutOutIndex()
+{
+  return cutOutIndex;
+}
+
+void TTCutParameter::setCutOutIndex(int value)
+{
+  cutOutIndex = value;
+}
+  
+void TTCutParameter::firstCall()
+{
+  if (!ttAssigned(resultHeaderList))
+    resultHeaderList = new TTVideoHeaderList(1000);
+  else
+    resultHeaderList->deleteAll();
+}
+
+void TTCutParameter::lastCall()
+{
+  if(isWriteSequenceEnd)
+    writeSequenceEndHeader();
+}
+
+void TTCutParameter::writeSequenceEndHeader()
+{
+  quint8 seqEndCode[4];
+
+  seqEndCode[0] = 0x00;
+  seqEndCode[1] = 0x00;
+  seqEndCode[2] = 0x01;
+  seqEndCode[3] = 0xb7;
+
+  TTSequenceEndHeader* sequenceEndHeader = new TTSequenceEndHeader();
+  sequenceEndHeader->setHeaderOffset(targetStreamBuffer->position());
+
+  resultHeaderList->add(sequenceEndHeader);
+  targetStreamBuffer->directWrite(seqEndCode, 4);
+}

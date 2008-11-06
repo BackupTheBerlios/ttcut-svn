@@ -5,6 +5,7 @@
 /* FILE     : ttmpeg2videoheader.h                                            */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 01/01/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -19,13 +20,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |
@@ -36,6 +34,8 @@
 //             |                                     +- TTGOPHeader
 //             |
 //             +- TTVideoIndex
+//             |
+//             +- TTBreakObject
 //
 // -----------------------------------------------------------------------------
 
@@ -72,9 +72,9 @@ class TTMpeg2VideoHeader : public TTVideoHeader
 public:
   TTMpeg2VideoHeader();
 
-  virtual bool readHeader( TTFileBuffer* mpeg2_stream );
-  virtual bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
-  virtual void parseBasicData( uint8_t* data, int offset=0 );
+  virtual bool readHeader( TTFileBuffer* mpeg2_stream ) = 0;
+  virtual bool readHeader( TTFileBuffer* mpeg2_stream, quint64 offset ) = 0;
+  virtual void parseBasicData( quint8* data, int offset=0 ) = 0;
 
 enum mpeg2StartCodes
   {
@@ -86,12 +86,9 @@ enum mpeg2StartCodes
     sequence_end_code             = 0xb7,
     group_start_code              = 0xb8,
     sequence_extension_id         = 0x01,
-    sequence_display_extension_id = 0x02
+    sequence_display_extension_id = 0x02,
+    ndef                          = 0xFF
   };
-
- protected:
-  uint8_t extension_start_code;
-  uint8_t extension_start_code_identifier;
 };
 
 // -----------------------------------------------------------------------------
@@ -103,8 +100,8 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
   TTSequenceHeader();
 
   bool readHeader( TTFileBuffer* mpeg2_stream );
-  bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
-  void parseBasicData( uint8_t* data, int offset=0);
+  bool readHeader( TTFileBuffer* mpeg2_stream, quint64 offset );
+  void parseBasicData( quint8* data, int offset=0);
 
   int     horizontalSize();
   int     verticalSize();
@@ -120,11 +117,7 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
   int      aspect_ratio_information;
   int      frame_rate_code;
   int      bit_rate_value;
-  uint8_t  marker_bit;
   int      vbv_buffer_size_value;
-
-  // internal:
-  int      pictures_in_sequence;          // number of pictures in sequence
 };
 
 /*! \brief SequenceEndHeader
@@ -136,8 +129,8 @@ class TTSequenceEndHeader : public TTMpeg2VideoHeader
   TTSequenceEndHeader();
 
   bool readHeader( TTFileBuffer* mpeg2_stream );
-  bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
-  void parseBasicData( uint8_t* data, int offset=0);
+  bool readHeader( TTFileBuffer* mpeg2_stream, quint64 offset );
+  void parseBasicData( quint8* data, int offset=0);
 };
 
 // -----------------------------------------------------------------------------
@@ -149,16 +142,13 @@ public:
    TTGOPHeader();
 
   bool readHeader( TTFileBuffer* mpeg2_stream );
-  bool readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
-  void parseBasicData( uint8_t* data, int offset=0 );
+  bool readHeader( TTFileBuffer* mpeg2_stream, quint64 offset );
+  void parseBasicData( quint8* data, int offset=0 );
 
    // from group_of_pictures_header [B8]
    TTimeCode time_code;
    bool      closed_gop;
    bool      broken_link;
-
-   // internal: number of pictures in GOP
-   int       pictures_in_gop;
 };
 
 // -----------------------------------------------------------------------------
@@ -170,8 +160,8 @@ class TTPicturesHeader : public TTMpeg2VideoHeader
   TTPicturesHeader();
 
   bool    readHeader( TTFileBuffer* mpeg2_stream );
-  bool    readHeader( TTFileBuffer* mpeg2_stream, off64_t offset );
-  void    parseBasicData( uint8_t* data, int offset=0 );
+  bool    readHeader( TTFileBuffer* mpeg2_stream, quint64 offset );
+  void    parseBasicData( quint8* data, int offset=0 );
   QString codingTypeString();
 
   // from picture_header [00]
@@ -179,8 +169,5 @@ class TTPicturesHeader : public TTMpeg2VideoHeader
   int     picture_coding_type;
   int     vbv_delay;
   bool    progressive_frame;
-
-  // internal
-  int abs_picture_number;
 };
 #endif //TTMPEG2VIDEOHEADER_H

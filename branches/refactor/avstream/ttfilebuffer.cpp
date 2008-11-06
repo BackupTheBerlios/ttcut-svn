@@ -1,14 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2009 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2008                                                      */
 /* FILE     : ttfilebuffer.cpp                                                */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/01/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/13/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/21/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
+/* MODIFIED: b. altendorf (totally rewritten)                DATE: 11/12/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -34,787 +31,396 @@
 
 #include "ttfilebuffer.h"
 
-#include <stdio.h>
-
-#define MAX_BUFFER_SIZE 5242880
-#define BUFFER_SIZE     1048576
-
 const char c_name [] = "TTFILEBUFFER  : ";
 
-uint8_t start_code [] = {0x00, 0x00, 0x01};
-
-// Construct object
-// -----------------------------------------------------------------------------
-TTFileBuffer::TTFileBuffer( )
+/* ////////////////////////////////////////////////////////////////////////////
+ * Construct object
+ */
+TTFileBuffer::TTFileBuffer(QString name, QIODevice::OpenMode mode)
 {
-  file_handle      = -1;         /*..no file descriptor.......................*/
-  mem_buffer       = NULL;       /*..no memory buffer.........................*/
-  buffer_size      = BUFFER_SIZE;/*..memory buffer size.......................*/
+  file = new QFile(name);
 
-  buffer_read_size = 0;
-  buffer_start     = 0;
-  buffer_end       = 0;
-  buffer_pos       = 0;
-  stream_pos       = 0;
-  stream_length    = 0;
+  file->open(mode);
 
-  last_buffer_read = false;
-  stream_eof       = false;
+   if (mode == QIODevice::WriteOnly)
+     file->resize(0);
 
-  file_name[0]     = '\0';
-  file_mode        = -1;
 
-  fill_count       = 0;
-  read_count       = 0;
-
+  initInstance();
   initTSearch();
 }
 
-
-/* Construct object with file name*/
-/* -----------------------------------------------------------------------------*/
-TTFileBuffer::TTFileBuffer( const char* f_name, int f_mode )
-{
-  file_handle      = -1;         /*..no file descriptor.......................*/
-  mem_buffer       = NULL;       /*..no memory buffer.........................*/
-  buffer_size      = BUFFER_SIZE;/*..memory buffer size.......................*/
-
-  buffer_read_size = 0;
-  buffer_start     = 0;
-  buffer_end       = 0;
-  buffer_pos       = 0;
-  stream_pos       = 0;
-  stream_length    = 0;
-
-  last_buffer_read = false;
-  stream_eof       = false;
-
-  fill_count       = 0;
-  read_count       = 0;
-
-  //printf("TTFileBuffer::openFile: %s\n", f_name);
-
-  openFile( f_name, f_mode );
-
-  initTSearch();
-}
-
-
-/* Destruct object*/
-/* -----------------------------------------------------------------------------*/
+/* ////////////////////////////////////////////////////////////////////////////
+ * Destruct object
+ */
 TTFileBuffer::~TTFileBuffer()
 {
-  releaseBuffer();
+  closeFile();
 
-  if ( file_handle <= -1)
-    return;
-
-  closeFile(true);
+  delete file;
 }
-  
-/* Open file*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::openFile( const char* f_name, int f_mode)
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::initInstance()
 {
-  bool     b_result;
+  bufferSize = 16384;
+  bufferMask = bufferSize-1;
+  readInc    = bufferSize/2;
+  isAtEnd    = false;
+  readPos    = 0;
+  writePos   = -1;
 
-  buffer_read_size = 0;
-  buffer_start     = 0;
-  buffer_end       = 0;
-  buffer_pos       = 0;
-  stream_pos       = 0;
-  stream_length    = 0;
-
-  last_buffer_read = false;
-  stream_eof       = false;
-
-  file_name[0]     = '\0';
-  file_mode        = f_mode;
-
-  /* get the file name*/
-  strcpy( file_name, f_name );
-
-  //printf("%sopen file: %s\n",c_name,file_name);
-  //printf("handle: %d\n", file_handle);
-
-  /* if a file already open close the open file*/
-  if ( file_handle > -1 )
-    close( file_handle );
-
-  /* select open statement according to file_mode*/
-  switch ( file_mode )
-  {
-   case fm_create :
-     file_handle   = open( file_name, O_RDWR | O_CREAT, 0644);
-     stream_length = 0;
-     break;
-
-   case fm_open_write :
-     file_handle = open( file_name, O_WRONLY | O_CREAT, 0644);
-     if ( file_handle > -1  )
-       stream_length = streamLength();
-     else
-       stream_length = 0;
-     break;
-
-   case fm_open_read :
-     file_handle = open( file_name, O_RDONLY);
-     if ( file_handle > -1  )
-       stream_length = streamLength();
-     else
-       stream_length = 0;
-     initBuffer();
-     break;
-   }
-
-   if ( file_handle > -1 )
-     b_result    = true;
-   else
-   {
-     stream_eof = true;
-     b_result   = false;
-     file_mode  = -1;
-   }
-   return b_result;
+  cBuffer = new quint8[bufferSize];
 }
 
-
-/* Close file*/
-/* -----------------------------------------------------------------------------*/
-void TTFileBuffer::closeFile( bool sync )
+/* ////////////////////////////////////////////////////////////////////////////
+ * Open file
+ */
+bool TTFileBuffer::openFile(QString name, QIODevice::OpenMode mode)
 {
-  //printf("%sclose file: %s with sync?%d\n",c_name,file_name, sync);
+   closeFile();
 
-  buffer_read_size = 0;
-  buffer_start     = 0;
-  buffer_end       = 0;
-  buffer_pos       = 0;
-  stream_pos       = 0;
-  stream_length    = 0;
+   file->setFileName(name); 
+   file->open(mode);
 
-  last_buffer_read = true;
-  stream_eof       = true;
+   if (mode == QIODevice::WriteOnly)
+     file->resize(0);
 
-  file_name[0]     = '\0';
-  file_mode        = -1;
+   initTSearch();
+   initInstance();
 
-  if ( file_handle > -1 )
-  { 
-    // close with snyc write to disk
-    if ((file_mode == fm_create || file_mode == fm_open_write) && sync)
-      fsync(file_handle);
-
-    close( file_handle );
-  }
-
-  file_handle = -1;
+   return file->exists();
 }
 
-
-/* Get file size in bytes*/
-/* -----------------------------------------------------------------------------*/
-off64_t TTFileBuffer::streamLength()
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Close file
+ */
+void TTFileBuffer::closeFile()
 {
-  off64_t offset;
-  off64_t o_result;
+  if (file->openMode() == QIODevice::WriteOnly)
+    file->flush();
 
-  if ( file_handle > -1 )
-  {
-     /*save current value of the file position pointer*/
-    offset = lseek64( file_handle, (off64_t)0, SEEK_CUR );
-    /*set file pointer at end of file*/
-    lseek64( file_handle, (off64_t)0, SEEK_END );
-    /*gets size of file*/
-    o_result = lseek64( file_handle, (off64_t)0, SEEK_CUR );
-    /*set the pointer back to previous position*/
-    lseek64( file_handle, offset, SEEK_SET );
-  }
-  else
-    o_result = (off64_t)-1;
-
-  /*printf("fileSize: %lld\n",o_result);*/
-  return o_result;
+  file->close();
 }
 
-
-/* Set memory buffer size*/
-/* -----------------------------------------------------------------------------*/
-void TTFileBuffer::setBufferSize( int size )
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the current file name
+ */
+QString TTFileBuffer::fileName()
 {
-  if ( buffer_size != size )
-  {
-    releaseBuffer();
-
-    if ( size > MAX_BUFFER_SIZE )
-      buffer_size = MAX_BUFFER_SIZE;
-    else
-      buffer_size = size;
-
-    initBuffer();
-  }
+  return file->fileName();
 }
 
-
-/* Get buffer size*/
-/* -----------------------------------------------------------------------------*/
-int TTFileBuffer::bufferSize()
+/* ///////////////////////////////////////////////////////////////////////////// 
+ *Get file size in bytes
+ */
+quint64 TTFileBuffer::size()
 {
-  return  buffer_size;
+  return file->size();
 }
 
-
-bool TTFileBuffer::readUInt8( uint8_t &byte1 )
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns true, if the file is at the end positon
+ */
+bool TTFileBuffer::atEnd()
 {
-  return readArray( (uint8_t*)&byte1, 1 );
+  return (isAtEnd && readPos > writePos);
 }
 
-bool TTFileBuffer::readUInt16( uint16_t &byte2 )
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the current read position
+ */
+quint64 TTFileBuffer::position()
 {
-  return readArray( (uint8_t*)&byte2, 2 );
+  return (quint64)readPos;
 }
 
-bool TTFileBuffer::readUInt32( uint32_t &byte4 )
-{
-  return readArray( (uint8_t*)&byte4, 4 );
-}
-
-bool TTFileBuffer::readUInt64( uint64_t &byte8 )
-{
-  return readArray( (uint8_t*)&byte8, 8 );
-}
-
-/* Read x bytes from stream*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::readArray( uint8_t* read_buffer, int read_length )
-{
-  int  i_read   = 0;
-  bool b_result = true;
-
-  while ( b_result && i_read < read_length )
-  {
-    b_result = readByte( read_buffer[i_read] );
-    i_read++;
-  }
-
-  if ( i_read < read_length )
-    b_result = false;
-
-  return b_result;
-}
-
-bool TTFileBuffer::readArray( uint8_t* read_buffer, __attribute__ ((unused))int start_pos, int read_length )
-{
-  // TODO: read array with start pos
-  return readArray( read_buffer, read_length );
-}
-
-int TTFileBuffer::readCount2( uint8_t* read_buffer, __attribute__ ((unused))int start_pos, int read_length )
-{
-  long current_read_count = read_count;
-
-  readArray( read_buffer, read_length );
-
-  return (int)read_count-current_read_count;
-}
-
-/* Read x bytes from stream*/
-/* -----------------------------------------------------------------------------*/
-int TTFileBuffer::readBuffer( uint8_t* read_buffer, int read_length )
-{
-  int  i_read   = 0;
-  bool b_result = true;
-  
-  try
-  {
-    while ( b_result && i_read < read_length )
-    {
-      b_result = readByte( read_buffer[i_read] );
-      i_read++;
-    }
-  }
-  catch ( TTStreamEOFException )
-  {
-    printf("%sreadBuffer: EOF: %d\n",c_name,i_read);
-    return i_read;
-  }
-    
-  return i_read;
-}
-
-
-/* "Brute force" search for next start-code in the stream*/
-/* -----------------------------------------------------------------------------*/
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
 void TTFileBuffer::nextStartCodeBF()
 {
-  byte4 = 0xFFFFFFFF;
-
-  while ( !stream_eof && ((byte4 & 0xFFFFFF)) != 1 )
-  {
-   /* buffer position inside memory buffer area;read from memory buffer*/
-    if ( buffer_pos < buffer_read_size )
-    {
-      byte4 = (byte4 << 8) | mem_buffer[buffer_pos];
-
-      /* increment bufferPosition and streamPosition*/
-      buffer_pos++;
-      stream_pos++;
-      read_count++;
-    }
-
-    /* new buffer pos outside memory buffer; fill the buffer*/
-    if ( buffer_pos >= buffer_read_size )
-    {
-      /* we are in the last stream buffer near the stream end*/
-      if ( last_buffer_read )
-      {
-        stream_eof = true;
-      }
-      /* fill the memory buffer*/
-      else
-      {
-        fillBuffer();
-      }
-    }
-  }
 }
 
-/* Initialize "T-Search"*/
-/* -----------------------------------------------------------------------------*/
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
 void TTFileBuffer::initTSearch()
 {
-  int i;
+  tsStartCode[0] = 0x00;
+  tsStartCode[1] = 0x00;
+  tsStartCode[2] = 0x01;
 
-  t_delta = 3;
+  int m = 3;
 
-  for ( i = 0; i < 256; i++ )
-    shift[i] = t_delta+1;
+  for (int i = 0; i < 256; ++i)
+    tsShift[i] = m+1;
 
-  for ( i = 0; i < t_delta; i++ )
-    shift[start_code[i]] = t_delta - i;
-  
-  look_at = 0;
+  for (int i = 0; i < m; ++i)
+    tsShift[tsStartCode[i]] = m-i;
 
-  while ( look_at < t_delta-1 )
+  tsLookAt = 0;
+
+  while (tsLookAt < m-1)
   {
-    if (start_code[t_delta-1] == start_code[t_delta-(look_at+2)])
+    if (tsStartCode[m-1] == tsStartCode[m-(tsLookAt+2)])
       break;
-    ++look_at;
+    ++tsLookAt;
   }
 }
 
-/* "T-Search" for next start-code sequence (0x000001) in the stream           */
-/* ---------------------------------------------------------------------------*/
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
 void TTFileBuffer::nextStartCodeTS()
 {
-  do
-  {
-    t_index = t_delta-1;
+  int i;
+  int mask = bufferMask;
+  int m    = 3;
 
-    while ( mem_buffer[buffer_pos+t_index] != start_code[t_index] )
+  try
+  {
+    do
     {
-      //seekRelative(shift[mem_buffer[buffer_pos+t_delta]]);
-      if( !seekRelative(shift[mem_buffer[buffer_pos+t_delta]]) )
-        return;
-    }
-    --t_index;
-    while ( mem_buffer[buffer_pos+t_index] == start_code[t_index] )
-    {
-      if ( --t_index < 0 )
+      // FIXME: Quick workaround for passing sequence-header at the beginning of stream!
+      //i = (position() == 0) ? 0 : m-1;
+      // test it under os x!
+      i = m-1;
+      fillBuffer(2*m+1);
+
+      while (cBuffer[(int)((position()+i)&mask)] != tsStartCode[i])
       {
-        seekRelative(t_delta);
-        return; 
+        quint8 pos = cBuffer[(int)((position()+m)&mask)];
+        seekRelative(tsShift[(int)pos]);
+        fillBuffer(2*m+1);
       }
-    }
-    bool seek = seekRelative(look_at+shift[mem_buffer[buffer_pos+t_delta+look_at]]);
-    if(!seek)
-    {
-      //printf("next start code: %d\n", seek);
-      //printf("t-search index: %d / %d\n", t_index, look_at+shift[mem_buffer[buffer_pos+t_delta+look_at]]);
-      return;
-    }
- 
-  }while(-1);
-}
 
+      --i;
 
+      while(cBuffer[(int)((position()+i)&mask)] == tsStartCode[i])
+      {
+        if(--i < 0)
+        {
+          seekRelative(m);
+          return;
+        }
+      }
 
-/* Read x bytes from stream and fill read_buffer in reverse order*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::readArrayRev( uint8_t* read_buffer, int read_length )
-{
-  int  i_read   = read_length-1;
-  bool b_result = true;
-
-  while ( b_result && i_read >= 0)
+      quint8 pos2 = cBuffer[(int)((position()+m+tsLookAt)&mask)];
+      seekRelative(tsLookAt+tsShift[(int)pos2]);
+    }while(-1);
+  }catch(...)
   {
-    b_result = readByte( read_buffer[i_read] );
-    i_read--;
-  }
-
-  if ( i_read > - 1 )
-    b_result = false;
-
-  return b_result;
-}
-
-
-/* Unbuffered read*/
-/* -----------------------------------------------------------------------------*/
-off64_t TTFileBuffer::directRead( uint8_t* read_buffer, off64_t read_length )
-{
-  off64_t o_result;
-
-  if ( file_mode == fm_open_read && file_handle > -1 )
-  {
-    stream_pos = lseek64( file_handle,(off64_t)0,SEEK_CUR );
-    o_result   = read( file_handle, read_buffer, read_length );
-    o_result  += stream_pos;
-  }
-  else
-    o_result = (off64_t)-1;
-
-  return o_result;
-}
-
-off64_t TTFileBuffer::directReadUInt8( uint8_t &byte1 )
-{
-  return directRead( (uint8_t*)byte1, 1 );
-}
-
-off64_t TTFileBuffer::directReadUInt16( uint16_t &byte2 )
-{
-  return directRead( (uint8_t*)byte2, 2 );
-}
-
-off64_t TTFileBuffer::directReadUInt32( uint32_t &byte4 )
-{
-  return directRead( (uint8_t*)byte4, 4 );
-}
-
-off64_t TTFileBuffer::directReadUInt64( uint64_t &byte8 )
-{
-  return directRead( (uint8_t*)byte8, 8 );
-}
-
-/* Unbuffered write*/
-/* -----------------------------------------------------------------------------*/
-off64_t TTFileBuffer::directWrite( const uint8_t* write_buf, int write_len )
-{
-  off64_t o_result;
-
-  if ( ((file_mode == fm_open_write) || (file_mode == fm_create)) &&
-       (file_handle > -1) )
-  {
-    stream_pos  = lseek64( file_handle,(off64_t)0,SEEK_CUR );
-    o_result    = write( file_handle, write_buf, write_len );
-    o_result   += stream_pos;
-    stream_pos  = o_result;
-    if ( o_result > stream_length )
-      stream_length = o_result;
-  }
-  else
-    o_result = (off64_t)-1;
-
-  //printf("directWrite: %lld, len: %lld\n",o_result,write_len);
-  return o_result;
-}
-
-off64_t TTFileBuffer::directWriteUInt8( uint8_t byte1 )
-{
-  return directWrite( (uint8_t*)&byte1, 1 );
-}
-
-off64_t TTFileBuffer::directWriteUInt16( uint16_t byte2 )
-{
-  return directWrite( (uint8_t*)&byte2, 2 );
-}
-
-off64_t TTFileBuffer::directWriteUInt32( uint32_t byte4 )
-{
-  return directWrite( (uint8_t*)&byte4, 4 );
-}
-
-off64_t TTFileBuffer::directWriteUInt64( uint64_t byte8 )
-{
-  return directWrite( (uint8_t*)&byte8, 8 );
-}
-
-/* stream end reached*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::streamEOF()
-{
-  return stream_eof;
-}
-
-
-/* last memory buffer before stream end*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::lastBufferRead()
-{
-  return last_buffer_read;
-}
-
-
-/* Rewind*/
-/* -----------------------------------------------------------------------------*/
-void TTFileBuffer::rewindFile()
-{
-  lseek64( file_handle, 0, SEEK_SET );
-  initBuffer();
-}
-
-
-/* Seek forward x bytes*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::seekForward( off64_t step_bytes )
-{
-  return newPosition( stream_pos + step_bytes );
-}
-
-
-/* Seek backward x bytes*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::seekBackward( off64_t step_bytes )
-{
-  return newPosition( stream_pos - step_bytes );
-}
-
-
-/* Seek x bytes relative to current position*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::seekRelative( off64_t step_bytes )
-{
-  /*printf("seekRelative: %lld - %lld\n",stream_pos,step_bytes);*/
-
-  return newPosition( stream_pos + step_bytes );
-}
-
-
-/* Seek x bytes relative to stream beginning*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::seekAbsolute( off64_t step_bytes )
-{
-  return newPosition( step_bytes );
-}
-
-
-/* Current stream offset*/
-/* -----------------------------------------------------------------------------*/
-off64_t TTFileBuffer::currentOffset()
-{
-  return stream_pos;
-}
-
-char* TTFileBuffer::fileName()
-{
-  return file_name;
-}
-
-
-/* Current buffer start offset*/
-/* -----------------------------------------------------------------------------*/
-off64_t TTFileBuffer::bufferStart()
-{
-  return buffer_start;
-}
-
-
-/* Current buffer end offset*/
-/* -----------------------------------------------------------------------------*/
-off64_t TTFileBuffer::bufferEnd()
-{
-  return buffer_end;
-}
-
-
-/* Current buffer relative position*/
-/* -----------------------------------------------------------------------------*/
-int TTFileBuffer::bufferPos()
-{
-  return buffer_pos;
-}
-
-
-/* Pufferreigeben*/
-/* -----------------------------------------------------------------------------*/
-void TTFileBuffer::releaseBuffer()
-{
-  if ( mem_buffer != NULL )
-  {
-    delete [] mem_buffer;
-    mem_buffer = NULL;
+    return;
   }
 }
 
-
-/* PufferInitialisieren*/
-/* -----------------------------------------------------------------------------*/
-void TTFileBuffer::initBuffer()
+/* /////////////////////////////////////////////////////////////////////////////
+ * Seek forward offset bytes in stream
+ */
+void TTFileBuffer::seekForward(quint64 offset)
 {
-  /* release buffer */
-  releaseBuffer();
-
-  /* Ist die Datei zum lesen geoeffnet und die Puffergroesse*/
-  /* groesser 0 wird Speicher besorgt und der Puffer mit dem*/
-  /* Inhalt der Datei ab der aktuellen Position neu gefuellt*/
-  /* Ansonsten ist der Puffer als leer zu betrachten*/
-  if ( file_mode == fm_open_read || file_mode == fm_create )
-  {
-    if ( buffer_size > 0 )
-      mem_buffer = new uint8_t[buffer_size];
-
-    if ( file_handle > -1 )
-    {
-      stream_pos = lseek64( file_handle, buffer_start, SEEK_SET );
-    }
-    else
-    {
-      stream_pos     = 0;
-      buffer_start   = 0;
-      buffer_end     = 0;
-    }
-
-    buffer_pos       = 0;
-    last_buffer_read = false;
-    stream_eof       = false;
-
-    fillBuffer();
-  }
-  else
-  {
-    printf("%swrong file mode (!)\n",c_name);   
-  }
+  //printf("seek forward: %lld / %lld\n", offset, readPos);
+  readPos += offset;
 }
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Seek backward offset bytes in stream
+ */
+void TTFileBuffer::seekBackward(quint64 offset)
+{
+  //printf("seek backward: %lld / %lld\n", offset, readPos);
+  readPos -= offset;
 
-/* Fill the memory buffer (private)*/
-/* -----------------------------------------------------------------------------*/
+  seekAbsolute(readPos);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::seekRelative(quint64 offset)
+{
+  readPos += offset;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::seekAbsolute(quint64 offset)
+{
+  isAtEnd  = false;
+  readPos  = offset;
+  writePos = (readPos&~bufferMask)-1;
+
+  file->seek(writePos+1);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::readByte(quint8 &byte1)
+{
+  byte1 = readByte();
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+int TTFileBuffer::readByte(quint8* byteArray, int length)
+{
+  quint64 startReadPos = readPos;
+
+  try
+  {
+  for (int i = 0; i < length; i++)
+    byteArray[i] = readByte();
+  }
+  catch(TTFileBufferException)
+  {
+    qDebug("StreamEOF during readByte!");
+    qDebug("length: %d / start: %lld / end: %lld", length, startReadPos, readPos-startReadPos);
+    readPos = writePos;
+    return (readPos - startReadPos);
+  }
+  return (readPos - startReadPos);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::readUInt16(quint16 &byte2)
+{
+  readByte((quint8*)&byte2, 2);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::readUInt32(quint32 &byte4)
+{
+  readByte((quint8*)&byte4, 4);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::readUInt64(quint64 &byte8)
+{
+  readByte((quint8*)&byte8, 8);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Writes w_buffer with size w_length direct to stream and returns the number
+ * of bytes that were actually written, or -1 if an error occured.
+ */
+quint64 TTFileBuffer::directWrite(const quint8* w_buffer, int w_length)
+{
+  return file->write((char*)w_buffer, w_length);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Writes an quint8 to stream
+ */
+quint64 TTFileBuffer::directWrite(quint8 byte1)
+{
+  return directWrite((quint8*)&byte1, 1);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Writes an quint16 to stream
+ */
+quint64 TTFileBuffer::directWriteUInt16(quint16 byte2)
+{
+  return directWrite((quint8*)&byte2, 2);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Writes an quint32 to stream
+ */
+quint64 TTFileBuffer::directWriteUInt32(quint32 byte4)
+{
+  return directWrite((quint8*)&byte4, 4);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Write an quint64 to stream
+ */
+quint64 TTFileBuffer::directWriteUInt64(quint64 byte8)
+{
+  return directWrite((quint8*)&byte8, 8);
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
 void TTFileBuffer::fillBuffer()
 {
-  /* buffer start position in file stream*/
-  buffer_start     = stream_pos;
-  buffer_pos       = 0;
-  buffer_read_size = 0;
-  fill_count++;
+  if (isAtEnd)
+    throw TTFileBufferException(TTFileBufferException::StreamEOF);
 
-  /* try to read buffer_size bytes from the stream*/
-  buffer_read_size = read( file_handle, mem_buffer, buffer_size );
+  qint64 rLength = file->read((char*)&cBuffer[((writePos+1)&bufferMask)], readInc);
 
-  /* set bufferEnd position*/
-  buffer_end = buffer_start + buffer_read_size;
+  if (rLength > 0)
+    writePos += rLength;
 
-  /* less bytes read than bufferSize; we are near the stream end*/
-  if ( buffer_read_size < buffer_size )
-    last_buffer_read = true;
+  if (rLength < readInc)
+    isAtEnd = true;
 }
 
-
-/* Read one byte from stream (private)*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::readByte( uint8_t &byte1 )
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+void TTFileBuffer::fillBuffer(int length)
 {
-  b_result = false;
-
-  /* buffer position inside memory buffer area;read from memory buffer*/
-  if ( buffer_pos < buffer_read_size )
-  {
-    byte1    = mem_buffer[buffer_pos];
-    b_result = true;
-	
-    /* increment bufferPosition and streamPosition*/
-    buffer_pos++;
-    stream_pos++;
-    read_count++;
-  }
-
-/*  if (last_buffer_read)
-  {
-    stream_eof = true;
-    throw TTStreamEOFException();
-  }
-
-  return newPosition(stream_pos);
-*/
-
-  /* new buffer pos outside memory buffer; fill the buffer*/
-  if ( buffer_pos >= buffer_read_size )
-  {
-    /* we are in the last stream buffer near the stream end*/
-    if ( last_buffer_read )
-    {
-      stream_eof = true;
-      b_result   = false;
-      throw TTStreamEOFException();
-    }
-    /* fill the memory buffer*/
-    else
-    {
+    while(readPos > (writePos-length) && !isAtEnd)
       fillBuffer();
-      b_result = true;
-    }
-  }
-  return b_result;
 }
 
-
-/* Seek to new position in stream (private)*/
-/* -----------------------------------------------------------------------------*/
-bool TTFileBuffer::newPosition( off64_t new_pos )
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+quint8 TTFileBuffer::readByte()
 {
-  /* new position inside memory buffer*/
-  if ( new_pos >= buffer_start  &&
-      new_pos <  buffer_end    
-     )
+  while (readPos > writePos && !isAtEnd)
+    fillBuffer();
+
+  return cBuffer[(int)(readPos++&bufferMask)];
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+bool TTFileBuffer::readArray(quint8* buffer, int length)
+{
+  while(readPos > (writePos-length))
+    fillBuffer();
+
+  buffer = cBuffer;
+  return true;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Exception class for TTFileBuffer
+ */
+TTFileBufferException::TTFileBufferException(ExceptionType type)
+{
+  ex_type = type;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the exception message
+ */
+QString TTFileBufferException::message()
+{
+  switch(ex_type)
   {
-    buffer_pos += new_pos - stream_pos;
-    stream_pos += new_pos - stream_pos;
-    b_result    = true;
-    stream_eof  = false;
+    case TTFileBufferException::StreamEOF:
+      return "Stream EOF reached!";
+    case TTFileBufferException::SeekError:
+      return "Error during seek!";
+	default:
+	  return "Unknown exception type!";
   }
-  /* new position outside buffer*/
-  else
-  {
-    if ( new_pos > -1             &&
-        (file_mode  == fm_open_read && new_pos < stream_length) ||
-        ((file_mode == fm_open_write || file_mode == fm_create) &&
-         new_pos < stream_length + 1) )
-    {
-      /* seek to new Position*/
-      stream_pos = lseek64(file_handle, (off64_t)new_pos, SEEK_SET);
-
-      stream_eof       = false;
-      last_buffer_read = false;
-
-      fillBuffer();
-
-      if ( stream_pos == new_pos )
-        b_result = true;
-      else
-        b_result = false;
-    }
-    else
-      b_result = false;
-  }
-  return b_result;
 }
-
-
-// statistic data
-// -----------------------------------------------------------------------------
-long TTFileBuffer::fillCount()
-{
-  return fill_count;
-}
-
-long TTFileBuffer::readCount()
-{
-  return read_count;
-}
-
-
-
-
-
-
-
-

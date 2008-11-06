@@ -118,8 +118,12 @@ int TTAudioListData::addItem(QString fName, TTAudioStream* aStream)
   // audio stream have constant properties, so we can use the first header
   header = aStream->headerAt(0);
 
-  item.audioLength.sprintf("%s (%lf MB)", qPrintable(aStream->absStreamTime()),
-      (double)aStream->streamLengthByte()/1024.0/1024.0);
+  item.audioLength = QString("%1 (%2 MB)")
+  			.arg(aStream->streamLengthTime().toString("hh:mm:ss.zzz"))
+  			.arg((double)aStream->streamLengthByte()/1024.0/1024.0);
+  //item.audioLength.sprintf("%s (%0.2lf MB)",
+  //    qPrintable(aStream->streamLengthTime().toString("hh:mm:ss.zzz")),
+  //    (double)aStream->streamLengthByte()/1024.0/1024.0);
   
   item.audioVersion    = header->descString();
   item.audioBitrate    = header->bitRateString();
@@ -187,7 +191,7 @@ void TTAudioListData::print()
   log->infoMsg(oName, "----------------------------------------");
 
   for(int i=0; i < data.count(); i++) {
-    log->infoMsg(oName, "audio-File: %s", data[i].audioStream->fileName().toLatin1().constData());//TTCut::toAscii(data[i].audioStream->fileName()));
+    log->infoMsg(oName, "audio-File: %s", TTCut::toAscii(data[i].audioStream->fileName()));
   }
 }
 

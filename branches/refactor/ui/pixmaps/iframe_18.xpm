@@ -1,5 +1,5 @@
 /* XPM */
-static char* const i_frame_18_xpm[] = { 
+const char* const i_frame_18_xpm[] = { 
 "18 18 9 1",
 ". c None",
 "d c #000096",

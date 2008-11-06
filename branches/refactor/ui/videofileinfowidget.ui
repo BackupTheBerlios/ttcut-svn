@@ -5,13 +5,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>988</width>
-    <height>141</height>
+    <width>1037</width>
+    <height>137</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>640</width>
+    <width>620</width>
+    <height>80</height>
+   </size>
+  </property>
+  <property name="baseSize" >
+   <size>
+    <width>620</width>
     <height>80</height>
    </size>
   </property>
@@ -85,20 +97,26 @@
          <widget class="QPushButton" name="pbVideoOpen" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize" >
            <size>
-            <width>36</width>
-            <height>36</height>
+            <width>45</width>
+            <height>45</height>
            </size>
           </property>
           <property name="maximumSize" >
            <size>
-            <width>46</width>
-            <height>46</height>
+            <width>45</width>
+            <height>45</height>
+           </size>
+          </property>
+          <property name="baseSize" >
+           <size>
+            <width>100</width>
+            <height>100</height>
            </size>
           </property>
           <property name="text" >
@@ -109,9 +127,15 @@
           </property>
           <property name="iconSize" >
            <size>
-            <width>32</width>
-            <height>32</height>
+            <width>24</width>
+            <height>24</height>
            </size>
+          </property>
+          <property name="autoDefault" >
+           <bool>true</bool>
+          </property>
+          <property name="default" >
+           <bool>false</bool>
           </property>
           <property name="flat" >
            <bool>false</bool>

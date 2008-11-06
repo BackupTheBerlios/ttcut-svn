@@ -40,7 +40,7 @@
  */
 
 #include "ttmessagelogger.h"
-#include "ttmessagewindow.h"
+//#include "ttmessagewindow.h"
 //#include <sys/stdarg.h>
 
 
@@ -163,7 +163,9 @@ void TTMessageLogger::debugMsg(QString caller, QString msgString)
   logMsg(DEBUG, caller, msgString); 
 }
 
-
+/*!
+ * Writes an logfile message from type INFO
+ */
 void TTMessageLogger::infoMsg(QString caller, const char* msg, ...)
 {
   char buf[1024];
@@ -176,6 +178,9 @@ void TTMessageLogger::infoMsg(QString caller, const char* msg, ...)
   logMsg(INFO, caller, buf);
 }
 
+/*!
+ * Writes an logfile message from type WARNING
+ */
 void TTMessageLogger::warningMsg(QString caller, const char* msg, ...)
 {
   char buf[1024];
@@ -188,6 +193,9 @@ void TTMessageLogger::warningMsg(QString caller, const char* msg, ...)
   logMsg(WARNING, caller, buf);
 }
 
+/*!
+ * Writes an logfile message from type ERROR
+ */
 void TTMessageLogger::errorMsg(QString caller, const char* msg, ...)
 {
   char buf[1024];
@@ -256,17 +264,12 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString,
   write.append("] ");
   write.append(msgString);
 
+  // show message window
+  if (show)
+    ;
+
   if (logMode & CONSOLE || msgType == ERROR)
     qDebug(write.toUtf8().data());
-
-  if (show)
-  {
-    TTMessageWindow* msgWnd = new TTMessageWindow(0);
-    msgWnd->setCallerText(caller);
-    msgWnd->setMessageText(msgString);
-
-    msgWnd->exec();
-  }
 
   writeMsg(write);
 }

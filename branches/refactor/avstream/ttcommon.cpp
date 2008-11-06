@@ -5,17 +5,6 @@
 #include <QString>
 #include <QFileInfo>
 
-#ifdef __WIN32
-int trunc( double f )
-{
-  return (int)f;
-}
-int round( double f )
-{
-  return (int)f;
-}
-#endif
-
 // check if pointer is assigned
 bool ttAssigned( const void* pointer )
 {
@@ -222,9 +211,3 @@ TTTimeCode::TTTimeCode()
 {
 
 }
-
-
-//QString TTTimeCode::toString()
-//{
-//
-//}

@@ -18,13 +18,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioStream
-//                               |
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
+//             +- TTAudioStream -|                   
+//             |                 +- TTAC3AudioStream 
+// TTAVStream -|                 
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -58,19 +55,24 @@
 class TTMPEGAudioStream : public TTAudioStream
 {
  public:
-  TTMPEGAudioStream();
   TTMPEGAudioStream( const QFileInfo &f_info, int s_pos=0 );
+  virtual ~TTMPEGAudioStream();
+
+  TTAVTypes::AVStreamType streamType() const;
 
   void searchNextSyncByte();
-  void parseAudioHeader( uint8_t* data, int offset, TTMpegAudioHeader* audio_header );
+  void parseAudioHeader( quint8* data, int offset, TTMpegAudioHeader* audio_header );
 
-  void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
+  virtual void cut(int start, int end, TTCutParameter* cp);
+  virtual void cut(TTFileBuffer* cut_stream, TTCutListData* cut_list);
 
   void    readAudioHeader( TTMpegAudioHeader* audio_header );
-  int     createHeaderList( );
+
+  virtual int createHeaderList( );
+  virtual int createIndexList(){return 0;};
+
   QString streamExtension();
-  QString absStreamTime();
+  QTime   streamLengthTime();
   int     searchIndex( double s_time );
 };
 

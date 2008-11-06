@@ -1,15 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2009 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2008                                                      */
 /* FILE     : ttfilebuffer.h                                                  */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/01/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/13/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 04/21/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/05/2005 */
+/* MODIFIED: b. altendorf (totally rewritten)                DATE: 11/12/2007 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -32,21 +28,10 @@
 #ifndef TTFILEBUFFER_H
 #define TTFILEBUFFER_H
 
-// C header
-#include <math.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <inttypes.h>
-#include <string.h>
-
-extern "C" bool    ttAssigned( const void* pointer );
-
-// constants for file open mode
-#define fm_create      2
-#define fm_open_write  4
-#define fm_open_read   8
+// Qt header files
+#include <QString>
+#include <QFile>
+#include <QByteArray>
 
 // -----------------------------------------------------------------------------
 // TTFileBuffer: class declaration
@@ -55,125 +40,80 @@ class TTFileBuffer
 {
 public:
   // create / delete
-  TTFileBuffer();
-  TTFileBuffer( const char* f_name, int f_mode );
+  TTFileBuffer(QString name, QIODevice::OpenMode mode);
   ~TTFileBuffer();
 
   // file stream
-  bool    openFile( const char* f_name, int f_mode );
-  void    closeFile(bool sync=false);
-  off64_t streamLength();
-  bool    streamEOF();
-  off64_t currentOffset();
-  char*   fileName();
-
-  // memory buffer
-  void    setBufferSize( int size );
-  int     bufferSize();
-  bool    lastBufferRead();
-  off64_t bufferStart();
-  off64_t bufferEnd();
-  int     bufferPos();
+  bool    openFile(QString name, QIODevice::OpenMode mode);
+  void    closeFile();
+  QString fileName();
+  quint64 size();
+  bool    atEnd();
+  quint64 position();
 
   // read / write
-  bool    readByte( uint8_t &byte1 );
-  bool    readUInt8( uint8_t &byte1 );
-  bool    readUInt16( uint16_t &byte2 );
-  bool    readUInt32( uint32_t &byte4 );
-  bool    readUInt64( uint64_t &byte8 );
-  bool    readArray( uint8_t* read_buffer, int read_length );
-  bool    readArray( uint8_t* read_buffer, int start_pos, int read_length );
-  int     readCount2( uint8_t* read_buffer, int start_pos, int read_length );
-  bool    readArrayRev( uint8_t* read_buffer, int read_length );
-  int     readBuffer( uint8_t* read_buffer, int read_length );
-  off64_t directRead( uint8_t* read_buffer, off64_t read_length );
-  off64_t directReadUInt8( uint8_t &byte1 );
-  off64_t directReadUInt16( uint16_t &byte2 );
-  off64_t directReadUInt32( uint32_t &byte4 );
-  off64_t directReadUInt64( uint64_t &byte8 );
-  off64_t directWrite( const uint8_t* write_buf, int write_len );
-  off64_t directWriteUInt8( uint8_t byte1 );
-  off64_t directWriteUInt16( uint16_t byte2 );
-  off64_t directWriteUInt32( uint32_t byte4 );
-  off64_t directWriteUInt64( uint64_t byte8 );
+  void    readByte( quint8 &byte1 );
+  int     readByte( quint8* byteArray, int length);
 
   // search
   void    nextStartCodeBF();
   void    initTSearch();
   void    nextStartCodeTS();
-
+   
   // positioning
-  void    rewindFile();
-  bool    seekForward( off64_t step_bytes );
-  bool    seekBackward( off64_t step_bytes );
-  bool    seekRelative( off64_t step_bytes );
-  bool    seekAbsolute( off64_t step_bytes );
+  void    seekForward(quint64 offset);
+  void    seekBackward(quint64 offset);
+  void    seekRelative(quint64 offset);
+  void    seekAbsolute(quint64 offset);
 
-  // statistic
-  long    readCount();
-  long    fillCount();
+  // migration stuff
+  void    readUInt16(quint16 &byte2);
+  void    readUInt32(quint32 &byte4);
+  void    readUInt64(quint64 &byte8);
+
+  quint64 directWrite(quint8 byte1);
+  quint64 directWrite(const quint8* w_buffer, int w_length);
+  quint64 directWriteUInt16(quint16 byte2);
+  quint64 directWriteUInt32(quint32 byte4);
+  quint64 directWriteUInt64(quint64 byte8);
 
  protected:
-  void    releaseBuffer();
-  void    initBuffer();
+  void    initInstance();
   void    fillBuffer();
-  bool    newPosition( off64_t new_pos );
-
+  void    fillBuffer(int length);
+  quint8  readByte();
+  bool    readArray(quint8* buffer, int length);
 
  private:
-  bool     ts_debug;
-  char     file_name[256];     /*..name of opened stream......................*/
-  int      file_mode;          /*..open mode: read, write, create.............*/
-  int      file_handle;        /*..handle to open stream......................*/
-  uint8_t* mem_buffer;         /*..memory buffer..............................*/
-  bool     last_buffer_read;   /*..last mem buffer filled with data...........*/
-  bool     stream_eof;         /*..end of stream..............................*/
-  long     buffer_size;        /*..memory buffer size.........................*/
-  long     buffer_read_size;   /*..current read bytes from stream into buffer.*/
-  off64_t  buffer_start;       /*..buffer start offset from stream beginning..*/
-  off64_t  buffer_end;         /*..buffer end offset from stream beginning....*/
-  long     buffer_pos;         /*..current pointer position in buffer.........*/
-  off64_t  stream_pos;         /*..current pointer position in stream.........*/
-  off64_t  stream_length;      /*..actual stream length in bytes..............*/
+  QFile*     file;
+  bool       isAtEnd;
+  quint8*    cBuffer;
+  int        bufferSize;
+  int        bufferMask;
+  qint64     writePos;
+  qint64     readPos;
+  int        readInc;
 
-  long     byte4;
-  int      t_delta;
-  int      t_index;
-  uint8_t  shift[256];
-  int      look_at;
-  
-  bool     b_result;
-  long     fill_count;
-  long     read_count;
+  quint8     tsStartCode[3];
+  int        tsShift[256];
+  int        tsLookAt;
 };
 
-class TTStreamException
+class TTFileBufferException
 {
-};
+  public:
+    enum ExceptionType
+    {
+      StreamEOF,
+      SeekError
+    };
 
-class TTStreamEOFException : public TTStreamException
-{
-};
+    TTFileBufferException(ExceptionType type);
 
-class TTStreamOpenException : public TTStreamException
-{
-};
+    QString message();
 
-class TTStreamReadException : public TTStreamException
-{
+  protected:
+    ExceptionType ex_type;
 };
-
-class TTStreamWriteException : public TTStreamException
-{
-};
-
-class TTStreamSeekException : public TTStreamException
-{
-};
-
-class TTStreamMiscException : public TTStreamException
-{
-};
-
 
 #endif //TTFILEBUFFER_H

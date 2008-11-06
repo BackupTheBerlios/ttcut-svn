@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2010 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2008                                                      */
 /* FILE     : ttmpeg2videostream.h                                            */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/18/2005 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -17,13 +17,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioStream
-//                               |
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
+//             +- TTAudioStream -|                   
+//             |                 +- TTAC3AudioStream 
+// TTAVStream -|                 
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -57,60 +54,55 @@
 
 #include <QString>
 #include <QFileInfo>
+#include <QStack>
 
 class TTAudioListData;
 class TTCutListData;
+
 // -----------------------------------------------------------------------------
 // TTMpeg2VideoStream
 // -----------------------------------------------------------------------------
 class TTMpeg2VideoStream : public TTVideoStream
 {
   public:
-    TTMpeg2VideoStream();
     TTMpeg2VideoStream( const QFileInfo &f_info );
+    virtual ~TTMpeg2VideoStream();
 
     void makeSharedCopy( TTMpeg2VideoStream* v_stream );
 
-    int createHeaderList();
-    int createIndexList();
+    virtual int createHeaderList();
+    virtual int createIndexList();
 
-    TTSequenceHeader* currentSequenceHeader();
-    TTGOPHeader*      currentGOPHeader();
-    TTPicturesHeader* currentPictureHeader();
-    TTSequenceHeader* sequenceHeaderAt( int index );
-    TTGOPHeader*      GOPHeaderAt( int index );
-    TTPicturesHeader* pictureHeaderAt( int index );
-    TTVideoHeader*    getPrevMpeg2Object( TTVideoHeader* current );
-    TTVideoHeader*    getNextMpeg2Object( TTVideoHeader* current );
+    virtual TTAVTypes::AVStreamType streamType() const;
+    QTime streamLengthTime() {return QTime(0, 0);};
 
-    bool isCutInPoint( int pos );
-    bool isCutOutPoint( int pos );
+    virtual bool isCutInPoint( int pos );
+    virtual bool isCutOutPoint( int pos );
 
-    void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-    void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
-    void transferMpegObjects( TTFileBuffer* fs,
-        TTVideoHeader* start_object,
-        int start_object_index,
-        TTVideoHeader* end_object,
-        int end_object_index,
-        TTCutParameter* cr );
-    void encodePart( int start, int end, TTCutParameter* cr, TTFileBuffer* cut_stream );
+    virtual void cut(int start, int end, TTCutParameter* cp);
+    virtual void cut(TTFileBuffer* cut_stream, TTCutListData* cut_list);
+
+    TTVideoHeader* getCutStartObject(int cutInPos, TTCutParameter* cutParams);
+    TTVideoHeader* getCutEndObject(int cutOutPos, TTCutParameter* cutParams);
+    TTVideoHeader* checkIFrameSequence(int iFramePos, TTCutParameter* cutParams);
+    void transferCutObjects(TTVideoHeader* startObject, TTVideoHeader* endObject, TTCutParameter* cutParams);
+    void writeSequenceEndHeader();
+
+    void rewriteGOP(quint8* buffer, quint64 absPos, TTGOPHeader* gop, bool closeGOP, TTCutParameter* cr);
+    void removeOrphanedBFrames(QStack<TTBreakObject*>* breakObjects, TTVideoHeader* currentObject);
+    void encodePart( int start, int end, TTCutParameter* cr);
 
   protected:
-    bool openStream();
-    bool closeStream();
-    bool createHeaderListFromIdd();
-    bool createHeaderListFromMpeg2();
-    void writeIDDFile( );
-    void readIDDHeader();
+    bool    openStream();
+    bool    closeStream();
+    bool    createHeaderListFromIdd(TTFileBuffer* iddStream);
+    bool    createHeaderListFromMpeg2();
+    void    writeIDDFile( );
+    void    readIDDHeader(TTFileBuffer* iddStream, quint8 iddFileVersion);
+    quint64 getByteCount(TTVideoHeader* startObject, TTVideoHeader* endObject);
 
   protected:
     TTMessageLogger* log;
-    TTFileBuffer*    mpeg2_stream;
-    TTFileBuffer*    idd_stream;
-    long*            stream_order_list;
-    int              idd_file_version;
-    long             picturesWritten;
 };
 
 #endif //TTMPEG2VIDEOSTREAM_H

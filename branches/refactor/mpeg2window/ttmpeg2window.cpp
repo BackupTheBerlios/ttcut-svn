@@ -195,7 +195,6 @@ void TTMPEG2Window::showVideoFrame()
   }
   else
   {
-    //log->debugMsg(c_name, "clear gl buffer");
     glClear( GL_COLOR_BUFFER_BIT );
     glClear( GL_DEPTH_BUFFER_BIT );
     swapBuffers();
@@ -223,6 +222,9 @@ void TTMPEG2Window::moveToFirstFrame( bool show )
 
   frameInfo = mpeg2_decoder->decodeFirstMPEG2Frame( formatRGB24 );
 
+  if (frameInfo == NULL)
+    qDebug("NO FRAME INFO!!!");
+
   if ( show && ttAssigned(frameInfo->Y) )
   {
     iVideoWidth  = frameInfo->width;
@@ -230,7 +232,7 @@ void TTMPEG2Window::moveToFirstFrame( bool show )
     fAspect      = (float)iVideoWidth/(float)iVideoHeight;
     
     picBuffer    = frameInfo->Y;
-    
+   
     showVideoFrame();
     
     swapBuffers();
@@ -307,6 +309,9 @@ void TTMPEG2Window::openVideoStream( TTMpeg2VideoStream* v_stream )
 
   frameInfo     = mpeg2_decoder->getFrameInfo();
 
+  if (frameInfo == NULL)
+    qDebug("No FrameInfo!");
+
   iVideoWidth  = frameInfo->width;
   iVideoHeight = frameInfo->height;
   fAspect      = (float)iVideoWidth/(float)iVideoHeight;
@@ -329,14 +334,14 @@ void TTMPEG2Window::closeVideoStream()
   showVideoFrame();
 }
 // -----------------------------------------------------------------------------
-// Move to specified frame position and frame typr
+// Move to specified frame position
 // -----------------------------------------------------------------------------
-long TTMPEG2Window::moveToVideoFrame( long iFramePos, int iFrameType )
+long TTMPEG2Window::moveToVideoFrame(long iFramePos)
 {
   if ( iFramePos == currentFrame )
     return currentFrame;
 
-  currentFrame = mpeg2_decoder->moveToFrameIndex( iFramePos, iFrameType );
+  currentFrame = mpeg2_decoder->moveToFrameIndex(iFramePos);
 
   decodeAndShowSlice();
 
@@ -418,7 +423,7 @@ bool TTMPEG2Window::decodeAndShowSlice()
   frame_index = video_index->videoIndexAt( currentFrame );
 
   // decode the current slice
-  frameInfo = mpeg2_decoder->decodeMPEG2Frame( formatRGB24, frame_index->picture_coding_type );
+  frameInfo = mpeg2_decoder->decodeMPEG2Frame(formatRGB24);
 
   // no slice data decoded
   if ( !ttAssigned(frameInfo->Y) )

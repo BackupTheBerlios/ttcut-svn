@@ -16,15 +16,22 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
-//             +- TTVideoHeader -TTMpeg2VideoHeader
+//             |                                     +- TTSequenceHeader
+//             |                                     |
+//             |                                     +- TTSequenceEndHeader
+//             +- TTVideoHeader -TTMpeg2VideoHeader -|
+//             |                                     +- TTPicturesHeader
+//             |                                     |
+//             |                                     +- TTGOPHeader
+//             |
+//             +- TTVideoIndex
+//             |
+//             +- TTBreakObject
 //
 // -----------------------------------------------------------------------------
 
@@ -142,7 +149,15 @@ QString& TTMpegAudioHeader::bitRateString()
  int TTMpegAudioHeader::sampleRate()
 {
   //qDebug( "version, sample_index: %d/%d:%d",version,sampling_frequency,mpeg_sample_raten[version][sampling_frequency] );
-  return mpeg_sample_raten[version][sampling_frequency];
+  int result = mpeg_sample_raten[version][sampling_frequency];
+
+  if (result == 0)
+  {
+    qDebug( "version, sample_index: %d/%d:%d",version,sampling_frequency,mpeg_sample_raten[version][sampling_frequency] );
+    result = 1;
+  }
+
+  return result;
 }
 
  QString& TTMpegAudioHeader::sampleRateString()

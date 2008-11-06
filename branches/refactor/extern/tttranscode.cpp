@@ -34,7 +34,7 @@
 #include <QTimer>
 #include <QTextStream>
 
-#define TTTRANSCODE_DEBUG
+//#define TTTRANSCODE_DEBUG
 
 #define EVENT_LOOP_INTERVALL 100
 
@@ -44,20 +44,20 @@ const char c_name[] = "TTTranscodeProvider";
  * Create the process form for displaying the output of the encode
  */
 TTTranscodeProvider::TTTranscodeProvider( )
-  : TTProcessForm( TTCut::mainWindow )
+  //: TTProcessForm( TTCut::mainWindow )
+  : QObject()
 {
   // message logger instance
   log = TTMessageLogger::getInstance();
   
   QString str_head = "starting encoder >>>transcode -y ffmpeg<<<";
-
   str_command       = "transcode";
   transcode_success = false;
 
-  setModal( true );
-  addLine( str_head );
-  show();  
-  qApp->processEvents();
+  //setModal( true );
+  //addLine( str_head );
+  //show();  
+  //qApp->processEvents();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -65,8 +65,8 @@ TTTranscodeProvider::TTTranscodeProvider( )
  */
 TTTranscodeProvider::~TTTranscodeProvider()
 {
-  close();
-  qApp->processEvents();
+  //close();
+  //qApp->processEvents();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -102,11 +102,7 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 		    << enc_par.avi_input_finfo.absoluteFilePath()
 		    << "--pre_clip"
 		    << "0"
-		    //<< "-y"               // isn't neccessary unless --export_prof is specified!
-		    //<< "mpeg2enc,mp2enc"  // mpeg2enc->video, mp2enc->audio!
-        //<< "-F"
-        //<< "8,\"-v 1 -q 3\""
-		    << "--export_prof"
+	      << "--export_prof"
 		    << "dvd"            // dvd-pal
 		    << "--export_asr"
 		    << str_aspect
@@ -139,19 +135,20 @@ bool TTTranscodeProvider::encodePart( )
 
   // start the process; if successfully started() was emitted otherwise error()
   proc->start(str_command, strl_command_line);
-  
-  // we must wait until the process has finished
-  while (proc->state() == QProcess::Starting ||
-         proc->state() == QProcess::Running     ) {
-    update--;
-    if ( update == 0 ) {
-      qApp->processEvents();
-      update = EVENT_LOOP_INTERVALL;
-    }
-  }
 
-  qApp->processEvents();
-  
+  proc->waitForFinished();
+  // we must wait until the process has finished
+  //while (proc->state() == QProcess::Starting ||
+  //       proc->state() == QProcess::Running     ) {
+  //  update--;
+  //  if ( update == 0 ) {
+  //    qApp->processEvents();      
+  //    update = EVENT_LOOP_INTERVALL;
+  //  }
+  //}
+
+  //qApp->processEvents();
+
   delete proc;
   proc = NULL;
 
@@ -211,7 +208,7 @@ void TTTranscodeProvider::onProcFinished(int e_code, QProcess::ExitStatus e_stat
       transcode_success = false;
       break;
   }
-  addLine(procMsg);
+  //addLine(procMsg);
   exit_code = e_code;
 }
 
@@ -243,7 +240,7 @@ void TTTranscodeProvider::onProcError(QProcess::ProcessError proc_error)
       errorMsg = QString(tr("An unknown error occured: %1")).arg(proc_error);
       break;
   }
-  addLine(errorMsg);
+  //addLine(errorMsg);
   log->errorMsg(c_name, qPrintable(errorMsg));
   transcode_success = false;
 }
@@ -271,7 +268,7 @@ void TTTranscodeProvider::onProcStateChanged(QProcess::ProcessState proc_state)
   }
 
   log->debugMsg(c_name, stateMsg);
-  addLine(stateMsg);
+  //addLine(stateMsg);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -298,7 +295,7 @@ void TTTranscodeProvider::procOutput()
   while (!out.atEnd())
   {
     line = out.readLine();
-    log->infoMsg(c_name, line);
-    addLine( line );
+    //log->infoMsg(c_name, line);
+    //addLine( line );
   }
 }

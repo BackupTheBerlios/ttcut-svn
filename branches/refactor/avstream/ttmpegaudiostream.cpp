@@ -17,23 +17,18 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioStream
-//                               |
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
+//             +- TTAudioStream -|                   
+//             |                 +- TTAC3AudioStream 
+// TTAVStream -|                 
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// TODO
-// -----------------------------------------------------------------------------
-// * video frame rate is here constant 25.0 fps (!) use variabel framerate
-// * check for audio delay
+// TODO * video frame rate is here constant 25.0 fps (!) use variabel framerate
+// TODO * check for audio delay
 //
 // -----------------------------------------------------------------------------
 
@@ -65,14 +60,6 @@ const char c_name[] = "MPEGAUDIOSTR";
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-// constructor
-// -----------------------------------------------------------------------------
-TTMPEGAudioStream::TTMPEGAudioStream()
-  : TTAudioStream()
-{
-   log = TTMessageLogger::getInstance();
-}
-
 // constructor with file info and start position
 // -----------------------------------------------------------------------------
 TTMPEGAudioStream::TTMPEGAudioStream( const QFileInfo &f_info, int s_pos )
@@ -81,17 +68,26 @@ TTMPEGAudioStream::TTMPEGAudioStream( const QFileInfo &f_info, int s_pos )
   log = TTMessageLogger::getInstance();
 }
 
+TTMPEGAudioStream::~TTMPEGAudioStream()
+{
+}
+
+TTAVTypes::AVStreamType TTMPEGAudioStream::streamType() const
+{
+  return TTAVTypes::mpeg_audio;
+}
+
 // search next sync byte in stream
 // -----------------------------------------------------------------------------
 void TTMPEGAudioStream::searchNextSyncByte()
 {
-  uint8_t  byte1;
-  uint8_t  byte2;
-  uint16_t sync_word;
+  quint8  byte1;
+  quint8  byte2;
+  quint16 sync_word;
 
   stream_buffer->readByte( byte2 );
 
-  while (!stream_buffer->streamEOF() )
+  while (!stream_buffer->atEnd() )
   {
     byte1 = byte2;
     stream_buffer->readByte( byte2 );
@@ -100,7 +96,7 @@ void TTMPEGAudioStream::searchNextSyncByte()
 
     if ((sync_word & 0xffe0) == 0xffe0)
     {
-      stream_buffer->seekRelative(-1);
+      stream_buffer->seekBackward(1);
       break;
     }
   }
@@ -108,7 +104,7 @@ void TTMPEGAudioStream::searchNextSyncByte()
 
 // parse mpeg audio header data
 // -----------------------------------------------------------------------------
-void TTMPEGAudioStream::parseAudioHeader( uint8_t* data, int offset, TTMpegAudioHeader* audio_header )
+void TTMPEGAudioStream::parseAudioHeader( quint8* data, int offset, TTMpegAudioHeader* audio_header )
 {
   audio_header->version            = (data[offset] & 0x18) >> 3;
   audio_header->layer              = (data[offset] & 0x06) >> 1;
@@ -171,13 +167,13 @@ void TTMPEGAudioStream::parseAudioHeader( uint8_t* data, int offset, TTMpegAudio
 // -----------------------------------------------------------------------------
 void TTMPEGAudioStream::readAudioHeader( TTMpegAudioHeader* audio_header )
 {
-  uint8_t* data = new uint8_t[3];
+  quint8* data = new quint8[3];
 
   // read 3 byte from stream
-  stream_buffer->readArray( data, 3 );
+  stream_buffer->readByte( data, 3 );
 
   // audio header offset
-  audio_header->setHeaderOffset( stream_buffer->currentOffset() - 4 );
+  audio_header->setHeaderOffset( stream_buffer->position() - 4 );
 
   // parse current audio header and fill header struct
   parseAudioHeader( data, 0, audio_header );
@@ -192,113 +188,77 @@ int TTMPEGAudioStream::createHeaderList( )
   TTMpegAudioHeader* audio_header;
   TTMpegAudioHeader* prev_audio_header;
 
-  // if file already parsed return
-  if ( stream_parsed )
-  {
-    if ( ttAssigned( header_list ) )
-      return header_list->count();
-    else
-      return (int)0;
-  }
-
-  // open the audio stream
-  // open the audio stream
-  if ( !openStream() )  
-  {
-    //qDebug( "%scannot open audio stream: %s",c_name,stream_info->filePath().toAscii() );
-    return (int)0;
-  }
-
-  // stream length
-  stream_length_bytes = stream_buffer->streamLength();
-
   // create new audio header list
   header_list = new TTAudioHeaderList( 1000 );
 
   // Fuer defekte Streams, auf die Startposition positionieren
-  stream_buffer->seekAbsolute( (off64_t)start_pos );
+  stream_buffer->seekAbsolute( (quint64)start_pos );
 
-  if ( ttAssigned( progress_bar ) )
-  {
-    progress_bar->setActionText( "Create audio header list." );
-    progress_bar->setTotalSteps( stream_buffer->streamLength() );
-  }
+  emit progressChanged(TTProgressBar::Init, "Create audio-header list", stream_buffer->size());
 
   try
   {
-    while ( !stream_buffer->streamEOF() )  
+    emit progressChanged(TTProgressBar::Start, "Create audio-header list", 0);
+
+    while ( !stream_buffer->atEnd() )  
     {
       searchNextSyncByte();
       audio_header = new TTMpegAudioHeader();
-      
+
       // read and parse current audio header
       readAudioHeader( audio_header );
-      
+
       // claculate the absolute frame time
       // -----------------------------------------------------------------------
       // first audio header: abs_frame_time = 0.0 (msec)
       if ( header_list->count() == 0 )
-	audio_header->abs_frame_time = (double)0.0;
+        audio_header->abs_frame_time = (double)0.0;
       else
       {
-	// prvious frame header
-	prev_audio_header = (TTMpegAudioHeader*)header_list->at(header_list->count()-1);
-	
-	// absolute frame time for current frame in msec
-	audio_header->abs_frame_time = prev_audio_header->abs_frame_time+
-	  prev_audio_header->frame_time;
+        // previous frame header
+        prev_audio_header = (TTMpegAudioHeader*)header_list->at(header_list->count()-1);
+
+        // absolute frame time for current frame in msec
+        audio_header->abs_frame_time = prev_audio_header->abs_frame_time+
+          prev_audio_header->frame_time;
       }
-      
+
       // add audio header to header list
       header_list->add( audio_header );
-      
       stream_buffer->seekRelative( audio_header->frame_length-4 );
 
-      if ( ttAssigned(progress_bar) )
-        progress_bar->setProgress( stream_buffer->currentOffset() );
-
+      emit progressChanged(TTProgressBar::Step, "Create audio-header list", stream_buffer->position());
     }
 
-    if (ttAssigned(progress_bar))
-      progress_bar->setComplete();
+    emit progressChanged(TTProgressBar::Finished, "Audio-heade list created", stream_buffer->position());
   }
-  catch ( TTStreamEOFException )
+  catch (TTFileBufferException)
   {
   }
-  
-  // close the stream
-  closeStream();
 
-  // TODO: looking for interesting stream points, like mode changes etc.  
-  
 #if defined MPEGAUDIO_DEBUG
-  log->infoMsg(c_name, "header list created: %d",header_list->count());
-  log->infoMsg(c_name, "abs stream length:   %s",absStreamTime().toAscii().data());
+  log->infoMsg(c_name, "header list created: %d", header_list->count());
+  log->infoMsg(c_name, "abs stream length:   %s", qPrintable(sreamLenghtTime().toString("hh:mm:ss")));
 #endif
 
   return header_list->count();
 }
 
-void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, int start, int end,__attribute__ ((unused)) TTCutParameter* cp )
+void TTMPEGAudioStream::cut(int start, int end, TTCutParameter* cp)
 {
-  off64_t start_offset;
-  off64_t end_offset;
+  quint64 start_offset;
+  quint64 end_offset;
 
   start_offset = header_list->audioHeaderAt(start)->headerOffset();
   end_offset   = header_list->audioHeaderAt(end)->headerOffset()-1;
 
-  //qDebug( "%scopy segment: %lld - %lld",c_name,start_offset,end_offset );
-
-  openStream();
-  copySegment( cut_stream, start_offset, end_offset );
-  closeStream();
+  copySegment(cp->getTargetStreamBuffer(), start_offset, end_offset );
 }
 
 
 void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 {
-  int i;
-  TTCutParameter* cut_param = new TTCutParameter();
+  TTCutParameter* cut_param = new TTCutParameter(cut_stream);
   long    start_pos;
   long    end_pos;
   QString action_string;
@@ -314,49 +274,36 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   log->infoMsg(c_name, ">>> cut audio stream                           ");
   log->infoMsg(c_name, "-----------------------------------------------");
   log->infoMsg(c_name, "entries in cut list: %d", cut_list->count());
-  log->infoMsg(c_name, "target stream      : %s", QString::fromUtf8(cut_stream->fileName()).toLatin1().constData());
+  log->infoMsg(c_name, "target stream      : %s", qPrintable(cut_stream->fileName()));
 #endif
 
-  for ( i = 0; i < cut_list->count(); i++ )
+  for (int i = 0; i < cut_list->count(); i++)
   {
-    if ( i == 0 )
-      cut_param->first_call = true;
-    else
-      cut_param->first_call = false;
-
-    if ( i == cut_list->count()-1 )
-      cut_param->last_call = true;
+    if (i == 0)
+      cut_param->firstCall();
 
     start_pos = cut_list->cutInPosAt( i );
     end_pos   = cut_list->cutOutPosAt( i );
 
-    if ( ttAssigned( progress_bar ) )
-    {
-      action_string.sprintf( "Audio cut: %d/%ld-%ld",i+1,start_pos,end_pos );
-      progress_bar->setActionText( action_string );
-    }
-
+    
     //qDebug( "%sstart / end  : %d / %d",c_name,start_pos,end_pos );
     //search 
+    TTMpegAudioHeader* audio_header = (TTMpegAudioHeader*)header_list->audioHeaderAt(0);
+    frame_time = audio_header->frame_time;
+
     video_frame_length = 1000.0 / 25.0; //TODO: replace with fps
 
     //qDebug( "%slocal audio offset: %f",c_name,local_audio_offset );
 
-    audio_start_time = ((float)start_pos*video_frame_length+local_audio_offset)/frame_time;
-    audio_start_index = (long)round(audio_start_time);
-    
-    if ( (int)audio_start_index < 0 )
-      audio_start_index = 0;
-
-    local_audio_offset = ((float)start_pos*video_frame_length)-
-      (float)audio_start_index*frame_time+local_audio_offset;
-
-    audio_end_time   = (((float)(end_pos+1)*video_frame_length-local_audio_offset)/frame_time-1.0);
-    audio_end_index  = (long)round(audio_end_time);
-
-    if (audio_end_index >= header_list->count())
-      audio_end_index = header_list->count()-1;
-
+    audio_start_time  = ((float)start_pos*video_frame_length+local_audio_offset)/frame_time;
+    audio_start_index = ((long)round(audio_start_time) >= 0)
+          ? (long)round(audio_start_time) 
+          : 0;
+    local_audio_offset = ((float)start_pos*video_frame_length) - (float)audio_start_index*frame_time+local_audio_offset;
+    audio_end_time     = (((float)(end_pos+1)*video_frame_length-local_audio_offset)/frame_time-1.0);
+    audio_end_index    = ((long)round(audio_end_time) < header_list->count()) 
+          ? (long)round(audio_end_time) 
+          : header_list->count()-1;
     local_audio_offset = ((float)(audio_end_index+1)*frame_time)-
       ((float)(end_pos+1)*video_frame_length)+local_audio_offset;
 
@@ -370,7 +317,10 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     log->infoMsg( c_name, "audio length      : %f",(audio_end_index-audio_start_index+1)*frame_time );
 #endif
 
-    cut( cut_stream, audio_start_index, audio_end_index, cut_param );
+    cut(audio_start_index, audio_end_index, cut_param);
+
+    if ( i == cut_list->count()-1 )
+      cut_param->lastCall();
   }
   delete cut_param;
 }
@@ -379,35 +329,29 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 // -----------------------------------------------------------------------------
 QString TTMPEGAudioStream::streamExtension()
 {
-  QString extension = ".mp2";
-
-  if ( ttAssigned( stream_info) )
-    return stream_info->suffix().toLower();
-  else
-    return extension;
+  return (ttAssigned( stream_info))
+        ? stream_info->suffix().toLower()
+        : ".mp2";
 }
 
 
-QString TTMPEGAudioStream::absStreamTime()
+QTime TTMPEGAudioStream::streamLengthTime()
 {
-  if ( ttAssigned( header_list ) )
-  {
-    if ( header_list->count() > (int)0 )
-    {
-      TTMpegAudioHeader* audio_header = (TTMpegAudioHeader*)header_list->audioHeaderAt( header_list->count()-1 );
+  QTime result(0, 0, 0);
 
-      return ttMsecToTimeD( audio_header->abs_frame_time ).toString("hh:mm:ss.zzz" );
-    }
-  }
-  // TODO: default return value
-  return QString("");
+  if (header_list == NULL || header_list->count() == 0)
+    return result;
+
+  TTMpegAudioHeader* audio_header = (TTMpegAudioHeader*)header_list->audioHeaderAt( header_list->count()-1 );
+  result = ttMsecToTimeD( audio_header->abs_frame_time );
+
+  return result;
 }
 
 
 int TTMPEGAudioStream::searchIndex( double s_time )
 {
-  if ( ttAssigned( header_list ) )
-    return header_list->searchTimeIndex( s_time );
-  else
-    return -1;
+  return (ttAssigned( header_list ))
+      ? header_list->searchTimeIndex( s_time )
+      : -1;
 }

@@ -17,8 +17,6 @@ extern "C" QTime   ttFramesToTime(long lFrames, float fps);
 extern "C" long    ttTimeToFrames(QTime timeCode, float fps);
 extern "C" TTTimeCode* ttFrameToTimeCode( int FrameNr, float fps);
 
-typedef qint64 int64;
-
 #ifndef TTTIMECODE_H
 #define TTTIMECODE_H
 

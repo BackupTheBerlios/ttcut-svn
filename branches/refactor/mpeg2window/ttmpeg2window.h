@@ -65,8 +65,8 @@ class TTMPEG2Window : public QGLWidget
     void closeVideoStream();
 
     // navigation
-    void moveToFirstFrame( bool show = true );
-    long moveToVideoFrame( long iFramePos, int iFrameType=0 );
+    void moveToFirstFrame(bool show = true);
+    long moveToVideoFrame(long iFramePos);
 
     void showVideoFrame();
     void showFrameAt( uint index );

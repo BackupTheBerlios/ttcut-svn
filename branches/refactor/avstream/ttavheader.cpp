@@ -19,13 +19,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |
@@ -126,17 +123,24 @@ QString& TTAVHeader::sampleRateString()
 
 // return header type (start code)
 // -----------------------------------------------------------------------------
-uint8_t TTAVHeader::headerType()
+quint8 TTAVHeader::headerType()
 {
   return header_start_code;
 }
 
 // return header offset in bytes
 // -----------------------------------------------------------------------------
-off64_t TTAVHeader::headerOffset()
+quint64 TTAVHeader::headerOffset() const
 {
   return header_offset;
 }
+
+bool TTAVHeader::operator==(const TTAVHeader& test) const
+{
+  qDebug("call to operator == ...");
+  return (header_offset == test.header_offset);
+}
+
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
@@ -208,17 +212,36 @@ TTVideoHeader::TTVideoHeader()
 // *** TTVideoIndex
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
-/*
-*bool TTVideoIndex::operator < (TTAVHeader* v_index)
-*{
-*  qDebug( "video index operator <" );
-*
-*  if ( display_order < ((TTVideoIndex*)v_index)->display_order )
-*    return true;
-*  else
-*    return false;
-*}
-*/
+void TTVideoIndex::setDisplayOrder(int value)
+{
+  display_order = value;
+}
+
+int TTVideoIndex::getDisplayOrder()
+{
+  return display_order;
+}
+
+void TTVideoIndex::setHeaderListIndex(int value)
+{
+  header_list_index = value;
+}
+
+int TTVideoIndex::getHeaderListIndex()
+{
+  return header_list_index;
+}
+
+void TTVideoIndex::setPictureCodingType(int value)
+{
+  picture_coding_type = value;
+}
+
+int TTVideoIndex::getPictureCodingType()
+{
+  return picture_coding_type;
+}
+
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
 // *** TTBreakObject
@@ -230,22 +253,20 @@ TTBreakObject::TTBreakObject()
   restart_object       = (TTVideoHeader*)NULL;
   stop_object_index    = -1;
   restart_object_index = -1;
-  copy_start           = -1;
-  copy_stop            = -1;
 }
 
 TTBreakObject::~TTBreakObject()
 {
 }
 
-void TTBreakObject::setStopObject( TTVideoHeader* stop, long index )
+void TTBreakObject::setStopObject( TTVideoHeader* stop, int index )
 {
   stop_object = stop;
   stop_object_index = index;
 }
 
 
-void TTBreakObject::setRestartObject( TTVideoHeader* restart, long index )
+void TTBreakObject::setRestartObject( TTVideoHeader* restart, int index )
 {
   restart_object = restart;
   restart_object_index = index;
@@ -264,36 +285,14 @@ TTVideoHeader* TTBreakObject::restartObject()
 }
 
 
-long TTBreakObject::stopObjectIndex()
+int TTBreakObject::stopObjectIndex()
 {
   return stop_object_index;
 }
 
 
-long TTBreakObject::restartObjectIndex()
+int TTBreakObject::restartObjectIndex()
 {
   return restart_object_index;
 }
 
-void TTBreakObject::setCopyStart( long start )
-{
-  copy_start = start;
-}
-
-
-void TTBreakObject::setCopyStop( long stop )
-{
-  copy_stop = stop;
-}
-
-
-long TTBreakObject::copyStart()
-{
-  return copy_start;
-}
-
-
-long TTBreakObject::copyStop()
-{
-  return copy_stop;
-}

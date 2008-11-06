@@ -1,13 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2005/2010 / www.tritime.org                    */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2008                                                      */
 /* FILE     : ttavstream.h                                                    */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/02/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/10/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/01/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -21,13 +19,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioStream
-//                               |
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
+//             +- TTAudioStream -|                   
+//             |                 +- TTAC3AudioStream 
+// TTAVStream -|                 
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -53,12 +48,7 @@
 #define TTAVSTREAM_H
 
 #include "ttcommon.h"
-
-#ifdef __WIN32
-#include "ttwfilebuffer.h"
-#else
 #include "ttfilebuffer.h"
-#endif
 
 #include "../data/ttcutparameter.h"
 #include "../common/ttmessagelogger.h"
@@ -66,14 +56,12 @@
 
 #include "ttavtypes.h"
 #include "ttaudioheaderlist.h"
-#include "ttaudioindexlist.h"
 #include "ttvideoheaderlist.h"
 #include "ttvideoindexlist.h"
-#include "ttmemorybuffer.h"
 
+#include <QObject>
 #include <qdatetime.h>
 
-//class TTCutParameter;
 class TTCutListData;
 class TTAVTypes;
 class QString;
@@ -84,52 +72,39 @@ class TTCutParameter;
 // -----------------------------------------------------------------------------
 // *** TTAVStream: Abstract class TTAVStream
 // -----------------------------------------------------------------------------
-class TTAVStream
+class TTAVStream : public QObject
 {
-public:
-  TTAVStream();
-  TTAVStream( const QFileInfo &f_info );
-  virtual ~TTAVStream();
-
-  virtual void setFileName( const QString &f_name );
-  virtual QString fileName();
-  virtual QString filePath();
-  virtual void setFileInfo( const QFileInfo &f_info );
-  virtual QFileInfo* fileInfo();
-  virtual TTFileBuffer* streamBuffer();
-  virtual off64_t streamLengthByte();
-  virtual TTAVTypes::AVStreamType streamType();
-
-  virtual bool openStream();
-  virtual bool closeStream();
-
-  virtual void setProgressBar( TTProgressBar* p_bar );
-
-  virtual void createIndex();
-  virtual int createHeaderList();
-  virtual int createIndexList();
-  virtual void cut( TTFileBuffer* cut_stream, int start, int end, TTCutParameter* cp );
-  virtual void cut( TTFileBuffer* cut_stream, TTCutListData* cut_list );
-  virtual bool isCutInPoint( int pos );
-  virtual bool isCutOutPoint( int pos );
-  virtual QString streamExtension();
-  virtual void copySegment( TTFileBuffer* cut_stream, off64_t start_adr, off64_t end_adr );
-
-  virtual void openSource( QString f_name, bool use_buffer );
-  virtual void closeSource();
-
-  virtual long calculateLength( int start, int end );
+  Q_OBJECT
 
 protected:
-  QFileInfo*     stream_info;
-  TTFileBuffer*  stream_buffer;
-  int            stream_mode;
-  off64_t        stream_length_bytes;
-  TTAVTypes::AVStreamType stream_type;
-  bool           stream_open;
-  bool           stream_parsed;
-  TTProgressBar* progress_bar;
+  TTAVStream(const QFileInfo &f_info);
+  virtual ~TTAVStream();
+
+public:
+  QString fileName();
+  QString filePath();
+  QString fileExtension();
+  quint64 streamLengthByte();
+  virtual QTime streamLengthTime() = 0;
+  virtual TTAVTypes::AVStreamType streamType() const = 0;
+  virtual bool isCutInPoint(int pos) = 0;
+  virtual bool isCutOutPoint(int pos) = 0;
+ 
+public:
+  virtual int  createHeaderList() = 0;
+  virtual int  createIndexList() = 0;
+  virtual void cut(int start, int end, TTCutParameter* cp) = 0;
+  virtual void cut(TTFileBuffer* cut_stream, TTCutListData* cut_list) = 0;
+  virtual void copySegment(TTFileBuffer* cut_stream, quint64 start_adr, quint64 end_adr);
+
+protected:
+  QFileInfo*       stream_info;
+  TTFileBuffer*    stream_buffer;
   TTMessageLogger* log;
+  TTAVTypes::AVStreamType stream_type;
+  
+signals:
+  void progressChanged(TTProgressBar::State state, const QString& msg, quint64 value);
 };
 
 
@@ -139,31 +114,21 @@ protected:
 class TTAudioStream : public TTAVStream
 {
 public:
-  TTAudioStream();
-  TTAudioStream( const QFileInfo &f_info, int s_pos=0);
+  TTAudioStream(const QFileInfo &f_info, int s_pos=0);
   virtual ~TTAudioStream();
 
-  // header an index list
+  // header list
   TTAudioHeaderList* headerList();
-  TTAudioIndexList* indexList();
-  void setHeaderList( TTAudioHeaderList* h_list );
-  void setIndexList( TTAudioIndexList* i_list );
 
   TTAudioHeader* headerAt( int index );
 
   // virtual cut methods
-  virtual bool isCutInPoint( int pos );
-  virtual bool isCutOutPoint( int pos );
-
-  // stream properties common for all audio stream types
-  int sampleCount();
-  double length();
-  virtual QString absStreamTime(){return "";};
+  virtual bool isCutInPoint(__attribute__ ((unused))int pos)  {return true;};
+  virtual bool isCutOutPoint(__attribute__ ((unused))int pos)  {return true;};
 
 protected:
-  // header and index list
+  // header list
   TTAudioHeaderList* header_list;
-  TTAudioIndexList*  index_list;
 
   // audio_delay > 0: audio starts before video (in ms)
   // audio_delay < 0: audio starts after  video (in ms)
@@ -181,39 +146,35 @@ protected:
 class TTVideoStream : public TTAVStream
 {
  public:
-  TTVideoStream();
   TTVideoStream( const QFileInfo &f_info );
   virtual ~TTVideoStream();
 
   // header- and index-list
   TTVideoHeaderList* headerList();
   TTVideoIndexList* indexList();
-  void setHeaderList( TTVideoHeaderList* h_list );
-  void setIndexList( TTVideoIndexList* i_list );
 
-  int    frameCount();
+  int     frameCount();
   float   frameRate();
   float   bitRate();
   int     currentFrameType();
   QTime   currentFrameTime();
-  off64_t currentFrameOffset();
-  int     frameType( int i_pos );
-  QTime   frameTime( int i_pos );
-  off64_t frameOffset( int i_pos );
-
-  // navigation in header-list
+  quint64 currentFrameOffset();
+  int     frameType(int i_pos);
+  QTime   frameTime(int i_pos);
+  quint64 frameOffset(int i_pos);
+  
+  TTSequenceHeader* currentSequenceHeader();
+  TTSequenceHeader* getSequenceHeader(int pos);
 
   // navigation in index-list
   int currentIndex();
-  int setCurrentIndex( int index );
-  int previousIndex();
+  
   int markerIndex();
   int setMarkerIndex( int index );
-  int moveToIndexPos( int index, int f_type=0 );
-  int moveToIndexPos( const QTime& f_time, int f_type=0 );
-  int moveToIndexPosSO( int index, int f_type=0 );
-  int moveToNextFrame( int f_type=0 );
-  int moveToPrevFrame( int f_type=0 );
+
+  int moveToIndexPos(int index, int f_type=0);
+  int moveToNextFrame(int f_type=0);
+  int moveToPrevFrame(int f_type=0);
   int moveToNextIFrame();
   int moveToPrevIFrame();
   int moveToNextPFrame();
@@ -225,19 +186,15 @@ protected:
   // List-objects
   TTVideoHeaderList* header_list;
   TTVideoIndexList*  index_list;
-  int               num_header;
-  int               num_index;
 
   // Navigation
-  TTVideoIndex*      video_index;
-  int               current_index;
-  int               previous_index;
-  int               current_marker_index;
-  int               prev_marker_index;
+  TTVideoIndex* video_index;
+  int           current_index;
+  int           current_marker_index;
 
   // intern
-  float              frame_rate;
-  float              bit_rate;
+  float         frame_rate;
+  float         bit_rate;
 };
 
 #endif //TTAVSTREAM_H

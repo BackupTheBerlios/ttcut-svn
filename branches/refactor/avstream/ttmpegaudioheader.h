@@ -16,15 +16,22 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
-//             +- TTVideoHeader -TTMpeg2VideoHeader
+//             |                                     +- TTSequenceHeader
+//             |                                     |
+//             |                                     +- TTSequenceEndHeader
+//             +- TTVideoHeader -TTMpeg2VideoHeader -|
+//             |                                     +- TTPicturesHeader
+//             |                                     |
+//             |                                     +- TTGOPHeader
+//             |
+//             +- TTVideoIndex
+//             |
+//             +- TTBreakObject
 //
 // -----------------------------------------------------------------------------
 
@@ -115,20 +122,20 @@ public:
   QString& sampleRateString();
 
   //private:
-  uint8_t version;
-  uint8_t layer;
-  bool    protection_bit;
-  uint8_t bitrate_index;
-  uint8_t bit_rate;
-  uint8_t sampling_frequency;
-  uint8_t sample_rate;
-  bool    padding_bit;
-  bool    private_bit;
-  uint8_t mode;
-  uint8_t mode_extension;
-  bool    copyright;
-  bool    original_home;
-  uint8_t emphasis;
+  quint8 version;
+  quint8 layer;
+  bool   protection_bit;
+  quint8 bitrate_index;
+  quint8 bit_rate;
+  quint8 sampling_frequency;
+  quint8 sample_rate;
+  bool   padding_bit;
+  bool   private_bit;
+  quint8 mode;
+  quint8 mode_extension;
+  bool   copyright;
+  bool   original_home;
+  quint8 emphasis;
 
   TTMessageLogger* log;
 };

@@ -1,15 +1,15 @@
 /*----------------------------------------------------------------------------*/
 /* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : tttranscode.h                                                   */
+/* PROJEKT  : TTCUT 2008                                                      */
+/* FILE     : ttavdata.h                                                      */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/07/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 03/18/2006 */
+/* AUTHOR  : a.fink (E-Mail: andreas.fink85@gmail.com)       DATE: 03/11/2008 */
+/* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// TTTRANSCODE
+// TTAVDATA
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -28,67 +28,37 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTTRANSCODE_H
-#define TTTRASNCODE_H
+/******************************************************************************/
+/**                         TTAVData                                          */
+/** class which manages the composition of a video stream with its            */
+/** audio files. Before deleting you can call deleteAll() to clear            */
+/** the data.                                                                 */
+/******************************************************************************/
 
-#include "../common/ttmessagelogger.h"
-#include "../common/ttcut.h"
-#include "../gui/ttprocessform.h"
+#ifndef TTAVDATA_H
+#define TTAVDATA_H
 
-#include <QFileInfo>
-#include <QProcess>
-#include <QCloseEvent>
+class TTVideoStream;
+class TTAudioListData;
+class TTAudioStream;
+class TTAudioListDataItem;
 
-class TTEncodeParameter;
-
-class TTTranscodeProvider : public QObject//: public TTProcessForm
+class TTAVData
 {
-  Q_OBJECT
-
   public:
-    TTTranscodeProvider();
-    ~TTTranscodeProvider();
+    TTAVData( TTVideoStream* pVideoStream, TTAudioListData* pAudioList );
 
-    void setParameter( TTEncodeParameter& enc_par );
-    bool encodePart( );
-
-  public slots:
-    void closeEvent(QCloseEvent *event);
-    void onProcReadOut();
-    void onProcStarted();
-    void onProcFinished(int exit_code, QProcess::ExitStatus );
-    void onProcError(QProcess::ProcessError proc_error);
-    void onProcStateChanged(QProcess::ProcessState proc_state);
-    void onProcKill();
-
-  protected:
-    void procOutput();
+    void                 deleteAll();
+    TTVideoStream*       videoStream();
+    TTAudioStream*       audioStream( int index );
+    TTAudioListData*     audioList();
+    int                  audioCount();
+    TTAudioListDataItem& audioItem( int index );
+    int                  indexOfAudioStream( TTAudioStream* pCompareStream );
+    bool                 CanCutWith( TTAVData* pOther );
 
   private:
-    TTMessageLogger* log;
-    QProcess*        proc;
-    QString          str_command;
-    QStringList      strl_command_line;
-    int              exit_code;
-    bool             transcode_success;
+    TTVideoStream*   m_pVideoStream;
+    TTAudioListData* m_pAudioList;
 };
-
-
-class TTEncodeParameter
-{
- public:
-  TTEncodeParameter(){};
-  ~TTEncodeParameter(){};
-
-  QFileInfo avi_input_finfo;
-  QFileInfo mpeg2_output_finfo;
-  int       video_width;
-  int       video_height;
-  float     video_fps;
-  int       video_aspect_code;
-  float     video_bitrate;
-  float     video_max_bitrate;
-};
-
-#endif //TTTRANSCODE_H  
-   
+#endif

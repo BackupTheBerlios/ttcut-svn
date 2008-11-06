@@ -16,15 +16,22 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
-//             +- TTVideoHeader -TTMpeg2VideoHeader
+//             |                                     +- TTSequenceHeader
+//             |                                     |
+//             |                                     +- TTSequenceEndHeader
+//             +- TTVideoHeader -TTMpeg2VideoHeader -|
+//             |                                     +- TTPicturesHeader
+//             |                                     |
+//             |                                     +- TTGOPHeader
+//             |
+//             +- TTVideoIndex
+//             |
+//             +- TTBreakObject
 //
 // -----------------------------------------------------------------------------
 

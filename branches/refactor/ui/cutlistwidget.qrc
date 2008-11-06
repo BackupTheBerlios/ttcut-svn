@@ -5,6 +5,7 @@
         <file>pixmaps/cutaudio_18.xpm</file>
         <file>pixmaps/cutav_18.xpm</file>
         <file>pixmaps/downarrow_18.xpm</file>
+        <file>pixmaps/editcopy.png</file>
         <file>pixmaps/preview_18.xpm</file>
         <file>pixmaps/uparrow_18.xpm</file>
     </qresource>

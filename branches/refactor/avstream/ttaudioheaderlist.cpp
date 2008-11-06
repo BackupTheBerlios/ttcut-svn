@@ -54,40 +54,27 @@ TTAudioHeaderList::TTAudioHeaderList( int size )
 
 TTAudioHeader* TTAudioHeaderList::audioHeaderAt( int index )
 {
-  try
-  {
-    checkIndexRange( index );
+  checkIndexRange(index);
     
-    return (TTAudioHeader*)at( index );
-  }
-  catch ( TTListIndexException )
-  {
-    qDebug("IndexListException!");
-    qDebug("Count %d CurrentIndex: %d", count(), index);
-    return NULL;
-  }
+  return (TTAudioHeader*)at( index );
 }
 
 
 int TTAudioHeaderList::searchTimeIndex( double s_time )
 {
-  int           index;
   int           abs_time = 0;
   int           search_time = (int)s_time*1000;
   TTAudioHeader* audio_header;
 
-  index = 0;
+  int index = 0;
 
   do
   {
     audio_header = (TTAudioHeader*)at(index);
     abs_time = (int)(audio_header->abs_frame_time*1000);
-    qDebug( "abs time: %d / %d",abs_time, search_time );
     index++;
   }
   while ( abs_time <= search_time );
-
-  qDebug( "found index: %d",index-2 );
 
   return index-2;
 }
@@ -97,12 +84,11 @@ void TTAudioHeaderList::sort()
   qSort( begin(), end(), audioHeaderListCompareItems );
 }
 
-
 bool audioHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 )
 {
   // the values for the display order of two items are compared
-  if ( (int)((TTAudioHeader*)head_1)->abs_frame_time*1000 < (int)((TTAudioHeader*)head_2)->abs_frame_time*1000 )
-    return true;
-  else
-    return false;
+  int time1 = (int)((TTAudioHeader*)head_1)->abs_frame_time*1000;
+  int time2 = (int)((TTAudioHeader*)head_2)->abs_frame_time*1000;
+
+  return (time1 < time2);
 }

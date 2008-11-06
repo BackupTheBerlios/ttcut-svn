@@ -47,14 +47,7 @@
 #define TTAVTYPES_H
 
 #include "ttcommon.h"
-
-#ifdef __WIN32
-#include "ttwfilebuffer.h"
-#else
 #include "ttfilebuffer.h"
-#endif
-
-#include "ttmemorybuffer.h"
 
 class QString;
 class QFileInfo;
@@ -62,9 +55,9 @@ class QFileInfo;
 class TTAudioStream;
 class TTVideoStream;
 
-// -----------------------------------------------------------------------------
-// *** TTAVTypes: Abstract base class for AV stream types
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Base class for AV stream types
+ */
 class TTAVTypes
 {
  public:
@@ -76,9 +69,6 @@ class TTAVTypes
   {
     mpeg_audio,
     ac3_audio,
-    pcm_audio,
-    dts16_audio,
-    dts14_audio,
     mpeg2_demuxed_video,
     mpeg2_mplexed_video,
     unknown
@@ -86,24 +76,21 @@ class TTAVTypes
 
   virtual QFileInfo&   avStreamInfo();
   virtual AVStreamType avStreamType();
-  virtual off64_t      typeHeaderOffset();
+  virtual quint64      typeHeaderOffset();
   virtual long         typeHeaderLength();
-
 
  protected:
   QFileInfo*      av_stream_info;
   bool            av_stream_exists;
   TTFileBuffer*   av_stream;
   AVStreamType    av_stream_type;
-  off64_t         type_header_offset;
+  quint64         type_header_offset;
   long            type_header_length;
-  TTMemoryBuffer* mem_buffer;
 };
 
-
-// -----------------------------------------------------------------------------
-// *** TTAudioType: Audio-stream type
-// -----------------------------------------------------------------------------
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Audio-stream type
+ */
 class TTAudioType : public TTAVTypes
 {
  public:
@@ -116,16 +103,15 @@ class TTAudioType : public TTAVTypes
   void getAudioStreamType();
 
  private:
-  int      start_pos;
-  uint8_t  frame_size_code;
-  uint16_t sample_rate;
-  uint16_t frame_len;
+  int     start_pos;
+  quint8  frame_size_code;
+  quint16 sample_rate;
+  quint16 frame_len;
 };
 
-
-// -----------------------------------------------------------------------------
-// *** TTVideoType: Video stream type
-// -----------------------------------------------------------------------------
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Video stream type
+ */
 class TTVideoType : public TTAVTypes
 {
  public:
@@ -139,5 +125,3 @@ class TTVideoType : public TTAVTypes
 };
 
 #endif //TTAVTYPES_H
-
-

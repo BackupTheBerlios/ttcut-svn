@@ -80,7 +80,7 @@ bool TTAVIWriter::initAVIWriter( TTVideoStream* v_stream )
    file_size       = v_stream->streamLengthByte();
 
    //create the decoder object
-   decoder = new TTMpeg2Decoder( qPrintable(video_file_name), index_list, header_list );
+   decoder = new TTMpeg2Decoder(video_file_name, index_list, header_list );
 
    // must set the format for conversion here
    decoder->decodeFirstMPEG2Frame( formatYV12 ); 
@@ -101,6 +101,7 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   TFrameInfo* frameInfo;
   int         frame_count = end_frame_pos - start_frame_pos;
 
+  //end_frame_pos = end_frame_pos + 50;
 
   //qDebug( "%s------------------------------------------------",c_name );
   //qDebug( "%swrite AVI: start: %ld | end: %ld | count: %d",c_name,start_frame_pos,end_frame_pos,frame_count );
@@ -126,10 +127,10 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   //qDebug( "%sAVI frame info: width: %d x height: %d",c_name,frameInfo->width,frameInfo->height );
 
   //TODO: avoid setting hard coded frame rate!
-  AVI_set_video(avi_file, frameInfo->width, frameInfo->height, 25.0, "YV12");
+  AVI_set_video(avi_file, frameInfo->width, frameInfo->height, 25.0, (char*)"YV12");
   
-  ref_data = new uint8_t [frameInfo->size+2*frameInfo->chroma_size];
-
+  ref_data = new quint8[frameInfo->size+2*frameInfo->chroma_size];
+  
 
   for ( i = start_frame_pos; i <= end_frame_pos; i++ )
   {

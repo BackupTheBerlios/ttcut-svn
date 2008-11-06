@@ -5,19 +5,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>947</width>
-    <height>120</height>
+    <width>881</width>
+    <height>100</height>
    </rect>
   </property>
   <property name="sizePolicy" >
    <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-    <horstretch>0</horstretch>
+    <horstretch>1</horstretch>
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>640</width>
+    <width>620</width>
+    <height>100</height>
+   </size>
+  </property>
+  <property name="baseSize" >
+   <size>
+    <width>620</width>
     <height>120</height>
    </size>
   </property>
@@ -63,21 +69,21 @@
      <item>
       <widget class="QPushButton" name="pbAudioFileOpen" >
        <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <horstretch>1</horstretch>
+         <verstretch>1</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize" >
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>45</width>
+         <height>24</height>
         </size>
        </property>
        <property name="maximumSize" >
         <size>
-         <width>32</width>
-         <height>32</height>
+         <width>45</width>
+         <height>24</height>
         </size>
        </property>
        <property name="text" >
@@ -108,21 +114,33 @@
        <item>
         <widget class="QPushButton" name="pbAudioEntryUp" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize" >
           <size>
-           <width>25</width>
-           <height>15</height>
+           <width>45</width>
+           <height>16</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
-           <width>25</width>
+           <width>45</width>
            <height>20</height>
+          </size>
+         </property>
+         <property name="sizeIncrement" >
+          <size>
+           <width>1</width>
+           <height>1</height>
+          </size>
+         </property>
+         <property name="baseSize" >
+          <size>
+           <width>60</width>
+           <height>32</height>
           </size>
          </property>
          <property name="text" >
@@ -131,26 +149,44 @@
          <property name="icon" >
           <iconset resource="audiofilelistwidget.qrc" >:/pixmaps/pixmaps/uparrow_18.xpm</iconset>
          </property>
+         <property name="iconSize" >
+          <size>
+           <width>12</width>
+           <height>12</height>
+          </size>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="pbAudioEntryDelete" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize" >
           <size>
-           <width>25</width>
-           <height>15</height>
+           <width>45</width>
+           <height>16</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
-           <width>25</width>
+           <width>45</width>
            <height>20</height>
+          </size>
+         </property>
+         <property name="sizeIncrement" >
+          <size>
+           <width>1</width>
+           <height>1</height>
+          </size>
+         </property>
+         <property name="baseSize" >
+          <size>
+           <width>60</width>
+           <height>32</height>
           </size>
          </property>
          <property name="text" >
@@ -159,26 +195,44 @@
          <property name="icon" >
           <iconset resource="audiofilelistwidget.qrc" >:/pixmaps/pixmaps/cancel_18.xpm</iconset>
          </property>
+         <property name="iconSize" >
+          <size>
+           <width>12</width>
+           <height>12</height>
+          </size>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="pbAudioEntryDown" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize" >
           <size>
-           <width>25</width>
-           <height>15</height>
+           <width>45</width>
+           <height>16</height>
           </size>
          </property>
          <property name="maximumSize" >
           <size>
-           <width>25</width>
+           <width>45</width>
            <height>20</height>
+          </size>
+         </property>
+         <property name="sizeIncrement" >
+          <size>
+           <width>1</width>
+           <height>1</height>
+          </size>
+         </property>
+         <property name="baseSize" >
+          <size>
+           <width>60</width>
+           <height>32</height>
           </size>
          </property>
          <property name="text" >

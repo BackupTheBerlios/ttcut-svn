@@ -33,23 +33,12 @@
 #ifndef TTMPEG2DECODER_H
 #define TTMPEG2DECODER_H
 
-//#include "../avstream/ttcommon.h"
-
-// project header files
-//#if defined(__TTCUT)
 #include "../common/ttcut.h"
-//#else
-//#include "ttmpeg2.h"
-//#endif
 
 // standard C header files
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#ifndef __WIN32
-#include <inttypes.h>
-#endif
 
 // libmpeg2-dec header files
 extern "C"
@@ -61,19 +50,14 @@ extern "C"
 // Qt header files
 #include <qstring.h>
 
-#ifdef __WIN32
-#include "../avstream/ttwfilebuffer.h"
-#else
-#include "../avstream/ttfilebuffer.h"
-#endif
-
 #include "../avstream/ttavheader.h"
 #include "../avstream/ttvideoheaderlist.h"
 #include "../avstream/ttvideoindexlist.h"
 #include "../avstream/ttmpeg2videoheader.h"
 
-// constants for mpeg2 pixel format
-// -----------------------------------------------------------------------------
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * constants for mpeg2 pixel format
+ */
 enum TPixelFormat 
 {
   formatRGB24 = 1,  // RGB interleaved; default
@@ -83,14 +67,14 @@ enum TPixelFormat
   formatYUV24 = 5   // YUV planes
 };
 
-
-// Frame info struct
-// -----------------------------------------------------------------------------
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Frame info struct
+ */
 typedef struct
 {
-  uint8_t* Y;
-  uint8_t* U;
-  uint8_t* V;
+  quint8* Y;
+  quint8* U;
+  quint8* V;
   int      width;
   int      height;
   int      size;
@@ -100,9 +84,9 @@ typedef struct
   int      chroma_size;
 } TFrameInfo;
 
-
-// Sequence properties struct
-// -----------------------------------------------------------------------------
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Sequence properties struct
+ */
 typedef struct
 {
   int          width;
@@ -112,101 +96,85 @@ typedef struct
   unsigned int frame_period;
 } TSequenceInfo;
 
-
-// Stream properties struct
-// -----------------------------------------------------------------------------
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Stream properties struct
+ */
 typedef struct
 {
-  off64_t size;
-  off64_t position;
+  quint64 size;
+  quint64 position;
   int     frame;
   int     videoPTS;
 } TStreamInfo;
 
-
-// Initial buffer size
-// -----------------------------------------------------------------------------
-//const int initialStreamBufferSize  = 1048576;
-//const int initialStreamBufferSize  = 524288;
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Initial buffer size
+ */
 const int initialStreamBufferSize  = 65536;
 const int initialDecoderBufferSize = 5129;
 
 
-// -----------------------------------------------------------------------------
-// TTMpeg2Decoder class declaration
-// -----------------------------------------------------------------------------
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * TTMpeg2Decoder class declaration
+ */
 class TTMpeg2Decoder
 {
  public:
-  TTMpeg2Decoder( );
-  TTMpeg2Decoder( QString cFName, TTVideoIndexList* viIndex=NULL, 
-		  TTVideoHeaderList* viHeader=NULL,long lOffset=0, long lSize=-1);
+  TTMpeg2Decoder(QString cFName, 
+                 TTVideoIndexList* viIndex, TTVideoHeaderList* viHeader);
   ~TTMpeg2Decoder();
 
-  // public methods
-  //bool      isDecoder();
-  mpeg2dec_t* decoder();
-
-  bool        openMPEG2File( QString cFName, long lOffset=0, long lSize=-1 );
-  bool        openMPEG2Disk( uint8_t Disk, long lOffset=0, long lSize=-1 );
-  void        setIndexFiles( TTVideoIndexList* viIndex, TTVideoHeaderList* viHeader );
-
-  off64_t     getFileSize();
-  void        closeMPEG2File();
-  long        moveToFrameIndex( long iFramePos, int iFrameType=0 );
-  uint8_t*    getMPEG2Frame();
-
-  TFrameInfo* decodeMPEG2Frame( TPixelFormat pixelFormat=formatRGB24, int type=0 );
-  TFrameInfo* decodeFirstMPEG2Frame( TPixelFormat pixelFormat=formatRGB24, int type=0 );
-
-  void        getCurrentFrameData( uint8_t* data );
-
-  void        skipMPEG2Frames( int iFrameCount );
-
+  void        openMPEG2File(QString cFName);
+  quint64     fileSize();
+  QString     fileName();
+  int         moveToFrameIndex(int iFramePos);
+  TFrameInfo* decodeFirstMPEG2Frame(TPixelFormat pixelFormat=formatRGB24);
+  TFrameInfo* decodeMPEG2Frame(TPixelFormat pixelFormat=formatRGB24);
+  int         gotoNextFrame();
+  void        getCurrentFrameData(quint8* data);
   TFrameInfo* getFrameInfo();
 
-  void        getMPEG2SequenceInfo( TSequenceInfo& sequenceInfo );
-  void        getMPEG2StreamInfo( TStreamInfo& streamInfo );
-
-  void        seekMPEG2Stream(off64_t lStreamPos);
-  void        setMPEG2PixelFormat(TPixelFormat pFormat);
-  void        setRGBScaleFlag(bool bDoScaling);
-  long        writeDataToFile(QString cFName, long lSize);
-
  protected:
-  bool initDecoder();
-  //bool framePosition(long sOrderI, long dOrderI, long posSOrder, long posDOrder, uint64_t sIAdress);
-  bool framePosition( long dOrderI, long posDOrder, uint64_t sIAdress, int tempRefer );
+  void initDecoder();
+  int  decodeNextFrame();
+  int  skipFrames(int count);
+  int  seek(quint64 seqHeaderOffset);
 
- private:
-  mpeg2dec_t*             mpeg2Decoder;
-  mpeg2_state_t           state;
-  bool                    isDecoder;
-  uint8_t*                decoderBuffer;
-  int                     decoderBufferSize;
-  TTFileBuffer*           mpeg2Stream;
-  off64_t                 fileSize;
-  bool                    mpeg2StreamOK;
-  uint8_t*                streamBuffer;
-  int                     streamBufferSize;
-  bool                    streamEndReached;
-  QString                 mpeg2FileName;
-  const mpeg2_info_t*     mpeg2Info;
-  const mpeg2_sequence_t* mpeg2Sequence;
-  uint8_t*                sliceData;
-  int                     iSkipFrames;
-  uint64_t                iNextAdress;
-  off64_t                 currentStreamPos;     // current position in mpeg2 stream
-  off64_t                 currentStreamFrame;   // current frame index
-  long                    currentFrameIndex;   
-  bool                    isIndexSeek;          
-  TTVideoHeaderList*      videoHeaderList; 
-  TTVideoIndexList*       videoIndexList; 
-  TPixelFormat            convType;
-  TFrameInfo*             t_frame_info;
-
-  bool                    isDecodedFrame;
+private:
+  QFile*              mpeg2Stream;
+  mpeg2dec_t*         mpeg2Decoder;
+  mpeg2_state_t       state;
+  quint8*             streamBuffer;
+  quint8*             decoderBuffer;
+  int                 streamBufferSize;
+  int                 decoderBufferSize;
+  const mpeg2_info_t* mpeg2Info;
+  quint8*             sliceData;
+  TTVideoHeaderList*  videoHeaderList; 
+  TTVideoIndexList*   videoIndexList; 
+  TPixelFormat        convType;
+  TFrameInfo*         t_frame_info;
 };
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Decoder exception class
+ */
+class TTMpeg2DecoderException
+{
+  public:
+    enum ExceptionType
+    {
+      ArgumentNull,
+      DecoderInit,
+      StreamOpen
+    };
+
+    TTMpeg2DecoderException(ExceptionType type);
+
+    QString message();
+
+  protected:
+    ExceptionType ex_type;
+};
 #endif //TTMPEG2DECODER_H
  

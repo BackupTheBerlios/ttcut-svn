@@ -1,18 +1,16 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2005/2010 / www.tritime.org                    */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttavcutposition.h                                               */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 02/23/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/20/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 06/22/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/18/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTCUTPARAMETER
+// TTCUTPARAMETER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -38,6 +36,7 @@
 #include <QVector>
 
 #include "../avstream/ttcommon.h"
+#include "../avstream/ttfilebuffer.h"
 #include "../avstream/ttvideoheaderlist.h"
 
 // -----------------------------------------------------------------------------
@@ -45,24 +44,43 @@
 // -----------------------------------------------------------------------------
 class TTCutParameter
 {
- public:
-  TTCutParameter();
-  ~TTCutParameter();
+  public:
+    TTCutParameter(TTFileBuffer* fBuffer);
+    ~TTCutParameter();
 
-  bool  writeSequenceEndCode();
-  bool  writeMaxBitrate();
-  bool  createDVDCompilantStream();
+    TTFileBuffer* getTargetStreamBuffer();
+    bool getIsWriteSequenceEnd();
+    void setIsWriteSequenceEnd(bool value);
+    bool getIsWriteMaxBitrate();
+    void setIsWriteMaxBitrate(bool value);
+    bool getIsDVDCompliantStream();
+    void setIsDVDCompliantStream(bool value);
+    int  getNumPicturesWritten();
+    void setNumPicturesWritten(int value);
+    TTVideoHeaderList* getResultHeaderList();
+    int  getMaxBitrate();
+    void setMaxBitrate(int value);
+    int  getCutInIndex();
+    void setCutInIndex(int value);
+    int  getCutOutIndex();
+    void setCutOutIndex(int value);
+    void firstCall();
+    void lastCall();
 
-  int   max_bitrate;
-  int   pictures_written;
-  bool  first_call;
-  bool  last_call;
-  TTVideoHeaderList* result_header_list;
-  bool  write_max_bitrate;
-  bool  write_sequence_end_code;
-  bool  create_dvd_compliant_stream;
-  float compliance_max_bitrate;
-  int   compliance_max_mrames;
+  private:
+    void writeSequenceEndHeader();
+
+    TTFileBuffer*      targetStreamBuffer;
+    bool               isWriteSequenceEnd;
+    bool               isDVDCompliantStream;
+    bool               isWriteMaxBitrate;
+    int                cutInIndex;
+    int                cutOutIndex;
+    int                numPicturesWritten;
+    TTVideoHeaderList* resultHeaderList;
+    int                maxBitrateValue;
+    float              dvdCompliantMaxBitrate;
+    int                dvdCompliantMaxMrames;
 };
 
 

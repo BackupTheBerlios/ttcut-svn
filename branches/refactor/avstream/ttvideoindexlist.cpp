@@ -1,31 +1,17 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2005/2010 / www.tritime.org                    */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttvideoindexlist.h                                              */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/29/2007 */
+/* MODIFIED: b. altendorf                                    DATE: 06/01/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTVIDEOINDEXLIST
+// TTVIDEOINDEXLIST
 // ----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Overview
-// -----------------------------------------------------------------------------
-//
-//               +- TTAudioHeaderList 
-//               | 
-//               +- TTAudioIndexList
-// TTHeaderList -|
-//               +- TTVideoHeaderList
-//               |
-//               +- TTVideoIndexList
-//
-// -----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
@@ -44,29 +30,53 @@
 /*----------------------------------------------------------------------------*/
 
 
+#include "ttheaderlist.h"
 #include "ttvideoindexlist.h"
+#include "../common/ttexception.h"
 
 const char c_name[] = "TTVIDEOINDEX  : ";
 
 /*! ////////////////////////////////////////////////////////////////////////////
  * Compare function for sorting the video index list by display order
  */
-bool compareFunc( TTAVHeader* index_1, TTAVHeader* index_2 )
+bool compareFunc( TTVideoIndex* index_1, TTVideoIndex* index_2 )
 {
-  if ( ((TTVideoIndex*)index_1)->display_order < ((TTVideoIndex*)index_2)->display_order )
-    return true;
-  else
-    return false;
+  return (index_1->getDisplayOrder() < index_2->getDisplayOrder());
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
  * Construct a index list object
  */
-TTVideoIndexList::TTVideoIndexList( int size )
-  :TTHeaderList( size )
+TTVideoIndexList::TTVideoIndexList()
 {
-  current_order     = 0;  //0: stream order; 1: display order
-  stream_order_list = NULL;
+  log = TTMessageLogger::getInstance();
+  current_order = 0;  //0: stream order; 1: display order
+}
+
+/*! /////////////////////////////////////////////////////////////////////////////
+ * Destructor
+ */
+TTVideoIndexList::~TTVideoIndexList()
+{
+  deleteAll();
+}
+
+/*! /////////////////////////////////////////////////////////////////////////////
+ * Add index to video index list
+ */
+void TTVideoIndexList::add(TTVideoIndex* index)
+{
+ append(index); 
+}
+
+void TTVideoIndexList::deleteAll()
+{
+  for (int i = 0; i < size(); i++)
+  {
+    TTVideoIndex* v_index = at(i);
+    delete v_index;
+  }
+  clear();
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -74,36 +84,8 @@ TTVideoIndexList::TTVideoIndexList( int size )
  */
 TTVideoIndex* TTVideoIndexList::videoIndexAt( int index )
 {
-  try
-  {
-    checkIndexRange( index );
-    return (TTVideoIndex*)at( index );
-  }
-  catch ( TTListIndexException )
-  {
-    qDebug("TTListIndexException");
-    return NULL;
-  }
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
- * Sort list items in stream order (default)
- */
-void TTVideoIndexList::sortStreamOrder()
-{
-  // list has to be in display order
-  if ( current_order == 1 )
-  {
-    // swap display and stream order
-    swapOrder();
-    // sort contents
-    sort();
-    // swap stream and display order
-    swapOrder();
-
-    // current order is stream order
-    current_order = 0;
-  }
+  checkIndexRange( index );
+  return (TTVideoIndex*)at( index );
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -111,15 +93,8 @@ void TTVideoIndexList::sortStreamOrder()
  */
 void TTVideoIndexList::sortDisplayOrder()
 {
-  //list has to be in stream order (the default)
-  if ( current_order == 0 )
-  {
-    // sort contents
-    sort();
-
-    // current order is display order
-    current_order = 1;
-  }
+  sort();
+  current_order = 1;
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -127,10 +102,7 @@ void TTVideoIndexList::sortDisplayOrder()
  */
 bool TTVideoIndexList::isStreamOrder()
 {
-  if ( current_order == 0 )
-    return true;
-  else
-    return false;
+	return (current_order == 0);
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -138,25 +110,7 @@ bool TTVideoIndexList::isStreamOrder()
  */
 bool TTVideoIndexList::isDisplayOrder()
 {
-  if ( current_order == 1 )
-    return true;
-  else
-    return false;
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
- * Returns the stream order of the picture at index position
- */
-int TTVideoIndexList::streamOrder( int index )
-{
-  try
-  {
-    return videoIndexAt(index)->stream_order;
-  }
-  catch ( TTListIndexException )
-  {
-    return (int)0;
-  }
+	return (current_order == 1);
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -164,14 +118,7 @@ int TTVideoIndexList::streamOrder( int index )
  */
 int TTVideoIndexList::displayOrder( int index )
 {
-  try
-  {
-    return videoIndexAt(index)->display_order;
-  }
-  catch ( TTListIndexException )
-  {
-    return (int) 0;
-  }
+  return videoIndexAt(index)->getDisplayOrder();
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -179,15 +126,7 @@ int TTVideoIndexList::displayOrder( int index )
  */
 int TTVideoIndexList::headerListIndex( int index )
 {
-  try
-  {
-    return videoIndexAt(index)->header_list_index;
-  }
-  catch ( TTListIndexException )
-  {
-    qDebug( "%sexception (!): %d",c_name,index );
-    return (int)0;
-  }
+  return videoIndexAt(index)->getHeaderListIndex();
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -195,67 +134,7 @@ int TTVideoIndexList::headerListIndex( int index )
  */
 int  TTVideoIndexList::pictureCodingType( int index )
 {
-  try
-  {
-    return videoIndexAt(index)->picture_coding_type;
-  }
-  catch ( TTListIndexException )
-  {
-    return (int) 0;
-  }
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
- * Returns the sequence index of picture at index position
- */
-int TTVideoIndexList::sequenceIndex( int index )
-{
-  try
-  {
-    return videoIndexAt(index)->sequence_index;
-  }
-  catch ( TTListIndexException )
-  {
-    return (int)0;
-  }
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
- * Returns the gop number of picture at index position
- */
-long TTVideoIndexList::gopNumber( int index )
-{
-  try
-  {
-    return videoIndexAt(index)->gop_number;
-  }
-  catch ( TTListIndexException )
-  {
-    return (long)0;
-  }
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
- * Swap display and stream order and vice versa
- */
-void TTVideoIndexList::swapOrder()
-{
-  long temp_order;
-  int  i;
-
-  try
-  {
-    for( i = 0; i < count(); i++ )
-    {
-      temp_order                     = videoIndexAt(i)->display_order;
-      videoIndexAt(i)->display_order = videoIndexAt(i)->stream_order;
-      videoIndexAt(i)->stream_order  = temp_order;
-    }
-  }
-  catch ( TTListIndexException )
-  {
-    qDebug( "not allowed index in TTVideoIndexList::swapOrder" );
-  }
+  return videoIndexAt(index)->getPictureCodingType();
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -265,3 +144,83 @@ void TTVideoIndexList::sort()
 {
   qSort( begin(), end(), compareFunc );
 }
+
+/*! ///////////////////////////////////////////////////////////////////////////// 
+ * Move to the next position after start_pos and frame_type in index list
+ */
+int TTVideoIndexList::moveToNextIndexPos(int start_pos, int frame_type)
+{  
+  TTVideoIndex* v_index;
+  int index = start_pos+1;
+
+  if (index < 0 || index >= count())
+    return -1;
+
+  if (frame_type <= 0) {
+    return index;
+  }
+
+  do {
+	  v_index = videoIndexAt(index);
+
+    if (v_index->getPictureCodingType() == frame_type)
+      break;
+
+	  index++;
+  } while (index < count());
+
+  return (v_index->getPictureCodingType() == frame_type)
+        ? index
+        : -1;
+}
+
+/*! ///////////////////////////////////////////////////////////////////////////// 
+ * Move to the previous position before start_pos and frame_type in index list
+ */
+int TTVideoIndexList::moveToPrevIndexPos(int start_pos, int frame_type)
+{
+  TTVideoIndex* v_index;
+  int index = start_pos-1;
+
+  if (index < 0 || index >= count())
+    return -1;
+
+  if (frame_type <= 0) {
+    return index;
+  }
+
+  do {
+	  v_index = videoIndexAt(index);
+
+    if (v_index->getPictureCodingType() == frame_type)
+      break;
+
+	  index--;
+  } while (index >= 0);
+
+  return (v_index->getPictureCodingType() == frame_type)
+        ? index
+        : -1;
+}
+
+/*! ///////////////////////////////////////////////////////////////////////////// 
+ * move to specified index position (index and frame coding type)
+ */
+int TTVideoIndexList::moveToIndexPos(int index, int frame_type)
+{
+  return moveToNextIndexPos(index-1, frame_type);
+}
+
+/*! /////////////////////////////////////////////////////////////////////////////
+ * Check if given index is in list range and throw an exception if index isn't
+ * in range
+ */
+void TTVideoIndexList::checkIndexRange( int index )
+{
+  if (index < 0 || index >= size()) {
+    QString msg = QString("Index %1 exceeds list bounds: %2").arg(index).arg(count());
+    throw TTIndexOutOfRangeException(msg);
+  }
+}
+
+

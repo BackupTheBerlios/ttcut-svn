@@ -28,6 +28,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "ttcutlistdata.h"
+#include "ttavdata.h"
 
 #include <QFileInfo>
 #include <QString>
@@ -40,14 +41,15 @@ TTCutListDataItem::TTCutListDataItem()
 {
 }
 
-TTCutListDataItem::TTCutListDataItem(int cutIn, QTime cInTime, int cutOut, QTime cOutTime, QTime lengthTime, off64_t lengthBytes)
+TTCutListDataItem::TTCutListDataItem(int cutIn, QTime cInTime, int cutOut, QTime cOutTime, QTime lengthTime, quint64 lengthBytes, TTAVData* avd)
 {
-  cutInIndex     = cutIn;
-  cutOutIndex    = cutOut;
-  cutInTime      = cInTime;
-  cutOutTime     = cOutTime;
-  cutLengthTime  = lengthTime;
-  cutLengthBytes = lengthBytes;
+  cutInIndex      = cutIn;
+  cutOutIndex     = cutOut;
+  cutInTime       = cInTime;
+  cutOutTime      = cOutTime;
+  cutLengthTime   = lengthTime;
+  cutLengthBytes  = lengthBytes;
+  avData         = avd;
 }
 
 int TTCutListDataItem::getCutInIndex()const
@@ -80,14 +82,18 @@ QTime TTCutListDataItem::getCutOutTime() const
   return cutOutTime;
 }
 
+TTAVData* TTCutListDataItem::getAVData() const
+{
+  return avData;
+}
+
+
 /*!
  * This class represents the audio list object
  */
-TTCutListData::TTCutListData(TTMpeg2VideoStream* sv)
+TTCutListData::TTCutListData()
 {
   log = TTMessageLogger::getInstance();
-
-  mpegStream = sv;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -99,19 +105,20 @@ TTCutListData::~TTCutListData()
     data.clear();
 }
 
-TTMpeg2VideoStream* TTCutListData::videoStream()
+TTAVData* TTCutListData::avData( int index )
 {
-  return mpegStream;
+  return data.at(index).getAVData();
 }
 
-int TTCutListData::addItem(int cutInIndex, int cutOutIndex)
+int TTCutListData::addItem(int cutInIndex, int cutOutIndex, TTAVData* avData)
 {
+  TTVideoStream* mpegStream = avData->videoStream();
   QTime cutInTime     = mpegStream->frameTime(cutInIndex);
   QTime cutOutTime    = mpegStream->frameTime(cutOutIndex);
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
   QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
-  off64_t lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
+  quint64 lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
   log->infoMsg(oName, "Insert cut position");
@@ -121,7 +128,7 @@ int TTCutListData::addItem(int cutInIndex, int cutOutIndex)
   log->infoMsg(oName, "Length : %s (%lld)",qPrintable(cutLengthTime.toString("hh:mm:ss.zzz")), lengthBytes);
   log->infoMsg(oName, "------------------------------------------");
 
-  TTCutListDataItem item(cutInIndex, cutInTime, cutOutIndex, cutOutTime, cutLengthTime, lengthBytes);
+  TTCutListDataItem item(cutInIndex, cutInTime, cutOutIndex, cutOutTime, cutLengthTime, lengthBytes, avData);
   item.cutInFrameType = mpegStream->frameType(cutInIndex);
   item.cutOutFrameType = mpegStream->frameType(cutOutIndex);
   data.append(item);
@@ -130,20 +137,21 @@ int TTCutListData::addItem(int cutInIndex, int cutOutIndex)
   return data.count()-1;
 }
 
-int TTCutListData::addCutPosition(int cutInIndex, int cutOutIndex, __attribute__((unused))int order)
-{
-  return addItem(cutInIndex, cutOutIndex);
-}
+// int TTCutListData::addCutPosition(int cutInIndex, int cutOutIndex, __attribute__((unused))int order)
+// {
+//   return addItem(cutInIndex, cutOutIndex);
+// }
 
 //! Update an existing cut list data item
 int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
 {
+  TTVideoStream* mpegStream = data.at(index).getAVData()->videoStream();
   QTime cutInTime     = mpegStream->frameTime(cutInIndex);
   QTime cutOutTime    = mpegStream->frameTime(cutOutIndex);
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
   QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
-  off64_t lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
+  quint64 lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
   //log->infoMsg(oName, "Update cut position at index: %d", index);
@@ -167,6 +175,11 @@ int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
   return data.count();
 }
  
+void TTCutListData::duplicateItem( int index )
+{
+  data.insert( index+1, data.at(index) );
+}
+
 int TTCutListData::cutInPos(int index)
 {
   return data.at(index).cutInIndex;
@@ -192,9 +205,9 @@ void TTCutListData::setCutOutPosAt(int index, int cutOut)
   data[index].cutOutIndex = cutOut;
 }
 
-QString TTCutListData::streamFileName()
+QString TTCutListData::streamFileName( int index )
 {
-  return mpegStream->fileName();
+  return avData(index)->videoStream()->fileName();
 }
 
 QString TTCutListData::cutInPosString(int index)

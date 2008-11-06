@@ -1,5 +1,5 @@
 /* XPM */
-static char * search_18_xpm[] = {
+const char * search_18_xpm[] = {
 "18 18 126 2",
 "  	c None",
 ". 	c #000000",

@@ -10,7 +10,7 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTVIDEOHEADERLIST
+// TTVIDEOHEADERLIST
 // ----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -47,36 +47,35 @@
 #define TTVIDEOHEADERLIST_H
 
 #include "ttheaderlist.h"
-#include "ttfilebuffer.h"
 #include "ttmpeg2videoheader.h"
 
 class TTSequenceHeader;
 class TTPicturesHeader;
 class TTGOPHeader;
 
-// -----------------------------------------------------------------------------
-// TTVideoHeaderList: Pointer list MPEG2 header objects
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////   
+ * TTVideoHeaderList: Pointer list MPEG2 header objects
+ */
 class TTVideoHeaderList : public TTHeaderList
 {
   public:
-    TTVideoHeaderList( int size );
+    TTVideoHeaderList(int size);
+    virtual ~TTVideoHeaderList();
 
-    uint8_t           headerTypeAt( int index );
-    TTVideoHeader*    headerAt( int index );
-    TTSequenceHeader* sequenceHeaderAt( int index );
-    TTPicturesHeader* pictureHeaderAt( int index );
-    TTGOPHeader*      gopHeaderAt( int index );
+    quint8            headerTypeAt(int index);
+    TTVideoHeader*    headerAt(int index);
+    TTVideoHeader*    getPrevHeader(int startPos, TTMpeg2VideoHeader::mpeg2StartCodes type = TTMpeg2VideoHeader::ndef);
+    TTVideoHeader*    getNextHeader(int startPos, TTMpeg2VideoHeader::mpeg2StartCodes type = TTMpeg2VideoHeader::ndef);
+    TTVideoHeader*    getPrevHeader(TTVideoHeader* current, TTMpeg2VideoHeader::mpeg2StartCodes type = TTMpeg2VideoHeader::ndef);
+    TTVideoHeader*    getNextHeader(TTVideoHeader* current, TTMpeg2VideoHeader::mpeg2StartCodes type = TTMpeg2VideoHeader::ndef);
+    TTSequenceHeader* sequenceHeaderAt(int index);
+    TTSequenceHeader* firstSequenceHeader();
+    TTPicturesHeader* pictureHeaderAt(int index);
+    TTGOPHeader*      gopHeaderAt(int index);
 
-    int headerIndex( TTVideoHeader* current );
-
-    long createHeaderList( TTFileBuffer* mpeg2_stream );
-
-    long readIndexFile( TTFileBuffer* idd_stream );
-    long writeIndexFile( TTFileBuffer* idd_stream );
-    bool checkIndexFile( TTFileBuffer* idd_stream, TTFileBuffer* mpeg2_stream );
+    int headerIndex(TTVideoHeader* current);
 
   protected:
-    void sort();
+    virtual void sort();
 };
 #endif //TTVIDEOHEADERLIST_H

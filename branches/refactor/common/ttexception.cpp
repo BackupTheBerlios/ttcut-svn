@@ -1,16 +1,16 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2006/2010 / www.tritime.org                    */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
-/* FILE     : ttaciwriter.h                                                   */
+/* PROJEKT  : TTCUT 2008                                                      */
+/* FILE     : ttexception.cpp                                                 */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/06/2005 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 06/15/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
-// ----------------------------------------------------------------------------
-// TTAVIWRITER
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// TTEXCEPTION
+// -----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
@@ -29,51 +29,24 @@
 /*----------------------------------------------------------------------------*/
 
 
-#ifndef TTAVIWRITER_H
-#define TTAVIWRITER_H
+#include "ttexception.h"
 
 
-#include <QString>
-
-#include "../gui/ttprogressbar.h"
-#include "../avstream/ttavstream.h"
-#include "../mpeg2decoder/ttmpeg2decoder.h"
-
-extern "C"
+TTException::TTException()
 {
-#include "../avilib/avilib.h"
 }
 
-/* /////////////////////////////////////////////////////////////////////////////
- * AVI writer class
- */
-class TTAVIWriter
+TTException::~TTException()
 {
- public:
-   TTAVIWriter( TTProgressBar* b_bar = NULL );
-   ~TTAVIWriter();
+}
 
-   bool initAVIWriter( TTVideoStream* v_stream );
-   int  writeAVI( int start_frame_pos, int end_frame_pos );
-   bool closeAVI();
+TTException::TTException(const QString& msg) : message(msg)
+{
+}
 
- protected:
-   bool initDecoder();
-   long compareFrames();
-
- private:
-   TTProgressBar*     progress_bar;
-   TTMpeg2Decoder*    decoder;			
-   QString            video_file_name;
-   TTVideoHeaderList* header_list; 
-   TTVideoIndexList*  index_list; 
-   int                current_frame;
-   qint64             file_size;
-   quint64            file_offset;
-   quint8*            ref_data;
-   avi_t*             avi_file;
-};
-
-#endif //TTAVIWRITER_H
+QString TTException::getMessage()
+{
+  return message;
+}
 
 

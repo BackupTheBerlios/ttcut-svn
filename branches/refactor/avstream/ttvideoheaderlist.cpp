@@ -10,7 +10,7 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTVIDEOHEADERLIST
+// TTVIDEOHEADERLIST
 // ----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -45,93 +45,126 @@
 
 #include "ttvideoheaderlist.h"
 
+#include "../common/ttexception.h"
+
 bool videoHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 );
+
+const char c_name[] = "TTVideoHeaderList";
 
 /*! ////////////////////////////////////////////////////////////////////////////
  * Constructor
  */
-TTVideoHeaderList::TTVideoHeaderList( int size )
+TTVideoHeaderList::TTVideoHeaderList(int size)
   :TTHeaderList( size )
+{
+}
+
+TTVideoHeaderList::~TTVideoHeaderList()
 {
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
  * Returns the header type at header list index position
  */
-uint8_t TTVideoHeaderList::headerTypeAt( int index )
+quint8 TTVideoHeaderList::headerTypeAt(int index)
 {
-  try
-  {
-    checkIndexRange( index );
-
-    return at( index )->headerType();
-  }
-  catch ( TTListIndexException )
-  {
-    return (uint8_t)0;
-  }
+  checkIndexRange(index);
+  return at(index)->headerType();
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
  * Returns the TTVideoHeader at header list index position
  */
-TTVideoHeader* TTVideoHeaderList::headerAt( int index )
+TTVideoHeader* TTVideoHeaderList::headerAt(int index)
 {
-  try
-  {
-    checkIndexRange( index );
-
-    return (TTVideoHeader*)at( index );
-  }
-  catch ( TTListIndexException )
-  {
-    if ( index < 0 )
-      return (TTVideoHeader*)at( 0 );
-
-    if ( index >= count() )
-      return (TTVideoHeader*)at( count()-1 );
-
-    return NULL;
-  }
+  checkIndexRange(index);
+  return (TTVideoHeader*)at( index );
 }
 
+/*! //////////////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+TTVideoHeader* TTVideoHeaderList::getPrevHeader(int startPos, TTMpeg2VideoHeader::mpeg2StartCodes type)
+{
+  int prevIndex = startPos-1;
+
+  if (prevIndex < 0 || prevIndex >= count())
+    return NULL;
+
+  if (prevIndex >= 0 && type == TTMpeg2VideoHeader::ndef)
+    return (TTVideoHeader*)at(prevIndex);
+
+  while (prevIndex >= 0)
+  {
+    if (at(prevIndex)->headerType() == type)
+      return (TTVideoHeader*)at(prevIndex);
+
+    prevIndex--;
+  }
+
+  return NULL;
+}
+
+/*! //////////////////////////////////////////////////////////////////////////////////////
+ * 
+ */
+TTVideoHeader* TTVideoHeaderList::getNextHeader(int startPos, TTMpeg2VideoHeader::mpeg2StartCodes type)
+{
+  int nextIndex = startPos+1;
+
+  if (nextIndex < 0 || nextIndex >= count())
+    return NULL;
+
+  if (nextIndex < count() && type == TTMpeg2VideoHeader::ndef)
+    return (TTVideoHeader*)at(nextIndex);
+
+  while (nextIndex < count())
+  {
+    if (at(nextIndex)->headerType() == type)
+      return (TTVideoHeader*)at(nextIndex);
+
+    nextIndex++;
+  }
+
+  return NULL;
+}
+
+TTVideoHeader* TTVideoHeaderList::getNextHeader(TTVideoHeader* current, TTMpeg2VideoHeader::mpeg2StartCodes type)
+{
+  return getNextHeader(indexOf(current), type);
+}
+
+TTVideoHeader* TTVideoHeaderList::getPrevHeader(TTVideoHeader* current, TTMpeg2VideoHeader::mpeg2StartCodes type)
+{
+  return getNextHeader(indexOf(current), type);
+}
+  
 /*! ////////////////////////////////////////////////////////////////////////////
  * Returns the TTSequenceHeader at header list index position
  */
-TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( int index )
+TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt(int index)
 {
-  int i;
+  checkIndexRange(index);
+  return (TTSequenceHeader*)at( index );
+}
 
-  try
+/* /////////////////////////////////////////////////////////////////////////////
+ * Returns the first TTSequenceHeader in index list
+ */
+TTSequenceHeader* TTVideoHeaderList::firstSequenceHeader()
+{
+  int    index = -1;
+  quint8 type  = 0xFF;
+
+  do
   {
-    checkIndexRange( index );
+    index++;
+    type = at(index)->headerType();
+  } while (index < count() && type != TTMpeg2VideoHeader::sequence_start_code);
 
-    if ( at(index)->headerType() == TTMpeg2VideoHeader::sequence_start_code )
-    {
-      //qDebug( "bingo, sequence found for index %d",index );
-      return (TTSequenceHeader*)at( index );
-    }
-    else
-    {
-      i = index-1;
-      while ( at(i)->headerType() != TTMpeg2VideoHeader::sequence_start_code && i > 0 )
-        i--;
-
-      index = i;
-
-      if ( at(index)->headerType() == TTMpeg2VideoHeader::sequence_start_code )
-        return (TTSequenceHeader*)at( index );
-      else
-      {
-        qDebug( "no sequence found for index: %d",index );
-        return NULL;
-      }
-    }
-  }
-  catch ( TTListIndexException )
-  {
-    return NULL;
-  }
+  return (at(index)->headerType() == TTMpeg2VideoHeader::sequence_start_code)
+    ? (TTSequenceHeader*)at( index )
+    : NULL;
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -139,15 +172,8 @@ TTSequenceHeader* TTVideoHeaderList::sequenceHeaderAt( int index )
  */
 TTPicturesHeader* TTVideoHeaderList::pictureHeaderAt( int index )
 {
-  try
-  {
-    checkIndexRange( index );
-    return (TTPicturesHeader*)at( index );
-  }
-  catch ( TTListIndexException )
-  {
-    return NULL;
-  }
+  checkIndexRange( index );
+  return (TTPicturesHeader*)at( index );
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -155,15 +181,8 @@ TTPicturesHeader* TTVideoHeaderList::pictureHeaderAt( int index )
  */
 TTGOPHeader* TTVideoHeaderList::gopHeaderAt( int index )
 {
-  try
-  {
-    checkIndexRange( index );
-    return (TTGOPHeader*)at( index );
-  }
-  catch ( TTListIndexException )
-  {
-    return NULL;
-  }
+  checkIndexRange( index );
+  return (TTGOPHeader*)at( index );
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -171,15 +190,12 @@ TTGOPHeader* TTVideoHeaderList::gopHeaderAt( int index )
  */
 int TTVideoHeaderList::headerIndex( TTVideoHeader* current )
 {
-  return indexOf( (TTVideoHeader*)current );
-}
+  if (size() == 0) {
+    QString msg = QString("No items in list!");
+    throw TTInvalidOperationException(msg);
+  }
 
-/*! ////////////////////////////////////////////////////////////////////////////
- * Create the video header list from the given mpeg2 video stream
- */
-long TTVideoHeaderList::createHeaderList( __attribute__ ((unused))TTFileBuffer* mpeg2_stream )
-{
-  return 0;
+  return indexOf( (TTAVHeader*)current );
 }
 
 // -----------------------------------------------------------------------------
@@ -208,31 +224,6 @@ long TTVideoHeaderList::createHeaderList( __attribute__ ((unused))TTFileBuffer* 
 //   8 Byte Adresse            (wird zum kopieren des letzten Bildes gebraucht)
 // -----------------------------------------------------------------------------
 
-/*! ////////////////////////////////////////////////////////////////////////////
- * Read an idd-index file from idd_stream and create a header list from it
- */
-long TTVideoHeaderList::readIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream )
-{
-  return 0;
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
- * Write an idd-index file from current header list
- */
-long TTVideoHeaderList::writeIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream )
-{
-  return 0;
-}
-
-/*! ////////////////////////////////////////////////////////////////////////////
- * Check an idd-index file against an mpeg2 stream
- */
-bool TTVideoHeaderList::checkIndexFile( __attribute__ ((unused))TTFileBuffer* idd_stream, 
-					__attribute__ ((unused))TTFileBuffer* mpeg2_stream )
-{
-  return false;
-}
-
 /*! ///////////////////////////////////////////////////////////////////////////
  * Sort the header list by header offset
  */
@@ -246,8 +237,5 @@ void TTVideoHeaderList::sort()
  */
 bool videoHeaderListCompareItems( TTAVHeader* head_1, TTAVHeader* head_2 )
 {
-  if ( head_1->headerOffset() < head_2->headerOffset() )
-    return true;
-  else
-    return false;
+  return (head_1->headerOffset() < head_2->headerOffset());
 }

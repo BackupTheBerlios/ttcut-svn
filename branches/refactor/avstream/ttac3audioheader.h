@@ -16,13 +16,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |
@@ -33,6 +30,8 @@
 //             |                                     +- TTGOPHeader
 //             |
 //             +- TTVideoIndex
+//             |
+//             +- TTBreakObject
 //
 // -----------------------------------------------------------------------------
 
@@ -116,7 +115,7 @@ __attribute__ ((unused))static int AC3AudioCodingMode[8] =
   2,1,2,3,3,4,4,5
 };
 
-__attribute__ ((unused))static char* AC3Mode[8] =
+__attribute__ ((unused))static const char* AC3Mode[8] =
 {
   "1+1", "1/0", "2/0", "3/0",
   "2/1", "3/1", "2/2", "3/2"
@@ -139,14 +138,14 @@ public:
   QString& sampleRateString();
 
   //private:
-  int      crc1;
-  uint8_t  fscod;
-  uint8_t  frmsizecod;
-  uint16_t syncframe_words;
-  uint8_t  bsid;
-  uint8_t  bsmod;
-  uint8_t  acmod;
-  bool     lfeon;
+  int     crc1;
+  quint8  fscod;
+  quint8  frmsizecod;
+  quint16 syncframe_words;
+  quint8  bsid;
+  quint8  bsmod;
+  quint8  acmod;
+  bool    lfeon;
 };
 
 #endif //TTAC3AUDIOHEADER_H

@@ -1,5 +1,5 @@
 /* XPM */
-static char * prev_18_xpm[] = {
+const char * prev_18_xpm[] = {
 "18 18 64 1",
 " 	c None",
 ".	c #0E0E0E",

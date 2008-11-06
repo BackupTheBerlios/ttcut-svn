@@ -17,13 +17,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioStream
-//                               |
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                    +- TTDTS14AudioStream
-//             |                 +- TTDTSAudioStream -|
-//             |                 |                    +- TTDTS16AudioStream
-// TTAVStream -|                 +- TTPCMAudioStream
+//             +- TTAudioStream -|                   
+//             |                 +- TTAC3AudioStream 
+// TTAVStream -|                 
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -58,14 +55,6 @@ const char c_name [] = "AC3STREAM";
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
-// constructor
-// -----------------------------------------------------------------------------
-  TTAC3AudioStream::TTAC3AudioStream()
-: TTAudioStream()
-{
-  log = TTMessageLogger::getInstance();
-}
-
 // constructor with file info and start position
 // -----------------------------------------------------------------------------
   TTAC3AudioStream::TTAC3AudioStream( const QFileInfo &f_info, int s_pos )
@@ -74,17 +63,26 @@ const char c_name [] = "AC3STREAM";
   log = TTMessageLogger::getInstance();
 }
 
+TTAC3AudioStream::~TTAC3AudioStream()
+{
+}
+
+TTAVTypes::AVStreamType TTAC3AudioStream::streamType() const
+{
+  return TTAVTypes::ac3_audio;
+}
+
 // search the next sync byte in stream
 // -----------------------------------------------------------------------------
 void TTAC3AudioStream::searchNextSyncByte()
 {
-  uint8_t  byte1;
-  uint8_t  byte2;
-  uint16_t sync_word;
+  quint8  byte1;
+  quint8  byte2;
+  quint16 sync_word;
 
   stream_buffer->readByte( byte2 );
 
-  while ( !stream_buffer->streamEOF() )
+  while ( !stream_buffer->atEnd() )
   {
     byte1 = byte2;
 
@@ -101,29 +99,29 @@ void TTAC3AudioStream::searchNextSyncByte()
 // -----------------------------------------------------------------------------
 void TTAC3AudioStream::readAudioHeader( TTAC3AudioHeader* audio_header)
 {
-  uint8_t* daten = new uint8_t[6];
-  uint16_t stuff;
+  quint8* daten = new quint8[6];
+  quint16 stuff;
 
-  stream_buffer->readArray( daten, 6 );
+  stream_buffer->readByte(daten, 6 );
 
-  audio_header->setHeaderOffset( stream_buffer->currentOffset() - 8 ); // +Syncwort
+  audio_header->setHeaderOffset( stream_buffer->position() - 8 ); // +Syncwort
 
   audio_header->crc1            = daten[0]<<8+daten[1];
-  audio_header->fscod           = (uint8_t)((daten[2]&0xc0)>>6);
-  audio_header->frmsizecod      = (uint8_t)(daten[2]&0x3f);
+  audio_header->fscod           = (quint8)((daten[2]&0xc0)>>6);
+  audio_header->frmsizecod      = (quint8)(daten[2]&0x3f);
   audio_header->syncframe_words = AC3FrameLength[audio_header->fscod][audio_header->frmsizecod];
   audio_header->frame_length    = audio_header->syncframe_words*2;
   audio_header->frame_time      = 1000.0*((double)audio_header->syncframe_words*16.0)/(double)audio_header->bitRate();
-  audio_header->bsid            = (uint8_t)(daten[3]>>3);
-  audio_header->bsmod           = (uint8_t)(daten[3] & 0x07);
-  audio_header->acmod           = (uint8_t)(daten[4]>>5);
+  audio_header->bsid            = (quint8)(daten[3]>>3);
+  audio_header->bsmod           = (quint8)(daten[3] & 0x07);
+  audio_header->acmod           = (quint8)(daten[4]>>5);
 
   //qDebug( "%sbit rate    : %d",c_name,audio_header->bitRate() );
   //qDebug( "%sframe length: %d",c_name,audio_header->frame_length );
   frame_length = audio_header->frame_length;
   frame_time   = audio_header->frame_time;
 
-  stuff = (uint16_t)((daten[4]<<8)+daten[5]);
+  stuff = (quint16)((daten[4]<<8)+daten[5]);
   stuff <<= 3;
 
   if ((audio_header->acmod & 0x01)!=0 && audio_header->acmod!=1)
@@ -147,38 +145,14 @@ int TTAC3AudioStream::createHeaderList()
 
   //qDebug( "%screate header list...",c_name );
 
-  // stream already parsed return
-  if ( stream_parsed )
-  {
-    if ( ttAssigned( header_list ) )
-      return header_list->count();
-    else
-      return (int)0;
-  }
-
-  // open the audio stream
-  if ( !openStream() )
-  {
-    // TODO: why result this in an compiler warning ???
-    // warning: cannot pass objects of non-POD type 'class QByteArray' through '...'; call will abort at runtime
-    //log->errorMsg(c_name, "cannot open audio stream: %s",stream_info->filePath().toAscii() );
-    return (int)0;
-  }
-
   header_list = new TTAudioHeaderList( 1000 );
 
   // seek to start pos for corrupt streams  
   stream_buffer->seekRelative( start_pos );
 
-  if (ttAssigned(progress_bar))
-  {
-    progress_bar->setActionText("Create audio header list.");
-    progress_bar->setTotalSteps(stream_buffer->streamLength());
-  }
-
   try
   {
-    while (!stream_buffer->streamEOF())
+    while (!stream_buffer->atEnd())
     {
       searchNextSyncByte();
 
@@ -200,13 +174,10 @@ int TTAC3AudioStream::createHeaderList()
       header_list->add( audio_header );
 
       stream_buffer->seekRelative(audio_header->syncframe_words*2-8);
+}
 
-      if (ttAssigned(progress_bar))
-        progress_bar->setProgress(stream_buffer->currentOffset());
-    }
-    progress_bar->setComplete();
   }
-  catch ( TTStreamEOFException )
+  catch (TTFileBufferException)
   {
 
   }
@@ -214,9 +185,7 @@ int TTAC3AudioStream::createHeaderList()
   // den Stream nach interessanten Punkten absuchen lassen:
   // base.CreateIndex(FileName);
 
-  // close the audio stream
-  closeStream();
-
+ 
   //qDebug( "%sheader list created: %d",c_name,header_list->count() );
 
   return header_list->count();
@@ -225,19 +194,19 @@ int TTAC3AudioStream::createHeaderList()
 /* /////////////////////////////////////////////////////////////////////////////
  * Cut method
  */
-void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, int start, int end, __attribute__ ((unused))TTCutParameter* cp )
+void TTAC3AudioStream::cut(int start, int end, TTCutParameter* cp)
 {
-  off64_t start_offset;
-  off64_t end_offset;
+  quint64 start_offset;
+  quint64 end_offset;
 
   start_offset = header_list->audioHeaderAt(start)->headerOffset();
   end_offset   = header_list->audioHeaderAt(end)->headerOffset()-1;
 
   //log->debugMsg(c_name, "copy segment: %lld - %lld", start_offset,end_offset );
 
-  openStream();
-  copySegment( cut_stream, start_offset, end_offset );
-  closeStream();
+  //openStream();
+  copySegment(cp->getTargetStreamBuffer(), start_offset, end_offset );
+  //closeStream();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -246,7 +215,7 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, int start, int end, __attr
 void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 {
   int i;
-  TTCutParameter* cut_param = new TTCutParameter();
+  TTCutParameter* cut_param = new TTCutParameter(cut_stream);
   long    start_pos;
   long    end_pos;
   QString action_string;
@@ -267,22 +236,12 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 
   for ( i = 0; i < cut_list->count(); i++ )
   {
-    if ( i == 0 )
-      cut_param->first_call = true;
-    else
-      cut_param->first_call = false;
-
-    if ( i == cut_list->count()-1 )
-      cut_param->last_call = true;
+    if (i == 0)
+      cut_param->firstCall();
 
     start_pos = cut_list->cutInPosAt( i );
     end_pos   = cut_list->cutOutPosAt( i );
 
-    if ( ttAssigned( progress_bar ) )
-    {
-      action_string.sprintf( "Audio cut: %d/%ld-%ld",i+1,start_pos,end_pos );
-      progress_bar->setActionText( action_string );
-    }
 
     //qDebug( "%sstart / end  : %d / %d",c_name,start_pos,end_pos );
     //search 
@@ -317,8 +276,12 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     log->debugMsg(c_name, "audio length      : %f", (audio_end_index-audio_start_index+1)*frame_time );
 #endif
 
-    cut( cut_stream, audio_start_index, audio_end_index, cut_param );
+    cut(audio_start_index, audio_end_index, cut_param);
+
+    if (i == cut_list->count()-1)
+      cut_param->lastCall();
   }
+
   delete cut_param;
 }
 
@@ -333,17 +296,15 @@ QString TTAC3AudioStream::streamExtension()
 }
 
 
-QString TTAC3AudioStream::absStreamTime()
+QTime TTAC3AudioStream::streamLengthTime()
 {
-  if ( ttAssigned( header_list ) )
-  {
-    if ( header_list->count() > (int)0 )
-    {
-      TTAC3AudioHeader* audio_header = (TTAC3AudioHeader*)header_list->audioHeaderAt( header_list->count()-1 );
+  QTime result(0, 0, 0);
 
-      return ttMsecToTimeD( audio_header->abs_frame_time ).toString("hh:mm:ss.zzz" );
-    }
-  }
-  // TODO: Fix default return value 
-  return "";
+  if (header_list == NULL || header_list->count() == 0)
+    return result;
+
+  TTAC3AudioHeader* audio_header = (TTAC3AudioHeader*)header_list->audioHeaderAt( header_list->count()-1 );
+  result = ttMsecToTimeD(audio_header->abs_frame_time);
+
+  return result;
 }

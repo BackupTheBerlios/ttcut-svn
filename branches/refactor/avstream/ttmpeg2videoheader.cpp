@@ -19,13 +19,10 @@
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |
@@ -36,6 +33,8 @@
 //             |                                     +- TTGOPHeader
 //             |
 //             +- TTVideoIndex
+//             |
+//             +- TTBreakObject
 //
 // -----------------------------------------------------------------------------
 
@@ -69,29 +68,6 @@ TTMpeg2VideoHeader::TTMpeg2VideoHeader()
   log = TTMessageLogger::getInstance();
 }
 
-/* /////////////////////////////////////////////////////////////////////////////
- * Read header from given stream
- */
-bool TTMpeg2VideoHeader::readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream )
-{
-  return false;
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Read header at given offset
- */
-bool TTMpeg2VideoHeader::readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream, __attribute__ ((unused))off64_t offset )
-{
-  return false;
-}
-
-/* /////////////////////////////////////////////////////////////////////////////
- * Parse basic header data
- */
-void TTMpeg2VideoHeader::parseBasicData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
-{
-
-}
 
 /* /////////////////////////////////////////////////////////////////////////////
  * TTSequenceHeader: Sequence header [0x000001B3]
@@ -107,23 +83,18 @@ TTSequenceHeader::TTSequenceHeader() : TTMpeg2VideoHeader()
  */
 bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
-  uint8_t  header_data[8];
+  quint8  header_data[8];
 
   try
   {
     // read 8 byte from stream, starting at current offset
-    mpeg2_stream->readArray( header_data, 8 ) ;
+    mpeg2_stream->readByte( header_data, 8 ) ;
 
     // fill sequence header
-    header_offset     = mpeg2_stream->currentOffset() - 12;
-
+    header_offset = mpeg2_stream->position() - 12;
     parseBasicData( header_data );
   }
-  catch ( TTStreamSeekException )
-  {
-    return false;
-  }
-  catch ( TTStreamEOFException )
+  catch (TTFileBufferException)
   {
     return false;
   }
@@ -133,7 +104,7 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream )
 /* /////////////////////////////////////////////////////////////////////////////
  * Read sequence header at given offset
  */
-bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
+bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream, quint64 offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
 
@@ -143,7 +114,7 @@ bool TTSequenceHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 /* /////////////////////////////////////////////////////////////////////////////
  * Parse basic header data
  */
-void TTSequenceHeader::parseBasicData( uint8_t* data, int offset )
+void TTSequenceHeader::parseBasicData( quint8* data, int offset )
 {
   horizontal_size_value        = (data[offset+0] << 4) + ((data[1] & 0xF0) >> 4);
   vertical_size_value          = ((data[1] & 0x0F) << 8) + data[2];
@@ -210,10 +181,7 @@ float TTSequenceHeader::frameRateValue()
   if ( frame_rate_code == 5 ) value = 30.0;
 
   if ( frame_rate_code < 2 || frame_rate_code > 5 )
-  {
-    log->errorMsg(cName, "Couldn't determine the correct frame rate: aussume 25 fps!");
-    value = 25.0;
-  }
+    log->errorMsg(cName, "Couldn't determine the correct frame rate: assume 25 fps!");
 
   return value;
 }
@@ -235,11 +203,10 @@ int TTSequenceHeader::vbvBufferSize()
 }
 
 
-// /////////////////////////////////////////////////////////////////////////////
-// -----------------------------------------------------------------------------
-// TTSequenceEndHeader
-// -----------------------------------------------------------------------------
-// /////////////////////////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////////////////////////////
+ * TTSequenceEndHeader
+ * Default constructor, extends TTMpeg2VideoHeader
+ */
   TTSequenceEndHeader::TTSequenceEndHeader()
 : TTMpeg2VideoHeader()
 {
@@ -248,28 +215,27 @@ int TTSequenceHeader::vbvBufferSize()
 
 bool TTSequenceEndHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
-  header_offset     = mpeg2_stream->currentOffset() - 4;
+  header_offset = mpeg2_stream->position() - 4;
 
   return true;
 }
 
-bool TTSequenceEndHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
+bool TTSequenceEndHeader::readHeader( TTFileBuffer* mpeg2_stream, quint64 offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
 
   return readHeader( mpeg2_stream );
 }
 
-void TTSequenceEndHeader::parseBasicData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset )
+void TTSequenceEndHeader::parseBasicData( __attribute__ ((unused))quint8* data, __attribute__ ((unused))int offset )
 {
 
 }
 
-// /////////////////////////////////////////////////////////////////////////////
-// -----------------------------------------------------------------------------
-// TTGOPHeader: Group of pictures header [000001B8]
-// -----------------------------------------------------------------------------
-// /////////////////////////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////////////////////////////
+ * TTGOPHeader: Group of pictures header [000001B8]
+ * Default constructor, extends TTMpeg2VideoHeader
+ */
   TTGOPHeader::TTGOPHeader()
 :TTMpeg2VideoHeader()
 {
@@ -281,19 +247,18 @@ void TTSequenceEndHeader::parseBasicData( __attribute__ ((unused))uint8_t* data,
  */
 bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
-  uint8_t header_data[4];
+  quint8 header_data[4];
 
   try
   {
-    mpeg2_stream->readArray( header_data,4 );
+    mpeg2_stream->readByte( header_data,4 );
 
-    header_offset     = mpeg2_stream->currentOffset() - 8;
-
-    parseBasicData( header_data );
+    header_offset = mpeg2_stream->position() - 8;
+     parseBasicData( header_data );
 
     return true;
   }
-  catch ( TTStreamEOFException )
+  catch (TTFileBufferException)
   {
     return false;
   }
@@ -302,7 +267,7 @@ bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream )
 /* /////////////////////////////////////////////////////////////////////////////
  * Read the GOP header at given offset
  */
-bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
+bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream, quint64 offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
 
@@ -312,7 +277,7 @@ bool TTGOPHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 /* /////////////////////////////////////////////////////////////////////////////
  * Parse the basic GOP header data
  */
-void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
+void TTGOPHeader::parseBasicData( quint8* data, int offset )
 {
   time_code.drop_frame_flag = (data[offset+0] >> 7) == 1;
   time_code.hours           = (int)((data[offset+0] & 0x7C) >> 2);
@@ -324,11 +289,10 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
   broken_link               = ((data[offset+3] & 0x20) >> 5) == 1;
 }
 
-// /////////////////////////////////////////////////////////////////////////////
-// -----------------------------------------------------------------------------
-// TTPicturesHeader: Pictures header [00000100]
-// -----------------------------------------------------------------------------
-// /////////////////////////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////////////////////////////
+ * TTPicturesHeader: Pictures header [00000100]
+ * Default constructor, extends TTMpeg2VideoHeader
+ */
   TTPicturesHeader::TTPicturesHeader()
 :TTMpeg2VideoHeader()
 {
@@ -340,24 +304,18 @@ void TTGOPHeader::parseBasicData( uint8_t* data, int offset )
  */
 bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 {
-  uint8_t header_data[5];
+  quint8 header_data[5];
 
   try
   {
+    mpeg2_stream->readByte( header_data, 4 );
 
-    mpeg2_stream->readArray( header_data, 4 );
-
-    header_offset     = mpeg2_stream->currentOffset() - 8;
-
+    header_offset = mpeg2_stream->position() - 8;
     parseBasicData( header_data );
 
     return true;
   }
-  catch ( TTStreamSeekException )
-  {
-    return false;
-  }
-  catch ( TTStreamEOFException )
+  catch (TTFileBufferException)
   {
     return false;
   }
@@ -366,7 +324,7 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream )
 /* /////////////////////////////////////////////////////////////////////////////
  * Read picture header at given offset.
  */
-bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
+bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream, quint64 offset )
 {
   mpeg2_stream->seekAbsolute( offset+4 );
   return readHeader( mpeg2_stream );
@@ -375,7 +333,7 @@ bool TTPicturesHeader::readHeader( TTFileBuffer* mpeg2_stream, off64_t offset )
 /* /////////////////////////////////////////////////////////////////////////////
  * Parse basic picture header data.
  */
-void TTPicturesHeader::parseBasicData( uint8_t* data, int offset )
+void TTPicturesHeader::parseBasicData( quint8* data, int offset )
 {
   picture_coding_type = (int)((data[offset+1] & 0x38) >> 3);
   temporal_reference  = (int)((data[offset+0] << 2) + ((data[offset+1] & 0xC0) >> 6));

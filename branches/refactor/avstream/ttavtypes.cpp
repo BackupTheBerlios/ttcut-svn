@@ -49,20 +49,17 @@
 #include "ttac3audioheader.h"
 #include "ttmpegaudiostream.h"
 #include "ttmpegaudioheader.h"
-#include "ttpcmaudiostream.h"
-#include "ttdtsaudiostream.h"
 #include "ttmpeg2videostream.h"
+#include "../common/ttexception.h"
 
 #include <QString>
 #include <qfileinfo.h>
-
-//#define TTAVTYPES_DEBUG
 
 const char c_name [] = "TTAVTYPES     : ";
 
 // /////////////////////////////////////////////////////////////////////////////
 // -----------------------------------------------------------------------------
-// *** TTAVTypes: Abstract base class for AV stream types
+// TTAVTypes: Base class for AV stream types
 // -----------------------------------------------------------------------------
 // /////////////////////////////////////////////////////////////////////////////
 
@@ -77,12 +74,11 @@ TTAVTypes::TTAVTypes( QString f_name )
   type_header_offset = 0;
   type_header_length = 0;
 
-#if defined(TTAVTYPES_DEBUG)
-  if ( !av_stream_exists )
-  {
-    qDebug("%saudio stream %s doesn't exist (!)", c_name, TTCut::toAscii(f_name));
+  if (!av_stream_info->exists()) {
+	  qDebug("throw IOException in AVTypes....");
+	  QString msg = QString("AV stream %1 does not exist").arg(f_name);
+	  throw TTIOException(msg);
   }
-#endif
 }
 
 // destructor
@@ -115,7 +111,7 @@ TTAVTypes::AVStreamType TTAVTypes::avStreamType()
 
 // return stream type header offset
 // -----------------------------------------------------------------------------
-off64_t TTAVTypes::typeHeaderOffset()
+quint64 TTAVTypes::typeHeaderOffset()
 {
   return type_header_offset;
 }
@@ -162,34 +158,12 @@ TTAudioStream* TTAudioType::createAudioStream()
   switch ( av_stream_type )
   {
   case ac3_audio:
-#if defined(TTAVTYPES_DEBUG)
-    qDebug( "%sAC3 audio stream",c_name );
-#endif
     return new TTAC3AudioStream( *av_stream_info, start_pos );
   case mpeg_audio:
-#if defined(TTAVTYPES_DEBUG)
-    qDebug( "%sMPEG audio stream",c_name );
-#endif
     return new TTMPEGAudioStream( *av_stream_info, start_pos );
-  case pcm_audio:
-#if defined(TTAVTYPES_DEBUG)
-    qDebug( "%sPCM audio stream",c_name );
-#endif
-    return new TTPCMAudioStream( *av_stream_info, start_pos );
-  case dts14_audio:
-#if defined(TTAVTYPES_DEBUG)
-    qDebug( "%sDTS14 audio stream",c_name );
-#endif
-    return new TTDTS14AudioStream( *av_stream_info, start_pos );
-  case dts16_audio:
-#if defined(TTAVTYPES_DEBUG)
-    qDebug( "%sDTS16 audio stream",c_name );
-#endif
-    return new TTDTS16AudioStream( *av_stream_info, start_pos );
+ 
   default:
-#if defined(TTAVTYPES_DEBUG)
     qDebug( "%sunknown audio stream",c_name );
-#endif
     return (TTAudioStream*)NULL;
   }
 }
@@ -198,28 +172,24 @@ TTAudioStream* TTAudioType::createAudioStream()
 // -----------------------------------------------------------------------------
 void TTAudioType::getAudioStreamType()
 {
-  int               count  = 0;
-  uint8_t*          buffer = new uint8_t [65536];
-  uint16_t          sync_word;
-  uint8_t*          unpack;
-  int               pos;
-  TTPCMAudioStream* pcm_audio_stream = new TTPCMAudioStream();
-  TTDTSAudioStream* dts_audio_stream = new TTDTSAudioStream();
+  int     count  = 0;
+  quint8* buffer = new quint8[65536];
+  quint16 sync_word;
 
-  //qDebug( "%s-----------------------------------------------",c_name );
-  //qDebug( "%s>>> get audio stream type",c_name );
-  //qDebug( "%s-----------------------------------------------",c_name );
+#if defined(TTAVTYPES_DEBUG)
+  qDebug( "%s-----------------------------------------------",c_name );
+  qDebug( "%s>>> get audio stream type",c_name );
+  qDebug( "%s-----------------------------------------------",c_name );
+#endif
 
   av_stream_type  = unknown;
   start_pos       = 0;
 
   // open audio-stream for reading
-  av_stream = new TTFileBuffer( qPrintable(av_stream_info->filePath()), fm_open_read );
+  av_stream = new TTFileBuffer(av_stream_info->filePath(), QIODevice::ReadOnly );
 
   // read buffer from stream
-  count = av_stream->readBuffer( buffer, 65536 );
-
-  //qDebug("%scount: %d",c_name,count);
+  count = av_stream->readByte( buffer, 65536 );
 
   // --------------------------------------------------------------------------
   // analyze buffer
@@ -260,7 +230,7 @@ void TTAudioType::getAudioStreamType()
       //qDebug( "%sFound MPEG audio sync word: %d",c_name,start_pos );
 
       TTMpegAudioHeader* mpeg_header = new TTMpegAudioHeader();
-      TTMPEGAudioStream* mpeg_stream = new TTMPEGAudioStream();
+      TTMPEGAudioStream* mpeg_stream = new TTMPEGAudioStream(*av_stream_info, 0);
 
       mpeg_stream->parseAudioHeader( buffer, start_pos+1, mpeg_header );
 
@@ -280,103 +250,7 @@ void TTAudioType::getAudioStreamType()
         break;
       }
     }
-
-    // PCM audio type
-    // -------------------------------------------------------------------------
-    if ( start_pos == 0 && sync_word == 0x5249 )
-    {
-      //qDebug( "%sfound PCM sync word: %d",c_name, start_pos );
-
-      mem_buffer = new TTMemoryBuffer( buffer );
-
-      // RIFF
-      if ( mem_buffer->readUInt32() == TTPCMAudioStream::ChunkID )
-      {
-        mem_buffer->seek( 8 );
-
-        // WAVE
-        if ( mem_buffer->readUInt32() == TTPCMAudioStream::Format )
-        {
-          // check 'fmt ' Chunk
-          pos = pcm_audio_stream->findChunk(TTPCMAudioStream::Subchunk1ID,buffer,count);
-          if ( pos != -1 )
-          {
-            mem_buffer->seek( pos );
-
-            int size = mem_buffer->readInt32();
-
-            if ( size == 16 && size ==18 ) // Size for PCM
-            {
-              if ( mem_buffer->readInt16() == 1 ) // Format is PCM
-              {	
-                // check 'data' Chunk
-                pos = pcm_audio_stream->findChunk(TTPCMAudioStream::Subchunk2ID,buffer,count);
-
-                if (pos != -1) // vorhanden?
-                {
-                  // OK is PCM
-                  //qDebug( "%sfound PCM audio...",c_name );
-                  av_stream_type = pcm_audio;
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // DTS16 audio type
-    // -------------------------------------------------------------------------
-    if ( sync_word == 0x7ffe )
-    {
-      //qDebug( "%sfound DTS16 sync word: %d",c_name, start_pos );
-      if ( start_pos+3 < count )
-      {
-        uint sync2 = (uint)((buffer[start_pos+2]<<8)+buffer[start_pos+3]);
-
-        if ( sync2 == 0x8001 )
-        {
-          av_stream_type = dts16_audio;
-          break;
-        }
-      }
-    }
-
-    // DTS14 audio type
-    // -------------------------------------------------------------------------
-    if ( sync_word == 0xff1f )
-    {
-      //qDebug( "%sfound DTS14 sync word: %d",c_name, start_pos );
-
-      if ( start_pos+6 < count )					
-      {
-        unpack = dts_audio_stream->fourteenToSixteen(buffer,start_pos,3);
-
-        //qDebug( "%s[0]: %02x [1]: %02x [2]: %02x [3]: %02x",c_name,unpack[0],unpack[1],unpack[2],unpack[3] );
-
-        if (unpack[0]==0x7f && unpack[1]==0xfe && unpack[2]==0x80 && unpack[3]==0x01)
-        {
-          av_stream_type = dts14_audio;
-
-          delete [] unpack;
-          break;
-        }
-        delete [] unpack;
-      }
-    }
   }
-
-  // close audio stream
-  delete pcm_audio_stream;
-  delete dts_audio_stream;
-
-  // check the destructor !!!!
-  //if (mem_buffer != 0)
-  //{
-    //delete mem_buffer;
-    //mem_buffer = 0;
-  //}
 
   av_stream->closeFile();
   delete av_stream;

@@ -1,16 +1,16 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2010 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttheaderlist.h                                                  */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 06/20/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTHEADERLIST
+// TTHEADERLIST
 // ----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -19,11 +19,9 @@
 //
 //               +- TTAudioHeaderList 
 //               | 
-//               +- TTAudioIndexList
-// TTHeaderList -|
-//               +- TTVideoHeaderList
+// TTHeaderList -+
 //               |
-//               +- TTVideoIndexList
+//               +- TTVideoHeaderList
 //
 // -----------------------------------------------------------------------------
 
@@ -47,6 +45,7 @@
 #define TTHEADERLIST_H
 
 #include "ttavheader.h"
+#include "../common/ttmessagelogger.h"
 
 #include <QVector>
 
@@ -57,30 +56,19 @@
 class TTHeaderList : public QVector<TTAVHeader*>
 {
  public:
-  TTHeaderList( int size );
   virtual ~TTHeaderList();
 
   virtual void add( TTAVHeader* header );
   virtual void deleteAll();
-  virtual void sort();
 
  protected:
-  virtual void checkIndexRange( int index );
+  TTHeaderList(int size);
+  virtual void sort() = 0;
+  virtual void checkIndexRange(int index);
 
  protected:
-  int initial_size;
-  int actual_size;
-};
-
-// -----------------------------------------------------------------------------
-// Exceptions
-// -----------------------------------------------------------------------------
-class TTListIndexException
-{
- public:
-  TTListIndexException( long i ) : index(i){ qDebug("index: %ld",index);}
- long index;
-
+  TTMessageLogger* log;
+  int              initial_size;
 };
 
 #endif //TTHEADERLIST

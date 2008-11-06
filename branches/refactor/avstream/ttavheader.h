@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2005/2010 / www.tritime.org                    */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttavheader.h                                                    */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/12/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 08/13/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 05/08/2008 */
 /* MODIFIED:                                                 DATE:            */
 /*----------------------------------------------------------------------------*/
 
@@ -16,25 +16,14 @@
 // TTVIDEOINDEX
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------- 
-// TODO
-// -----------------------------------------------------------------------------
-// * Make TTAvHeader base class complete virtual (abstract)
-//
-// -----------------------------------------------------------------------------
-
-
 // -----------------------------------------------------------------------------
 // Overview
 // -----------------------------------------------------------------------------
 //
-//                               +- TTAC3AudioHeader
-//                               |
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                    +- TTDTS14AudioHeader
-//             |                 +- TTDTSAudioHeader -|
-//             |                 |                    +- TTDTS16AudioHeader
-// TTAVHeader -|                 +- TTPCMAudioHeader
+//             +- TTAudioHeader -|                  
+//             |                 +- TTAC3AudioHeader 
+// TTAVHeader -|                 
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |
@@ -89,14 +78,16 @@ public:
   virtual QString& bitRateString();
   virtual QString& sampleRateString();
 
-  virtual uint8_t  headerType();
-  virtual void     setHeaderType( uint8_t h_type ) {header_start_code = h_type;}
-  virtual off64_t  headerOffset();
-  virtual void     setHeaderOffset( off64_t h_offset ){header_offset = h_offset;}
+  virtual quint8   headerType();
+  virtual void     setHeaderType( quint8 h_type ) {header_start_code = h_type;}
+  virtual quint64  headerOffset() const;
+  virtual void     setHeaderOffset( quint64 h_offset ){header_offset = h_offset;}
+
+  virtual bool operator==(const TTAVHeader& test) const;
 
 protected:
-  off64_t          header_offset;
-  uint8_t          header_start_code;
+  quint64          header_offset;
+  quint8           header_start_code;
   QString*         str_description;
   QString*         str_mode;
   QString*         str_bit_rate;
@@ -136,9 +127,10 @@ class TTVideoHeader : public TTAVHeader
 public:
   TTVideoHeader();
 
-  virtual bool readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream ){ return false; };
-  virtual bool readHeader( __attribute__ ((unused))TTFileBuffer* mpeg2_stream, __attribute__ ((unused))off64_t offset ){ return false; };
-  virtual void parseBasicData( __attribute__ ((unused))uint8_t* data, __attribute__ ((unused))int offset=0){};
+  virtual bool readHeader(TTFileBuffer* mpeg2_stream) = 0;
+  virtual bool readHeader(TTFileBuffer* mpeg2_stream, quint64 offset) = 0;
+  virtual void parseBasicData(quint8* data, int offset=0) = 0;
+
 
  protected:
   typedef struct
@@ -155,17 +147,22 @@ public:
 // -----------------------------------------------------------------------------
 // TTVideoIndex: Object (data) for the video index list
 // -----------------------------------------------------------------------------
-class TTVideoIndex : public TTAVHeader
+class TTVideoIndex
 {
  public:
-  TTVideoIndex():TTAVHeader(){};
+   TTVideoIndex(){};
 
-  int     stream_order;
-  int     display_order;
-  int     header_list_index;
-  int     picture_coding_type;
-  int     sequence_index;
-  long    gop_number;
+   void setDisplayOrder(int value);
+   int  getDisplayOrder();
+   void setHeaderListIndex(int value);
+   int  getHeaderListIndex();
+   void setPictureCodingType(int value);
+   int  getPictureCodingType();
+
+ protected:
+   int display_order;
+   int header_list_index;
+   int picture_coding_type;
 };
 
 
@@ -178,24 +175,18 @@ class TTBreakObject
   TTBreakObject();
   ~TTBreakObject();
 
-  void setStopObject( TTVideoHeader* stop, long index=-1 );
-  void setRestartObject( TTVideoHeader* restart, long index=-1 );
+  void setStopObject( TTVideoHeader* stop, int index=-1 );
+  void setRestartObject( TTVideoHeader* restart, int index=-1 );
   TTVideoHeader* stopObject();
   TTVideoHeader* restartObject();
-  long stopObjectIndex();
-  long restartObjectIndex();
-  void setCopyStart( long start );
-  void setCopyStop( long stop );
-  long copyStart();
-  long copyStop();
+  int stopObjectIndex();
+  int restartObjectIndex();
 
  private:
   TTVideoHeader* stop_object;
   TTVideoHeader* restart_object;
-  long stop_object_index;
-  long restart_object_index;
-  long copy_start;
-  long copy_stop;
+  int stop_object_index;
+  int restart_object_index;
 };
 #endif //TTAVHEADER_H
 
