@@ -102,6 +102,11 @@ void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
 		    << enc_par.avi_input_finfo.absoluteFilePath()
 		    << "--pre_clip"
 		    << "0"
+        // new transcode version for linux!
+        // -------------------------------
+        << "-y"
+        << "ffmpeg"
+        // ------------------------------
 	      << "--export_prof"
 		    << "dvd"            // dvd-pal
 		    << "--export_asr"
