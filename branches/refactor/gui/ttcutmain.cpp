@@ -63,7 +63,7 @@ int main( int argc, char **argv )
     mainWnd->show();
 
     // set initial size of applications main window
-    mainWnd->resize( 800, 600 );
+    mainWnd->resize(1024, 768);
 
     a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
     // Execute application and start event loop

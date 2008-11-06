@@ -64,10 +64,10 @@ class TTFrameSearch
    TTVideoHeaderList* header_list; 
    TTVideoIndexList*  index_list; 
    uint               current_frame;
-   off64_t            file_size;
-   off64_t            file_offset;
-   uint8_t*           ref_data;
-   uint8_t*           com_data;
+   quint64            file_size;
+   quint64            file_offset;
+   quint8*            ref_data;
+   quint8*            com_data;
 };
 
 #endif //TTFRAMESEARCH_H

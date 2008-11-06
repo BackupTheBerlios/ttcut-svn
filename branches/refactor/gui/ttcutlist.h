@@ -50,7 +50,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void clearList();
    
   public slots:
-    void onAddEntry(int cutIn, int cutOut);
+    void onAddEntry(int cutIn, int cutOut, TTAVData* avData);
     void onEntryUp();
     void onEntryDown();
     void onEntryDelete();
@@ -62,17 +62,21 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void onEntryCut();
     void onPreview();
     void onAVCut();
+    void onAVSelCut();
     void onAudioCut();
     void onEditCutOut(int cutOut);
     void onContextMenuRequest(const QPoint& point);
+    void onEntryDuplicate();
 
   signals:
     void entrySelected(int cutOutIndex );
+    void changeVideo( TTAVData* pNewAVData );
     void entryEdit(const TTCutListDataItem& cutData);
     void gotoCutIn(int cutInIndex);
     void gotoCutOut(int cutOutIndex);
     void previewCut(int index);
     void audioVideoCut(int index);
+    void selectedAudioVideoCut(QVector<int> selectedItems);
     void audioCut(int index);
     void refreshDisplay();
  
@@ -90,6 +94,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     QAction*       gotoCutInAction;
     QAction*       gotoCutOutAction;
     QAction*       itemPreviewAction;
+    QAction*       itemDuplicateAction;
 };
 
 #endif

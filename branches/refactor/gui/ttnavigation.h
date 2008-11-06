@@ -66,6 +66,7 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     void onGotoMarker();
     void onQuickJump();
     void onEditCut(const TTCutListDataItem& cutData);
+    void onCurVideoChanged( TTAVData* pAVData );
 
   signals:
     void prevIFrame();
@@ -78,7 +79,7 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     void setCutOut(int);
     void gotoCutIn(int);
     void gotoCutOut(int);
-    void addCutRange(int, int);
+    void addCutRange(int, int, TTAVData*);
     void gotoMarker(int);
     void moveNumSteps(int);
     void moveToHome();
@@ -98,6 +99,7 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     int     cutInPosition;
     int     cutOutPosition;
     int     markerPosition;
+    TTAVData*           m_pAVData;
 };
 
 #endif

@@ -57,6 +57,17 @@ class TTProgressBar : public QDialog
     Q_OBJECT
 
 public:
+  enum State
+  {
+    Init,
+    Start,
+    Step,
+    Finished,
+    Canceled,
+    Error
+  };
+
+public:
     TTProgressBar( QWidget* parent = 0, Qt::WFlags f = 0 );
     ~TTProgressBar();
 
@@ -77,6 +88,8 @@ public:
 
     public slots:
     void slotCancel();
+    void setProgress2(TTProgressBar::State state, const QString& msg = "", quint64 value = 0);
+
 
     signals:
       void cancel();

@@ -33,9 +33,12 @@
 #include <QPixmap>
 
 #include "ttcutmainwindow.h"
+
+#include "../common/ttexception.h"
 #include "ttcutavcutdlg.h"
 #include "ttprogressbar.h"
 #include "ttcutaboutdlg.h"
+#include "data/ttavdata.h"
 
 #include "../ui//pixmaps/downarrow_18.xpm"
 #include "../ui/pixmaps/uparrow_18.xpm"
@@ -189,7 +192,8 @@ TTCutMainWindow::TTCutMainWindow()
   connect(navigation, SIGNAL(setCutIn(int)),     currentFrame, SLOT(onSetCutIn(int)));
   connect(navigation, SIGNAL(gotoCutIn(int)),    currentFrame, SLOT(onGotoCutIn(int)));
   connect(navigation, SIGNAL(gotoCutOut(int)),   currentFrame, SLOT(onGotoCutOut(int)));
-  connect(navigation, SIGNAL(addCutRange(int, int)), cutList,   SLOT(onAddEntry(int, int)));
+  connect(navigation, SIGNAL(addCutRange(int, int, TTAVData*)),
+                                                 cutList,   SLOT(onAddEntry(int, int, TTAVData*)));
   connect(navigation, SIGNAL(gotoMarker(int)),   currentFrame, SLOT(onGotoMarker(int)));
   connect(navigation, SIGNAL(moveNumSteps(int)), currentFrame, SLOT(onMoveNumSteps(int)));
   connect(navigation, SIGNAL(moveToHome()),      currentFrame, SLOT(onMoveToHome()));
@@ -211,6 +215,7 @@ TTCutMainWindow::TTCutMainWindow()
   // Connect signals from cut list widget
   // --------------------------------------------------------------------------
   connect(cutList, SIGNAL(entrySelected(int)), cutOutFrame,     SLOT(onGotoCutOut(int)));
+  connect(cutList, SIGNAL(changeVideo(TTAVData*)),                  SLOT(onChangeVideoStream(TTAVData*)));
   connect(cutList, SIGNAL(entryEdit(const TTCutListDataItem&)), 
                                               navigation,       SLOT(onEditCut(const TTCutListDataItem&)));
   connect(cutList, SIGNAL(gotoCutIn(int)),     currentFrame,    SLOT(onGotoFrame(int)));
@@ -219,6 +224,12 @@ TTCutMainWindow::TTCutMainWindow()
   connect(cutList, SIGNAL(previewCut(int)),                     SLOT(onPreviewCut(int)));
   connect(cutList, SIGNAL(audioVideoCut(int)),                  SLOT(onAudioVideoCut(int)));
   connect(cutList, SIGNAL(audioCut(int)),                       SLOT(onAudioCut(int)));
+  connect(cutList, SIGNAL(selectedAudioVideoCut(QVector<int>)),    SLOT(onSelectedAudioVideoCut(QVector<int>)));
+
+  // connect signals from cut main window
+  connect( this, SIGNAL(currentVideoChanged(TTAVData*)), navigation,      SLOT(onCurVideoChanged(TTAVData*)) );
+  connect( this, SIGNAL(currentVideoChanged(TTAVData*)), streamNavigator, SLOT(onCurVideoChanged(TTAVData*)) );
+
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -319,7 +330,7 @@ void TTCutMainWindow::onFileSave()
 
   // write video file section
   projectFile->writeVideoSection(true);
-  projectFile->writeVideoFileName(mpegStream->fileInfo()->absoluteFilePath());
+  projectFile->writeVideoFileName(mpegStream->filePath());
   projectFile->writeVideoSection(false);
 
   // write audio files section
@@ -464,7 +475,6 @@ void TTCutMainWindow::onReadVideoStream(QString fName)
 
   if (audioInfoList.count() == 0)
   {
-    TTCut::numAudioTracks = 0;
     audioFileInfo->onFileOpen();
     return;
   }
@@ -553,7 +563,7 @@ void TTCutMainWindow::onPreviewCut(int index)
 /* /////////////////////////////////////////////////////////////////////////////
  * Do video and audio cut
  */
-void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cutAudioOnly)
+void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cutAudioOnly, TTCutListData* cutData)
 {
   QString        AudioDateiEndung;
   QString        HString;
@@ -571,8 +581,12 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
 
+  // if cutData==0, take the whole list as cut data
+  if (cutData == NULL)
+    cutData=cutListData;
+
   // no video stream open or no cut sequences defined; exit
-  if ( !TTCut::isVideoOpen || cutListData->count() == 0 )
+  if ( !TTCut::isVideoOpen || cutData->count() == 0 )
     return;
 
   if ( ttAssigned(settings) ) 
@@ -582,15 +596,15 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
   // compose video cut name from video file name
   // --------------------------------------------------------------------------
   // get video file file-extension
-  QString sExt = mpegStream->fileInfo()->suffix();
+  QString sExt = mpegStream->fileExtension();
 
   // remove the extension
   len1 = sExt.length();
-  len2 = mpegStream->fileInfo()->fileName().length();
+  len2 = mpegStream->fileName().length();
 
   len  = len2 - len1 - 1;
 
-  videoCutName = mpegStream->fileInfo()->fileName();
+  videoCutName = mpegStream->fileName();
   videoCutName.truncate(len);
 
   // append new cut name
@@ -640,13 +654,14 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
   {
     //qDebug("Meldung125: Die Videodaten werden in der Datei %s gespeichert.",videoCutName.ascii());
 
-    progress_bar = new TTProgressBar( this );
+   progress_bar = new TTProgressBar( this );
+   connect(mpegStream,  SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)), 
+          progress_bar, SLOT(setProgress2(TTProgressBar::State, const QString&, quint64)));
+
     progress_bar->show();
     qApp->processEvents();
 
-     video_cut_stream = new TTFileBuffer(videoCutName.toUtf8().constData(), fm_open_write );
-
-    mpegStream->setProgressBar( progress_bar );
+     video_cut_stream = new TTFileBuffer(videoCutName.toUtf8().constData(), QIODevice::WriteOnly );
 
     mpegStream->cut( video_cut_stream, cutListData );
 
@@ -663,7 +678,9 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
       return;
     }
 
-    muxIndex = muxListData->addItem(QString::fromUtf8(video_cut_stream->fileName()));
+    muxIndex = muxListData->addItem(video_cut_stream->fileName());
+
+    mpegStream->disconnect();
 
     delete progress_bar;
     delete video_cut_stream;
@@ -710,14 +727,15 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
     }
 
     progress_bar = new TTProgressBar( this );
+   connect(current_audio_stream,  SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)), 
+          progress_bar, SLOT(setProgress2(TTProgressBar::State, const QString&, quint64)));
+
     progress_bar->show();
     qApp->processEvents();
 
-    current_audio_stream->setProgressBar( progress_bar );
+    audio_cut_stream = new TTFileBuffer(qPrintable(audio_cut_name), QIODevice::WriteOnly );
 
-    audio_cut_stream = new TTFileBuffer(qPrintable(audio_cut_name), fm_open_write );
-
-    current_audio_stream->cut( audio_cut_stream, cutListData );
+    current_audio_stream->cut( audio_cut_stream, cutListData); 
 
     // audio cut canceled
     if (progress_bar->isCanceled())
@@ -733,7 +751,9 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
     }
 
     if (!cutAudioOnly)
-      muxListData->appendAudioName(muxIndex, QString::fromUtf8(audio_cut_stream->fileName()));
+      muxListData->appendAudioName(muxIndex, audio_cut_stream->fileName());
+
+    current_audio_stream->disconnect();
 
     delete progress_bar;
     delete audio_cut_stream;
@@ -758,6 +778,18 @@ void TTCutMainWindow::onAudioCut(__attribute__ ((unused))int index)
 {
   onAudioVideoCut(index, true);
 }
+
+
+void TTCutMainWindow::onSelectedAudioVideoCut(QVector<int> selectedItems)
+{
+  TTCutListData cutData;
+  for ( int i=0; i<selectedItems.count(); ++i ) {
+    cutData.addItem( cutListData->cutInPos(selectedItems[i]), cutListData->cutOutPos(selectedItems[i]),
+                     cutListData->avData(i) );
+  }
+  onAudioVideoCut(-1, false, &cutData);
+}
+
 
 /* /////////////////////////////////////////////////////////////////////////////
  * Service methods
@@ -890,12 +922,12 @@ bool TTCutMainWindow::openProjectFile(QString fName)
 
   // read cut positions
   projectFile->seekToCutSection();
-  cutListData = new TTCutListData(mpegStream);
+  cutListData = new TTCutListData();
   cutList->setListData(cutListData);
   int cutInPos;
   int cutOutPos;
   while (projectFile->readCutEntry(cutInPos, cutOutPos)) {
-    cutList->onAddEntry(cutInPos, cutOutPos);
+    cutList->onAddEntry(cutInPos, cutOutPos, m_pCurAVData);
   }
 
   initStreamNavigator();
@@ -926,11 +958,14 @@ int TTCutMainWindow::openVideoStream(QString fName)
     return result;
   }
 
-  log->infoMsg(oName, "Read video stream: %s", TTCut::toAscii(fName));
+  log->infoMsg(oName, "Read video stream: %s", qPrintable(fName));
 
   // Close current project
   if(TTCut::isVideoOpen){
-    closeProject();
+    audioList = new TTAudioListData();
+    audioFileInfo->setListData(audioList);
+    audioFileInfo->clearList();
+//     closeProject();
   }
 
   videoType = new TTVideoType( fName );
@@ -941,59 +976,104 @@ int TTCutMainWindow::openVideoStream(QString fName)
     return result;
   }
 
-  mpegStream = (TTMpeg2VideoStream*)videoType->createVideoStream();
+  try
+  {
+    mpegStream = (TTMpeg2VideoStream*)videoType->createVideoStream();
 
-  // init progress bar
-  progressBar = new TTProgressBar( this );
-  mpegStream->setProgressBar( progressBar );
-  progressBar->show();
-  qApp->processEvents();
+    // init progress bar
+    progressBar = new TTProgressBar( this );
+    connect(mpegStream,  SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)), 
+        progressBar, SLOT(setProgress2(TTProgressBar::State, const QString&, quint64)));
 
-  // create header- and index-list for mpeg stream
-  int numHeader = mpegStream->createHeaderList();
-  int numIndex  = 0;
+    progressBar->setActionText("Init cut");
+    progressBar->show();
+    qApp->processEvents();
 
-  if( numHeader > 0 ){
-    numIndex = mpegStream->createIndexList(); 
-  }else{
-    log->errorMsg(oName, "no header list created");
+    // create header- and index-list for mpeg stream
+    int numHeader = mpegStream->createHeaderList();
+    int numIndex  = 0;
+
+    if( numHeader > 0 ){
+      numIndex = mpegStream->createIndexList(); 
+    }else{
+      log->errorMsg(oName, "no header list created");    
+      delete progressBar;
+      delete videoType;
+      mpegStream->disconnect();
+      mpegStream = (TTMpeg2VideoStream*)NULL;
+      return result;
+    }
+
+    if (numIndex == 0) {
+      log->errorMsg(oName, "no index list created");
+      delete progressBar;
+      delete videoType;
+      mpegStream->disconnect();
+      mpegStream = (TTMpeg2VideoStream*)NULL;
+      return result;
+    }
+
+    result = numIndex;
+
+    // Videostream successfully openend, header and indexlists created
+    progressBar->hide();
+    TTCut::isVideoOpen = true;
+    mpegStream->indexList()->sortDisplayOrder();
+
+    videoFileInfo->setVideoInfo( mpegStream );
+
+    // show video stream in current frame and prepare cut-out frame preview
+    currentFrame->initVideoStream( mpegStream );
+    cutOutFrame->initVideoStream( mpegStream );
+
+    onNewFramePos( 0 );
+    
+    mpegStream->disconnect();
+    
+    m_pCurAVData = new TTAVData( mpegStream, audioList );
+    m_AVDataList.append( *m_pCurAVData );
+    emit currentVideoChanged( m_pCurAVData );       
+  } catch (TTException ex) {
+    qDebug("Exception while openening video file: %s", TTCut::toAscii(ex.getMessage()));
+
+    progressBar->hide();
+    TTCut::isVideoOpen = false;
+    delete mpegStream;
+    mpegStream = NULL;
+
     delete progressBar;
     delete videoType;
-    mpegStream->setProgressBar((TTProgressBar*)NULL);    
-    mpegStream = (TTMpeg2VideoStream*)NULL;
-    return result;
+
+    return 0;
   }
-
-  if (numIndex == 0) {
-    log->errorMsg(oName, "no index list created");
-    delete progressBar;
-    delete videoType;
-    mpegStream->setProgressBar((TTProgressBar*)NULL);    
-    mpegStream = (TTMpeg2VideoStream*)NULL;
-    return result;
-  }
-
-  result = numIndex;
-
-  // Videostream successfully openend, header and indexlists created
-  progressBar->hide();
-  TTCut::isVideoOpen = true;
-  mpegStream->indexList()->sortDisplayOrder();
-
-  videoFileInfo->setVideoInfo( mpegStream );
-
-  // show video stream in current frame and prepare cut-out frame preview
-  currentFrame->initVideoStream( mpegStream );
-  cutOutFrame->initVideoStream( mpegStream );
-
-  onNewFramePos( 0 );
-
-  mpegStream->setProgressBar((TTProgressBar*)NULL);    
 
   delete progressBar;
   delete videoType;
 
   return result;
+}
+
+
+void TTCutMainWindow::onChangeVideoStream( TTAVData* pAVData )
+{
+  if ( pAVData == m_pCurAVData )
+    return;
+
+  // video stream specific commands
+  mpegStream = (TTMpeg2VideoStream*) pAVData->videoStream();
+  videoFileInfo->setVideoInfo( mpegStream );
+  currentFrame->initVideoStream( mpegStream );
+  cutOutFrame->initVideoStream( mpegStream );
+  onNewFramePos( 0 );
+  initStreamNavigator();
+
+  // audio stream specific commands
+  audioList = pAVData->audioList();
+  audioFileInfo->setListData( audioList );
+
+  m_pCurAVData = pAVData;
+
+  emit currentVideoChanged( pAVData );
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -1006,32 +1086,35 @@ int TTCutMainWindow::openAudioStream(QString fName)
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
 
-  log->infoMsg(oName, "Read audio stream: %s", fName.toLatin1().constData());
-
   // get the stream type and create according stream-object
+  try
+  {
+    qDebug("Open audio file...");
   audio_type   = new TTAudioType( fName );
+  } catch (TTException ex) {
+    qDebug("catch IO:");
+    log->infoMsg("MainWindow", ex.getMessage());
+    delete audio_type;
+    return 0;
+  }
 
   // create the audio stream object for the first audio file
   if ( audio_type->avStreamType() == TTAVTypes::mpeg_audio  ||
-      audio_type->avStreamType() == TTAVTypes::ac3_audio   ||
-      audio_type->avStreamType() == TTAVTypes::dts14_audio ||
-      audio_type->avStreamType() == TTAVTypes::dts16_audio ||
-      audio_type->avStreamType() == TTAVTypes::pcm_audio      ) {
+      audio_type->avStreamType()  == TTAVTypes::ac3_audio ) {
 
     current_audio_stream = (TTAudioStream*)audio_type->createAudioStream();
 
     // set progress bar
     progress_bar = new TTProgressBar( this );
-    current_audio_stream->setProgressBar( progress_bar );
+    connect(current_audio_stream, SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)),
+            progress_bar,         SLOT(setProgress2(TTProgressBar::State, const QString&, quint64)));
     progress_bar->show();
     qApp->processEvents();
 
     // create header list for audio stream
     int num_header = current_audio_stream->createHeaderList();
-
     // error reading audio stream or user abort during operation
-    if ( num_header == 0 && audio_type->avStreamType() != TTAVTypes::pcm_audio ||
-        num_header == 1 && audio_type->avStreamType() == TTAVTypes::pcm_audio    ) {
+    if (num_header == 0) {
 
       log->errorMsg( oName, "error reading audio stream; no header list (!)" );
       delete current_audio_stream;
@@ -1050,7 +1133,7 @@ int TTCutMainWindow::openAudioStream(QString fName)
     }
 
     delete progress_bar;
-    current_audio_stream->setProgressBar( (TTProgressBar*)NULL );
+    current_audio_stream->disconnect();
 
   } else {
     log->errorMsg(oName, "wrong audio type for file: %s", TTCut::toAscii(fName));
@@ -1067,7 +1150,7 @@ void TTCutMainWindow::initStreamNavigator()
 {
   if (cutListData == 0)
   {
-    cutListData = new TTCutListData(mpegStream);
+    cutListData = new TTCutListData();
     cutList->setListData(cutListData);
   }
 

@@ -86,8 +86,13 @@ void TTVideoFileInfo::setVideoInfo( TTMpeg2VideoStream* mpeg2Stream )
 {
   QString szTemp;
 
+  TTSequenceHeader* currentSequence = mpeg2Stream->currentSequenceHeader();
+  
+  if (currentSequence == NULL)
+	return;
+	
   // video file name
-  infoVideoFileName->setText( mpeg2Stream->fileInfo()->fileName());
+  infoVideoFileName->setText(mpeg2Stream->fileName());
 
   // video length
   int numFrames = mpeg2Stream->frameCount();

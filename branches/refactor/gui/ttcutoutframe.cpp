@@ -84,7 +84,7 @@ void TTCutOutFrame::closeVideoStream()
 //! Goto specified cut out position
 void TTCutOutFrame::onGotoCutOut(int pos)
 {
-  currentPosition = mpeg2Stream->moveToIndexPos( pos, 0 );  
+  currentPosition = mpeg2Stream->moveToIndexPos(pos);  
   mpegWindow->showFrameAt( currentPosition );
 
   updateCurrentPosition();

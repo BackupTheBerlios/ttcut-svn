@@ -216,7 +216,7 @@ bool TTProgressBar::setProgress( uint64_t progress )
     strPercentage.sprintf( "%02.0lf%%",progressPercent );
     percentageString->setText( strPercentage );
 
-    progressPercent = (double)progress / (double)totalSteps * 100.0;
+    //progressPercent = (double)progress / (double)totalSteps * 100.0;
 
     // normalized progress value for the progress bar
     normProgress = (int)(progressPercent*1000.0);
@@ -262,6 +262,19 @@ void TTProgressBar::slotCancel()
   userCancel = true;
   emit cancel();
   qApp->processEvents();
+}
+
+void TTProgressBar::setProgress2(TTProgressBar::State state, const QString& msg, quint64 value)
+{
+  //qDebug("setProgress: %d / %s / %lld", state, qPrintable(msg), value);
+  if (state == TTProgressBar::Init)
+  {
+    setTotalSteps(value);
+    setActionText(msg);
+  }
+
+  if (state == TTProgressBar::Step)
+    setProgress(value);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////

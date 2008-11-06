@@ -5,7 +5,9 @@
 /* FILE     : ttcutpreview.h                                                  */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 03/13/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 03/12/2005 */
+/* MODIFIED: b. altendorf                                    DATE: 03/12/2006 */
+/* MODIFIED: b. altendorf                                    DATE: 04/19/2007 */
+/* MODIFIED: b. altendorf                                    DATE: 05/06/2008 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -33,17 +35,18 @@
 
 #include "ui_previewwidget.h"
 
-
 #include <QProcess>
+#include <QResizeEvent>
+#include <QCloseEvent>
 
 #include "../common/ttcut.h"
-#include "ttprogressbar.h"
-
 #include "../common/ttmessagelogger.h"
 #include "../data/ttaudiolistdata.h"
 #include "../data/ttcutlistdata.h"
 #include "../avstream/ttavstream.h"
 #include "../avstream/ttvideoindexlist.h"
+#include "ttprogressbar.h"
+#include "ttmoviewidget.h"
 
 class QVBoxLayout;
 class QHBoxLayout;
@@ -52,7 +55,6 @@ class QSpacerItem;
 class QComboBox;
 class QPushButton;
 class QFrame;
-
 
 // -----------------------------------------------------------------------------
 // TTCUTPREVIEW
@@ -66,28 +68,22 @@ class TTCutPreview : public QDialog, Ui::TTPreviewWidget
     TTCutPreview( QWidget* parent = 0, int prevW = 640, int prevH = 480);
     ~TTCutPreview();
 
+    void resizeEvent(QResizeEvent* event);
     void initPreview( TTVideoStream* v_stream, TTAudioStream* a_stream, TTCutListData* c_list );
     void createPreview( int cut_index=-1 );
 
  protected:
-    bool playMPlayer( QString videoFile, QString audioFile );
-    bool stopMPlayer();
-
+    void closeEvent(QCloseEvent* event);
+    void cleanUp();
     void createCutPreviewList( );
 
 protected slots:
+    void updateSizes();
+    void isPlayingSlot(bool value);
     void selectCut( int iCut );
     void playPreview();
-    void stopPreview();
     void exitPreview();
 
-    void mplayerStarted();
-
-    void readFromStdout();
-    void exitMPlayer( int e_code, QProcess::ExitStatus e_status );
-    void errorMplayer( QProcess::ProcessError );
-    void stateChangedMplayer( QProcess::ProcessState newState );
-    
  private:
     TTMessageLogger*   log;
     TTProgressBar*     progress_bar;
@@ -100,7 +96,6 @@ protected slots:
     int                cut_index;
     TTFileBuffer*      video_cut_stream;
     TTFileBuffer*      audio_cut_stream;
-    QProcess*          mplayerProc;      
     QProcess*          mplexProc;        
     int                previewWidth;        
     int                previewHeight;       
@@ -109,6 +104,7 @@ protected slots:
     QString            current_video_file;    
     QString            current_audio_file;    
     bool               isPlaying;           
+    TTMovieWidget*     movieWidget;
 };
 
 #endif // TTCUTPREVIEW_H

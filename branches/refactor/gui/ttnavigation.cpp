@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2008 / ttcut.tritime.org                       */
+/* COPYRIGHT: TriTime (c) 2003/2010 / ttcut.tritime.org                       */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2005                                                      */
 /* FILE     : ttnavigation.cpp                                                */
@@ -8,7 +8,7 @@
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// *** TTNAVIGATION
+// TTNAVIGATION
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -96,17 +96,8 @@ void TTNavigation::checkCutPosition( TTVideoStream* vs )
   currentTime      = vs->currentFrameTime().toString("hh:mm:ss.zzz");
   currentFrameType = vs->currentFrameType();
   
-  // cut in possible
-  if ( vs->isCutInPoint( -1 ) )
-    pbSetCutIn->setEnabled( true );
-  else
-    pbSetCutIn->setEnabled( false );
-
-  // cut out possible
-  if ( vs->isCutOutPoint( -1 ) )
-    pbSetCutOut->setEnabled( true );
-  else
-    pbSetCutOut->setEnabled( false );
+  pbSetCutIn->setEnabled(vs->isCutInPoint(-1));
+  pbSetCutOut->setEnabled(vs->isCutOutPoint(-1));
 }
 
 
@@ -332,7 +323,7 @@ void TTNavigation::onAddCutRange()
       isEditCut = false;
     }
 
-    emit addCutRange(cutInPosition, cutOutPosition);
+    emit addCutRange(cutInPosition, cutOutPosition, m_pAVData);
   }
 }
 
@@ -407,3 +398,7 @@ void TTNavigation::onEditCut(const TTCutListDataItem& cutData)
   emit gotoCutIn(cutInPosition);
 }
 
+void TTNavigation::onCurVideoChanged( TTAVData* pAVData )
+{
+  m_pAVData = pAVData;
+}

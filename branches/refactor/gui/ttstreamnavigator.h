@@ -33,6 +33,7 @@
 #include "ui_streamnavigationwidget.h"
 
 class TTCutListData;
+class TTAVData;
 
 class TTStreamNavigator : public QWidget, public Ui::TTStreamNavigatorWidget
 {
@@ -53,6 +54,7 @@ class TTStreamNavigator : public QWidget, public Ui::TTStreamNavigatorWidget
     void onNewSliderValue(int value);
     void onSliderMoved(int value);
     void onRefreshDisplay();
+    void onCurVideoChanged( TTAVData* pCurAVData );
     
   signals:
     void sliderValueChanged(int value);

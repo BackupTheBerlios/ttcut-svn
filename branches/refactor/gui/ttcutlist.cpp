@@ -28,11 +28,13 @@
 /*----------------------------------------------------------------------------*/
 
 #include "ttcutlist.h"
+#include "data/ttavdata.h"
 
 #include <QMenu>
 #include <QPoint>
 #include <QHeaderView>
 #include <QModelIndex>
+#include <QMessageBox>
 
 //! Construct the cut list object
 TTCutList::TTCutList(QWidget* parent)
@@ -63,8 +65,10 @@ TTCutList::TTCutList(QWidget* parent)
   connect(pbEntryUp,       SIGNAL(clicked()), SLOT(onEntryUp()));
   connect(pbEntryDown,     SIGNAL(clicked()), SLOT(onEntryDown()));
   connect(pbEntryDelete,   SIGNAL(clicked()), SLOT(onEntryDelete()));
+  connect(pbEntryDuplicate,SIGNAL(clicked()), SLOT(onEntryDuplicate()));
   connect(pbPreview,       SIGNAL(clicked()), SLOT(onPreview()));
   connect(pbCutAudioVideo, SIGNAL(clicked()), SLOT(onAVCut()));
+  connect(pbCutSelected,   SIGNAL(clicked()), SLOT(onAVSelCut()));
   connect(pbCutAudio,      SIGNAL(clicked()), SLOT(onAudioCut()));
   connect(videoCutList,    SIGNAL(itemClicked( QTreeWidgetItem*, int)), SLOT(onEntrySelected(QTreeWidgetItem*, int)));
   connect(videoCutList,    SIGNAL( customContextMenuRequested( const QPoint& ) ), SLOT( onContextMenuRequest( const QPoint& ) ) );
@@ -95,24 +99,31 @@ void TTCutList::clearList()
 
 
 //! Add or update an entry in the cut list
-void TTCutList::onAddEntry(int cutIn, int cutOut)
+void TTCutList::onAddEntry(int cutIn, int cutOut, TTAVData* avData)
 {
   int cutIndex;
 
   if ( ttAssigned(cutListData) ) {
 
+    if ( cutListData->count() > 0 ) {
+      if ( cutListData->avData(0)->CanCutWith(avData) == false ) {
+        QMessageBox::critical( this, tr("Cannot add the cutpoint"), tr("The cutpoint cannot be added") );
+        return;
+      }
+    }
+
     if (editItemIndex < 0) {
-      cutIndex = cutListData->addItem( cutIn, cutOut );
+      cutIndex = cutListData->addItem( cutIn, cutOut, avData );
 
       QTreeWidgetItem* treeItem = new QTreeWidgetItem(videoCutList);
-      treeItem->setText(0, cutListData->streamFileName());
+      treeItem->setText(0, cutListData->streamFileName(cutIndex));
       treeItem->setText(1, cutListData->cutInPosString(cutIndex));
       treeItem->setText(2, cutListData->cutOutPosString(cutIndex));
       treeItem->setText(3, cutListData->cutLengthString(cutIndex));
     } else {
       cutListData->updateItem(editItemIndex, cutIn, cutOut);
       QTreeWidgetItem* editItem = videoCutList->topLevelItem(editItemIndex);
-      editItem->setText(0, cutListData->streamFileName());
+      editItem->setText(0, cutListData->streamFileName(editItemIndex));
       editItem->setText(1, cutListData->cutInPosString(editItemIndex));
       editItem->setText(2, cutListData->cutOutPosString(editItemIndex));
       editItem->setText(3, cutListData->cutLengthString(editItemIndex));
@@ -133,61 +144,79 @@ void TTCutList::onAddEntry(int cutIn, int cutOut)
 //! Move the currently selected entry up
 void TTCutList::onEntryUp()
 {
-  if (videoCutList->currentItem() != NULL &&
-      editItemIndex < 0) {
-    // current index
-    int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+  bool bUpNotAllowed = videoCutList->topLevelItem(0)->isSelected();
+  bUpNotAllowed = bUpNotAllowed && editItemIndex < 0;
+  if ( bUpNotAllowed )
+    return;
 
-    if (index > 0) {
-      // take current item form list but don't delete it
-      QTreeWidgetItem* curItem = videoCutList->takeTopLevelItem(index);
-
-      // insert new item
-      videoCutList->insertTopLevelItem(index-1, curItem);       
-      videoCutList->setCurrentItem(curItem);
-
-      cutListData->swap(index, index-1);
-      //cutListData->print();
+  QTreeWidgetItem* pCurItem = videoCutList->currentItem();
+  QList<QTreeWidgetItem*> SelectedItems = videoCutList->selectedItems();
+  for ( int i=0; i<videoCutList->topLevelItemCount(); ++i ) {
+    if ( videoCutList->topLevelItem(i)->isSelected() ) {
+      QTreeWidgetItem* pTmpItem = videoCutList->takeTopLevelItem( i );
+      videoCutList->insertTopLevelItem( i-1, pTmpItem );
+      cutListData->swap( i, i-1 );
     }
   }
+
+  // restore current item, and item selection
+  videoCutList->setCurrentItem( pCurItem );
+  for ( int i=0; i<SelectedItems.count(); ++i )
+    SelectedItems[i]->setSelected( true );
 }
 
 //! Move the currently selected entry down
 void TTCutList::onEntryDown()
 {
-  if (videoCutList->currentItem() != NULL &&
-      editItemIndex < 0) {
-    // current index
-    int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+  bool bDownNotAllowed = videoCutList->topLevelItem(videoCutList->topLevelItemCount()-1)->isSelected();
+  bDownNotAllowed = bDownNotAllowed && editItemIndex < 0;
+  if ( bDownNotAllowed )
+    return;
 
-    if (index < videoCutList->topLevelItemCount()-1) {
-      // take current item from list but don't delete it
-      QTreeWidgetItem* curItem = videoCutList->takeTopLevelItem(index);
-
-      // insert new item
-      videoCutList->insertTopLevelItem(index+1, curItem);       
-      videoCutList->setCurrentItem(curItem);
-
-      cutListData->swap(index, index+1);
-      //cutListData->print();
+  QTreeWidgetItem* pCurItem = videoCutList->currentItem();
+  QList<QTreeWidgetItem*> SelectedItems = videoCutList->selectedItems();
+  for ( int i=videoCutList->topLevelItemCount()-1; i>=0; --i ) {
+    if ( videoCutList->topLevelItem(i)->isSelected() ) {
+      QTreeWidgetItem* pTmpItem = videoCutList->takeTopLevelItem( i );
+      videoCutList->insertTopLevelItem( i+1, pTmpItem );
+      cutListData->swap( i, i+1 );
     }
   }
+
+  // restore current item, and item selection
+  videoCutList->setCurrentItem( pCurItem );
+  for ( int i=0; i<SelectedItems.count(); ++i )
+    SelectedItems[i]->setSelected( true );
 }
 
 //! Remove the currently selected entry from the list
 void TTCutList::onEntryDelete()
 {
-  if (videoCutList->currentItem() != NULL &&
-      editItemIndex < 0) {
-    // current index
-    int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+  if ( editItemIndex >= 0 )
+    return;
 
-    // remove current item from list
-    delete videoCutList->takeTopLevelItem(index);
-
-    cutListData->removeAt(index);
+  for ( int i=0; i<videoCutList->topLevelItemCount(); ++i ) {
+    if ( videoCutList->topLevelItem(i)->isSelected() ) {
+      delete videoCutList->takeTopLevelItem(i);
+      cutListData->removeAt(i);
+    }
+  }
     emit refreshDisplay();
     //cutListData->print();
+  }
+
+
+//! Duplicate the currently selected entry from the list
+void TTCutList::onEntryDuplicate()
+{
+  if ( editItemIndex >= 0 )
+    return;
+
+  for ( int i=0; i<videoCutList->topLevelItemCount(); ++i ) {
+    if ( videoCutList->topLevelItem(i)->isSelected() ) {
+      videoCutList->insertTopLevelItem( i+1, new QTreeWidgetItem(*videoCutList->topLevelItem(i)) );
+      cutListData->duplicateItem(i);
+    }
   }
 }
 
@@ -216,6 +245,7 @@ void TTCutList::onEntryEdit()
     videoCutList->setItemSelected(curItem, false);
 
     editItemIndex = index;
+    emit changeVideo(cutListData->avData(index));
     emit entryEdit(cutListData->at(index));
   }
 }
@@ -225,6 +255,7 @@ void TTCutList::onGotoCutIn()
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+    emit changeVideo( cutListData->avData(index) );
     emit gotoCutIn(cutListData->cutInPos(index));
   }
 }
@@ -234,6 +265,7 @@ void TTCutList::onGotoCutOut()
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
+    emit changeVideo( cutListData->avData(index) );
     emit gotoCutOut(cutListData->cutOutPos(index));
   }
 }
@@ -264,6 +296,18 @@ void TTCutList::onAVCut()
   emit audioVideoCut(-1);
 }
 
+
+//! Cut selected audio+video button action
+void TTCutList::onAVSelCut()
+{
+  QVector<int> selectedItems;
+  for ( int i=0; i<videoCutList->topLevelItemCount(); ++i )
+    if ( videoCutList->topLevelItem(i)->isSelected() )
+      selectedItems << i;
+  emit selectedAudioVideoCut(selectedItems);
+}
+
+
 //! Cut audio only button action
 void TTCutList::onAudioCut()
 {
@@ -290,17 +334,23 @@ void TTCutList::onContextMenuRequest( const QPoint& point)
   if(videoCutList->currentItem() != NULL) {
 
     QMenu contextMenu(this);
+    bool bMultipleSelected = ( videoCutList->selectedItems().count() > 1 );
 
+    if ( !bMultipleSelected ) {
     contextMenu.addAction(gotoCutInAction);
     contextMenu.addAction(gotoCutOutAction);
     contextMenu.addSeparator();
+    }
     contextMenu.addAction(itemUpAction);
     contextMenu.addAction(itemDeleteAction);
+    contextMenu.addAction(itemDuplicateAction);
     contextMenu.addAction(itemDownAction);
+    if ( !bMultipleSelected ) {
     contextMenu.addSeparator();
     contextMenu.addAction(itemPreviewAction);
     contextMenu.addSeparator();
     contextMenu.addAction(itemEditAction);
+    }
 
     contextMenu.exec(videoCutList->mapToGlobal(point));
   }
@@ -318,6 +368,11 @@ void TTCutList::createActions()
   itemDeleteAction->setIcon(QIcon(QString::fromUtf8(":/pixmaps/pixmaps/cancel_18.xpm")));
   itemDeleteAction->setStatusTip(tr("Remove selected cut from list"));
   connect(itemDeleteAction, SIGNAL(triggered()), this, SLOT(onEntryDelete()));
+
+  itemDuplicateAction = new QAction(tr("Duplicate Cut"), this);
+  itemDuplicateAction->setIcon(QIcon(QString::fromUtf8(":/pixmaps/pixmaps/editcopy.png")));
+  itemDuplicateAction->setStatusTip(tr("Duplicate the selected cut"));
+  connect(itemDuplicateAction, SIGNAL(triggered()), this, SLOT(onEntryDuplicate()));
 
   itemDownAction = new QAction(tr("Move d&own"), this);
   itemDownAction->setIcon(QIcon(QString::fromUtf8(":/pixmaps/pixmaps/downarrow_18.xpm")));

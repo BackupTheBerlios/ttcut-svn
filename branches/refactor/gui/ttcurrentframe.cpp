@@ -131,7 +131,7 @@ void TTCurrentFrame::onPrevPFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToPrevPFrame( );  
+  newFramePos = mpeg2Stream->moveToPrevPIFrame( );  
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -142,7 +142,7 @@ void TTCurrentFrame::onNextPFrame()
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToNextPFrame( );  
+  newFramePos = mpeg2Stream->moveToNextPIFrame( );  
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -175,7 +175,7 @@ void TTCurrentFrame::onGotoMarker(int markerPos)
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToIndexPos( markerPos, 0 );
+  newFramePos = mpeg2Stream->moveToIndexPos(markerPos);
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -196,7 +196,7 @@ void TTCurrentFrame::onGotoCutIn(int pos)
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToIndexPos( pos, 0 );
+  newFramePos = mpeg2Stream->moveToIndexPos(pos);
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
@@ -207,7 +207,7 @@ void TTCurrentFrame::onGotoCutOut(int pos)
 {
   int newFramePos;
 
-  newFramePos = mpeg2Stream->moveToIndexPos( pos, 0 );
+  newFramePos = mpeg2Stream->moveToIndexPos(pos);
   mpegWindow->showFrameAt( newFramePos );
 
   updateCurrentPosition();
