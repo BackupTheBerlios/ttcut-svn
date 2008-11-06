@@ -1,0 +1,50 @@
+--------------------------------------------------------------------------------
+TTCut - Readme
+--------------------------------------------------------------------------------
+
+TTCut is a simple tool for cutting mpeg-streams, without reencoding the whole video.
+Only a small amount around the cut is reencoded.
+The main purpose of ttcut lies in removing advertisements e. g. from DVB-recordings.
+
+The MPEG2-2 video has to be demuxed as ttcut accepts only elementary streams for
+processing. An excellent programm for achieving this is for instance ProjectX 
+(http://project-x.sourceforge.net).
+
+According the structure of the mpeg2-stream, cutting without reencoding is only possible
+at certain frames:
+cut-in:  Only at an I-Frame
+cut-out: Only at a P- or an I-Frame
+
+If you have transcode installed, cutting the video is possible on every frame.
+For this only the immediate surrounding around the cut point (normally from 2 to 4 frames)
+is decoded and afterwards encoded again considering the cut marks.
+
+The development of ttcut is more or less in progress.
+Unfortunately i could not spend so much time on the project as i do this in my spare-time
+like many others out there providing open-source software. However i try to respond to
+questions, critics or helpful suggestions in an adequate time
+(b.altendorf@tritime.de or ttcut@tritime.org).
+
+Features:
+--------
+-Frame-accurate cuttiong on every Frame with newencoding of the relevant parts
+-Simultaneous cutting of more than one audio-stream
+-For convienient cutting the last cut-out is displayed in a separate window
+-Editable cut-list
+-Preview of defined cuts
+
+Download:
+---------
+
+http://developer.berlios.de/project/showfiles.php?group_id=4403
+
+SVN:
+---
+
+The svn-repositories are normally more recent compared to the tar-archives.
+
+Stable svn-version:
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/trunk
+
+Developer svn-version (eventually not stable!):
+svn checkout http://svn.berlios.de/svnroot/repos/ttcut/branches/work
