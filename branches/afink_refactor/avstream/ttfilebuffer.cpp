@@ -30,6 +30,7 @@
 // -----------------------------------------------------------------------------
 
 #include "ttfilebuffer.h"
+#include "ttcommon.h"
 
 const char c_name [] = "TTFILEBUFFER  : ";
 
@@ -38,16 +39,16 @@ const char c_name [] = "TTFILEBUFFER  : ";
  */
 TTFileBuffer::TTFileBuffer(QString name, QIODevice::OpenMode mode)
 {
-  file = new QFile(name);
+  this->file = new QFile(name);
+  this->mode = mode;
 
-  file->open(mode);
-
-   if (mode == QIODevice::WriteOnly)
-     file->resize(0);
-
+  if (this->mode == QIODevice::WriteOnly)
+    file->resize(0);
 
   initInstance();
   initTSearch();
+
+  open();
 }
 
 /* ////////////////////////////////////////////////////////////////////////////
@@ -55,9 +56,12 @@ TTFileBuffer::TTFileBuffer(QString name, QIODevice::OpenMode mode)
  */
 TTFileBuffer::~TTFileBuffer()
 {
-  closeFile();
+  close();
 
-  delete file;
+  delete []cBuffer;
+
+  if (file != NULL)
+    delete file;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -75,32 +79,33 @@ void TTFileBuffer::initInstance()
   cBuffer = new quint8[bufferSize];
 }
 
-/* ////////////////////////////////////////////////////////////////////////////
+/* ///////////////////////////////////////////////////////////////////////////// 
  * Open file
  */
-bool TTFileBuffer::openFile(QString name, QIODevice::OpenMode mode)
+bool TTFileBuffer::open()
 {
-   closeFile();
+  //qDebug("open file: %s", qPrintable(file->fileName()));
 
-   file->setFileName(name); 
-   file->open(mode);
+  if (file->isOpen()) 
+    return true;
+  
+  file->open(this->mode);
 
-   if (mode == QIODevice::WriteOnly)
-     file->resize(0);
-
-   initTSearch();
-   initInstance();
-
-   return file->exists();
+  return (file->exists() & file->isOpen());
 }
 
 /* ///////////////////////////////////////////////////////////////////////////// 
  * Close file
  */
-void TTFileBuffer::closeFile()
+void TTFileBuffer::close()
 {
-  if (file->openMode() == QIODevice::WriteOnly)
-    file->flush();
+  //qDebug("close file: %s", qPrintable(file->fileName()));
+
+  if (file->openMode() == QIODevice::WriteOnly) {
+    //qDebug("close -> waitForBytesWritten");
+    //file->flush();
+    //file->waitForBytesWritten(-1);
+  }
 
   file->close();
 }
@@ -135,6 +140,15 @@ bool TTFileBuffer::atEnd()
 quint64 TTFileBuffer::position()
 {
   return (quint64)readPos;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
+ * Flushes any buffered data to the file. Returns true if successful; 
+ * otherwise returns false.
+ */
+bool TTFileBuffer::flush()
+{
+  return file->flush();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -274,8 +288,12 @@ int TTFileBuffer::readByte(quint8* byteArray, int length)
 
   try
   {
-  for (int i = 0; i < length; i++)
-    byteArray[i] = readByte();
+    for (int i = 0; i < length; i++) {
+      //readByte(byteArray[i]);
+      byteArray[i] = readByte();
+      //quint8 by = readByte();
+      //byteArray[i] = by;
+    }
   }
   catch(TTFileBufferException)
   {
@@ -317,7 +335,9 @@ void TTFileBuffer::readUInt64(quint64 &byte8)
  */
 quint64 TTFileBuffer::directWrite(const quint8* w_buffer, int w_length)
 {
-  return file->write((char*)w_buffer, w_length);
+  quint64 result = file->write((char*)w_buffer, w_length);
+
+  return result;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////

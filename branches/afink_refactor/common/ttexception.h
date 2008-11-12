@@ -34,6 +34,9 @@
 
 #include <QString>
 
+/* /////////////////////////////////////////////////////////////////////////////
+ * Generell base class for all exception types
+ */
 class TTException
 {
   public:
@@ -46,6 +49,22 @@ class TTException
 
   protected:
     QString message;
+};
+
+class TTCommonException : public TTException
+{
+  public:
+    TTCommonException(const QString& msg) : TTException(msg){};
+  protected:
+    virtual QString getClassName() { return "TTCommonException"; };
+};
+
+class TTMemoryAllocationException : public TTException
+{
+  public:
+    TTMemoryAllocationException(const QString&msg) : TTException(msg){};
+  protected:
+    virtual QString getClassName() {return "TTMemoryAllocationException";}
 };
 
 class TTMethodNotImplementedException : public TTException

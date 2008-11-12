@@ -42,10 +42,10 @@ class TTMessageLogger
 {
   private:
     TTMessageLogger(int mode = STD_LOG_MODE);
-    ~TTMessageLogger();
 
   public:
     static TTMessageLogger* getInstance(int mode = STD_LOG_MODE);
+    ~TTMessageLogger();
 
     void enableLogFile(bool enable);
     void setLogModeConsole(bool console);
@@ -57,6 +57,7 @@ class TTMessageLogger
     void warningMsg(QString caller, QString msgString);
     void errorMsg(QString caller, QString msgString);
     void debugMsg(QString caller, QString msgString);;
+    void debugMsg(QString caller, int line, QString msgString);
 
     void infoMsg(QString caller, const char* msg, ...);
     void warningMsg(QString caller, const char* msg, ...);
@@ -79,7 +80,7 @@ class TTMessageLogger
       CONSOLE    = 0x04
     };
 
-    void logMsg( MsgType type, QString caller, QString msgString, bool show=false);
+    void logMsg( MsgType type, QString caller, int line, QString msgString, bool show=false);
     void writeMsg(QString msgString);
 
   private:

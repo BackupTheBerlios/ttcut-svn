@@ -2,14 +2,13 @@
 /* COPYRIGHT: TriTime (c) 2003/2010 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2008                                                      */
-/* FILE     : ttaciwriter.h                                                   */
+/* FILE     : ttencodeparameter.h                                             */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/06/2005 */
-/* MODIFIED: b. altendorf                                    DATE: 11/08/2008 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 11/07/2008 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// TTAVIWRITER
+// TTENCODEPARAMETER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -28,53 +27,46 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-
-#ifndef TTAVIWRITER_H
-#define TTAVIWRITER_H
-
-#include <QString>
-
-#include "../gui/ttprogressbar.h"
-#include "../avstream/ttavstream.h"
-#include "../mpeg2decoder/ttmpeg2decoder.h"
-
-class QFileInfo;
-
-extern "C"
-{
-#include "../avilib/avilib.h"
-}
+#ifndef TTENCODEPARAMETER_H
+#define TTENCODEPARAMETER_H
 
 /* /////////////////////////////////////////////////////////////////////////////
- * AVI writer class
+ * Class for parameter common for all encoder
  */
-class TTAVIWriter
+class TTEncodeParameter
 {
- public:
-   TTAVIWriter(TTVideoStream* v_stream);
-   ~TTAVIWriter();
+  public:
+    TTEncodeParameter(){};
+    ~TTEncodeParameter(){};
 
-   int  writeAVI(int start_frame_pos, int end_frame_pos, const QFileInfo& avi_fInfo);
-   bool closeAVI();
+    void      setAVIFileInfo(const QFileInfo& value)   { aviFInfo = value; }
+    QFileInfo aviFileInfo()                            { return aviFInfo; }
+    void      setMpeg2FileInfo(const QFileInfo& value) { mpeg2FInfo = value; }
+    QFileInfo mpeg2FileInfo()                          { return mpeg2FInfo; }
+    void      setVideoWidth(int value)                 { vWidth = value; }
+    int       videoWidth()                             { return vWidth; }
+    void      setVideoHeight(int value)                { vHeight = value; }
+    int       videoHeight()                            { return vHeight; }
+    void      setVideoFPS(float value)                 { vFPS = value; }
+    float     videoFPS()                               { return vFPS; }
+    void      setVideoAspectCode(int value)            { vAspectCode = value; }
+    int       videoAspectCode()                        { return vAspectCode; }
+    void      setVideoBitrate(float value)             { vBitrate = value; }
+    float     videoBitrate()                           { return vBitrate; }
+    void      setVideoMaxBitrate(float value)          { vMaxBitrate = value; }
+    float     videoMaxBitrate()                        { return vMaxBitrate; }
 
- protected:
-   void initAVIWriter(TTVideoStream* v_stream);
-   bool initDecoder();
-   long compareFrames();
+    void      print(char* prefix);
 
- private:
-   TTProgressBar*     progress_bar;
-   TTMpeg2Decoder*    decoder;			
-   QString            video_file_name;
-   TTVideoHeaderList* header_list; 
-   TTVideoIndexList*  index_list; 
-   int                current_frame;
-   qint64             file_size;
-   quint64            file_offset;
-   quint8*            ref_data;
-   avi_t*             avi_file;
+  private:
+    QFileInfo aviFInfo;
+    QFileInfo mpeg2FInfo;
+    int       vWidth;
+    int       vHeight;
+    float     vFPS;
+    int       vAspectCode;
+    float     vBitrate;
+    float     vMaxBitrate;
 };
 
-#endif //TTAVIWRITER_H
-
-
+#endif //TTENCODEPARAMETER_H

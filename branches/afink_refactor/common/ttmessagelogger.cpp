@@ -86,10 +86,6 @@ TTMessageLogger::~TTMessageLogger()
     logfile->close();
     delete logfile;
   }
- 
-  if (loggerInstance != NULL) {
-    delete loggerInstance;
-  }
 }
 
 /*!
@@ -134,7 +130,7 @@ void TTMessageLogger::setLogMode(int mode)
  */
 void TTMessageLogger::infoMsg(QString caller, QString msgString)
 {
-  logMsg(INFO, caller, msgString);
+  logMsg(INFO, caller, 0, msgString);
 }
 
 /*!
@@ -142,7 +138,7 @@ void TTMessageLogger::infoMsg(QString caller, QString msgString)
  */
 void TTMessageLogger::warningMsg(QString caller, QString msgString)
 {
-  logMsg(WARNING, caller, msgString);
+  logMsg(WARNING, caller, 0, msgString);
 }
 
 
@@ -151,7 +147,7 @@ void TTMessageLogger::warningMsg(QString caller, QString msgString)
  */
 void TTMessageLogger::errorMsg(QString caller, QString msgString)
 {
-  logMsg(ERROR, caller, msgString);
+  logMsg(ERROR, caller, 0, msgString);
 }
 
 
@@ -160,7 +156,12 @@ void TTMessageLogger::errorMsg(QString caller, QString msgString)
  */
 void TTMessageLogger::debugMsg(QString caller, QString msgString)
 {
-  logMsg(DEBUG, caller, msgString); 
+  logMsg(DEBUG, caller, 0, msgString); 
+}
+
+void TTMessageLogger::debugMsg(QString caller, int line, QString msgString)
+{
+  logMsg(DEBUG, caller, line, msgString);
 }
 
 /*!
@@ -175,7 +176,7 @@ void TTMessageLogger::infoMsg(QString caller, const char* msg, ...)
   vsprintf( buf, msg, ap );
   va_end( ap );
 
-  logMsg(INFO, caller, buf);
+  logMsg(INFO, caller, 0, buf);
 }
 
 /*!
@@ -190,7 +191,7 @@ void TTMessageLogger::warningMsg(QString caller, const char* msg, ...)
   vsprintf( buf, msg, ap );
   va_end( ap );
 
-  logMsg(WARNING, caller, buf);
+  logMsg(WARNING, caller, 0, buf);
 }
 
 /*!
@@ -205,7 +206,7 @@ void TTMessageLogger::errorMsg(QString caller, const char* msg, ...)
   vsprintf( buf, msg, ap );
   va_end( ap );
 
-  logMsg(ERROR, caller, buf);
+  logMsg(ERROR, caller, 0, buf);
 }
 
 void TTMessageLogger::showErrorMsg(QString caller, const char* msg, ...)
@@ -217,7 +218,7 @@ void TTMessageLogger::showErrorMsg(QString caller, const char* msg, ...)
   vsprintf( buf, msg, ap );
   va_end( ap );
 
-  logMsg(ERROR, caller, buf, true);
+  logMsg(ERROR, caller, 0, buf, true);
 }
 
 void TTMessageLogger::debugMsg(QString caller, const char* msg, ...)
@@ -229,7 +230,7 @@ void TTMessageLogger::debugMsg(QString caller, const char* msg, ...)
   vsprintf( buf, msg, ap );
   va_end( ap );
 
-  logMsg(DEBUG, caller, buf);
+  logMsg(DEBUG, caller, 0, buf);
 }
 
 
@@ -238,7 +239,7 @@ void TTMessageLogger::debugMsg(QString caller, const char* msg, ...)
  * This method finally writes the message to the logfile.
  * You must set the message type.  
  */
-void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString, bool show)
+void TTMessageLogger::logMsg(MsgType msgType, QString caller, int line, QString msgString, bool show)
 {
   QString write;
   
@@ -261,6 +262,8 @@ void TTMessageLogger::logMsg(MsgType msgType, QString caller, QString msgString,
   write.append(QDateTime::currentDateTime().toString("hh:mm:ss"));
   write.append("][");
   write.append(caller);
+  //write.append(":");
+  //write.append(line);
   write.append("] ");
   write.append(msgString);
 

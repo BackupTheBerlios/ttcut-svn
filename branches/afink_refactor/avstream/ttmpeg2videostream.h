@@ -90,6 +90,7 @@ class TTMpeg2VideoStream : public TTVideoStream
 
     void rewriteGOP(quint8* buffer, quint64 absPos, TTGOPHeader* gop, bool closeGOP, TTCutParameter* cr);
     void removeOrphanedBFrames(QStack<TTBreakObject*>* breakObjects, TTVideoHeader* currentObject);
+    void rewriteTempRefData(quint8* buffer, TTPicturesHeader* currentPicture, quint64 bufferStartOffset, int tempRefDelta);
     void encodePart( int start, int end, TTCutParameter* cr);
 
   protected:

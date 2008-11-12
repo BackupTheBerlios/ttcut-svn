@@ -60,6 +60,7 @@ class TTCutListDataItem
     int       getCutOutFrameType() const;
     QTime     getCutInTime() const;
     QTime     getCutOutTime() const;
+    int       getCutLengthFrames() const;
     TTAVData* getAVData() const;
     
   private:
@@ -70,7 +71,7 @@ class TTCutListDataItem
     QTime     cutInTime;
     QTime     cutOutTime;
     QTime     cutLengthTime;
-    quint64   cutLengthBytes;
+    qint64    cutLengthBytes;
     TTAVData* avData;
 };
 

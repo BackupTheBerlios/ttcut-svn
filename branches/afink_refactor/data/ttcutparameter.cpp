@@ -37,17 +37,18 @@ const char c_name[] = "TTCutParameter";
 
 TTCutParameter::TTCutParameter(TTFileBuffer* fBuffer)
 {
-  targetStreamBuffer   = fBuffer;
-  isWriteSequenceEnd   = false;
-  isWriteMaxBitrate    = false;
-  isDVDCompliantStream = false;
-  numPicturesWritten   = 0;
-  resultHeaderList     = new TTVideoHeaderList(1000);
+  targetStreamBuffer     = fBuffer;
+  isWriteSequenceEnd     = false;
+  isWriteMaxBitrate      = false;
+  isDVDCompliantStream   = false;
+  numPicturesWritten     = 0;
+  maxBitrateValue        = 0;
+  dvdCompliantMaxBitrate = 0.0;
+  dvdCompliantMaxMrames  = 0;
 }
 
 TTCutParameter::~TTCutParameter()
 {
-  resultHeaderList->clear();
 }
 
 TTFileBuffer* TTCutParameter::getTargetStreamBuffer()
@@ -95,11 +96,6 @@ void TTCutParameter::setNumPicturesWritten(int value)
   numPicturesWritten = value;
 }
 
-TTVideoHeaderList* TTCutParameter::getResultHeaderList()
-{
-  return resultHeaderList;
-}
-
 int TTCutParameter::getMaxBitrate()
 {
   return maxBitrateValue;
@@ -132,10 +128,6 @@ void TTCutParameter::setCutOutIndex(int value)
   
 void TTCutParameter::firstCall()
 {
-  if (!ttAssigned(resultHeaderList))
-    resultHeaderList = new TTVideoHeaderList(1000);
-  else
-    resultHeaderList->deleteAll();
 }
 
 void TTCutParameter::lastCall()
@@ -153,9 +145,5 @@ void TTCutParameter::writeSequenceEndHeader()
   seqEndCode[2] = 0x01;
   seqEndCode[3] = 0xb7;
 
-  TTSequenceEndHeader* sequenceEndHeader = new TTSequenceEndHeader();
-  sequenceEndHeader->setHeaderOffset(targetStreamBuffer->position());
-
-  resultHeaderList->add(sequenceEndHeader);
   targetStreamBuffer->directWrite(seqEndCode, 4);
 }

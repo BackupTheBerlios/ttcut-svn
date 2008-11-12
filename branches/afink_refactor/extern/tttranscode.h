@@ -34,26 +34,26 @@
 #include "../common/ttmessagelogger.h"
 #include "../common/ttcut.h"
 #include "../gui/ttprocessform.h"
+#include "ttencodeparameter.h"
 
 #include <QFileInfo>
 #include <QProcess>
 #include <QCloseEvent>
 
+class TTVideoStream;
 class TTEncodeParameter;
 
-class TTTranscodeProvider : public QObject//: public TTProcessForm
+class TTTranscodeProvider : public QObject
 {
   Q_OBJECT
 
   public:
-    TTTranscodeProvider();
+    TTTranscodeProvider(TTEncodeParameter& enc_par);
     ~TTTranscodeProvider();
 
-    void setParameter( TTEncodeParameter& enc_par );
-    bool encodePart( );
+    bool encodePart(TTVideoStream* vStream, int start, int end);
 
   public slots:
-    void closeEvent(QCloseEvent *event);
     void onProcReadOut();
     void onProcStarted();
     void onProcFinished(int exit_code, QProcess::ExitStatus );
@@ -61,33 +61,23 @@ class TTTranscodeProvider : public QObject//: public TTProcessForm
     void onProcStateChanged(QProcess::ProcessState proc_state);
     void onProcKill();
 
+  signals:
+    void processOutput(const QString& msg);
+
   protected:
+    void buildCommandLine();
+    void writeAVIFile(TTVideoStream* vs, int start, int end);
+    void connectSignals(QProcess* proc);
     void procOutput();
 
   private:
-    TTMessageLogger* log;
-    QProcess*        proc;
-    QString          str_command;
-    QStringList      strl_command_line;
-    int              exit_code;
-    bool             transcode_success;
-};
-
-
-class TTEncodeParameter
-{
- public:
-  TTEncodeParameter(){};
-  ~TTEncodeParameter(){};
-
-  QFileInfo avi_input_finfo;
-  QFileInfo mpeg2_output_finfo;
-  int       video_width;
-  int       video_height;
-  float     video_fps;
-  int       video_aspect_code;
-  float     video_bitrate;
-  float     video_max_bitrate;
+    TTMessageLogger*  log;
+    TTEncodeParameter enc_par;
+    QProcess*         proc;
+    QString           str_command;
+    QStringList       strl_command_line;
+    int               exit_code;
+    bool              transcode_success;
 };
 
 #endif //TTTRANSCODE_H  

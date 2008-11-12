@@ -1,14 +1,14 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2008 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2010 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
 /* PROJEKT  : TTCUT 2008                                                      */
-/* FILE     : ttmplayerwidget.cpp                                             */
+/* FILE     : ttencodeparameter.cpp                                           */
 /*----------------------------------------------------------------------------*/
-/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 05/06/2008 */
+/* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 11/07/2008 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
-// TTMPLAYERWIDGET
+// TTENCODEPARAMETER
 // ----------------------------------------------------------------------------
 
 /*----------------------------------------------------------------------------*/
@@ -27,56 +27,26 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#include <QObject>
-#include <QProcess>
+#include "ttencodeparameter.h"
+#include "common/ttmessagelogger.h"
 
-#include "../common/ttcut.h"
-#include "../common/ttmessagelogger.h"
-#include "ttmoviewidget.h"
-#include "ttprogressbar.h"
-
-#ifndef TTMPLAYERWIDGET_H
-#define TTMPLAYERWIDGET_H
-
-class TTMplayerWidget : public TTMovieWidget
+/* /////////////////////////////////////////////////////////////////////////////
+ * Print out the encode parameter for debug and logging purpose
+ */
+void print(char* prefix)
 {
-    Q_OBJECT
-    Q_PROPERTY(bool getControlsVisible READ getControlsVisible WRITE setControlsVisible)
+  TTMesasgeLogger* log = TTMessageLogger::getInstance();
 
-public:
-    TTMplayerWidget(QWidget *parent);
-    ~TTMplayerWidget();
-    
-    QSize sizeHint() const;
+  log->debugMsg( prefix, "----------------------------------------------------" );
+  log->debugMsg( prefix, "encoder parameter:" );
+  log->debugMsg( prefix, "----------------------------------------------------" );
+  log->debugMsg( prefix, "avi-file    : %s",    qPrintable(aviFileInfo().absoluteFilePath()) );
+  log->debugMsg( prefix, "mpeg-file   : %s",    qPrintable(mpeg2FileInfo().absoluteFilePath()) );
+  log->debugMsg( prefix, "widhtxheight: %dx%d", videoWidth(), videoHeight() );
+  log->debugMsg( prefix, "aspect-code : %d",    videoAspectCode() );
+  log->debugMsg( prefix, "bitrate     : %f",    videoBitrate() );
+  log->debugMsg( prefix, "max bitrate : %f",    videoMaxBitrate() );
+  log->debugMsg( prefix, "framerate   : %f",    videoFPS() );
+  log->debugMsg( prefix, "----------------------------------------------------" );
+}
 
-    bool getControlsVisible() const;
-    void setControlsVisible(bool visible);
-
-    void playMovie();
-    void stopMovie();
-
-protected:
-    bool playMplayer(QString videoFile);
-    bool stopMplayer();
-
-signals:
-    void optimalSizeChange();
-    //void isPlayingEvent(bool);
-
-public slots:
-    void loadMovie(const QString &fileName);
-
-protected slots:
-    void mplayerStarted();
-    void readFromStdout();
-    void exitMplayer(int e_code, QProcess::ExitStatus e_status);
-    void errorMplayer(QProcess::ProcessError);
-    void stateChangedMplayer(QProcess::ProcessState newState);
-
-private:
-    TTMessageLogger*   log;
-    QProcess*          mplayerProc;      
-    bool               isPlaying;
-};
-
-#endif

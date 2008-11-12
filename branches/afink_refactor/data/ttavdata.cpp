@@ -28,9 +28,9 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 #include "ttavdata.h"
-#include "avstream/ttavstream.h"
-#include "avstream/ttmpeg2videostream.h"
-#include "data/ttaudiolistdata.h"
+#include "../avstream/ttavstream.h"
+#include "../avstream/ttmpeg2videostream.h"
+#include "ttaudiolistdata.h"
 
 
 TTAVData::TTAVData( TTVideoStream* pVideoStream, TTAudioListData* pAudioList )
@@ -41,11 +41,16 @@ TTAVData::TTAVData( TTVideoStream* pVideoStream, TTAudioListData* pAudioList )
 
 void TTAVData::deleteAll()
 {
-  delete m_pVideoStream;
-  m_pVideoStream = 0;
+  //FIXME: m_pVideoStream and m_pAudioList are pointer to objects outside this
+  //       class!
+  //       Sure you can do so, but imho this is evel. I share the position to
+  //       delete objects in the same context were they are created.
+  //delete m_pVideoStream;
+  m_pVideoStream = NULL;
   m_pAudioList->deleteAll();
-  delete m_pAudioList;
-  m_pAudioList = 0;
+
+  //delete m_pAudioList;
+  m_pAudioList = NULL;
 }
 
 

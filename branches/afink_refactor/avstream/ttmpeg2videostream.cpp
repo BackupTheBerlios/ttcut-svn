@@ -61,7 +61,7 @@ const char c_name[] = "MPEG2STREAM";
  * Constructor with QFileInfo
  */
 TTMpeg2VideoStream::TTMpeg2VideoStream( const QFileInfo &f_info )
-: TTVideoStream( f_info )
+  : TTVideoStream( f_info )
 {
   log = TTMessageLogger::getInstance();
 
@@ -114,7 +114,10 @@ int TTMpeg2VideoStream::createHeaderList()
       TTFileBuffer* iddStreamBuffer = new TTFileBuffer(iddStreamName, QIODevice::ReadOnly);
       createHeaderListFromIdd(iddStreamBuffer);
 
-      delete iddStreamBuffer;
+      if (iddStreamBuffer != NULL) {
+        delete iddStreamBuffer;
+        iddStreamBuffer = NULL;
+      }
     }
   }
 
@@ -123,9 +126,11 @@ int TTMpeg2VideoStream::createHeaderList()
     createHeaderListFromMpeg2();
 
   if (header_list->count() == 0) {
-    QString msg = QString("%1 Could not create header list!").arg(c_name);
-    delete header_list;
-    throw TTInvalidOperationException(msg);
+    if (header_list != NULL) {
+      delete header_list;
+      header_list = NULL;
+    }
+    throw TTInvalidOperationException(QString("%1 Could not create header list!").arg(__FILE__));
   }
 
   return header_list->count();
@@ -171,7 +176,7 @@ int TTMpeg2VideoStream::createIndexList()
         break;
     }
     index++;
-  }
+  }  
   return index_list->count();
 }
 
@@ -187,11 +192,8 @@ TTAVTypes::AVStreamType TTMpeg2VideoStream::streamType() const
  * Open the mpeg2 video stream
  */
 bool TTMpeg2VideoStream::openStream()
-{
-  if ( ttAssigned(stream_info) ) {
-    stream_buffer = new TTFileBuffer(stream_info->filePath(), QIODevice::ReadOnly);
-  }
-
+{  
+  stream_buffer->open();
   return ttAssigned(stream_buffer);
 }
 
@@ -200,13 +202,8 @@ bool TTMpeg2VideoStream::openStream()
  */
 bool TTMpeg2VideoStream::closeStream()
 {
-  stream_buffer->closeFile();
-
-  if (ttAssigned(stream_buffer)) {
-    delete stream_buffer;
-    stream_buffer = (TTFileBuffer*)NULL;
-  }
-    
+  stream_buffer->close();
+  
   return true;
 }
 
@@ -217,20 +214,20 @@ bool TTMpeg2VideoStream::createHeaderListFromIdd(TTFileBuffer* iddStream)
 {
   quint8 buffer4[4];
 
+  iddStream->open();
+
   if (!iddStream->readByte(buffer4, 4))
-  {
-    QString msg = QString("%1 Error reading IDD file!").arg(c_name);
-    throw TTIOException(msg);
-  }
+    throw TTIOException(QString("Error reading IDD file in %1 at line %2!").arg(__FILE__).arg(__LINE__));
 
   if (buffer4[0] != int('i') &&
       buffer4[1] != int('d') &&
       buffer4[2] != int('d')    ) {
-    QString msg = QString("%1 The file isn't a IDD file!").arg(c_name);
-    throw TTDataFormatException(msg);
+    throw TTDataFormatException(QString("No IDD file in %1 at line %2!").arg(__FILE__).arg(__LINE__));
     }
 
   readIDDHeader(iddStream, buffer4[3]);
+
+  iddStream->close();
 
   return (header_list->count() > 0);
 }
@@ -241,7 +238,8 @@ bool TTMpeg2VideoStream::createHeaderListFromIdd(TTFileBuffer* iddStream)
 bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
 {
   quint8              headerType;
-  TTMpeg2VideoHeader* newHeader;
+  //TTMpeg2VideoHeader* newHeader;
+  TTVideoHeader* newHeader;
 
   header_list->clear();
 
@@ -296,6 +294,8 @@ bool TTMpeg2VideoStream::createHeaderListFromMpeg2()
   }
   catch (...)
   {
+    //FIXME: maybe show some information about occured exception;
+    //       but not for StreamEOF exceptions
   }  
 
   // write an idd file with the header information
@@ -336,6 +336,8 @@ void TTMpeg2VideoStream::writeIDDFile( )
 
   // create new idd-stream
   TTFileBuffer* iddStream = new TTFileBuffer(iddStreamName, QIODevice::WriteOnly);
+  
+  iddStream->open();
 
   // IDD header data and version
   buffer[0] = int('i');
@@ -380,6 +382,9 @@ void TTMpeg2VideoStream::writeIDDFile( )
   // write last file offset
   offset = header_list->at(index-1)->headerOffset();
   iddStream->directWriteUInt64( offset );  // 8 Byte
+
+  iddStream->close();
+  delete iddStream;
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -420,6 +425,10 @@ void TTMpeg2VideoStream::readIDDHeader(TTFileBuffer* iddStream, quint8 iddFileVe
           ((TTPicturesHeader*)newHeader)->setHeaderOffset(offset);
           ((TTPicturesHeader*)newHeader)->temporal_reference  = temporalReference;
           ((TTPicturesHeader*)newHeader)->picture_coding_type = pictureCodingType;
+
+          //do we realy need the vbv delay???
+          //newHeader->readHeader(stream_buffer, offset);
+          
             break;
         case TTMpeg2VideoHeader::group_start_code:
           newHeader = new TTGOPHeader();
@@ -485,6 +494,8 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* cutStream, TTCutListData* cutList)
 {
   TTCutParameter* cutParams = new TTCutParameter(cutStream);
 
+  cutStream->open();
+
   cutParams->setIsWriteSequenceEnd(true);
 
   for (int i = 0; i < cutList->count(); i++)
@@ -499,15 +510,38 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* cutStream, TTCutListData* cutList)
       cutParams->firstCall();
 
     cut(cutInPos, cutOutPos, cutParams);
-
+    
     if (i == cutList->count()-1)
       cutParams->lastCall();
   }
 
-  qDebug("result header list count: %d", cutParams->getResultHeaderList()->count());
+  cutStream->close();
 
   delete cutParams;
 }
+
+/*! ////////////////////////////////////////////////////////////////////////////
+ * Cut Method
+ * TTFileBuffer*   targetStream: The mpeg2 video target stream
+ * int             startIndex:   Start index of current cut
+ * int             endIndex:     End index of current cut
+ * TTCutParameter: cutParams:    Cut parameter
+ */
+void TTMpeg2VideoStream::cut(int cutInPos, int cutOutPos, TTCutParameter* cutParams)
+{
+  openStream();
+
+  TTVideoHeader* startObject = getCutStartObject(cutInPos, cutParams);
+  TTVideoHeader* endObject   = getCutEndObject(cutOutPos,  cutParams);
+
+  transferCutObjects(startObject, endObject, cutParams);
+
+  if (cutOutPos > cutParams->getCutOutIndex()) 
+    encodePart(cutParams->getCutOutIndex()+1, cutOutPos, cutParams);
+
+  closeStream();
+}
+
 
 /*! /////////////////////////////////////////////////////////////////////////////
  * Return the start object for current cut
@@ -640,7 +674,7 @@ quint64 TTMpeg2VideoStream::getByteCount(TTVideoHeader* startObject, TTVideoHead
  */
 void TTMpeg2VideoStream::transferCutObjects(TTVideoHeader* startObject, TTVideoHeader* endObject, TTCutParameter* cr)
 {
-  quint8*   buffer            = new quint8[65536];
+  quint8    buffer[65536];
   quint64   bytesToWrite      = getByteCount(startObject, endObject);
   quint64   bufferStartOffset = startObject->headerOffset();
   int       numPicsWritten = cr->getNumPicturesWritten();
@@ -649,165 +683,170 @@ void TTMpeg2VideoStream::transferCutObjects(TTVideoHeader* startObject, TTVideoH
   int       tempRefDelta   = 0;     // delta for temporal reference if closed GOP
   const int watermark      = 12;    // size of header type-code (12 byte)
   bool      objectProcessed;
+  bool      isContinue = false;
+
+  //log->debugMsg(c_name, "transferCutObjects: bytesToWrite %lld", bytesToWrite);
 
   TTVideoHeader*          currentObject = startObject;
   QStack<TTBreakObject*>* break_objects = new QStack<TTBreakObject*>; 
 
-  // source mpeg2-stream to start objects offset
   stream_buffer->seekAbsolute( startObject->headerOffset() );
 
   emit progressChanged(TTProgressBar::Init, "Transfer objects", bytesToWrite);
-
-  // copy count bytes of data
+  
   while( bytesToWrite > 0 )
   {
-    int bytesProcessed = (bytesToWrite < 65536)
+   int bytesProcessed = (bytesToWrite < 65536)
         ? stream_buffer->readByte(buffer, bytesToWrite)
         : stream_buffer->readByte(buffer, 65536);
 
     if (bytesProcessed <= 0)
-    {
-      QString msg = QString("%1 bytes from stream buffer read").arg(bytesProcessed);
-      throw TTIOException(msg);
-    }
+      throw TTIOException(QString("%1 bytes from stream buffer read").arg(bytesProcessed));
 
     do
     {
-      if (currentObject->headerOffset() >= bufferStartOffset+bytesProcessed-watermark) 
-      {
-        objectProcessed = false;
-        break;  
+      isContinue      = false;
+
+      // is start address not in current buffer
+      if (currentObject->headerOffset() < bufferStartOffset || currentObject->headerOffset() > (bufferStartOffset+bytesProcessed-1)) {
+        break;
+      }  
+
+
+      objectProcessed = (currentObject->headerOffset() < bufferStartOffset+bytesProcessed-watermark);
+
+      if (!objectProcessed) {
+        stream_buffer->seekBackward(watermark);
+        bytesProcessed -= watermark;
+        break;
       }
-      
-      objectProcessed = true;
 
       // removing unwanted objects
       if ( break_objects->count() > 0 )
       {
-        //log->infoMsg(c_name, ">>> remove unwanted objects: %d", break_objects->count());
         TTBreakObject* current_break = (TTBreakObject*)break_objects->top();
 
         if ( current_break->stopObject() != NULL && 
             current_break->stopObject()->headerOffset() == currentObject->headerOffset() )
         {
-          //log->debugMsg(c_name, "stop    object-1: %lld",current_break->stopObject()->headerOffset() );
-          //log->debugMsg(c_name, "restart object-1: %lld",current_break->restartObject()->headerOffset() );
-          // Wir müssen so tun, als würden wir die Objekte schreiben
           quint64 adress_delta = current_break->restartObject()->headerOffset()-currentObject->headerOffset();
-          bytesProcessed = (int)(currentObject->headerOffset()-bufferStartOffset);
-          bytesToWrite   -= adress_delta;
-          bufferStartOffset += adress_delta;
-          currentObject    = current_break->restartObject(); // hier gehts weiter
+          bytesProcessed       = (int)(currentObject->headerOffset()-bufferStartOffset);
+          bytesToWrite        -= adress_delta;
+          bufferStartOffset   += adress_delta;
+          currentObject        = current_break->restartObject(); // hier gehts weiter
           
-          stream_buffer->seekAbsolute( current_break->restartObject()->headerOffset() );
-          current_break->setStopObject( (TTVideoHeader*)NULL );
+          stream_buffer->seekAbsolute(current_break->restartObject()->headerOffset());
+          current_break->setStopObject((TTVideoHeader*)NULL );
           
           objectProcessed = false; 
           continue; 
         }
 
+        
         if (current_break->restartObject()->headerOffset() == currentObject->headerOffset())
         {
-          delete break_objects->pop();
+          TTBreakObject* tmpBreak = break_objects->pop();
+          if (ttAssigned(tmpBreak))
+            delete tmpBreak;
         }
       }
 
-      // sequence header
-      if (currentObject->headerType() == TTMpeg2VideoHeader::sequence_start_code)
+      switch(currentObject->headerType())
       {
-        cr->getResultHeaderList()->add((TTSequenceHeader*)currentObject);
- 
-        // Maximale Bitrate ermitteln
-        if (cr->getMaxBitrate() < ((TTSequenceHeader*)currentObject)->bit_rate_value)
-          cr->setMaxBitrate(((TTSequenceHeader*)currentObject)->bit_rate_value);
-      }
+        case TTMpeg2VideoHeader::sequence_start_code:
+          // Maximale Bitrate ermitteln
+          if (cr->getMaxBitrate() < ((TTSequenceHeader*)currentObject)->bit_rate_value)
+            cr->setMaxBitrate(((TTSequenceHeader*)currentObject)->bit_rate_value);
+           break;
 
-      // sequence-end header; always remove sequence end codes
-      if ( currentObject->headerType() == TTMpeg2VideoHeader::sequence_end_code )
-      {
-        TTBreakObject* new_break = new TTBreakObject();
+        case TTMpeg2VideoHeader::sequence_end_code: {
+          //remove sequence end code
+          TTBreakObject* new_break = new TTBreakObject();
 
-        new_break->setStopObject(currentObject);
-        new_break->setRestartObject(header_list->getNextHeader(currentObject));
-        break_objects->push( new_break );
-        continue;
-      }
-
-      // gop header
-      if ( currentObject->headerType() == TTMpeg2VideoHeader::group_start_code )
-      {
-        cr->getResultHeaderList()->add((TTGOPHeader*)currentObject);
-
-        TTPicturesHeader* nextPic = (TTPicturesHeader*)header_list->getNextHeader(
-            currentObject, TTMpeg2VideoHeader::picture_start_code);
-
-        if (closeNextGOP && (ttAssigned(nextPic)) && (nextPic->temporal_reference == 0))
-          closeNextGOP = false;
-
-        rewriteGOP(buffer, bufferStartOffset, (TTGOPHeader*)currentObject, closeNextGOP, cr);
-      }
-
-      // picture header
-      if ( currentObject->headerType() == TTMpeg2VideoHeader::picture_start_code )
-      {
-        TTPicturesHeader* currentPicture = (TTPicturesHeader*)currentObject;
-
-
-        if (closeNextGOP       && 
-            tempRefDelta  != 0 && 
-            currentPicture->picture_coding_type == 3)
-        {
-          removeOrphanedBFrames(break_objects, currentObject);
-          closeNextGOP = false;
-          continue;
+          new_break->setStopObject(currentObject);
+          new_break->setRestartObject(header_list->getNextHeader(currentObject));
+          break_objects->push( new_break );
+          isContinue = true;
         }
+          break;
 
-        numPicsWritten++;
-        cr->setNumPicturesWritten(numPicsWritten);
-        cr->getResultHeaderList()->add((TTPicturesHeader*)currentObject);
+        case TTMpeg2VideoHeader::group_start_code: 
+          {
+            TTPicturesHeader* nextPic = (TTPicturesHeader*)header_list->getNextHeader(
+              currentObject, TTMpeg2VideoHeader::picture_start_code);
 
-        if (currentPicture->picture_coding_type == 1) {
-          tempRefDelta = (closeNextGOP) 
+          if (closeNextGOP && (ttAssigned(nextPic)) && (nextPic->temporal_reference == 0))
+            closeNextGOP = false;
+
+          rewriteGOP(buffer, bufferStartOffset, (TTGOPHeader*)currentObject, closeNextGOP, cr);
+        }
+          break;
+
+        case TTMpeg2VideoHeader::picture_start_code: {
+          TTPicturesHeader* currentPicture = (TTPicturesHeader*)currentObject;
+
+          if (closeNextGOP       && 
+              tempRefDelta  != 0 && 
+              currentPicture->picture_coding_type == 3)
+          {
+            removeOrphanedBFrames(break_objects, currentObject);
+            closeNextGOP = false;
+            isContinue   = true;
+            break;
+            //continue;
+          }
+
+          numPicsWritten++;
+          cr->setNumPicturesWritten(numPicsWritten);
+
+          if (currentPicture->picture_coding_type == 1) {
+            tempRefDelta = (closeNextGOP) 
               ? currentPicture->temporal_reference
               : 0;
-        }
+          }
 
-        // Müssen neue temporärere Referenzen geschrieben werden?
-        if ( tempRefDelta != 0) 
-        {
-          int newTempRef = (int)(currentPicture->temporal_reference-tempRefDelta);
-          int offset     = (int)(currentPicture->headerOffset()-bufferStartOffset)+4; // Hier rein damit!
-
-          buffer[offset]   = (quint8)(newTempRef >> 2);               // Bit 10 - 2 von 10 Bit Tempref
-          buffer[offset+1] = (quint8)(((newTempRef & 0x0003) << 6) +  // Bit 1 und 0 von 10 Bit Tempref
-              ((int)currentPicture->picture_coding_type << 3) +       // Bildtype auf Bit 5, 4 und 3
-              (currentPicture->vbv_delay >> 13));                     // 3 Bit von VBVDelay
+          // Müssen neue temporärere Referenzen geschrieben werden?
+          if ( tempRefDelta != 0) 
+          {
+            rewriteTempRefData(buffer, currentPicture, bufferStartOffset, tempRefDelta);
+          }
         }
+          break;
       }
 
-      currentObject = header_list->getNextHeader(currentObject);
+      if (isContinue)
+        continue;
 
-      //FIXME: quick fix?
-      if (currentObject == NULL)
+
+      if (currentObject == endObject) {
         break;
+      }
+ 
+      currentObject = header_list->getNextHeader(currentObject);
 
      }while(objectProcessed);
 
-
-    // Jetzt können wir den Pufferinhalt schreiben, ggf. nicht komplett
-    //log->debugMsg(c_name, "write data: processed: %d", bytesProcessed );
     cr->getTargetStreamBuffer()->directWrite(buffer, bytesProcessed);
 
     process           += bytesProcessed;
     bytesToWrite      -= bytesProcessed;
     bufferStartOffset += bytesProcessed;
 
-    //log->debugMsg(c_name, "test count: %lld %lld %lld", bufferStartOffset, stream_buffer->position(), process);
     emit progressChanged(TTProgressBar::Step, "Transfer objects", process);
-  } //while(count > 0)
+  } 
+   
 
-  delete [] buffer;
-  delete break_objects;
+  // clean-up
+  for (int i = 0; i < break_objects->size(); i++) {
+    TTBreakObject* tmpBreak = break_objects->at(i);
+    if (ttAssigned(tmpBreak))
+      delete tmpBreak;
+  }
+
+  if (ttAssigned(break_objects)) {
+    delete break_objects;
+    break_objects = NULL;
+  }
 }
 
 /*! /////////////////////////////////////////////////////////////////////////////
@@ -838,49 +877,43 @@ void TTMpeg2VideoStream::removeOrphanedBFrames(QStack<TTBreakObject*>* breakObje
  */
 void TTMpeg2VideoStream::rewriteGOP(quint8* buffer, quint64 abs_pos, TTGOPHeader* gop, bool close_gop, TTCutParameter* cr)
 {
-  quint8*     time_code = new quint8[4];
-  TTTimeCode* tc        = ttFrameToTimeCode(cr->getNumPicturesWritten(), frameRate());
+  if (abs_pos > gop->headerOffset()) {
+    qDebug("buffer position is invalid in rewrite GOP!!!");
+    return;
+  }
 
-  time_code[0]=(quint8)(((tc->drop_frame_flag?1:0)<<7)
-      +((tc->hours & 0x1f)<<2)
-      +((tc->minutes & 0x30)>>4));
-  time_code[1]=(quint8)(((tc->minutes & 0x0f)<<4)
-      +((tc->marker_bit?1:0)<<3)
-      +((tc->seconds & 0x38)>>3));
-  time_code[2]=(quint8)(((tc->seconds & 0x07)<<5)
-      + ((tc->pictures & 0x3e)>>1));
-  time_code[3]=(quint8)((((tc->pictures & 0x01)==1)?0x80:0x00)
+  quint8      time_code[4];
+  TTTimeCode  tc = ttFrameToTimeCode(cr->getNumPicturesWritten(), frameRate());
+
+  time_code[0]=(quint8)(((tc.drop_frame_flag?1:0)<<7)
+      +((tc.hours & 0x1f)<<2)
+      +((tc.minutes & 0x30)>>4));
+  time_code[1]=(quint8)(((tc.minutes & 0x0f)<<4)
+      +((tc.marker_bit?1:0)<<3)
+      +((tc.seconds & 0x38)>>3));
+  time_code[2]=(quint8)(((tc.seconds & 0x07)<<5)
+      + ((tc.pictures & 0x3e)>>1));
+  time_code[3]=(quint8)((((tc.pictures & 0x01)==1)?0x80:0x00)
       | ((close_gop || gop->closed_gop)?0x40:0)
       | (gop->broken_link ? 0x20:0x00));
-  buffer[gop->headerOffset()-abs_pos+4] = time_code[0];
-  buffer[gop->headerOffset()-abs_pos+5] = time_code[1];
-  buffer[gop->headerOffset()-abs_pos+6] = time_code[2];
-  buffer[gop->headerOffset()-abs_pos+7] = time_code[3];
-
-  delete [] time_code;
-  delete tc;
+  buffer[(int)(gop->headerOffset()-abs_pos)+4] = time_code[0];
+  buffer[(int)(gop->headerOffset()-abs_pos)+5] = time_code[1];
+  buffer[(int)(gop->headerOffset()-abs_pos)+6] = time_code[2];
+  buffer[(int)(gop->headerOffset()-abs_pos)+7] = time_code[3];
 }
 
-/*! ////////////////////////////////////////////////////////////////////////////
- * Cut Method
- * TTFileBuffer*   targetStream: The mpeg2 video target stream
- * int             startIndex:   Start index of current cut
- * int             endIndex:     End index of current cut
- * TTCutParameter: cutParams:    Cut parameter
+/* /////////////////////////////////////////////////////////////////////////////
+ * Rewrite temporal references
  */
-void TTMpeg2VideoStream::cut(int cutInPos, int cutOutPos, TTCutParameter* cutParams)
+void TTMpeg2VideoStream::rewriteTempRefData(quint8* buffer, TTPicturesHeader* currentPicture, quint64 bufferStartOffset, int tempRefDelta)
 {
-  openStream();
+  qint16 newTempRef = (qint16)(currentPicture->temporal_reference-tempRefDelta);
+  int    offset     = (int)(currentPicture->headerOffset()-bufferStartOffset)+4; // Hier rein damit!
 
-  TTVideoHeader* startObject = getCutStartObject(cutInPos, cutParams);
-  TTVideoHeader* endObject   = getCutEndObject(cutOutPos,  cutParams);
-
-  transferCutObjects(startObject, endObject, cutParams);
-
-  if (cutOutPos > cutParams->getCutOutIndex()) 
-    encodePart(cutParams->getCutOutIndex()+1, cutOutPos, cutParams);
-
-  closeStream();
+  buffer[offset]   = (quint8)(newTempRef >> 2);               // Bit 10 - 2 von 10 Bit Tempref
+  buffer[offset+1] = (quint8)(((newTempRef & 0x0003) << 6) +  // Bit 1 und 0 von 10 Bit Tempref
+      ((int)currentPicture->picture_coding_type << 3) +       // Bildtype auf Bit 5, 4 und 3
+      (currentPicture->vbv_delay >> 13));                     // 3 Bit von VBVDelay
 }
 
 /*! ////////////////////////////////////////////////////////////////////////////
@@ -892,54 +925,48 @@ void TTMpeg2VideoStream::cut(int cutInPos, int cutOutPos, TTCutParameter* cutPar
  */
 void TTMpeg2VideoStream::encodePart(int start, int end, TTCutParameter* cr)
 {
-  QFileInfo    new_file_info;
-  TTAVIWriter* avi_writer = new TTAVIWriter( NULL );
-
   // save current cut parameter
   bool savIsWriteMaxBitrate  = cr->getIsWriteMaxBitrate();
   bool savIsWriteSequenceEnd = cr->getIsWriteSequenceEnd(); 
+  bool savCreateVideoIDD     = TTCut::createVideoIDD;
+  bool savReadVideoIDD       = TTCut::readVideoIDD;
 
   // no sequence end code
   cr->setIsWriteSequenceEnd(false);
   cr->setIsWriteMaxBitrate(false);
-
-  // decode the part to avi
-  avi_writer->initAVIWriter( (TTVideoStream*)this );
-  avi_writer->writeAVI( start, end );
-  avi_writer->closeAVI();
+  TTCut::createVideoIDD = false;
+  TTCut::readVideoIDD   = false;
 
   // use the sequence header according to current picture for information about
   // frame size (width x height) and aspect ratio
   TTSequenceHeader* seq_head  = getSequenceHeader(current_index);
 
-  QDir    temp_dir( TTCut::tempDirPath );
-  QString avi_out_file   = "encode.avi";
-  QString mpeg2_out_file = "encode";          // extension is added by transcode (!)
-  new_file_info.setFile( temp_dir, avi_out_file );
+  QDir      tempDir( TTCut::tempDirPath );
+  QString   aviOutFile   = "encode.avi";
+  QString   mpeg2OutFile = "encode";          // extension is added by transcode (!)
+  QFileInfo aviFileInfo(tempDir, aviOutFile);
+  QFileInfo mpeg2FileInfo(tempDir, mpeg2OutFile);
+
+  TTEncodeParameter encParams;
   
-  TTEncodeParameter enc_par;
-  enc_par.avi_input_finfo.setFile( temp_dir, avi_out_file );
-  enc_par.mpeg2_output_finfo.setFile( temp_dir, mpeg2_out_file );
-  enc_par.video_width        = seq_head->horizontal_size_value;
-  enc_par.video_height       = seq_head->vertical_size_value;
-  enc_par.video_aspect_code  = seq_head->aspect_ratio_information;
-  enc_par.video_bitrate      = seq_head->bitRateKbit();
+  encParams.setAVIFileInfo(aviFileInfo);
+  encParams.setMpeg2FileInfo(mpeg2FileInfo);
+  encParams.setVideoWidth(seq_head->horizontal_size_value);
+  encParams.setVideoHeight(seq_head->vertical_size_value);
+  encParams.setVideoAspectCode(seq_head->aspect_ratio_information);
+  encParams.setVideoBitrate(seq_head->bitRateKbit());
 
-  TTTranscodeProvider* transcode_prov = new TTTranscodeProvider( );
-  transcode_prov->setParameter( enc_par );
+  TTTranscodeProvider* transcode_prov = new TTTranscodeProvider(encParams);
 
-  bool success = transcode_prov->encodePart();
+  bool success = transcode_prov->encodePart((TTVideoStream*)this, start, end);
 
-  char* envPath = getenv("PATH");
-  qDebug("Path: %s", envPath);
-  
   if (!success) {
     QString msg = QString("%1 Error in encode part!").arg(c_name);
     throw TTInvalidOperationException(msg);
   }
 
-  new_file_info.setFile( temp_dir, "encode.m2v" );
-  TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream( new_file_info );
+  mpeg2FileInfo.setFile(tempDir, "encode.m2v");
+  TTMpeg2VideoStream* new_mpeg_stream = new TTMpeg2VideoStream(mpeg2FileInfo);
 
   new_mpeg_stream->createHeaderList();
   new_mpeg_stream->createIndexList();
@@ -948,17 +975,16 @@ void TTMpeg2VideoStream::encodePart(int start, int end, TTCutParameter* cr)
   new_mpeg_stream->cut(0, end-start, cr);
 
   // remove temporary files
-  QString rm_cmd = "rm ";
-  rm_cmd        += new_file_info.absolutePath();
-  rm_cmd        += "/encode.*";
+  QString rmCmd = QString("rm %1/encode.*").arg(mpeg2FileInfo.absolutePath());
 
-  if (system(rm_cmd.toAscii().data()) < 0)
-    log->errorMsg(c_name, "system call %s fails!", TTCut::toAscii(rm_cmd));
+  if (system(rmCmd.toAscii().data()) < 0)
+    log->errorMsg(c_name, "system call %s fails!", TTCut::toAscii(rmCmd));
 
   cr->setIsWriteMaxBitrate(savIsWriteMaxBitrate);
   cr->setIsWriteSequenceEnd(savIsWriteSequenceEnd);
+  TTCut::readVideoIDD   = savReadVideoIDD;
+  TTCut::createVideoIDD = savCreateVideoIDD;
 
-  delete new_mpeg_stream;
-  delete avi_writer;
   delete transcode_prov;
+  delete new_mpeg_stream;
 }

@@ -68,10 +68,10 @@
 // -----------------------------------------------------------------------------
 TTAVHeader::TTAVHeader()
 {
-  str_description   = new QString( "unknown" );
-  str_mode          = new QString( "unknown" );
-  str_bit_rate      = new QString( "unknown" );
-  str_sample_rate   = new QString( "unknown" );
+  str_description   = "unknown";
+  str_mode          = "unknown";
+  str_bit_rate      = "unknown";
+  str_sample_rate   = "unknown";
   header_start_code = 0xFF;
   header_offset     = 0;
 }
@@ -80,45 +80,35 @@ TTAVHeader::TTAVHeader()
 // -----------------------------------------------------------------------------
 TTAVHeader::~TTAVHeader()
 {
-  if ( ttAssigned( str_description ) )
-    delete str_description;
-
-  if ( ttAssigned( str_mode ) )
-    delete str_mode;
-
-  if ( ttAssigned( str_bit_rate ) )
-    delete str_bit_rate;
-
-  if ( ttAssigned( str_sample_rate ) )
-    delete str_sample_rate;
+  //qDebug("TTAVHeader destructor...");
 }
 
 // return header description string
 // -----------------------------------------------------------------------------
-QString& TTAVHeader::descString()
+const QString& TTAVHeader::descString()
 {
-  return *str_description;
+  return str_description;
 }
 
 // return header mode string
 // -----------------------------------------------------------------------------
-QString& TTAVHeader::modeString()
+const QString& TTAVHeader::modeString()
 {
-  return *str_mode;
+  return str_mode;
 }
 
 // return bit rate string
 // -----------------------------------------------------------------------------
-QString& TTAVHeader::bitRateString()
+const QString& TTAVHeader::bitRateString()
 {
-  return *str_bit_rate;
+  return str_bit_rate;
 }
 
 // return sample rate string
 // -----------------------------------------------------------------------------
-QString& TTAVHeader::sampleRateString()
+const QString& TTAVHeader::sampleRateString()
 {
-  return *str_sample_rate;
+  return str_sample_rate;
 }
 
 // return header type (start code)
@@ -137,7 +127,6 @@ quint64 TTAVHeader::headerOffset() const
 
 bool TTAVHeader::operator==(const TTAVHeader& test) const
 {
-  qDebug("call to operator == ...");
   return (header_offset == test.header_offset);
 }
 
@@ -204,7 +193,6 @@ int TTAudioHeader::frameLength()
 // -----------------------------------------------------------------------------
 TTVideoHeader::TTVideoHeader()
 {
-
 }
 
 // /////////////////////////////////////////////////////////////////////////////

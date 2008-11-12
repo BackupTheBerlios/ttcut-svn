@@ -85,12 +85,14 @@ TTAVTypes::TTAVTypes( QString f_name )
 // -----------------------------------------------------------------------------
 TTAVTypes::~TTAVTypes()
 {
-  if ( av_stream_info != NULL )
+  if (av_stream_info != NULL) {
     delete av_stream_info;
+  }
 
-  if ( av_stream != NULL )
-  {
-    av_stream->closeFile();
+
+  if ( av_stream != NULL ) {
+    //FIXME: Why here is a file buffer????
+    av_stream->close();
     delete av_stream;
   }
 }
@@ -186,6 +188,7 @@ void TTAudioType::getAudioStreamType()
   start_pos       = 0;
 
   // open audio-stream for reading
+  // FIXME: av_stream seems to be local
   av_stream = new TTFileBuffer(av_stream_info->filePath(), QIODevice::ReadOnly );
 
   // read buffer from stream
@@ -245,17 +248,24 @@ void TTAudioType::getAudioStreamType()
         //qDebug( "%sfound MPEG audio...",c_name );
         av_stream_type = mpeg_audio;
 
-        delete mpeg_stream;
-        delete mpeg_header;
+        if (mpeg_stream != NULL)
+          delete mpeg_stream;
+
+        if (mpeg_header != NULL)
+          delete mpeg_header;
+        
         break;
       }
     }
   }
 
-  av_stream->closeFile();
-  delete av_stream;
+  if (av_stream != NULL) {
+    av_stream->close();
+    delete av_stream;
+    av_stream = NULL;
+  }
+
   delete [] buffer;
-  av_stream = (TTFileBuffer*)NULL;
 
   //qDebug( "%s-----------------------------------------------",c_name );
 }
@@ -289,10 +299,9 @@ TTVideoType::~TTVideoType()
 // -----------------------------------------------------------------------------
 TTVideoStream* TTVideoType::createVideoStream()
 {
-  if ( av_stream_exists )
-    return new TTMpeg2VideoStream( *av_stream_info );
-  else
-    return (TTVideoStream*)NULL;
+  return (av_stream_exists)
+      ? new TTMpeg2VideoStream(*av_stream_info)
+      : (TTVideoStream*)NULL;
 }
 
 // evaluate video stream and estimate video stream type
