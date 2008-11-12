@@ -51,13 +51,6 @@ TTHeaderList::TTHeaderList(int size)
  */
 TTHeaderList::~TTHeaderList()
 {
-  for (int i = 0; i < size(); i++)
-  {
-    TTAVHeader* av_header = at(i);
-    if (ttAssigned(av_header))
-      delete av_header;
-  }
-  clear();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -65,18 +58,25 @@ TTHeaderList::~TTHeaderList()
  */
 void TTHeaderList::add(TTAVHeader* header)
 {
-  append( header );
+  if (header == NULL)
+    qDebug("try to insert NULL header in list!");
+
+  append(header);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Remove all items from the header list; Pointer to items were deleted!
+ * Remove all items from the header list
+ * The objects in the list were also deleted!
  */
 void TTHeaderList::deleteAll()
 {
   for (int i = 0; i < size(); i++)
   {
     TTAVHeader* av_header = at(i);
-    delete av_header;
+    if (av_header != NULL) {
+      //remove(i);
+      delete av_header;
+    }
   }
   clear();
 }

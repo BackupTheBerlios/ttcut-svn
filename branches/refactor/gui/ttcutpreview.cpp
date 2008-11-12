@@ -483,6 +483,7 @@ void TTCutPreview::playPreview()
     return;
   }
 
+  printf("play preview....\n");
   //pbPlay->setText(tr("Stop"));
   //pbPlay->setIcon(QIcon(":/pixmaps/pixmaps/stop_18.xpm"));
   movieWidget->playMovie();

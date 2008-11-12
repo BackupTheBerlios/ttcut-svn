@@ -60,42 +60,34 @@ const char c_name[] = "TTAC3HEADER   : ";
 TTAC3AudioHeader::TTAC3AudioHeader()
   : TTAudioHeader()
 {
-  if ( ttAssigned( str_description ) )
-    *str_description = "AC-3";
-  else
-    str_description = new QString( "AC-3" );
-
-  if ( ttAssigned( str_mode ) )
-    *str_mode = "unknown";
-  else
-    str_mode = new QString( "unknown" );
+    str_description = "AC-3";
+    str_mode        = "unknown";
 }
 
 
 QString& TTAC3AudioHeader::descString()
 {
-  return *str_description;
+  return str_description;
 }
 
 QString& TTAC3AudioHeader::modeString()
 {
-  QString num_string;
+  //QString num_string;
 
-  num_string.setNum(AC3AudioCodingMode[acmod]);
+  //num_string.setNum(AC3AudioCodingMode[acmod]);
   
   //TODO: Question, is AC3 mode correct ???
 
   //qDebug( "%sAC3 mode: %d",c_name,acmod );
 
-  *str_mode = AC3Mode[acmod];
-  *str_mode += "-";
-  *str_mode += num_string;
-  if ( lfeon == 0 )
-    *str_mode += ".0";
-  else
-    *str_mode += ".1";
+  str_mode = QString("%1-%2%3").arg(AC3Mode[acmod]).arg(AC3AudioCodingMode[acmod]).arg((lfeon == 0) ? ".0" : ".1");
 
-  return *str_mode;
+  //str_mode = AC3Mode[acmod];
+  //str_mode += "-";
+  //str_mode += num_string;
+  //str_mode += (lfeon == 0) ? ".0" : ".1";
+
+  return str_mode;
 }
 
 int TTAC3AudioHeader::bitRate()
@@ -105,9 +97,9 @@ int TTAC3AudioHeader::bitRate()
 
 QString& TTAC3AudioHeader::bitRateString()
 {
-  str_bit_rate->sprintf( "%d KBit/s", bitRate() );
+  str_bit_rate = QString("%1 KBit/s").arg(bitRate());
 
-  return *str_bit_rate;
+  return str_bit_rate;
 }
 
 int TTAC3AudioHeader::sampleRate()
@@ -117,8 +109,8 @@ int TTAC3AudioHeader::sampleRate()
 
 QString& TTAC3AudioHeader::sampleRateString()
 {
-  str_sample_rate->sprintf( "%d",sampleRate() );
+  str_sample_rate = QString("%1").arg(sampleRate());
   
-  return *str_sample_rate;
+  return str_sample_rate;
 }
 

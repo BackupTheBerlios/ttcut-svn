@@ -39,17 +39,19 @@
 class TTFileBuffer
 {
 public:
-  // create / delete
+  // cr:w
+  // eate / delete
   TTFileBuffer(QString name, QIODevice::OpenMode mode);
   ~TTFileBuffer();
 
   // file stream
-  bool    openFile(QString name, QIODevice::OpenMode mode);
-  void    closeFile();
+  bool    open();    
+  void    close();
   QString fileName();
   quint64 size();
   bool    atEnd();
   quint64 position();
+  bool    flush();
 
   // read / write
   void    readByte( quint8 &byte1 );
@@ -86,6 +88,7 @@ public:
 
  private:
   QFile*     file;
+  QIODevice::OpenMode mode;
   bool       isAtEnd;
   quint8*    cBuffer;
   int        bufferSize;

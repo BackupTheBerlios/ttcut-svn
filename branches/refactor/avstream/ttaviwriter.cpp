@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2010 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2008                                                      */
 /* FILE     : ttaviwriter.cpp                                                 */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/06/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 11/08/2008 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -31,49 +31,42 @@
 
 #include "ttaviwriter.h"
 
+#include <QFileInfo>
 #include <QDir>
 
 const char c_name[] = "TTAVIWRITER   : ";
 
-// -----------------------------------------------------------------------------
-// Construct a TTAVIWriter object
-// -----------------------------------------------------------------------------
-TTAVIWriter::TTAVIWriter( TTProgressBar* pBar )
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Construct a TTAVIWriter object
+ */
+TTAVIWriter::TTAVIWriter(TTVideoStream* v_stream)
 {
    decoder      = NULL;
    header_list  = NULL;
    index_list   = NULL;
    ref_data     = NULL;
    avi_file     = NULL;
-   progress_bar = pBar;
 
    file_size    = 0;
    file_offset  = 0;
+
+  initAVIWriter(v_stream);
 }
 
-
-// -----------------------------------------------------------------------------
-// Destructor
-// -----------------------------------------------------------------------------
+/* /////////////////////////////////////////////////////////////////////////////
+ * Clean up object
+ */
 TTAVIWriter::~TTAVIWriter()
 {
-  if ( ttAssigned(decoder) )
-      delete decoder;
-
-  if ( ttAssigned(avi_file) )
-    closeAVI();
+  if (decoder != NULL)
+    delete decoder;
 }
 
-
-// -----------------------------------------------------------------------------
-// Initialize the AVI writer
-// -----------------------------------------------------------------------------
-bool TTAVIWriter::initAVIWriter( TTVideoStream* v_stream )
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Initialize the AVI writer
+ */
+void TTAVIWriter::initAVIWriter(TTVideoStream* v_stream)
 {
-   bool b_result;
- 
-   b_result = false;
-
    video_file_name = v_stream->filePath();
    index_list      = v_stream->indexList();
    header_list     = v_stream->headerList();
@@ -84,37 +77,23 @@ bool TTAVIWriter::initAVIWriter( TTVideoStream* v_stream )
 
    // must set the format for conversion here
    decoder->decodeFirstMPEG2Frame( formatYV12 ); 
-
-   b_result = true;
-
-   return b_result;
 }
 
-
-// -----------------------------------------------------------------------------
-// Write AVI file
-// -----------------------------------------------------------------------------
-int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
+/* ///////////////////////////////////////////////////////////////////////////// 
+ * Write AVI file
+ */
+int TTAVIWriter::writeAVI(int start_frame_pos, int end_frame_pos, const QFileInfo& avi_finfo)
 {
-  long        i;
   QTime       searchTime;
   TFrameInfo* frameInfo;
   int         frame_count = end_frame_pos - start_frame_pos;
-
-  //end_frame_pos = end_frame_pos + 50;
 
   //qDebug( "%s------------------------------------------------",c_name );
   //qDebug( "%swrite AVI: start: %ld | end: %ld | count: %d",c_name,start_frame_pos,end_frame_pos,frame_count );
   //qDebug( "%s------------------------------------------------",c_name );
 
-  QFileInfo avi_finfo( QDir(TTCut::tempDirPath), "encode.avi" );
   avi_file = AVI_open_output_file( avi_finfo.absoluteFilePath().toLatin1().data() );
 
-  // Progressbar action text 
-  if ( ttAssigned(progress_bar) )
-    progress_bar->setActionText( "Search equal frame..." );
-  //else
-    //qDebug("ProgessBar not assigned (!)");
 
   //TODO: go back to previous sequence to ensure correct encoding of
   //      open GOP's
@@ -132,10 +111,8 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   ref_data = new quint8[frameInfo->size+2*frameInfo->chroma_size];
   
 
-  for ( i = start_frame_pos; i <= end_frame_pos; i++ )
+  for (int i = start_frame_pos; i <= end_frame_pos; i++)
   {
-    //qDebug( "%swrite frame #: %d",c_name,i );
-
     // get decoded mpeg-frame data
     decoder->getCurrentFrameData( ref_data );
 
@@ -152,8 +129,9 @@ int TTAVIWriter::writeAVI( int start_frame_pos, int end_frame_pos )
   return frame_count;  
 }
 
-
-
+/* /////////////////////////////////////////////////////////////////////////////
+ *
+ */
 bool TTAVIWriter::closeAVI()
 {
   AVI_close(avi_file);

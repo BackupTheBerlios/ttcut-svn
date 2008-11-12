@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* COPYRIGHT: TriTime (c) 2003/2005 / www.tritime.org                         */
+/* COPYRIGHT: TriTime (c) 2003/2010 / www.tritime.org                         */
 /*----------------------------------------------------------------------------*/
-/* PROJEKT  : TTCUT 2005                                                      */
+/* PROJEKT  : TTCUT 2008                                                      */
 /* FILE     : ttaciwriter.h                                                   */
 /*----------------------------------------------------------------------------*/
 /* AUTHOR  : b. altendorf (E-Mail: b.altendorf@tritime.de)   DATE: 08/06/2005 */
-/* MODIFIED:                                                 DATE:            */
+/* MODIFIED: b. altendorf                                    DATE: 11/08/2008 */
 /*----------------------------------------------------------------------------*/
 
 // ----------------------------------------------------------------------------
@@ -32,12 +32,13 @@
 #ifndef TTAVIWRITER_H
 #define TTAVIWRITER_H
 
-
 #include <QString>
 
 #include "../gui/ttprogressbar.h"
 #include "../avstream/ttavstream.h"
 #include "../mpeg2decoder/ttmpeg2decoder.h"
+
+class QFileInfo;
 
 extern "C"
 {
@@ -50,14 +51,14 @@ extern "C"
 class TTAVIWriter
 {
  public:
-   TTAVIWriter( TTProgressBar* b_bar = NULL );
+   TTAVIWriter(TTVideoStream* v_stream);
    ~TTAVIWriter();
 
-   bool initAVIWriter( TTVideoStream* v_stream );
-   int  writeAVI( int start_frame_pos, int end_frame_pos );
+   int  writeAVI(int start_frame_pos, int end_frame_pos, const QFileInfo& avi_fInfo);
    bool closeAVI();
 
  protected:
+   void initAVIWriter(TTVideoStream* v_stream);
    bool initDecoder();
    long compareFrames();
 

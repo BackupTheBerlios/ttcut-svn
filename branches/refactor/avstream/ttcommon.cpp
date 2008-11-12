@@ -1,5 +1,6 @@
 
 #include "ttcommon.h"
+#include "../common/ttmessagelogger.h"
 
 #include <math.h>
 #include <QString>
@@ -180,10 +181,10 @@ long ttTimeToFrames(QTime timeCode, float fps)
 }
 
 
-TTTimeCode* ttFrameToTimeCode( int frame_nr, float fps)
+TTTimeCode ttFrameToTimeCode( int frame_nr, float fps)
 {
   int frames_per_second = (int)(fps+0.5);
-  TTTimeCode* tc = new TTTimeCode();
+  TTTimeCode tc;
  
   //if (useNTSCDropFrame && fps==30000m/1001m)
   //{
@@ -192,16 +193,16 @@ TTTimeCode* ttFrameToTimeCode( int frame_nr, float fps)
     //tc.drop_frame_flag=true;
   //}
   //else
-  tc->drop_frame_flag = false;
+  tc.drop_frame_flag = false;
   
-  tc->pictures = (short)(frame_nr%frames_per_second);
+  tc.pictures = (short)(frame_nr%frames_per_second);
 
   QTime dt = ttFramesToTime( frame_nr, fps );
 
-  tc->seconds    =(short)dt.second();
-  tc->minutes    =(short)dt.minute();
-  tc->hours      =(short)dt.hour();
-  tc->marker_bit =true;
+  tc.seconds    =(short)dt.second();
+  tc.minutes    =(short)dt.minute();
+  tc.hours      =(short)dt.hour();
+  tc.marker_bit =true;
   
   return tc;
 }

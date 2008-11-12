@@ -111,12 +111,18 @@ TTVideoHeader* TTVideoHeaderList::getPrevHeader(int startPos, TTMpeg2VideoHeader
 TTVideoHeader* TTVideoHeaderList::getNextHeader(int startPos, TTMpeg2VideoHeader::mpeg2StartCodes type)
 {
   int nextIndex = startPos+1;
-
+ 
   if (nextIndex < 0 || nextIndex >= count())
     return NULL;
 
-  if (nextIndex < count() && type == TTMpeg2VideoHeader::ndef)
+  if (nextIndex < count() && type == TTMpeg2VideoHeader::ndef) {
+    TTAVHeader* next = at(nextIndex);
+
+    if (next == at(startPos))
+      qDebug("ksfjgkdfjgkdjfgkldjf");
+
     return (TTVideoHeader*)at(nextIndex);
+  }
 
   while (nextIndex < count())
   {
@@ -131,14 +137,33 @@ TTVideoHeader* TTVideoHeaderList::getNextHeader(int startPos, TTMpeg2VideoHeader
 
 TTVideoHeader* TTVideoHeaderList::getNextHeader(TTVideoHeader* current, TTMpeg2VideoHeader::mpeg2StartCodes type)
 {
-  return getNextHeader(indexOf(current), type);
+  return (current != NULL)
+      ? getNextHeader(indexOf((TTAVHeader*)current), type)
+      : NULL;
 }
 
 TTVideoHeader* TTVideoHeaderList::getPrevHeader(TTVideoHeader* current, TTMpeg2VideoHeader::mpeg2StartCodes type)
 {
-  return getNextHeader(indexOf(current), type);
+  return (current != NULL)
+      ? getPrevHeader(indexOf((TTAVHeader*)current), type)
+      : NULL;
 }
-  
+
+
+int TTVideoHeaderList::findIndexOf(TTVideoHeader* current)
+{
+  for (int i = 0; i < size(); i++) {
+    TTAVHeader* check = at(i);
+
+    if (check == NULL)
+      qDebug("check is null!");
+
+    if (check->headerOffset() == ((TTAVHeader*)current)->headerOffset())
+      return i;
+  }
+  return -2;
+}
+
 /*! ////////////////////////////////////////////////////////////////////////////
  * Returns the TTSequenceHeader at header list index position
  */

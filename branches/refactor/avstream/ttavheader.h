@@ -73,10 +73,10 @@ public:
   TTAVHeader();
   virtual ~TTAVHeader();
 
-  virtual QString& descString();
-  virtual QString& modeString();
-  virtual QString& bitRateString();
-  virtual QString& sampleRateString();
+  virtual const QString& descString();
+  virtual const QString& modeString();
+  virtual const QString& bitRateString();
+  virtual const QString& sampleRateString();
 
   virtual quint8   headerType();
   virtual void     setHeaderType( quint8 h_type ) {header_start_code = h_type;}
@@ -88,10 +88,10 @@ public:
 protected:
   quint64          header_offset;
   quint8           header_start_code;
-  QString*         str_description;
-  QString*         str_mode;
-  QString*         str_bit_rate;
-  QString*         str_sample_rate;
+  QString          str_description;
+  QString          str_mode;
+  QString          str_bit_rate;
+  QString          str_sample_rate;
   TTMessageLogger* log;
 };
 

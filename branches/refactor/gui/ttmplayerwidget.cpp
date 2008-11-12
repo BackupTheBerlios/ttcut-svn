@@ -57,6 +57,7 @@ TTMplayerWidget::~TTMplayerWidget()
  */
 void TTMplayerWidget::playMovie()
 {
+  printf("play mplayer movie...\n");
   mplayerProc = new QProcess();
   playMplayer(currentMovie);
 }
@@ -126,8 +127,9 @@ bool TTMplayerWidget::playMplayer(QString videoFile)
   if (!ttAssigned(mplayerProc))
     return false;
 
-  if (isPlaying)
-    return false;
+  //FIXME:
+  //if (isPlaying)
+  //  return false;
 
   // Setup interface with MPlayer
   mplayer_cmd.clear();

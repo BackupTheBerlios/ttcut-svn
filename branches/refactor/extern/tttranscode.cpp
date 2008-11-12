@@ -29,35 +29,30 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
+//TODO: make an IEnocdeProvider as interface for other encode
+//
 #include "tttranscode.h"
+#include "ttencodeparameter.h"
+#include "../avstream/ttaviwriter.h"
 
 #include <QTimer>
 #include <QTextStream>
-
-//#define TTTRANSCODE_DEBUG
-
-#define EVENT_LOOP_INTERVALL 100
+#include <QByteArray>
 
 const char c_name[] = "TTTranscodeProvider";
 
 /* ////////////////////////////////////////////////////////////////////////////
  * Create the process form for displaying the output of the encode
  */
-TTTranscodeProvider::TTTranscodeProvider( )
-  //: TTProcessForm( TTCut::mainWindow )
+TTTranscodeProvider::TTTranscodeProvider(TTEncodeParameter& enc_par )
   : QObject()
 {
-  // message logger instance
-  log = TTMessageLogger::getInstance();
-  
-  QString str_head = "starting encoder >>>transcode -y ffmpeg<<<";
+  log               = TTMessageLogger::getInstance();
+  this->enc_par     = enc_par;
   str_command       = "transcode";
   transcode_success = false;
 
-  //setModal( true );
-  //addLine( str_head );
-  //show();  
-  //qApp->processEvents();
+  buildCommandLine();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -65,94 +60,68 @@ TTTranscodeProvider::TTTranscodeProvider( )
  */
 TTTranscodeProvider::~TTTranscodeProvider()
 {
-  //close();
-  //qApp->processEvents();
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
  * Parameter for the encoder
  */
-void TTTranscodeProvider::setParameter( TTEncodeParameter& enc_par )
+void TTTranscodeProvider::buildCommandLine()
 {
-#if defined (TTTRANSCODE_DEBUG)
-  log->debugMsg( c_name, "----------------------------------------------------" );
-  log->debugMsg( c_name, "transcode parameter:" );
-  log->debugMsg( c_name, "----------------------------------------------------" );
-  log->debugMsg( c_name, "avi-file    : %s",    qPrintable(enc_par.avi_input_finfo.absoluteFilePath()) );
-  log->debugMsg( c_name, "mpeg-file   : %s",    qPrintable(enc_par.mpeg2_output_finfo.absoluteFilePath()) );
-  log->debugMsg( c_name, "widhtxheight: %dx%d", enc_par.video_width,enc_par.video_height );
-  log->debugMsg( c_name, "aspect-code : %d",    enc_par.video_aspect_code );
-  log->debugMsg( c_name, "bitrate     : %f",    enc_par.video_bitrate );
-  log->debugMsg( c_name, "----------------------------------------------------" );
-#endif
+  //enc_par.Print(c_name);
 
   //transcode -i encode.avi --pre_clip 0 -y ffmpeg --export_prof dvd-pal --export_asr 2 -o encode
-  QString str_aspect;
-  str_aspect.sprintf("%d",enc_par.video_aspect_code );
-
-  QString str_format;
-  str_format.sprintf("%dx%d", enc_par.video_width, enc_par.video_height);
-
-  QString str_bitrate;
-  str_bitrate.sprintf("%f", enc_par.video_bitrate);
+  QString str_aspect  = QString("%1").arg(enc_par.videoAspectCode());
+  QString str_format  = QString("%1x%2").arg(enc_par.videoWidth()).arg(enc_par.videoHeight());
+  QString str_bitrate = QString("%1").arg(enc_par.videoBitrate());
 
   strl_command_line.clear();
 
   strl_command_line << "-i"
-		    << enc_par.avi_input_finfo.absoluteFilePath()
+		    << enc_par.aviFileInfo().absoluteFilePath()
 		    << "--pre_clip"
 		    << "0"
-        // new transcode version for linux!
-        // -------------------------------
-        << "-y"
-        << "ffmpeg"
-        // ------------------------------
 	      << "--export_prof"
 		    << "dvd"            // dvd-pal
 		    << "--export_asr"
 		    << str_aspect
 		    << "-o"
-		    << enc_par.mpeg2_output_finfo.absoluteFilePath();
+		    << enc_par.mpeg2FileInfo().absoluteFilePath();
 
   log->infoMsg(c_name, strl_command_line.join(" "));
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
+ * converts the mpeg2 stream from encode params to temporary avi
+ */
+void TTTranscodeProvider::writeAVIFile(TTVideoStream* vs, int start, int end)
+{
+  TTAVIWriter* aviWriter = new TTAVIWriter(vs);
+
+  aviWriter->writeAVI(start, end, enc_par.aviFileInfo());
+  aviWriter->closeAVI();
+
+  delete aviWriter;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////
  * Create encoder process and start it
  */
-bool TTTranscodeProvider::encodePart( )    
+bool TTTranscodeProvider::encodePart(TTVideoStream* vStream, int start, int end)    
 {
-  int update        = EVENT_LOOP_INTERVALL;     //update intervall for local event loop
+  writeAVIFile(vStream, start, end);
+
   transcode_success = false;      
-  
-  // create the process object for transcode
   proc = new QProcess();
   
   // read both channels: stderr and stdout
-  proc->setReadChannelMode( QProcess::MergedChannels );
+  proc->setReadChannelMode(QProcess::MergedChannels);
 
-  // signal and slot connection
-  connect(proc, SIGNAL(error(QProcess::ProcessError)),       SLOT(onProcError(QProcess::ProcessError)));
-  connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onProcFinished(int, QProcess::ExitStatus)));  
-  connect(proc, SIGNAL(readyRead()),                         SLOT(onProcReadOut()) );
-  connect(proc, SIGNAL(started()),                           SLOT(onProcStarted()) );
-  connect(proc, SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(onProcStateChanged(QProcess::ProcessState)));
+  connectSignals(proc);
 
   // start the process; if successfully started() was emitted otherwise error()
   proc->start(str_command, strl_command_line);
 
   proc->waitForFinished();
-  // we must wait until the process has finished
-  //while (proc->state() == QProcess::Starting ||
-  //       proc->state() == QProcess::Running     ) {
-  //  update--;
-  //  if ( update == 0 ) {
-  //    qApp->processEvents();      
-  //    update = EVENT_LOOP_INTERVALL;
-  //  }
-  //}
-
-  //qApp->processEvents();
 
   delete proc;
   proc = NULL;
@@ -161,15 +130,15 @@ bool TTTranscodeProvider::encodePart( )
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
- * Reimplement the closeEvent to avoid closing the process window while the
- * process is in running state
+ * Signal and slot connection
  */
-void TTTranscodeProvider::closeEvent(QCloseEvent *event)
+void TTTranscodeProvider::connectSignals(QProcess* proc)
 {
-  if (proc != NULL && proc->state() == QProcess::Running)
-    event->ignore();
-  else
-    event->accept();
+  connect(proc, SIGNAL(error(QProcess::ProcessError)),       SLOT(onProcError(QProcess::ProcessError)));
+  connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onProcFinished(int, QProcess::ExitStatus)));  
+  connect(proc, SIGNAL(readyRead()),                         SLOT(onProcReadOut()) );
+  connect(proc, SIGNAL(started()),                           SLOT(onProcStarted()) );
+  connect(proc, SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(onProcStateChanged(QProcess::ProcessState)));
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -198,22 +167,19 @@ void TTTranscodeProvider::onProcFinished(int e_code, QProcess::ExitStatus e_stat
 
   switch (e_status) {
     case QProcess::NormalExit:
-      //log->debugMsg(c_name, "The process ecxited normally: %d", e_code);
       procMsg = tr("Transcode exit normally ... done(0)");
       transcode_success = true;
       break;
     case QProcess::CrashExit:
-      //log->debugMsg(c_name, "The process crashed: %d", e_code);
       procMsg = tr("Transcode crashed");
       transcode_success = false;
       break;
     default:
-      //log->debugMsg(c_name, "Unknown process exit status (!): %d", e_code);
       procMsg = tr("unknown process exit status");
       transcode_success = false;
       break;
   }
-  //addLine(procMsg);
+  //log->debugMsg(c_name, "ProcMessage: %s ProcStatus: %d ProcCode: %d", qPrintable(procMsg), e_status, e_code);
   exit_code = e_code;
 }
 
@@ -245,7 +211,6 @@ void TTTranscodeProvider::onProcError(QProcess::ProcessError proc_error)
       errorMsg = QString(tr("An unknown error occured: %1")).arg(proc_error);
       break;
   }
-  //addLine(errorMsg);
   log->errorMsg(c_name, qPrintable(errorMsg));
   transcode_success = false;
 }
@@ -271,9 +236,7 @@ void TTTranscodeProvider::onProcStateChanged(QProcess::ProcessState proc_state)
       stateMsg = "Unknown process state!";
       break;
   }
-
   log->debugMsg(c_name, stateMsg);
-  //addLine(stateMsg);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -291,16 +254,9 @@ void TTTranscodeProvider::onProcKill( )
  */
 void TTTranscodeProvider::procOutput()
 {
-  QString    line;
-  QByteArray ba;
-
-  ba = proc->readAll();
+  QByteArray ba = proc->readAll();
   QTextStream out(&ba);
 
   while (!out.atEnd())
-  {
-    line = out.readLine();
-    //log->infoMsg(c_name, line);
-    //addLine( line );
-  }
+    emit processOutput(out.readLine());
 }

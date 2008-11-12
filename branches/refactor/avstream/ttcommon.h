@@ -15,7 +15,7 @@ extern "C" QTime   ttMsecToTime( int msec );
 extern "C" QTime   ttMsecToTimeD( double msec );
 extern "C" QTime   ttFramesToTime(long lFrames, float fps);
 extern "C" long    ttTimeToFrames(QTime timeCode, float fps);
-extern "C" TTTimeCode* ttFrameToTimeCode( int FrameNr, float fps);
+extern "C" TTTimeCode ttFrameToTimeCode( int FrameNr, float fps);
 
 #ifndef TTTIMECODE_H
 #define TTTIMECODE_H

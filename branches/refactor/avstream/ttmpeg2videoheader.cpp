@@ -297,6 +297,8 @@ void TTGOPHeader::parseBasicData( quint8* data, int offset )
 :TTMpeg2VideoHeader()
 {
   header_start_code = picture_start_code;
+
+  vbv_delay = 0;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////

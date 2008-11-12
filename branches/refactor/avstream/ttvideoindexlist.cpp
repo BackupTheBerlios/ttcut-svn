@@ -58,7 +58,6 @@ TTVideoIndexList::TTVideoIndexList()
  */
 TTVideoIndexList::~TTVideoIndexList()
 {
-  deleteAll();
 }
 
 /*! /////////////////////////////////////////////////////////////////////////////
@@ -74,7 +73,9 @@ void TTVideoIndexList::deleteAll()
   for (int i = 0; i < size(); i++)
   {
     TTVideoIndex* v_index = at(i);
-    delete v_index;
+    if (v_index != NULL) {
+      delete v_index;
+    }
   }
   clear();
 }

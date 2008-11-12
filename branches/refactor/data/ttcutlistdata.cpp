@@ -82,6 +82,11 @@ QTime TTCutListDataItem::getCutOutTime() const
   return cutOutTime;
 }
 
+int TTCutListDataItem::getCutLengthFrames() const
+{
+  return cutOutIndex - cutInIndex + 1;
+}
+
 TTAVData* TTCutListDataItem::getAVData() const
 {
   return avData;
@@ -118,7 +123,7 @@ int TTCutListData::addItem(int cutInIndex, int cutOutIndex, TTAVData* avData)
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
   QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
-  quint64 lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
+  qint64 lengthBytes  = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
   log->infoMsg(oName, "Insert cut position");
@@ -151,7 +156,7 @@ int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
   QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
-  quint64 lengthBytes = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
+  qint64 lengthBytes  = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
   //log->infoMsg(oName, "Update cut position at index: %d", index);

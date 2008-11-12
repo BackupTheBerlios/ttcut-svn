@@ -89,15 +89,18 @@ TTAVStream::TTAVStream(const QFileInfo &f_info)
  */
 TTAVStream::~TTAVStream()
 {
-  if (ttAssigned(stream_info))
-    delete stream_info;
-
-  if (ttAssigned(stream_buffer))
-  {
-    stream_buffer->closeFile();
+  if (ttAssigned(stream_buffer)) {
+    stream_buffer->close();
     delete stream_buffer;
+    stream_buffer = NULL;
+  }
+
+  if (ttAssigned(stream_info)) {
+    delete stream_info;
+    stream_info = NULL;
   }
 }
+
 
 // -----------------------------------------------------------------------------
 // methods common for all stream types
@@ -186,8 +189,11 @@ TTAudioStream::TTAudioStream(const QFileInfo &f_info, int s_pos)
 
 TTAudioStream::~TTAudioStream()
 {
-  if (header_list != 0)
+  if (ttAssigned(header_list)) {
+    header_list->deleteAll();
     delete header_list;
+    header_list = NULL;
+  }
 }
 
 // return pointer to current header list
@@ -221,11 +227,15 @@ TTVideoStream::TTVideoStream( const QFileInfo &f_info )
 
 TTVideoStream::~TTVideoStream()
 {
-  if ( ttAssigned( header_list ) )
+  if (ttAssigned( header_list)) {
+    header_list->deleteAll();
     delete header_list;
+  }
 
-  if ( ttAssigned( index_list ) )
+  if (ttAssigned( index_list)) {
+    index_list->deleteAll();
     delete index_list;
+  }
 }
 
 // return pointer to current header list

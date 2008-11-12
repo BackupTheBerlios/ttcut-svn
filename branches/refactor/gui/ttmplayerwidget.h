@@ -61,7 +61,7 @@ protected:
 
 signals:
     void optimalSizeChange();
-    void isPlayingEvent(bool);
+    //void isPlayingEvent(bool);
 
 public slots:
     void loadMovie(const QString &fileName);

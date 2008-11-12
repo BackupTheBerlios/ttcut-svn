@@ -77,6 +77,9 @@ TTMpeg2Decoder::~TTMpeg2Decoder()
 
   if (ttAssigned(streamBuffer))
      delete [] streamBuffer;
+
+  if (ttAssigned(decoderBuffer))
+    delete [] decoderBuffer;
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
