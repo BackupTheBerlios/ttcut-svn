@@ -13,8 +13,8 @@ PROJECT     = TTCUT
 CONFIG      += qt warn_on debug
 QT          += opengl
 DEFINES     += _FILE_OFFSET_BITS=64
-DIST        = TTCut
-TARGET      = TTCut
+DIST        = ttcut
+TARGET      = ttcut
 LIBS        = -lmpeg2 -lmpeg2convert
 
 #FIXME: find out why these defines wont work
