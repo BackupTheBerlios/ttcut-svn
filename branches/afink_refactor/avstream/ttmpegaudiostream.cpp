@@ -18,9 +18,9 @@
 // -----------------------------------------------------------------------------
 //
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                   
-//             |                 +- TTAC3AudioStream 
-// TTAVStream -|                 
+//             +- TTAudioStream -|
+//             |                 +- TTAC3AudioStream
+// TTAVStream -|
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -51,6 +51,7 @@
 
 #include "ttmpegaudiostream.h"
 #include "../data/ttcutlistdata.h"
+#include "../data/ttavdata.h"
 
 const char c_name[] = "MPEGAUDIOSTR";
 
@@ -200,7 +201,7 @@ int TTMPEGAudioStream::createHeaderList( )
   {
     emit progressChanged(TTProgressBar::Start, "Create audio-header list", 0);
 
-    while ( !stream_buffer->atEnd() )  
+    while ( !stream_buffer->atEnd() )
     {
       searchNextSyncByte();
       audio_header = new TTMpegAudioHeader();
@@ -230,7 +231,7 @@ int TTMPEGAudioStream::createHeaderList( )
       emit progressChanged(TTProgressBar::Step, "Create audio-header list", stream_buffer->position());
     }
 
-    emit progressChanged(TTProgressBar::Finished, "Audio-heade list created", stream_buffer->position());
+    emit progressChanged(TTProgressBar::Finished, "Audio-header list created", stream_buffer->position());
   }
   catch (TTFileBufferException)
   {
@@ -268,6 +269,9 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   float   audio_start_time;
   float   audio_end_time;
   float   local_audio_offset = 0.0;
+  int     audio_index;
+  QList<TTAVStream*> connectedToProgressBar;
+  connectedToProgressBar.append(this);
 
 #if defined MPEGAUDIO_DEBUG
   log->infoMsg(c_name, "-----------------------------------------------");
@@ -277,6 +281,7 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
   log->infoMsg(c_name, "target stream      : %s", qPrintable(cut_stream->fileName()));
 #endif
 
+  audio_index = cut_list->avData(0)->indexOfAudioStream( this );
   for (int i = 0; i < cut_list->count(); i++)
   {
     if (i == 0)
@@ -284,11 +289,17 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 
     start_pos = cut_list->cutInPosAt( i );
     end_pos   = cut_list->cutOutPosAt( i );
+    TTAudioStream* pAudioStream = cut_list->avData(i)->audioStream(audio_index);
 
-    
+    if ( -1 == connectedToProgressBar.indexOf(pAudioStream) ) {
+      connect( pAudioStream, SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)),
+               this, SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)) );
+      connectedToProgressBar.append(pAudioStream);
+    }
+
     //qDebug( "%sstart / end  : %d / %d",c_name,start_pos,end_pos );
-    //search 
-    TTMpegAudioHeader* audio_header = (TTMpegAudioHeader*)header_list->audioHeaderAt(0);
+    //search
+    TTMpegAudioHeader* audio_header = (TTMpegAudioHeader*)pAudioStream->headerList()->audioHeaderAt(0);
     frame_time = audio_header->frame_time;
 
     video_frame_length = 1000.0 / 25.0; //TODO: replace with fps
@@ -297,13 +308,13 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
 
     audio_start_time  = ((float)start_pos*video_frame_length+local_audio_offset)/frame_time;
     audio_start_index = ((long)round(audio_start_time) >= 0)
-          ? (long)round(audio_start_time) 
+          ? (long)round(audio_start_time)
           : 0;
     local_audio_offset = ((float)start_pos*video_frame_length) - (float)audio_start_index*frame_time+local_audio_offset;
     audio_end_time     = (((float)(end_pos+1)*video_frame_length-local_audio_offset)/frame_time-1.0);
-    audio_end_index    = ((long)round(audio_end_time) < header_list->count()) 
-          ? (long)round(audio_end_time) 
-          : header_list->count()-1;
+    audio_end_index    = ((long)round(audio_end_time) < pAudioStream->headerList()->count())
+          ? (long)round(audio_end_time)
+          : pAudioStream->headerList()->count()-1;
     local_audio_offset = ((float)(audio_end_index+1)*frame_time)-
       ((float)(end_pos+1)*video_frame_length)+local_audio_offset;
 
@@ -317,7 +328,7 @@ void TTMPEGAudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
     log->infoMsg( c_name, "audio length      : %f",(audio_end_index-audio_start_index+1)*frame_time );
 #endif
 
-    cut(audio_start_index, audio_end_index, cut_param);
+    pAudioStream->cut(audio_start_index, audio_end_index, cut_param);
 
     if ( i == cut_list->count()-1 )
       cut_param->lastCall();

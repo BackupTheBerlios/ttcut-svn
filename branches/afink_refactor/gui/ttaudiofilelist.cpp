@@ -82,6 +82,11 @@ void TTAudioFileList::setTitle ( __attribute__((unused))const QString& title )
 void TTAudioFileList::setListData(TTAudioListData* ad)
 {
   audioListData = ad;
+
+  // add all files from the audio list data to the list
+  audioListView->clear();
+  for ( int i=0; i<audioListData->count(); ++i )
+    addItem( audioListData->itemAt(i) );
 }
 
 //! Enable or disable the audiolist widget
@@ -130,7 +135,7 @@ void TTAudioFileList::onFileOpen()
   // no video loaded
   if (!TTCut::isVideoOpen)
     return;
-  
+
   QString fn = QFileDialog::getOpenFileName( this,
       tr("Open audio file"),
       TTCut::lastDirPath,
@@ -177,7 +182,7 @@ void TTAudioFileList::onItemDown()
 
       // take current item from list but don't delete it
       QTreeWidgetItem* curItem = audioListView->takeTopLevelItem(index);
-      
+
       audioListView->insertTopLevelItem(index+1, curItem);
       audioListView->setCurrentItem(curItem);
 
@@ -190,12 +195,19 @@ void TTAudioFileList::onItemDown()
 //! Event handler for delete item button clicked
 void TTAudioFileList::onDeleteItem()
 {
+
   if (audioListView->currentItem() != NULL) {
 
     // current index
     int index = audioListView->indexOfTopLevelItem(audioListView->currentItem());
+    emit deleteVideo( index );
+  }
+}
 
-    // remove current item from list
+void TTAudioFileList::removeItem( int index )
+{
+  if ( index >= 0 && index < audioListData->count() ) {
+    // remove item from list
     delete audioListView->takeTopLevelItem(index);
 
     audioListData->removeAt(index);

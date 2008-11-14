@@ -48,9 +48,9 @@ const char c_name[] = "TTMPEG2Window";
 TTMPEG2Window::TTMPEG2Window( QWidget *parent )
   : QGLWidget( parent )
 {
-  
+
   setObjectName( c_name );
-  
+
   // message logger instance
   log = TTMessageLogger::getInstance();
 
@@ -81,7 +81,7 @@ void TTMPEG2Window::setFrameShadow(QFrame::Shadow)
 void TTMPEG2Window::setLineWidth(__attribute__ ((unused))int width)
 {
 }
-    
+
 
 // -----------------------------------------------------------------------------
 // Initialize the Qt OpenGL context
@@ -105,7 +105,7 @@ void TTMPEG2Window::initializeGL()
 // -----------------------------------------------------------------------------
 void TTMPEG2Window::resizeGL( __attribute__ ((unused))int width, __attribute ((unused))int height )
 {
-  showVideoFrame();  
+  showVideoFrame();
   swapBuffers();
 }
 
@@ -184,7 +184,7 @@ void TTMPEG2Window::showVideoFrame()
     log->errorMsg( c_name, "rX: %8.4lf rY: %8.4lf zoom: %8.4lf" , rasterPosX,rasterPosY,zoomFactor );
     log->errorMsg( c_name, "iSceneHeight: %d iSceneWidth: %d fAscpect: %8.2lf" , iSceneHeight,iSceneWidth,fAspect );
   }
-  
+
   glRasterPos2d( rasterPosX, rasterPosY );
 
   glPixelZoom( zoomFactor,-zoomFactor );
@@ -230,11 +230,11 @@ void TTMPEG2Window::moveToFirstFrame( bool show )
     iVideoWidth  = frameInfo->width;
     iVideoHeight = frameInfo->height;
     fAspect      = (float)iVideoWidth/(float)iVideoHeight;
-    
+
     picBuffer    = frameInfo->Y;
-   
+
     showVideoFrame();
-    
+
     swapBuffers();
   }
 }
@@ -284,7 +284,7 @@ void TTMPEG2Window::openVideoFile( QString fName, TTVideoIndexList* viIndex, TTV
 
     if ( ttAssigned(mpeg2_decoder) )
        delete mpeg2_decoder;
- 
+
     // create the decoder object
     mpeg2_decoder  = new TTMpeg2Decoder( qPrintable(fName), video_index, video_header );
     frameInfo     = mpeg2_decoder->getFrameInfo();
@@ -303,7 +303,7 @@ void TTMPEG2Window::openVideoStream( TTMpeg2VideoStream* v_stream )
 
   if ( ttAssigned(mpeg2_decoder) )
     delete mpeg2_decoder;
- 
+
   // create the decoder object
   mpeg2_decoder  = new TTMpeg2Decoder( qPrintable(mpeg2FileName), video_index, video_header );
 

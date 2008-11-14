@@ -36,7 +36,7 @@ TTCutOutFrame::TTCutOutFrame(QWidget* parent)
   setupUi( this );
 
   currentPosition = -1;
-  
+
   connect(pbPrevCutOutFrame, SIGNAL(clicked()), SLOT(onPrevCutOutPos()));
   connect(pbNextCutOutFrame, SIGNAL(clicked()), SLOT(onNextCutOutPos()));
   connect(pbSearchFrame,     SIGNAL(clicked()), SLOT(onSearchFrame()));
@@ -58,33 +58,55 @@ void TTCutOutFrame::controlEnabled( bool enabled )
 //! Set the mpeg stream
 void TTCutOutFrame::initVideoStream(TTMpeg2VideoStream *vs)
 {
+  if ( currentMpeg2Stream == vs || vs == 0 )
+    return;
+
   currentMpeg2Stream = vs;
   QFileInfo fInfo(vs->filePath());
 
-  mpeg2Stream = new TTMpeg2VideoStream(fInfo);
-  mpeg2Stream->makeSharedCopy( vs );
+  if ( !videoToSharedVideoMap.contains(vs) ) {
+    mpeg2Stream = new TTMpeg2VideoStream(fInfo);
+    mpeg2Stream->makeSharedCopy( vs );
+    videoToSharedVideoMap[vs] = mpeg2Stream;
+  }
+  else
+    mpeg2Stream = videoToSharedVideoMap[vs];
 
   mpegWindow->openVideoStream( mpeg2Stream );
   mpegWindow->moveToFirstFrame( false );
 }
- 
+
 //! Returns the current frame position in stream
 int TTCutOutFrame::currentFramePos()
 {
-  return mpeg2Stream->currentIndex();
+  if ( mpeg2Stream != 0 )
+    return mpeg2Stream->currentIndex();
+  else
+    return -1;
 }
 
-void TTCutOutFrame::closeVideoStream()
+void TTCutOutFrame::closeVideoStream(TTMpeg2VideoStream* vs)
 {
-  mpegWindow->closeVideoStream();
+  if ( vs == currentMpeg2Stream )
+    mpegWindow->closeVideoStream();
 
-  //TODO: clean up shared stream copy!!!!
+  delete videoToSharedVideoMap[vs];
+  videoToSharedVideoMap.remove(vs);
+
+  if ( vs == currentMpeg2Stream )
+    mpeg2Stream = 0;
 }
 
 //! Goto specified cut out position
-void TTCutOutFrame::onGotoCutOut(int pos)
+void TTCutOutFrame::onGotoCutOut( int pos, TTMpeg2VideoStream* pMpeg2Stream )
 {
-  currentPosition = mpeg2Stream->moveToIndexPos(pos);  
+  if ( pMpeg2Stream != 0 )
+    initVideoStream( pMpeg2Stream );
+
+  if ( mpeg2Stream == 0 )
+    return;
+
+  currentPosition = mpeg2Stream->moveToIndexPos(pos);
   mpegWindow->showFrameAt( currentPosition );
 
   updateCurrentPosition();
@@ -93,8 +115,8 @@ void TTCutOutFrame::onGotoCutOut(int pos)
 //! Goto previous possible cut-out position
 void TTCutOutFrame::onPrevCutOutPos()
 {
-  int cutOutIndex; 
-  
+  int cutOutIndex;
+
   if (!TTCut::encoderMode)
     cutOutIndex = mpeg2Stream->moveToPrevPIFrame();
   else
@@ -109,8 +131,8 @@ void TTCutOutFrame::onPrevCutOutPos()
 //! Goto next possible cut-out position
 void TTCutOutFrame::onNextCutOutPos()
 {
-   int cutOutIndex; 
-  
+   int cutOutIndex;
+
   if (!TTCut::encoderMode)
     cutOutIndex = mpeg2Stream->moveToNextPIFrame();
   else
@@ -137,15 +159,15 @@ void TTCutOutFrame::onSearchFrame()
     TTFrameSearch* searchFrame = new TTFrameSearch( pBar );
 
     searchFrame->initFrameSearch( currentMpeg2Stream );
-    searchPos = searchFrame->searchFrame( 
+    searchPos = searchFrame->searchFrame(
         mpeg2Stream->currentIndex(),
         currentMpeg2Stream->currentIndex() );
 
-    // show frame in cut-in window 
+    // show frame in cut-in window
     if ( searchPos >= 0 )
     {
       emit equalFrameFound( searchPos );
-    } 
+    }
 
     delete pBar;
     delete searchFrame;
@@ -154,6 +176,9 @@ void TTCutOutFrame::onSearchFrame()
 
 void TTCutOutFrame::updateCurrentPosition()
 {
+  if ( mpeg2Stream == 0 )
+    return;
+
   QString szTemp;
   QString szTemp1, szTemp2;
   int     frame_type = mpeg2Stream->currentFrameType();

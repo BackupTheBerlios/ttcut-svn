@@ -17,9 +17,9 @@
 // -----------------------------------------------------------------------------
 //
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                  
-//             |                 +- TTAC3AudioHeader 
-// TTAVHeader -|                 
+//             +- TTAudioHeader -|
+//             |                 +- TTAC3AudioHeader
+// TTAVHeader -|
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |
@@ -54,7 +54,7 @@
 // Aufbau der AC3 AudioHeader:  (kein Anspruch auf Vollstaendigkeit)
 // -----------------------------------------------------------------------------
 // SyncWort: 0B 77    (00001011 01110111)   (mindestens 7 Byte)
-//    16 Bit Prüfsumme
+//    16 Bit Prï¿½fsumme
 //     2 Bit Samplerate                    (0, 1, 2)
 //     6 Bit Bitrate                       (0 - 37)
 //     5 Bit Stream Identification         (01000 = 8)
@@ -129,6 +129,7 @@ class TTAC3AudioHeader : public TTAudioHeader
 {
 public:
   TTAC3AudioHeader();
+  virtual ~TTAC3AudioHeader() {}
 
   QString& descString();
   QString& modeString();

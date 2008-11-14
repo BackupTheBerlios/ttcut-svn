@@ -115,8 +115,8 @@ bool TTAVData::CanCutWith( TTAVData* pOther )
   for ( int i=0; i<audioCount(); ++i ) {
     TTAudioListDataItem& aud1 = audioItem(i);
     TTAudioListDataItem& aud2 = pOther->audioItem(i);
-//     if ( aud1.getVersion() != aud2.getVersion() )
-//       return false;
+    if ( aud1.getVersion() != aud2.getVersion() )
+      return false;
     if ( aud1.getBitrate() != aud2.getBitrate() )
       return false;
     if ( aud1.getSamplerate() != aud2.getSamplerate() )

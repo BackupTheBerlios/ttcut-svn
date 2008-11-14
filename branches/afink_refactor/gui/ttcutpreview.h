@@ -69,7 +69,7 @@ class TTCutPreview : public QDialog, Ui::TTPreviewWidget
     ~TTCutPreview();
 
     void resizeEvent(QResizeEvent* event);
-    void initPreview( TTVideoStream* v_stream, TTAudioStream* a_stream, TTCutListData* c_list );
+    void initPreview( TTCutListData* c_list );
     void createPreview( int cut_index=-1 );
 
  protected:
@@ -87,23 +87,21 @@ protected slots:
  private:
     TTMessageLogger*   log;
     TTProgressBar*     progress_bar;
-    TTVideoStream*     video_stream;
-    TTAudioStream*     audio_stream;
-    TTVideoIndexList*  video_index;      
-    TTVideoHeaderList* video_header;     
+    TTVideoIndexList*  video_index;
+    TTVideoHeaderList* video_header;
     TTCutListData*     avcut_list;
     TTCutListData*     preview_cut_list;
     int                cut_index;
     TTFileBuffer*      video_cut_stream;
     TTFileBuffer*      audio_cut_stream;
-    QProcess*          mplexProc;        
-    int                previewWidth;        
-    int                previewHeight;       
-    int                num_cut_list;        
-    int                num_preview;         
-    QString            current_video_file;    
-    QString            current_audio_file;    
-    bool               isPlaying;           
+    QProcess*          mplexProc;
+    int                previewWidth;
+    int                previewHeight;
+    int                num_cut_list;
+    int                num_preview;
+    QString            current_video_file;
+    QString            current_audio_file;
+    bool               isPlaying;
     TTMovieWidget*     movieWidget;
 };
 

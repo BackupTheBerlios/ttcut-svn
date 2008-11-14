@@ -53,22 +53,24 @@ int main( int argc, char **argv )
     }
 
     // Application main widget
-    TTCutMainWindow* mainWnd = new TTCutMainWindow();
+    TTCutMainWindow mainWnd;
 
     QPlastiqueStyle* style = new QPlastiqueStyle();
     a.setStyle(style);
 
-    // Caption text in applications title bar
-    mainWnd->setWindowTitle( TTCut::versionString );
-    mainWnd->show();
 
     // set initial size of applications main window
-    mainWnd->resize(1024, 768);
+    mainWnd.resize(1024, 768);
+
+    // Caption text in applications title bar
+    mainWnd.setWindowTitle( TTCut::versionString );
+    mainWnd.show();
+
 
     a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
     // Execute application and start event loop
-    return a.exec();	   
-  } 
+    return a.exec();
+  }
   catch (...)
   {
     qWarning("Unhandled exception occurred!");

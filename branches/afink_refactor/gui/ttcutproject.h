@@ -41,25 +41,25 @@ class QString;
 class TTCutProject
 {
  public:
-  TTCutProject( QString& prj_file_name, QIODevice::OpenModeFlag mode=QIODevice::ReadOnly ); 
+  TTCutProject( QString& prj_file_name, QIODevice::OpenModeFlag mode=QIODevice::ReadOnly );
   ~TTCutProject();
 
   void clearFile();
   void writeVideoSection( bool start=true );
   void writeVideoFileName( const QString& video_file_name );
   void writeAudioSection( bool start=true );
-  void writeAudioFileName( const QString& audio_file_name );
+  void writeAudioFileName( const QString& audio_file_name, int videoIndex );
   void writeCutSection( bool start=true );
-  void writeCutEntry( int cut_in, int cut_out );
+  void writeCutEntry( int cut_in, int cut_out, int videoIndex );
 
   bool seekToVersionSection();
   bool readFileVersion( int& version );
   bool seekToVideoSection();
   bool readVideoFileName( QString& video_file_name );
   bool seekToAudioSection();
-  bool readAudioFileName( QString& audio_file_name );
+  bool readAudioFileName( QString& audio_file_name, int& videoIndex );
   bool seekToCutSection();
-  bool readCutEntry( int& cut_in, int& cut_out );
+  bool readCutEntry( int& cut_in, int& cut_out, int& videoIndex );
 
  private:
   QFile* project_file;

@@ -8,11 +8,11 @@
 /* MODIFIED: b. altendorf                                    DATE: 02/19/2006 */
 /* MODIFIED: b. altendorf                                    DATE: 03/21/2007 */
 /*----------------------------------------------------------------------------*/
- 
+
 // ----------------------------------------------------------------------------
 // TTVIDEOFILEINFO
 // ----------------------------------------------------------------------------
-  
+
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
 /* under the terms of the GNU General Public License as published by the Free */
@@ -28,11 +28,14 @@
 /* with this program; if not, write to the Free Software Foundation,          */
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
- 
+
 #include "ttvideofileinfo.h"
+#include "data/ttavdata.h"
 
 #include <QFileInfo>
 #include <QFileDialog>
+#include <QHeaderView>
+#include <QMenu>
 
 /*
  * Constructor
@@ -42,7 +45,22 @@ TTVideoFileInfo::TTVideoFileInfo(QWidget* parent)
 {
   setupUi( this );
 
-  connect(pbVideoOpen, SIGNAL(clicked()), SLOT(onFileOpen()));
+  videoListView->setRootIsDecorated(false);
+  QHeaderView* header = videoListView->header();
+  header->resizeSection(0, 220);
+  header->resizeSection(1, 220);
+  header->resizeSection(2, 140);
+  header->resizeSection(3, 80);
+  header->resizeSection(4, 80);
+  header->resizeSection(5, 100);
+  header->resizeSection(6,  60);
+
+  connect( pbVideoOpen,   SIGNAL(clicked()),   SLOT(onFileOpen()));
+  connect( pbVideoDelete, SIGNAL(clicked()),   SLOT(onDeleteVideo()) );
+  connect( videoListView, SIGNAL(customContextMenuRequested(const QPoint&)),
+                                              SLOT(onContextMenuRequest(const QPoint& )) );
+  connect( videoListView, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+                                              SLOT(onCurItemChange(QTreeWidgetItem*, QTreeWidgetItem*)) );
 }
 
 /*
@@ -60,175 +78,92 @@ void TTVideoFileInfo::enableControl(bool value)
   pbVideoOpen->setEnabled(value);
 }
 
-/*
- * legacy ;-)
- */
-void TTVideoFileInfo::resetVideoInfo()
-{
-  clearControl();
-}
 
-/*
- * Reset the video file info text labels to default values
- */
-void TTVideoFileInfo::clearControl()
-{
-  infoVideoFileName->setText("---");
-  infoVideoLength->setText("---");
-  infoVideoResolution->setText("---");
-  infoVideoAspectRatio->setText("---");
-  infoVideoFramerate->setText("---");
-  infoVideoBitrate->setText("---");
-  infoVideoBuffer->setText("---");
-}
-
-void TTVideoFileInfo::setVideoInfo( TTMpeg2VideoStream* mpeg2Stream )
+void TTVideoFileInfo::setVideoInfo( TTVideoStream* pVideoStream )
 {
   QString szTemp;
 
-  TTSequenceHeader* currentSequence = mpeg2Stream->currentSequenceHeader();
-  
+  TTSequenceHeader* currentSequence = pVideoStream->currentSequenceHeader();
+
   if (currentSequence == NULL)
-	return;
-	
+    return;
+
+  int idx = videoListData.indexOf(pVideoStream);
+  if ( -1 == idx )
+    return;
+
+  QTreeWidgetItem* treeItem = videoListView->topLevelItem( idx );
+  if ( 0 == treeItem )
+    return;
+
   // video file name
-  infoVideoFileName->setText(mpeg2Stream->fileName());
+  treeItem->setText( 0, pVideoStream->fileName() );
 
   // video length
-  int numFrames = mpeg2Stream->frameCount();
-  QTime time = ttFramesToTime( numFrames, mpeg2Stream->frameRate() );
+  int numFrames = pVideoStream->frameCount();
+  QTime time = ttFramesToTime( numFrames, pVideoStream->frameRate() );
   szTemp.sprintf("%s (%d)", qPrintable(time.toString("hh:mm:ss.zzz")), numFrames);
-  infoVideoLength->setText( szTemp );
+  treeItem->setText( 1, szTemp );
 
   // set video resolution
-  szTemp.sprintf("%dx%d",mpeg2Stream->currentSequenceHeader()->horizontalSize(),
-      mpeg2Stream->currentSequenceHeader()->verticalSize());
-  infoVideoResolution->setText( szTemp );
+  szTemp.sprintf("%dx%d",pVideoStream->currentSequenceHeader()->horizontalSize(),
+                 pVideoStream->currentSequenceHeader()->verticalSize());
+  treeItem->setText( 2, szTemp );
 
   // set aspect
-  infoVideoAspectRatio->setText(mpeg2Stream->currentSequenceHeader()->aspectRatioText());
+  treeItem->setText( 3, pVideoStream->currentSequenceHeader()->aspectRatioText() );
 
   // set framerate
-  infoVideoFramerate->setText(mpeg2Stream->currentSequenceHeader()->frameRateText());
+  treeItem->setText( 4, pVideoStream->currentSequenceHeader()->frameRateText() );
 
   // set bitrate
   szTemp.sprintf("%4.1f kBit/s",
-      mpeg2Stream->currentSequenceHeader()->bitRateKbit());
-  infoVideoBitrate->setText( szTemp );
+                 pVideoStream->currentSequenceHeader()->bitRateKbit());
+  treeItem->setText( 5, szTemp );
 
   // set VBV buffer size
   szTemp.sprintf("%d kWords",
-      mpeg2Stream->currentSequenceHeader()->vbvBufferSize());
-  infoVideoBuffer->setText( szTemp );
+                 pVideoStream->currentSequenceHeader()->vbvBufferSize());
+  treeItem->setText( 6, szTemp );
 }
 
 
-
-/*
- * Set the video stream file name
- */
-void TTVideoFileInfo::setFileName(QString fName)
+void TTVideoFileInfo::addVideo( TTVideoStream* pVideoStream )
 {
-  infoVideoFileName->setText(fName); 
+  if ( -1 == videoListData.indexOf(pVideoStream) ) {
+    QTreeWidgetItem* pNewItem = new QTreeWidgetItem( videoListView );
+    videoListData.append( pVideoStream );
+    setVideoInfo( pVideoStream );
+    videoListView->setCurrentItem( pNewItem );
+  }
 }
 
-/*
- * Set the video stream length as QString
- */
-void TTVideoFileInfo::setLength(QString length)
+
+void TTVideoFileInfo::removeVideo( int idx )
 {
-  infoVideoLength->setText(length);
+  if ( idx >= 0 && idx < videoListData.count() ) {
+    delete videoListView->takeTopLevelItem( idx );
+    videoListData.removeAt(idx);
+  }
 }
 
-/*
- * Set the video stream file length as QTime an the number of frames
- * as int
- */
-void TTVideoFileInfo::setLength(QTime total, int numFrames)
+void TTVideoFileInfo::onDeleteVideo()
 {
-  QString tmpString;
-
-  tmpString.sprintf("%s (%d)", 
-      qPrintable(total.toString("hh:mm:ss.zzz")), 
-      numFrames);
-  infoVideoLength->setText(tmpString);
+  if ( videoListView->currentItem() != NULL ) {
+    int index = videoListView->indexOfTopLevelItem( videoListView->currentItem() );
+    emit deleteVideo( index );
+  }
 }
 
-/*
- * Set the video stream resolution as QString
- */
-void TTVideoFileInfo::setResolution(QString resolution)
+
+void TTVideoFileInfo::clearList()
 {
-  infoVideoResolution->setText(resolution);
+  videoListView->clear();
 }
 
-/*
- * Set the video stream resolution as width x heigth
- */
-void TTVideoFileInfo::setResolution(int width, int height)
-{
-  QString tmpString;
-
-  tmpString.sprintf("%dx%d", width, height);
-  infoVideoResolution->setText(tmpString);
-}
 
 /*
- * Set the video stream aspect ratio as QString
- */
-void TTVideoFileInfo::setAspect(QString aspect)
-{
-  infoVideoAspectRatio->setText( aspect );  
-}
-
-/*
- * Set the video stream framerate as QString
- */
-void TTVideoFileInfo::setFrameRate(QString frameRate)
-{
-  infoVideoFramerate->setText(frameRate);
-}
-
-/*
- * Set the video stream bitrate as QString
- */
-void TTVideoFileInfo::setBitRate(QString bitRate)
-{
-  infoVideoBitrate->setText(bitRate);
-}
-
-/*
- * Set the video stream bitrate as float value
- */
-void TTVideoFileInfo::setBitRate(float rate)
-{
-  QString tmpString;
-
-  tmpString.sprintf("%4.1f kBit/s", rate);
-  infoVideoBitrate->setText(tmpString);
-}
-
-/*
- * Set the video stream VBV buffer size as QString
- */
-void TTVideoFileInfo::setVBVBuffer(QString vbvBuffer)
-{
-  infoVideoBuffer->setText(vbvBuffer);
-}
-
-/*
- * Set the video stream VBV buffer as int value
- */
-void TTVideoFileInfo::setVBVBuffer(int buffSize)
-{
-  QString tmpString;
-
-  tmpString.sprintf("%d kWords", buffSize);
-  infoVideoBuffer->setText(tmpString);
-}
-
-/*
- * Show the file open dialog 
+ * Show the file open dialog
  */
 void TTVideoFileInfo::onFileOpen()
 {
@@ -244,3 +179,49 @@ void TTVideoFileInfo::onFileOpen()
     emit fileOpened( fn );
   }
 }
+
+
+void TTVideoFileInfo::onContextMenuRequest( const QPoint& point )
+{
+  if ( videoListView->currentItem() != NULL ) {
+    QAction* itemNewAction = new QAction(tr("&Insert video"), this);
+    itemNewAction->setIcon(QIcon(QString::fromUtf8(":/pixmaps/pixmaps/fileopen_24.xpm")));
+    itemNewAction->setStatusTip(tr("Open a new video and insert to list"));
+    connect(itemNewAction, SIGNAL(triggered()), SLOT(onFileOpen()));
+
+    QAction* itemDeleteAction = new QAction(tr("&Delete video"), this);
+    itemDeleteAction->setIcon(QIcon(QString::fromUtf8(":/pixmaps/pixmaps/cancel_18.xpm")));
+    itemDeleteAction->setStatusTip(tr("Remove selected video from list"));
+    connect(itemDeleteAction, SIGNAL(triggered()), SLOT(onDeleteVideo()));
+
+    QMenu contextMenu(this);
+    contextMenu.addAction(itemNewAction);
+    contextMenu.addSeparator();
+    contextMenu.addAction(itemDeleteAction);
+
+    contextMenu.exec( videoListView->mapToGlobal(point) );
+
+    delete itemNewAction;
+    delete itemDeleteAction;
+  }
+}
+
+
+void TTVideoFileInfo::onCurItemChange( QTreeWidgetItem* pNew, QTreeWidgetItem* pOld )
+{
+  if ( pNew == 0 || pNew == pOld )
+    return;
+
+  int idx = videoListView->indexOfTopLevelItem( pNew );
+  if ( -1 != idx )
+    emit changeVideo( videoListData[idx] );
+}
+
+
+void TTVideoFileInfo::onVideoChange( TTAVData* pAVData )
+{
+  int idx = videoListData.indexOf( pAVData->videoStream() );
+  if ( -1 != idx )
+    videoListView->setCurrentItem( videoListView->topLevelItem(idx) );
+}
+

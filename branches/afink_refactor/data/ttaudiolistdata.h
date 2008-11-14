@@ -45,7 +45,7 @@ class QFileInfo;
 class TTAudioListDataItem
 {
   friend class TTAudioListData;
-  
+
   public:
     TTAudioListDataItem();
     TTAudioListDataItem(QFileInfo fInfo, TTAudioStream* aStream);
@@ -59,7 +59,7 @@ class TTAudioListDataItem
     QString        getBitrate();
     QString        getSamplerate();
     QString        getDelay();
-    
+
   private:
     QFileInfo      audioFileInfo;
     TTAudioStream* audioStream;
@@ -68,7 +68,7 @@ class TTAudioListDataItem
     QString        audioMode;
     QString        audioSamplerate;
     QString        audioBitrate;
-    QString        audioDelay;    
+    QString        audioDelay;
 };
 
 
@@ -86,7 +86,7 @@ class TTAudioListData
     void removeAt(int index);
     void swap(int a, int b);
     void print();
-    void writeToProject(TTCutProject* prj);
+    void writeToProject(TTCutProject* prj, int nVideoIndex);
 
   private:
     TTMessageLogger* log;

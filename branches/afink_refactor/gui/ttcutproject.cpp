@@ -29,6 +29,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "ttcutproject.h"
+#include "data/ttavdata.h"
 
 #include <QTextStream>
 #include <QString>
@@ -118,9 +119,9 @@ void TTCutProject::writeAudioSection( bool start )
 /* /////////////////////////////////////////////////////////////////////////////
  * Write the audio file entry
  */
-void TTCutProject::writeAudioFileName( const QString& audio_file_name )
+void TTCutProject::writeAudioFileName( const QString& audio_file_name, int videoIndex )
 {
-  *io_stream << audio_file_name << "\n";
+  *io_stream << audio_file_name << ";" << videoIndex << "\n";
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -137,9 +138,9 @@ void TTCutProject::writeCutSection( bool start )
 /* /////////////////////////////////////////////////////////////////////////////
  * Write an cut entry
  */
-void TTCutProject::writeCutEntry( int cut_in, int cut_out )
+void TTCutProject::writeCutEntry( int cut_in, int cut_out, int videoIndex )
 {
-  *io_stream << cut_in << ";" << cut_out << "\n";
+  *io_stream << cut_in << ";" << cut_out << ";" << videoIndex << "\n";
 }
 
 /* /////////////////////////////////////////////////////////////////////////////
@@ -174,11 +175,11 @@ bool TTCutProject::readFileVersion( int& version )
   if ( !io_stream->atEnd() )
   {
     line = io_stream->readLine();
-    
+
     if ( !line.isEmpty() )
     {
       version = line.toInt();
-      
+
 #if defined(TTCUTPROJECT_DEBUG)
       qDebug( "%sfound file-version: %d",c_name,version );
 #endif
@@ -220,11 +221,11 @@ bool TTCutProject::readVideoFileName( QString& video_file_name )
   if ( !io_stream->atEnd() )
   {
     line = io_stream->readLine();
-    
+
     if ( !line.isEmpty() )
     {
       video_file_name = line;
-      
+
 #if defined(TTCUTPROJECT_DEBUG)
       qDebug( "%sfound video file: %s", c_name, qPrintable(video_file_name) );
 #endif
@@ -259,26 +260,30 @@ bool TTCutProject::seekToAudioSection()
 /* /////////////////////////////////////////////////////////////////////////////
  * Read the audio file name
  */
-bool TTCutProject::readAudioFileName( QString& audio_file_name )
+bool TTCutProject::readAudioFileName( QString& audio_file_name, int& videoIndex )
 {
   QString line;
-  
+  int videoIndexPos;
+
   if ( !io_stream->atEnd() )
   {
     line = io_stream->readLine();
-    
-    if ( !line.isEmpty() )
+    videoIndexPos = line.lastIndexOf( ';' );
+
+    if ( !line.isEmpty() && -1 != videoIndexPos )
     {
-      audio_file_name = line;
-      
+      audio_file_name = line.left(videoIndexPos);
+      videoIndex = line.mid(videoIndexPos+1).toInt();
+
 #if defined(TTCUTPROJECT_DEBUG)
       qDebug( "%sfound audio file: %s", c_name, qPrintable(audio_file_name) );
-#endif      
+#endif
       return true;
     }
   }
   return false;
 }
+
 
 /* /////////////////////////////////////////////////////////////////////////////
  * Go to the cut section
@@ -305,7 +310,7 @@ bool TTCutProject::seekToCutSection()
 /* /////////////////////////////////////////////////////////////////////////////
  * Read an cut entry
  */
-bool TTCutProject::readCutEntry( int& cut_in, int& cut_out )
+bool TTCutProject::readCutEntry( int& cut_in, int& cut_out, int& videoIndex )
 {
   QString     line;
   QStringList str_list;
@@ -313,19 +318,20 @@ bool TTCutProject::readCutEntry( int& cut_in, int& cut_out )
   if ( !io_stream->atEnd() )
   {
     line = io_stream->readLine();
-    
+
     if ( !line.isEmpty() )
     {
       str_list.clear();
 
       str_list = line.split( ";");
-      
-      cut_in  = str_list[0].toInt();
-      cut_out = str_list[1].toInt();
+
+      cut_in     = str_list[0].toInt();
+      cut_out    = str_list[1].toInt();
+      videoIndex = str_list[2].toInt();
 
 #if defined(TTCUTPROJECT_DEBUG)
       qDebug( "%sfound cut entry: cut-in: %d / cut_out: %d",c_name,cut_in,cut_out );
-#endif      
+#endif
       return true;
     }
   }

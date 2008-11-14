@@ -28,7 +28,7 @@
 /*----------------------------------------------------------------------------*/
 
 #ifndef TTNAVIGATION_H
-#define TTNAVIGATION_H 
+#define TTNAVIGATION_H
 
 #include "ui_framenavigationwidget.h"
 

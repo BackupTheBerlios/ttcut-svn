@@ -124,15 +124,15 @@ int TTAudioListData::addItem(QString fName, TTAudioStream* aStream)
   //item.audioLength.sprintf("%s (%0.2lf MB)",
   //    qPrintable(aStream->streamLengthTime().toString("hh:mm:ss.zzz")),
   //    (double)aStream->streamLengthByte()/1024.0/1024.0);
-  
+
   item.audioVersion    = header->descString();
   item.audioBitrate    = header->bitRateString();
   item.audioSamplerate = header->sampleRateString();
   item.audioMode       = header->modeString();
-  
+
   // FIXME: use real delay value for audio delay
   item.audioDelay      = "0";
-  
+
   data.append(item);
 
   // return current index position in data list
@@ -175,6 +175,11 @@ void TTAudioListData::deleteAll()
 //! Remove item at position index from list
 void TTAudioListData::removeAt(int index)
 {
+  if ( data[index].audioStream != 0 )
+  {
+    delete data[index].audioStream;
+    data[index].audioStream = 0;
+  }
   data.removeAt(index);
 }
 
@@ -196,14 +201,10 @@ void TTAudioListData::print()
 }
 
 //! Write audio list to projecfile
-void TTAudioListData::writeToProject(TTCutProject* prj)
+void TTAudioListData::writeToProject(TTCutProject* prj, int nVideoIndex)
 {
-  prj->writeAudioSection( true );
-
   for (int i=0; i < data.count(); i++) {
-    prj->writeAudioFileName( data[i].audioFileInfo.absoluteFilePath() );
+    prj->writeAudioFileName( data[i].audioFileInfo.absoluteFilePath(), nVideoIndex );
   }
-
-  prj->writeAudioSection( false );
 }
 

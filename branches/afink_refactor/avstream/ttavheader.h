@@ -21,9 +21,9 @@
 // -----------------------------------------------------------------------------
 //
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                  
-//             |                 +- TTAC3AudioHeader 
-// TTAVHeader -|                 
+//             +- TTAudioHeader -|
+//             |                 +- TTAC3AudioHeader
+// TTAVHeader -|
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |

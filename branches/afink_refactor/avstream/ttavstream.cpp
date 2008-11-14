@@ -20,9 +20,9 @@
 // -----------------------------------------------------------------------------
 //
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                   
-//             |                 +- TTAC3AudioStream 
-// TTAVStream -|                 
+//             +- TTAudioStream -|
+//             |                 +- TTAC3AudioStream
+// TTAVStream -|
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -84,7 +84,7 @@ TTAVStream::TTAVStream(const QFileInfo &f_info)
   stream_type = TTAVTypes::unknown;
 }
 
-/* ///////////////////////////////////////////////////////////////////////////// 
+/* /////////////////////////////////////////////////////////////////////////////
  * Destructor
  */
 TTAVStream::~TTAVStream()
@@ -151,7 +151,7 @@ void TTAVStream::copySegment(TTFileBuffer* cut_stream, quint64 start_adr, quint6
 
   emit progressChanged(TTProgressBar::Init, "copy segment", count);
 
-  while( count > buffer_size )  
+  while( count > buffer_size )
   {
     progress = end_adr-start_adr+1-count;
 
@@ -293,12 +293,12 @@ TTSequenceHeader* TTVideoStream::getSequenceHeader(int pos)
 
   int head_index = index_list->headerListIndex(pic_index);
 
-  while ((head_index >= 0) && 
+  while ((head_index >= 0) &&
          (header_list->headerTypeAt(head_index) != TTMpeg2VideoHeader::sequence_start_code)) {
       head_index--;
   }
 
-  return (head_index > 0) 
+  return (head_index > 0)
       ? header_list->sequenceHeaderAt(head_index)
       : header_list->firstSequenceHeader();
 }
@@ -309,7 +309,7 @@ TTSequenceHeader* TTVideoStream::getSequenceHeader(int pos)
  */
 int TTVideoStream::currentFrameType()
 {
-  return (ttAssigned(index_list)) 
+  return (ttAssigned(index_list))
       ? index_list->pictureCodingType(current_index)
       : 0;
 }

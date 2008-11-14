@@ -8,11 +8,11 @@
 /* MODIFIED: b. altendorf                                    DATE: 02/19/2006 */
 /* MODIFIED: b. altendorf                                    DATE: 03/21/2007 */
 /*----------------------------------------------------------------------------*/
- 
+
 // ----------------------------------------------------------------------------
 // TTVIDEOFILEINFO
 // ----------------------------------------------------------------------------
-  
+
 /*----------------------------------------------------------------------------*/
 /* This program is free software; you can redistribute it and/or modify it    */
 /* under the terms of the GNU General Public License as published by the Free */
@@ -28,7 +28,7 @@
 /* with this program; if not, write to the Free Software Foundation,          */
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
-  
+
 
 #ifndef TTVIDEOFILEINFO_H
 #define TTVIDEOFILEINFO_H
@@ -36,7 +36,10 @@
 #include "ui_videofileinfowidget.h"
 #include "../common/ttcut.h"
 #include "../avstream/ttavtypes.h"
-#include "../avstream/ttmpeg2videostream.h"
+#include "../avstream/ttavstream.h"
+
+class TTAVData;
+
 
 class TTVideoFileInfo : public QWidget, Ui::TTVideoFileInfoWidget
 {
@@ -47,26 +50,25 @@ class TTVideoFileInfo : public QWidget, Ui::TTVideoFileInfoWidget
 
     void setTitle (const QString & title);
     void enableControl(bool value);
-    void resetVideoInfo();
-    void clearControl();
-    void setVideoInfo(TTMpeg2VideoStream* mpeg2Stream);
-    void setFileName(QString fName);
-    void setLength(QString length);
-    void setLength(QTime total, int numFrames);
-    void setResolution(QString resolution);
-    void setResolution(int width, int height);
-    void setAspect(QString aspect);
-    void setFrameRate(QString frameRate);
-    void setBitRate(QString bitRate);
-    void setBitRate(float bitRate);
-    void setVBVBuffer(QString vbvBuffer);
-    void setVBVBuffer(int buffSize);
-    
+    void clearList();
+    void addVideo( TTVideoStream* pVideoStream );
+    void removeVideo( int index );
+    void setVideoInfo(TTVideoStream* pVideoStream);
+
   public slots:
     void onFileOpen();
+    void onDeleteVideo();
+    void onContextMenuRequest( const QPoint& point );
+    void onCurItemChange( QTreeWidgetItem* pNew, QTreeWidgetItem* pOld );
+    void onVideoChange( TTAVData* pAVData );
 
   signals:
     void fileOpened( QString fileName );
+    void changeVideo( TTVideoStream* pNewVideoStream );
+    void deleteVideo( int idx );
+
+  private:
+    QList<TTVideoStream*> videoListData;
 };
 
 #endif

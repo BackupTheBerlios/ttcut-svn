@@ -34,6 +34,8 @@
 #include "ttprogressbar.h"
 #include "ttsearchframe.h"
 
+#include <QMap>
+
 class TTCutOutFrame : public QWidget, Ui::TTCutOutFrameWidget
 {
   Q_OBJECT
@@ -42,18 +44,18 @@ class TTCutOutFrame : public QWidget, Ui::TTCutOutFrameWidget
     TTCutOutFrame( QWidget* parent=0 );
 
     void setTitle ( const QString & title );
-    void controlEnabled( bool enabled );    
+    void controlEnabled( bool enabled );
     void initVideoStream( TTMpeg2VideoStream* vs );
     int currentFramePos();
-    void closeVideoStream();
+    void closeVideoStream( TTMpeg2VideoStream* vs );
 
-    public slots:
-      void onGotoCutOut( int pos );
+  public slots:
+    void onGotoCutOut( int pos, TTMpeg2VideoStream* pMpeg2Stream=0 );
     void onPrevCutOutPos();
     void onNextCutOutPos();
     void onSearchFrame();
 
-signals:
+  signals:
     void newCutOutFramePos( int );
     void equalFrameFound( int );
 
@@ -63,7 +65,8 @@ signals:
   private:
     TTMpeg2VideoStream* currentMpeg2Stream;
     TTMpeg2VideoStream* mpeg2Stream;
+    QMap<TTMpeg2VideoStream*, TTMpeg2VideoStream*> videoToSharedVideoMap;
     int currentPosition;
 };
 
-#endif //TTCUTOUTFRAME_H  
+#endif //TTCUTOUTFRAME_H

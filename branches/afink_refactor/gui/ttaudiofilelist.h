@@ -53,11 +53,12 @@ class TTAudioFileList : public QWidget, Ui::TTAudioFileListWidget
     void setControlEnabled( bool enabled );
     void openAudioFile();
     void addItem(TTAudioListDataItem& item);
+    void removeItem( int index );
     void clearList();
 
   signals:
     void fileOpened( const QString& fName );
-    void itemDeleted( QTreeWidgetItem* item );
+    void deleteVideo( int index );
     void itemPositionChanged( QTreeWidgetItem* item );
 
   public slots:

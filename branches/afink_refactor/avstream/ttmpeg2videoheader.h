@@ -21,9 +21,9 @@
 // -----------------------------------------------------------------------------
 //
 //                               +- TTMpegAudioHeader
-//             +- TTAudioHeader -|                  
-//             |                 +- TTAC3AudioHeader 
-// TTAVHeader -|                 
+//             +- TTAudioHeader -|
+//             |                 +- TTAC3AudioHeader
+// TTAVHeader -|
 //             |
 //             |                                     +- TTSequenceHeader
 //             |                                     |
@@ -121,7 +121,7 @@ class TTSequenceHeader : public TTMpeg2VideoHeader
 };
 
 /*! \brief SequenceEndHeader
- * 
+ *
  */
 class TTSequenceEndHeader : public TTMpeg2VideoHeader
 {

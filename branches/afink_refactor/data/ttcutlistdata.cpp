@@ -122,7 +122,7 @@ int TTCutListData::addItem(int cutInIndex, int cutOutIndex, TTAVData* avData)
   QTime cutOutTime    = mpegStream->frameTime(cutOutIndex);
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
-  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
+  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );
   qint64 lengthBytes  = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
@@ -155,7 +155,7 @@ int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
   QTime cutOutTime    = mpegStream->frameTime(cutOutIndex);
   int numFrames       = cutOutIndex-cutInIndex;
   if ( numFrames < 0 ) numFrames *= -1;
-  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );  
+  QTime cutLengthTime = ttFramesToTime( numFrames, mpegStream->frameRate() );
   qint64 lengthBytes  = mpegStream->frameOffset(cutOutIndex) - mpegStream->frameOffset(cutInIndex);
   if ( lengthBytes < 0 ) lengthBytes *= -1;
 
@@ -179,7 +179,7 @@ int TTCutListData::updateItem( int index, int cutInIndex, int cutOutIndex)
   // return current item count
   return data.count();
 }
- 
+
 void TTCutListData::duplicateItem( int index )
 {
   data.insert( index+1, data.at(index) );
@@ -265,10 +265,18 @@ const TTCutListDataItem& TTCutListData::at(int index)
   return data.at(index);
 }
 
-//! Return the number of items in data list
-int TTCutListData::count()
+//! Return the number of cuts in data list which refer to the video pAVData
+//! if pAVData == 0 return whole count
+int TTCutListData::count( TTAVData* pAVData )
 {
-  return data.count();
+  if ( 0 == pAVData )
+    return data.count();
+
+  int count = 0;
+  for ( int i=0; i<data.count(); ++i )
+    if ( avData(i) == pAVData )
+      count++;
+  return count;
 }
 
 void TTCutListData::deleteAll()
@@ -290,19 +298,21 @@ void TTCutListData::swap(int a, int b)
 
 
 //! Write the cut list data to project file
-void TTCutListData::writeToProject(TTCutProject* prj)
+void TTCutListData::writeToProject(TTCutProject* prj, QMap<TTAVData*, int>& videoToIndexMap)
 {
   int    start_pos;
   int    end_pos;
+  int    videoIndex;
 
   prj->writeCutSection( true );
 
   // walk through the av cut list
   for (int i = 0; i < data.count(); i++ ) {
-    start_pos = data[i].cutInIndex;
-    end_pos   = data[i].cutOutIndex;
+    start_pos   = data[i].cutInIndex;
+    end_pos     = data[i].cutOutIndex;
+    videoIndex  = videoToIndexMap[ data[i].avData ];
 
-    prj->writeCutEntry( start_pos, end_pos );
+    prj->writeCutEntry( start_pos, end_pos, videoIndex );
   }
   prj->writeCutSection( false );
 }

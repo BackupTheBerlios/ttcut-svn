@@ -27,7 +27,7 @@
 /* Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.              */
 /*----------------------------------------------------------------------------*/
 
-#ifndef TTCUTLIST_H 
+#ifndef TTCUTLIST_H
 #define TTCUTLIST_H
 
 #include "ui_cutlistwidget.h"
@@ -48,7 +48,9 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void setTitle( const QString& title );
     void setListData( TTCutListData* ld );
     void clearList();
-   
+    void removeCutpoints( TTAVData* pAVCompare );
+    void removeItem( int index );
+
   public slots:
     void onAddEntry(int cutIn, int cutOut, TTAVData* avData);
     void onEntryUp();
@@ -69,8 +71,8 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void onEntryDuplicate();
 
   signals:
-    void entrySelected(int cutOutIndex );
-    void changeVideo( TTAVData* pNewAVData );
+    void entrySelected(int cutOutIndex, TTMpeg2VideoStream* pMpeg2Stream);
+    void changeVideo( TTVideoStream* pNewVideoStream );
     void entryEdit(const TTCutListDataItem& cutData);
     void gotoCutIn(int cutInIndex);
     void gotoCutOut(int cutOutIndex);
@@ -79,7 +81,7 @@ class TTCutList : public QWidget, Ui::TTCutListWidget
     void selectedAudioVideoCut(QVector<int> selectedItems);
     void audioCut(int index);
     void refreshDisplay();
- 
+
   private:
     void createActions();
 

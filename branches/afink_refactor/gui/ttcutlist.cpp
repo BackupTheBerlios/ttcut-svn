@@ -44,7 +44,7 @@ TTCutList::TTCutList(QWidget* parent)
 
   // not implemented
   //pbCutAudio->setEnabled(false);
-  
+
   // set list view header (column) width
   videoCutList->setRootIsDecorated( false );
   QHeaderView* header = videoCutList->header();
@@ -53,11 +53,11 @@ TTCutList::TTCutList(QWidget* parent)
   header->resizeSection(2, 140);
   header->resizeSection(3, 150);
   header->resizeSection(4,  80);
-  
+
   // data struct for cut list view
   cutListData   = NULL;
   editItemIndex = -1;
-    
+
   // actions for context menu
   createActions();
 
@@ -107,7 +107,11 @@ void TTCutList::onAddEntry(int cutIn, int cutOut, TTAVData* avData)
 
     if ( cutListData->count() > 0 ) {
       if ( cutListData->avData(0)->CanCutWith(avData) == false ) {
-        QMessageBox::critical( this, tr("Cannot add the cutpoint"), tr("The cutpoint cannot be added") );
+        QMessageBox::critical( this, tr("Cannot add the cutpoint"),
+                               tr("The cutpoint cannot be added.\n")
+                             + tr("Possible reasons: missmatch in video (fps, aspect ratio, resolution ")
+                             + tr("must be the same). Or you have an audio missmatch (different audio stream, ")
+                             + tr("different number of audio streams)") );
         return;
       }
     }
@@ -203,7 +207,22 @@ void TTCutList::onEntryDelete()
   }
     emit refreshDisplay();
     //cutListData->print();
-  }
+}
+
+
+void TTCutList::removeItem( int index )
+{
+  delete videoCutList->takeTopLevelItem( index );
+  cutListData->removeAt(index);
+}
+
+
+void TTCutList::removeCutpoints( TTAVData* pAVCompare )
+{
+  for ( int i=0; i<cutListData->count(); ++i )
+    if ( cutListData->avData(i) == pAVCompare )
+      removeItem( i-- );  //decrease i, because item is removed from list
+}
 
 
 //! Duplicate the currently selected entry from the list
@@ -225,7 +244,8 @@ void TTCutList::onEntrySelected(__attribute((unused))QTreeWidgetItem* item, __at
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
-    emit entrySelected(cutListData->cutOutPos(index));
+    emit entrySelected( cutListData->cutOutPos(index),
+                        (TTMpeg2VideoStream*) cutListData->avData(index)->videoStream() );
   }
 }
 
@@ -245,7 +265,7 @@ void TTCutList::onEntryEdit()
     videoCutList->setItemSelected(curItem, false);
 
     editItemIndex = index;
-    emit changeVideo(cutListData->avData(index));
+    emit changeVideo(cutListData->avData(index)->videoStream());
     emit entryEdit(cutListData->at(index));
   }
 }
@@ -255,7 +275,7 @@ void TTCutList::onGotoCutIn()
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
-    emit changeVideo( cutListData->avData(index) );
+    emit changeVideo( cutListData->avData(index)->videoStream() );
     emit gotoCutIn(cutListData->cutInPos(index));
   }
 }
@@ -265,7 +285,7 @@ void TTCutList::onGotoCutOut()
 {
   if (ttAssigned(cutListData)) {
     int index = videoCutList->indexOfTopLevelItem(videoCutList->currentItem());
-    emit changeVideo( cutListData->avData(index) );
+    emit changeVideo( cutListData->avData(index)->videoStream() );
     emit gotoCutOut(cutListData->cutOutPos(index));
   }
 }
@@ -397,5 +417,5 @@ void TTCutList::createActions()
   gotoCutOutAction = new QAction(tr("Goto Cut-Out"), this);
   //gotoCutOutAction->setIcon(QIcon(QString::fromUtf8(":/pixmaps/pixmaps/downarrow_18.xpm")));
   gotoCutOutAction->setStatusTip(tr("Goto selected cut-out position"));
-  connect(gotoCutOutAction, SIGNAL(triggered()), this, SLOT(onGotoCutOut())); 
+  connect(gotoCutOutAction, SIGNAL(triggered()), this, SLOT(onGotoCutOut()));
 }

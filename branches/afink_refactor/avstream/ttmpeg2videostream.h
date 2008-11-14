@@ -18,9 +18,9 @@
 // -----------------------------------------------------------------------------
 //
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                   
-//             |                 +- TTAC3AudioStream 
-// TTAVStream -|                 
+//             +- TTAudioStream -|
+//             |                 +- TTAC3AudioStream
+// TTAVStream -|
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -101,6 +101,7 @@ class TTMpeg2VideoStream : public TTVideoStream
     void    writeIDDFile( );
     void    readIDDHeader(TTFileBuffer* iddStream, quint8 iddFileVersion);
     quint64 getByteCount(TTVideoHeader* startObject, TTVideoHeader* endObject);
+    int*    sharedCopyCount;
 
   protected:
     TTMessageLogger* log;

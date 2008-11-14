@@ -65,7 +65,7 @@ void TTNavigatorDisplay::setMaxValue(int val)
 
 void TTNavigatorDisplay::onRefreshDisplay()
 {
-  
+
 }
 
 void TTNavigatorDisplay::resizeEvent(__attribute__((unused))QResizeEvent* event)

@@ -48,7 +48,7 @@ class QFileInfo;
 class TTCutListDataItem
 {
   friend class TTCutListData;
-  
+
   public:
     TTCutListDataItem();
     TTCutListDataItem(int cutIn, QTime cutInTime, int cutOut, QTime cutOutTime, QTime lengthTime,
@@ -62,7 +62,7 @@ class TTCutListDataItem
     QTime     getCutOutTime() const;
     int       getCutLengthFrames() const;
     TTAVData* getAVData() const;
-    
+
   private:
     int       cutInIndex;
     int       cutOutIndex;
@@ -97,12 +97,12 @@ class TTCutListData
     QString cutOutPosString(int index);
     QString cutLengthString(int index);
     const TTCutListDataItem& at(int index);
-    int count();
+    int count( TTAVData* pAVData=0 );
     void deleteAll();
     void removeAt(int index);
     void swap(int a, int b);
     void print();
-    void writeToProject(TTCutProject* prj);
+    void writeToProject(TTCutProject* prj, QMap<TTAVData*, int>& videoToIndexMap);
 
   private:
     QList<TTCutListDataItem> data;

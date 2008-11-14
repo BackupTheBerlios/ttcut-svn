@@ -159,7 +159,6 @@ bool TTCut::spumuxChapter = false;
 // Status
 // -----------------------------------------------------------------------------
 bool TTCut::isVideoOpen       = false;
-int  TTCut::numAudioTracks    = 0;
 bool TTCut::isProjektModified = false;
 bool TTCut::isPlaying         = false;
 bool TTCut::isWorking         = false;

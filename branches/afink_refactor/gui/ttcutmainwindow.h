@@ -82,19 +82,22 @@ void keyPressEvent(QKeyEvent* e);
     void onAudioCut(int index);
     void onSelectedAudioVideoCut(QVector<int> selectedItems);
 
-    void onChangeVideoStream( TTAVData* pAVData );
+    void onChangeVideoStream( TTVideoStream* pNewVideoStream );
+    void onDeleteVideoStream( int index );
+    void onDeleteAudioStream( int index );
 
   signals:
     void currentVideoChanged( TTAVData* pCurAVData );
 
   private:
     void closeProject();
+    void closeVideoStream( int idx );
     void createAVStreams( QString videoFile, QString audioFile );
-    QFileInfoList audioFromVideoName(QString videoFile); 
+    QFileInfoList audioFromVideoName(QString videoFile);
     void navigationEnabled( bool enabled );
     bool openProjectFile(QString fName);
     int openVideoStream(QString fName);
-    int openAudioStream(QString fName);
+    int openAudioStream(QString fName, int nVideoIndex=-1);
     void initStreamNavigator();
     void updateRecentFileActions();
     void insertRecentFile(const QString& fName);
@@ -108,10 +111,10 @@ void keyPressEvent(QKeyEvent* e);
    TTMplexProvider*    mplexProvider;
    TTMpeg2VideoStream* mpegStream;
    bool                sliderUpdateFrame;
-   QList<TTAVData>     m_AVDataList;
+   QList<TTAVData*>     m_AVDataList;
    TTAVData*           m_pCurAVData;
 
-   // recent files menu 
+   // recent files menu
    enum {MaxRecentFiles = 5};
    QAction* recentFileAction[MaxRecentFiles];
 };
