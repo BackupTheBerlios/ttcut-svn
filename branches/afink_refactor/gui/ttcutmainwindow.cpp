@@ -183,7 +183,7 @@ TTCutMainWindow::TTCutMainWindow()
   // Connect signals from audio info
   // --------------------------------------------------------------------------
   connect(audioFileInfo,   SIGNAL(fileOpened(QString)),         SLOT(onReadAudioStream(QString)));
-  connect(audioFileInfo,   SIGNAL(deleteVideo(int)),            SLOT(onDeleteAudioStream(int)) );
+  connect(audioFileInfo,   SIGNAL(deleteAudio(int)),            SLOT(onDeleteAudioStream(int)) );
 
   // Connect signals from navigation widget
   // --------------------------------------------------------------------------

@@ -58,7 +58,7 @@ class TTAudioFileList : public QWidget, Ui::TTAudioFileListWidget
 
   signals:
     void fileOpened( const QString& fName );
-    void deleteVideo( int index );
+    void deleteAudio( int index );
     void itemPositionChanged( QTreeWidgetItem* item );
 
   public slots:

@@ -200,7 +200,7 @@ void TTAudioFileList::onDeleteItem()
 
     // current index
     int index = audioListView->indexOfTopLevelItem(audioListView->currentItem());
-    emit deleteVideo( index );
+    emit deleteAudio( index );
   }
 }
 
