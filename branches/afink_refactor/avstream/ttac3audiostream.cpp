@@ -293,6 +293,11 @@ void TTAC3AudioStream::cut( TTFileBuffer* cut_stream, TTCutListData* cut_list )
       cut_param->lastCall();
   }
 
+  for ( int i=0; i<connectedToProgressBar.count(); ++i ) {
+    disconnect( connectedToProgressBar[i], SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)),
+                this, SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)) );
+  }
+
   delete cut_param;
 }
 

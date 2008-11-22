@@ -541,6 +541,11 @@ void TTMpeg2VideoStream::cut(TTFileBuffer* cutStream, TTCutListData* cutList)
 
   cutStream->close();
 
+  for ( int i=0; i<connectedToProgressBar.count(); ++i ) {
+    disconnect( connectedToProgressBar[i], SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)),
+                this, SIGNAL(progressChanged(TTProgressBar::State, const QString&, quint64)) );
+  }
+
   delete cutParams;
 }
 
