@@ -134,6 +134,9 @@ class TTMpeg2Decoder
   void        getCurrentFrameData(quint8* data);
   TFrameInfo* getFrameInfo();
 
+  int desiredFrameType;
+  int desiredFramePos;
+
  protected:
   void initDecoder();
   int  decodeNextFrame();

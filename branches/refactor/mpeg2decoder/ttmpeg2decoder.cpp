@@ -183,7 +183,7 @@ int TTMpeg2Decoder::seek(quint64 seekOffset)
   // full_reset=1: lib starts decoding at the next sequence header
   int resetMode = 0;
 
-  if (seekOffset == 0)
+  //if (seekOffset == 0)
     resetMode = 1;
 
   mpeg2_reset(mpeg2Decoder, resetMode);
@@ -258,7 +258,7 @@ int TTMpeg2Decoder::decodeNextFrame()
           frameInfo.type          = mpeg2Info->display_picture->flags&0x03;
           frameInfo.chroma_width  = mpeg2Info->sequence->chroma_width;
           frameInfo.chroma_height = mpeg2Info->sequence->chroma_height;
-
+ 
           switch (convType)
           {
             case formatRGB24:
@@ -352,11 +352,20 @@ int TTMpeg2Decoder::moveToFrameIndex(int framePosition)
 
   currentFrameIndex = videoIndexList->videoIndexAt(framePosition);
 
+  //int headerIndex = currentFrameIndex->getHeaderListIndex();
+  //TTPicturesHeader* picHeader = videoHeaderList->pictureHeaderAt(headerIndex);
+  //if (currentFrameIndex->getPictureCodingType() == 1)
+  //  qDebug("temp ref is %d", picHeader->temporal_reference);
+
+  //qDebug("desired frame at index %d is from type %d", framePosition, currentFrameIndex->getPictureCodingType());
+  desiredFramePos  = framePosition;
+  desiredFrameType = currentFrameIndex->getPictureCodingType();
+
   // search intra frame before framePositions
-  if (currentFrameIndex->getPictureCodingType() == 1)
-    intraFramePosition = framePosition;
-  else
-  {
+  //if (currentFrameIndex->getPictureCodingType() == 1)
+  //  intraFramePosition = framePosition;
+  //else
+  //{
     intraFramePosition = framePosition-1;
 
     while (intraFramePosition >= 0)
@@ -367,11 +376,11 @@ int TTMpeg2Decoder::moveToFrameIndex(int framePosition)
 
       intraFramePosition--;
     }
-  }
-
+   //}
+   
   if (intraFramePosition < 0)
   {
-    qDebug("No previous intra frame found for positin %d! What should i do?", framePosition);
+    //qDebug("No previous intra frame found for positin %d! What should i do?", framePosition);
     intraFramePosition = 0;
   }
 
@@ -402,7 +411,7 @@ int TTMpeg2Decoder::moveToFrameIndex(int framePosition)
 
   while (t_frame_info != NULL && frameInfo.type != 1)
     decodeNextFrame();
-
+  
   skipFrames(framePosition-intraFramePosition); 
 
   return framePosition;

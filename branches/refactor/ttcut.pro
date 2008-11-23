@@ -18,13 +18,13 @@ TARGET      = TTCut
 LIBS        = -lmpeg2 -lmpeg2convert
 
 #macx {
-  LIBS     += -framework QuickTime -framework Carbon
-  DEFINES  += MACX
+#  LIBS     += -framework QuickTime -framework Carbon
+#  DEFINES  += MACX
 #}
 
-#unix {
-# DEFINES   += UNIX
-#}
+unix {
+ DEFINES   += UNIX
+}
 
 OBJECTS_DIR = obj
 MOC_DIR     = moc
@@ -120,11 +120,11 @@ HEADERS     = common/ttcut.h\
               gui/ttcutavcutdlg.h\
               gui/ttcutmainwindow.h
 #macx {
-  HEADERS += gui/tthimoviewidget.h
+#  HEADERS += gui/tthimoviewidget.h
 #}
 
 #unix {
-#  HEADERS += gui/ttmplayerwidget.h
+  HEADERS += gui/ttmplayerwidget.h
 #}
               
 SOURCES     = common/ttcut.cpp\
@@ -183,10 +183,10 @@ SOURCES     = common/ttcut.cpp\
               gui/ttcutmainwindow.cpp\
               gui/ttcutmain.cpp
 #macx {
-  SOURCES += gui/tthimoviewidget.cpp
+#  SOURCES += gui/tthimoviewidget.cpp
 #}
 #unix {
-#  SOURCES += gui/ttmplayerwidget.cpp
+  SOURCES += gui/ttmplayerwidget.cpp
 #}
 #
 # -------------------------------------------------------------------------------

@@ -141,6 +141,15 @@ void TTMPEG2Window::showVideoFrame()
   GLdouble zoomFactor;
   GLdouble rasterPosX, rasterPosY;
 
+  if (mpeg2_decoder != 0) {
+    frameInfo     = mpeg2_decoder->getFrameInfo();
+    if (frameInfo != 0)
+      //qDebug("Decoded frame type is %d", frameInfo->type);
+      if (frameInfo->type != mpeg2_decoder->desiredFrameType)
+        qDebug("decoded frame is %d / desired was %d", frameInfo->type, mpeg2_decoder->desiredFrameType);
+
+  }
+
   makeCurrent();
 
   // set the new GL viewport according to the new window size
@@ -179,11 +188,11 @@ void TTMPEG2Window::showVideoFrame()
                           0.50*((double)iSceneHeight - (double)iVideoHeight*zoomFactor));
 
    // if something goes wrong
-  if ( rasterPosX < 0.0 || rasterPosY >= (GLdouble)iSceneHeight ) {
-    log->errorMsg( c_name, "iVideoWidth: %d / iVideoHeigth: %d", iVideoWidth, iVideoHeight );
-    log->errorMsg( c_name, "rX: %8.4lf rY: %8.4lf zoom: %8.4lf" , rasterPosX,rasterPosY,zoomFactor );
-    log->errorMsg( c_name, "iSceneHeight: %d iSceneWidth: %d fAscpect: %8.2lf" , iSceneHeight,iSceneWidth,fAspect );
-  }
+  //if ( rasterPosX < 0.0 || rasterPosY >= (GLdouble)iSceneHeight ) {
+  //  log->errorMsg(__FILE__, QString("iVideoWidth: %1 / iVideoHeigth: %2").arg(iVideoWidth).arg(iVideoHeight), __LINE__ );
+  //  log->errorMsg(__FILE__, QString("rX: %1 rY: %2 zoom: %3").arg(rasterPosX).arg(rasterPosY).arg(zoomFactor), __LINE__ );
+  //  log->errorMsg(__FILE__, QString("iSceneHeight: %1 iSceneWidth: %2 fAscpect: %3").arg(iSceneHeight).arg(iSceneWidth).arg(fAspect), __LINE__);
+  //}
   
   glRasterPos2d( rasterPosX, rasterPosY );
 
@@ -387,7 +396,7 @@ void TTMPEG2Window::saveCurrentFrame( QString fName, const char* format )
 bool TTMPEG2Window::showDecodedSlice()
 {
   frameInfo = mpeg2_decoder->getFrameInfo();
-
+  
   // no slice data decoded
   if ( !ttAssigned(frameInfo->Y) )
   {
