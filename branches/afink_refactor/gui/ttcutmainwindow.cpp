@@ -592,8 +592,7 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
   QString        audio_number;
   QFileInfo      video_cut_file_info;
   QFileInfo      audio_cut_file_info;
-  uint           len1, len2, len;
-  TTFileBuffer*  video_cut_stream;
+  uint           len1, len2, len;  TTFileBuffer*  video_cut_stream;
   TTFileBuffer*  audio_cut_stream;
   TTAudioStream* current_audio_stream;
   TTProgressBar* progress_bar;
@@ -627,8 +626,9 @@ void TTCutMainWindow::onAudioVideoCut(__attribute__ ((unused))int index, bool cu
   // append new cut name
   videoCutName += "_cut.m2v";
 
-  // set global cut video name
-  TTCut::cutVideoName = videoCutName;
+  // set global cut video name, only for the first time, thereafter keep old name...
+  if ( TTCut::cutVideoName == "_cut.m2v" )
+    TTCut::cutVideoName = videoCutName;
 
   // --------------------------------------------------------------------------
   // start dialog for cut options

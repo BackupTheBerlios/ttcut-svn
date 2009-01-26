@@ -46,7 +46,7 @@ extern "C"
 #include <mpeg2dec/mpeg2.h>
 #include <mpeg2dec/mpeg2convert.h>
 }
-  
+
 // Qt header files
 #include <qstring.h>
 
@@ -55,19 +55,19 @@ extern "C"
 #include "../avstream/ttvideoindexlist.h"
 #include "../avstream/ttmpeg2videoheader.h"
 
-/* ///////////////////////////////////////////////////////////////////////////// 
+/* /////////////////////////////////////////////////////////////////////////////
  * constants for mpeg2 pixel format
  */
-enum TPixelFormat 
+enum TPixelFormat
 {
   formatRGB24 = 1,  // RGB interleaved; default
-  formatRGB32 = 2,  
+  formatRGB32 = 2,
   formatRGB8  = 3,
   formatYV12  = 4,
   formatYUV24 = 5   // YUV planes
 };
 
-/* ///////////////////////////////////////////////////////////////////////////// 
+/* /////////////////////////////////////////////////////////////////////////////
  * Frame info struct
  */
 typedef struct
@@ -84,7 +84,7 @@ typedef struct
   int      chroma_size;
 } TFrameInfo;
 
-/* ///////////////////////////////////////////////////////////////////////////// 
+/* /////////////////////////////////////////////////////////////////////////////
  * Sequence properties struct
  */
 typedef struct
@@ -96,7 +96,7 @@ typedef struct
   unsigned int frame_period;
 } TSequenceInfo;
 
-/* ///////////////////////////////////////////////////////////////////////////// 
+/* /////////////////////////////////////////////////////////////////////////////
  * Stream properties struct
  */
 typedef struct
@@ -107,20 +107,20 @@ typedef struct
   int     videoPTS;
 } TStreamInfo;
 
-/* ///////////////////////////////////////////////////////////////////////////// 
+/* /////////////////////////////////////////////////////////////////////////////
  * Initial buffer size
  */
 const int initialStreamBufferSize  = 65536;
 const int initialDecoderBufferSize = 5129;
 
 
-/* ///////////////////////////////////////////////////////////////////////////// 
+/* /////////////////////////////////////////////////////////////////////////////
  * TTMpeg2Decoder class declaration
  */
 class TTMpeg2Decoder
 {
  public:
-  TTMpeg2Decoder(QString cFName, 
+  TTMpeg2Decoder(QString cFName,
                  TTVideoIndexList* viIndex, TTVideoHeaderList* viHeader);
   ~TTMpeg2Decoder();
 
@@ -133,6 +133,9 @@ class TTMpeg2Decoder
   int         gotoNextFrame();
   void        getCurrentFrameData(quint8* data);
   TFrameInfo* getFrameInfo();
+
+  int desiredFrameType;
+  int desiredFramePos;
 
  protected:
   void initDecoder();
@@ -150,8 +153,8 @@ private:
   int                 decoderBufferSize;
   const mpeg2_info_t* mpeg2Info;
   quint8*             sliceData;
-  TTVideoHeaderList*  videoHeaderList; 
-  TTVideoIndexList*   videoIndexList; 
+  TTVideoHeaderList*  videoHeaderList;
+  TTVideoIndexList*   videoIndexList;
   TPixelFormat        convType;
   TFrameInfo*         t_frame_info;
 };
@@ -177,4 +180,4 @@ class TTMpeg2DecoderException
     ExceptionType ex_type;
 };
 #endif //TTMPEG2DECODER_H
- 
+

@@ -29,7 +29,7 @@
 /*----------------------------------------------------------------------------*/
 
 
-#include "ttmpeg2decoder.h"	
+#include "ttmpeg2decoder.h"
 
 static TFrameInfo frameInfo;
 
@@ -38,7 +38,7 @@ const char c_name[] = "MPEG2DECODER  : ";
 /* /////////////////////////////////////////////////////////////////////////////
  * Constructor with filename, index- and header-list
  */
-TTMpeg2Decoder::TTMpeg2Decoder(QString cFName, 	
+TTMpeg2Decoder::TTMpeg2Decoder(QString cFName,
                                TTVideoIndexList* viIndex, TTVideoHeaderList* viHeader)
 {
   mpeg2Stream        = NULL;
@@ -183,7 +183,7 @@ int TTMpeg2Decoder::seek(quint64 seekOffset)
   // full_reset=1: lib starts decoding at the next sequence header
   int resetMode = 0;
 
-  if (seekOffset == 0)
+//   if (seekOffset == 0)
     resetMode = 1;
 
   mpeg2_reset(mpeg2Decoder, resetMode);
@@ -204,7 +204,7 @@ int TTMpeg2Decoder::decodeNextFrame()
   //TODO: make conversion type variabel
   //convType =  formatRGB24;
   //mpeg2_convert (mpeg2Decoder, mpeg2convert_rgb24, NULL);
- 
+
   do
   {
     state = mpeg2_parse (mpeg2Decoder);
@@ -287,7 +287,7 @@ int TTMpeg2Decoder::decodeNextFrame()
   return 0;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////   
+/* /////////////////////////////////////////////////////////////////////////////
  * Seek to position 0 and decode the first slice
  */
 TFrameInfo* TTMpeg2Decoder::decodeFirstMPEG2Frame(TPixelFormat pixelFormat)
@@ -352,11 +352,20 @@ int TTMpeg2Decoder::moveToFrameIndex(int framePosition)
 
   currentFrameIndex = videoIndexList->videoIndexAt(framePosition);
 
+   //int headerIndex = currentFrameIndex->getHeaderListIndex();
+//TTPicturesHeader* picHeader = videoHeaderList->pictureHeaderAt(headerIndex);
+//if (currentFrameIndex->getPictureCodingType() == 1)
+// qDebug("temp ref is %d", picHeader->temporal_reference);
+
+//qDebug("desired frame at index %d is from type %d", framePosition, currentFrameIndex->getPictureCodingType());
+  desiredFramePos = framePosition;
+  desiredFrameType = currentFrameIndex->getPictureCodingType();
+
   // search intra frame before framePositions
-  if (currentFrameIndex->getPictureCodingType() == 1)
-    intraFramePosition = framePosition;
-  else
-  {
+//   if (currentFrameIndex->getPictureCodingType() == 1)
+//     intraFramePosition = framePosition;
+//   else
+//   {
     intraFramePosition = framePosition-1;
 
     while (intraFramePosition >= 0)
@@ -367,23 +376,23 @@ int TTMpeg2Decoder::moveToFrameIndex(int framePosition)
 
       intraFramePosition--;
     }
-  }
+//   }
 
   if (intraFramePosition < 0)
   {
-    qDebug("No previous intra frame found for positin %d! What should i do?", framePosition);
+//     qDebug("No previous intra frame found for positin %d! What should i do?", framePosition);
     intraFramePosition = 0;
   }
 
   currentFrameIndex = videoIndexList->videoIndexAt(intraFramePosition);
 
-  if (currentFrameIndex->getPictureCodingType() != 1)    
+  if (currentFrameIndex->getPictureCodingType() != 1)
     qDebug("no intra frame at index: %d", intraFramePosition);
 
   // look for according sequence header
   int headerListIndex = currentFrameIndex->getHeaderListIndex();
-  
-  while (headerListIndex >= 0 && 
+
+  while (headerListIndex >= 0 &&
          videoHeaderList->headerTypeAt(headerListIndex) != TTMpeg2VideoHeader::sequence_start_code)
      headerListIndex--;
 
@@ -403,7 +412,7 @@ int TTMpeg2Decoder::moveToFrameIndex(int framePosition)
   while (t_frame_info != NULL && frameInfo.type != 1)
     decodeNextFrame();
 
-  skipFrames(framePosition-intraFramePosition); 
+  skipFrames(framePosition-intraFramePosition);
 
   return framePosition;
 }

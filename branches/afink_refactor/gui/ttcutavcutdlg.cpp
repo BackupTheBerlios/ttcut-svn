@@ -54,9 +54,11 @@ TTCutAVCutDlg::TTCutAVCutDlg(QWidget* parent)
 
   // signals and slot connection
   // ------------------------------------------------------------------
-  connect(btnDirOpen,   SIGNAL(clicked()),           SLOT(onDirectoryOpen()));
-  connect(okButton,     SIGNAL(clicked()),           SLOT( onDlgStart()));
-  connect(cancelButton, SIGNAL(clicked()),           SLOT( onDlgCancel()));
+  connect(btnDirOpen,   SIGNAL(clicked()),                     SLOT(onDirectoryOpen()));
+  connect(okButton,     SIGNAL(clicked()),                     SLOT( onDlgStart()));
+  connect(cancelButton, SIGNAL(clicked()),                     SLOT( onDlgCancel()));
+  connect(leOutputFile, SIGNAL(textChanged(const QString&)),   SLOT(onOutFileChange()));
+  connect(leOutputPath, SIGNAL(textChanged(const QString&)),   SLOT(onOutFileChange()));
 
   // set the tabs data
   // ------------------------------------------------------------------
@@ -117,7 +119,7 @@ void TTCutAVCutDlg::onDirectoryOpen()
       (QFileDialog::DontResolveSymlinks |
        QFileDialog::ShowDirsOnly) );
 
-  if ( !str_dir.isEmpty() ) 
+  if ( !str_dir.isEmpty() )
   {
     TTCut::cutDirPath    = str_dir;
     TTCut::muxOutputPath = str_dir;
@@ -183,7 +185,7 @@ void TTCutAVCutDlg::getCommonData()
 void TTCutAVCutDlg::getFreeDiskSpace()
 {
   QStringList df_cmd_list;
-  
+
   // get free disk space
   dfOutput2 = "No information available";
   dfProc = new QProcess( );
@@ -239,6 +241,18 @@ void TTCutAVCutDlg::readFromStdout()
 void TTCutAVCutDlg::exitProcess( __attribute__ ((unused))int e_code, __attribute__((unused))QProcess::ExitStatus e_stat)
 {
   qApp->processEvents();
+}
+
+
+void TTCutAVCutDlg::onOutFileChange()
+{
+  QString sOutFile = leOutputPath->text() + "/" + leOutputFile->text();
+  QPalette pal = leOutputFile->palette();
+  if ( QFile::exists(sOutFile) )
+    pal.setColor( leOutputFile->backgroundRole(), Qt::red );
+  else
+    pal.setColor( leOutputFile->backgroundRole(), Qt::white );
+  leOutputFile->setPalette(pal);
 }
 
 

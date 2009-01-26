@@ -41,10 +41,10 @@
 class QString;
 
 // -----------------------------------------------------------------------------
-// TTCut A/V cut dialog; 
+// TTCut A/V cut dialog;
 // -----------------------------------------------------------------------------
 class TTCutAVCutDlg : public QDialog, Ui::TTCutAVCutDlg
-{ 
+{
   Q_OBJECT
 
   public:
@@ -61,6 +61,7 @@ class TTCutAVCutDlg : public QDialog, Ui::TTCutAVCutDlg
     void onDirectoryOpen();
     void readFromStdout();
     void exitProcess(int e_code, QProcess::ExitStatus);
+    void onOutFileChange();
 
   private:
     void getFreeDiskSpace();

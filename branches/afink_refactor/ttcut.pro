@@ -18,17 +18,17 @@ TARGET      = TTCut
 LIBS        = -lmpeg2 -lmpeg2convert
 
 #macx {
-  LIBS     += -framework QuickTime -framework Carbon
-  DEFINES  += MACX
+#  LIBS     += -framework QuickTime -framework Carbon
+#  DEFINES  += MACX
 #}
 
-#unix {
-# DEFINES   += UNIX
-#}
+unix {
+ DEFINES   += UNIX
+}
 
 OBJECTS_DIR = obj
 MOC_DIR     = moc
-UI_DIR      = ui_h 
+UI_DIR      = ui_h
 RCC_DIR     = res
 RESOURCES   = ui/videofileinfowidget.qrc\
               ui/audiofilelistwidget.qrc\
@@ -81,13 +81,13 @@ HEADERS     = common/ttcut.h\
               avstream/ttavheader.h\
               avstream/ttavstream.h\
               avstream/ttavtypes.h\
-              avstream/ttfilebuffer.h\ 
-              avstream/ttheaderlist.h\ 
+              avstream/ttfilebuffer.h\
+              avstream/ttheaderlist.h\
               avstream/ttmpeg2videoheader.h\
-              avstream/ttmpeg2videostream.h\   
-              avstream/ttmpegaudioheader.h\    
-              avstream/ttmpegaudiostream.h\    
-              avstream/ttvideoheaderlist.h\    
+              avstream/ttmpeg2videostream.h\
+              avstream/ttmpegaudioheader.h\
+              avstream/ttmpegaudiostream.h\
+              avstream/ttvideoheaderlist.h\
               avstream/ttvideoindexlist.h\
               avstream/ttaviwriter.h\
               mpeg2decoder/ttmpeg2decoder.h\
@@ -120,13 +120,13 @@ HEADERS     = common/ttcut.h\
               gui/ttcutavcutdlg.h\
               gui/ttcutmainwindow.h
 #macx {
-  HEADERS += gui/tthimoviewidget.h
+#  HEADERS += gui/tthimoviewidget.h
 #}
 
 #unix {
-#  HEADERS += gui/ttmplayerwidget.h
+  HEADERS += gui/ttmplayerwidget.h
 #}
-              
+
 SOURCES     = common/ttcut.cpp\
               common/ttmessagelogger.cpp\
               common/ttmessagewindow.cpp\
@@ -143,13 +143,13 @@ SOURCES     = common/ttcut.cpp\
               avstream/ttavheader.cpp\
               avstream/ttavstream.cpp\
               avstream/ttavtypes.cpp\
-              avstream/ttfilebuffer.cpp\ 
-              avstream/ttheaderlist.cpp\ 
+              avstream/ttfilebuffer.cpp\
+              avstream/ttheaderlist.cpp\
               avstream/ttmpeg2videoheader.cpp\
-              avstream/ttmpeg2videostream.cpp\   
-              avstream/ttmpegaudioheader.cpp\    
-              avstream/ttmpegaudiostream.cpp\    
-              avstream/ttvideoheaderlist.cpp\    
+              avstream/ttmpeg2videostream.cpp\
+              avstream/ttmpegaudioheader.cpp\
+              avstream/ttmpegaudiostream.cpp\
+              avstream/ttvideoheaderlist.cpp\
               avstream/ttvideoindexlist.cpp\
               avstream/ttaviwriter.cpp\
               mpeg2decoder/ttmpeg2decoder.cpp\
@@ -183,10 +183,10 @@ SOURCES     = common/ttcut.cpp\
               gui/ttcutmainwindow.cpp\
               gui/ttcutmain.cpp
 #macx {
-  SOURCES += gui/tthimoviewidget.cpp
+#  SOURCES += gui/tthimoviewidget.cpp
 #}
 #unix {
-#  SOURCES += gui/ttmplayerwidget.cpp
+  SOURCES += gui/ttmplayerwidget.cpp
 #}
 #
 # -------------------------------------------------------------------------------
