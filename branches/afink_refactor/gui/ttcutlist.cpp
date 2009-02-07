@@ -107,11 +107,9 @@ void TTCutList::onAddEntry(int cutIn, int cutOut, TTAVData* avData)
 
     if ( cutListData->count() > 0 ) {
       if ( cutListData->avData(0)->CanCutWith(avData) == false ) {
-        QMessageBox::critical( this, tr("Cannot add the cutpoint"),
-                               tr("The cutpoint cannot be added.\n")
-                             + tr("Possible reasons: missmatch in video (fps, aspect ratio, resolution ")
-                             + tr("must be the same). Or you have an audio missmatch (different audio stream, ")
-                             + tr("different number of audio streams)") );
+        QString sMes = tr( "The cutpoint cannot be added.\nPossible reasons: audio missmatch "
+                           "(different audio stream types, different number of audio streams)" );
+        QMessageBox::critical( this, tr("Cannot add the cutpoint"), sMes );
         return;
       }
     }

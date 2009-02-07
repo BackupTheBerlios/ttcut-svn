@@ -97,17 +97,18 @@ int TTAVData::indexOfAudioStream( TTAudioStream* pCompareStream )
 
 bool TTAVData::CanCutWith( TTAVData* pOther )
 {
+  // video can change, but audio must be the same
   // frame rate, horizontal and vertical size, aspect ratio must fit for both videos
-  TTMpeg2VideoStream* vid1 = (TTMpeg2VideoStream*) videoStream();
-  TTMpeg2VideoStream* vid2 = (TTMpeg2VideoStream*) pOther->videoStream();
-  if ( vid1->frameRate() != vid2->frameRate() )
-    return false;
-  if ( vid1->currentSequenceHeader()->horizontalSize() != vid2->currentSequenceHeader()->horizontalSize() )
-    return false;
-  if ( vid1->currentSequenceHeader()->verticalSize() != vid2->currentSequenceHeader()->verticalSize() )
-    return false;
-  if ( vid1->currentSequenceHeader()->aspectRatioText() != vid2->currentSequenceHeader()->aspectRatioText() )
-    return false;
+//   TTSequenceHeader* header1 = videoStream()->getSequenceHeader(cutOut);
+//   TTSequenceHeader* header2 = pOther->videoStream()->getSequenceHeader(cutIn);
+//   if ( header1->frameRateValue() != header2->frameRateValue() )
+//     return false;
+//   if ( header1->horizontalSize() != header2->horizontalSize() )
+//     return false;
+//   if ( header1->verticalSize() != header2->verticalSize() )
+//     return false;
+//   if ( header1->aspectRatioText() != header2->aspectRatioText() )
+//     return false;
 
   // audio lists must be the same, ie. same number of tracks, and tracks have to fit each other
   if ( pOther->audioCount() != audioCount() )

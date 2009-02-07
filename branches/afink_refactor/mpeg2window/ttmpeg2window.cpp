@@ -352,7 +352,7 @@ long TTMPEG2Window::moveToVideoFrame(long iFramePos)
 
   currentFrame = mpeg2_decoder->moveToFrameIndex(iFramePos);
 
-  decodeAndShowSlice();
+  showDecodedSlice();
 
   return currentFrame;
 }
