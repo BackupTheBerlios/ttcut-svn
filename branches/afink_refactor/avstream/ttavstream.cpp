@@ -460,3 +460,46 @@ int TTVideoStream::moveToPrevPIFrame()
   return (index >= 0) ? current_index=index : current_index;
 }
 
+// goto next frame where the video format changes (aspect ratio, or resolution, or fps)
+// -----------------------------------------------------------------------------
+int TTVideoStream::moveToNextFFrame()
+{
+  float   fps      = currentSequenceHeader()->frameRateValue();
+  int     horiz    = currentSequenceHeader()->horizontalSize();
+  int     vert     = currentSequenceHeader()->verticalSize();
+  QString aspect   = currentSequenceHeader()->aspectRatioText();
+  int     newIndex = current_index;
+  while ( -1 != (newIndex=index_list->moveToNextIndexPos(newIndex, 1)) ) {
+    TTSequenceHeader* newHeader = getSequenceHeader(newIndex);
+    if ( newHeader->frameRateValue()  != fps   ||
+         newHeader->horizontalSize()  != horiz ||
+         newHeader->verticalSize()    != vert  ||
+         newHeader->aspectRatioText() != aspect )
+    {
+      return current_index=newIndex;
+    }
+  }
+  return current_index;
+}
+
+// goto prev frame where the video format changes (aspect ratio, or resolution, or fps)
+// -----------------------------------------------------------------------------
+int TTVideoStream::moveToPrevFFrame()
+{
+  float   fps      = currentSequenceHeader()->frameRateValue();
+  int     horiz    = currentSequenceHeader()->horizontalSize();
+  int     vert     = currentSequenceHeader()->verticalSize();
+  QString aspect   = currentSequenceHeader()->aspectRatioText();
+  int     newIndex = current_index;
+  while ( -1 != (newIndex=index_list->moveToPrevIndexPos(newIndex, 1)) ) {
+    TTSequenceHeader* newHeader = getSequenceHeader(newIndex);
+    if ( newHeader->frameRateValue()  != fps   ||
+         newHeader->horizontalSize()  != horiz ||
+         newHeader->verticalSize()    != vert  ||
+         newHeader->aspectRatioText() != aspect )
+    {
+      return current_index=newIndex;
+    }
+  }
+  return current_index;
+}

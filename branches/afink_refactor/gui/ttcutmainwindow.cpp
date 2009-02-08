@@ -193,6 +193,8 @@ TTCutMainWindow::TTCutMainWindow()
   connect(navigation, SIGNAL(nextPFrame()),      currentFrame, SLOT(onNextPFrame()));
   connect(navigation, SIGNAL(prevBFrame()),      currentFrame, SLOT(onPrevBFrame()));
   connect(navigation, SIGNAL(nextBFrame()),      currentFrame, SLOT(onNextBFrame()));
+  connect(navigation, SIGNAL(prevFFrame()),      currentFrame, SLOT(onPrevFFrame()));
+  connect(navigation, SIGNAL(nextFFrame()),      currentFrame, SLOT(onNextFFrame()));
   connect(navigation, SIGNAL(setCutOut(int)),    currentFrame, SLOT(onSetCutOut(int)));
   connect(navigation, SIGNAL(setCutOut(int)),    cutOutFrame,  SLOT(onGotoCutOut(int)));
   connect(navigation, SIGNAL(setCutIn(int)),     currentFrame, SLOT(onSetCutIn(int)));

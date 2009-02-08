@@ -49,13 +49,15 @@ TTNavigation::TTNavigation(QWidget* parent)
   cutInPosition  = -1;
   cutOutPosition = -1;
   markerPosition = -1;
-  
-  connect(pbNextIFrame,   SIGNAL(clicked()), SLOT(onNextIFrame()));
-  connect(pbPrevIFrame,   SIGNAL(clicked()), SLOT(onPrevIFrame()));
-  connect(pbNextPFrame,   SIGNAL(clicked()), SLOT(onNextPFrame()));
-  connect(pbPrevPFrame,   SIGNAL(clicked()), SLOT(onPrevPFrame()));
-  connect(pbNextBFrame,   SIGNAL(clicked()), SLOT(onNextBFrame()));
-  connect(pbPrevBFrame,   SIGNAL(clicked()), SLOT(onPrevBFrame()));
+
+  connect(pbNextIFrame,   SIGNAL(clicked()), SIGNAL(nextIFrame()));
+  connect(pbPrevIFrame,   SIGNAL(clicked()), SIGNAL(prevIFrame()));
+  connect(pbNextPFrame,   SIGNAL(clicked()), SIGNAL(nextPFrame()));
+  connect(pbPrevPFrame,   SIGNAL(clicked()), SIGNAL(prevPFrame()));
+  connect(pbNextBFrame,   SIGNAL(clicked()), SIGNAL(nextBFrame()));
+  connect(pbPrevBFrame,   SIGNAL(clicked()), SIGNAL(prevBFrame()));
+  connect(pbNextFFrame,   SIGNAL(clicked()), SIGNAL(nextFFrame()));
+  connect(pbPrevFFrame,   SIGNAL(clicked()), SIGNAL(prevFFrame()));
   connect(pbSetCutIn,     SIGNAL(clicked()), SLOT(onSetCutIn()));
   connect(pbSetCutOut,    SIGNAL(clicked()), SLOT(onSetCutOut()));
   connect(pbGotoCutIn,    SIGNAL(clicked()), SLOT(onGotoCutIn()));
@@ -81,6 +83,8 @@ void TTNavigation::controlEnabled( bool enabled )
   pbPrevPFrame->setEnabled( enabled );
   pbNextBFrame->setEnabled( enabled );
   pbPrevBFrame->setEnabled( enabled );
+  pbNextFFrame->setEnabled( enabled );
+  pbPrevFFrame->setEnabled( enabled );
   pbSetCutIn->setEnabled( enabled );
   pbSetCutOut->setEnabled( enabled );
   pbGotoCutIn->setEnabled( enabled );
@@ -95,7 +99,7 @@ void TTNavigation::checkCutPosition( TTVideoStream* vs )
   currentPosition  = vs->currentIndex();
   currentTime      = vs->currentFrameTime().toString("hh:mm:ss.zzz");
   currentFrameType = vs->currentFrameType();
-  
+
   pbSetCutIn->setEnabled(vs->isCutInPoint(-1));
   pbSetCutOut->setEnabled(vs->isCutOutPoint(-1));
 }
@@ -218,41 +222,6 @@ void TTNavigation::keyPressEvent(QKeyEvent* e)
   }
 }
 
-void TTNavigation::onPrevIFrame()
-{
-  emit prevIFrame();
-}
-
-
-void TTNavigation::onNextIFrame()
-{
-  emit nextIFrame();
-}
-
-
-void TTNavigation::onPrevPFrame()
-{
-  emit prevPFrame();
-}
-
-
-void TTNavigation::onNextPFrame()
-{
-  emit nextPFrame();
-}
-
-
-void TTNavigation::onPrevBFrame()
-{
-  emit prevBFrame();
-}
-
-
-void TTNavigation::onNextBFrame()
-{
-  emit nextBFrame();
-}
-
 
 void TTNavigation::onSetCutIn()
 {
@@ -278,7 +247,7 @@ void TTNavigation::onSetCutIn()
 void TTNavigation::onSetCutOut()
 {
   QString szTemp1, szTemp2;
-  
+
   isCutOutPosition = true;
   cutOutPosition = currentPosition;
 

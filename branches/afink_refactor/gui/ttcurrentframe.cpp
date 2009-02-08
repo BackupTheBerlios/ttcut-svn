@@ -170,6 +170,29 @@ void TTCurrentFrame::onNextBFrame()
   updateCurrentPosition();
 }
 
+
+//! Navigate to previous video format change frame
+void TTCurrentFrame::onPrevFFrame()
+{
+  int newFramePos;
+
+  newFramePos = mpeg2Stream->moveToPrevFFrame( );
+  mpegWindow->showFrameAt( newFramePos );
+
+  updateCurrentPosition();
+}
+
+//! Navigate to next video format change frame
+void TTCurrentFrame::onNextFFrame()
+{
+  int newFramePos;
+
+  newFramePos = mpeg2Stream->moveToNextFFrame( );
+  mpegWindow->showFrameAt( newFramePos );
+
+  updateCurrentPosition();
+}
+
 //! Navigate to marker position
 void TTCurrentFrame::onGotoMarker(int markerPos)
 {

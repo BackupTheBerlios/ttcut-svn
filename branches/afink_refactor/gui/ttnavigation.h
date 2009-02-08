@@ -50,12 +50,6 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     void keyPressEvent(QKeyEvent* e);
 
   public slots:
-    void onPrevIFrame();
-    void onNextIFrame();
-    void onPrevPFrame();
-    void onNextPFrame();
-    void onPrevBFrame();
-    void onNextBFrame();
     void onSetCutIn();
     void onSetCutOut();
     void onGotoCutIn();
@@ -75,6 +69,8 @@ class TTNavigation : public QWidget, Ui::TTFrameNavigationWidget
     void nextPFrame();
     void prevBFrame();
     void nextBFrame();
+    void prevFFrame();
+    void nextFFrame();
     void setCutIn(int);
     void setCutOut(int);
     void gotoCutIn(int);

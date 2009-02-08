@@ -20,9 +20,9 @@
 // -----------------------------------------------------------------------------
 //
 //                               +- TTMpegAudioStream
-//             +- TTAudioStream -|                   
-//             |                 +- TTAC3AudioStream 
-// TTAVStream -|                 
+//             +- TTAudioStream -|
+//             |                 +- TTAC3AudioStream
+// TTAVStream -|
 //             |
 //             +- TTVideoStream -TTMpeg2VideoStream
 //
@@ -89,7 +89,7 @@ public:
   virtual TTAVTypes::AVStreamType streamType() const = 0;
   virtual bool isCutInPoint(int pos) = 0;
   virtual bool isCutOutPoint(int pos) = 0;
- 
+
 public:
   virtual int  createHeaderList() = 0;
   virtual int  createIndexList() = 0;
@@ -102,7 +102,7 @@ protected:
   TTFileBuffer*    stream_buffer;
   TTMessageLogger* log;
   TTAVTypes::AVStreamType stream_type;
-  
+
 signals:
   void progressChanged(TTProgressBar::State state, const QString& msg, quint64 value);
 };
@@ -162,13 +162,13 @@ class TTVideoStream : public TTAVStream
   int     frameType(int i_pos);
   QTime   frameTime(int i_pos);
   quint64 frameOffset(int i_pos);
-  
+
   TTSequenceHeader* currentSequenceHeader();
   TTSequenceHeader* getSequenceHeader(int pos);
 
   // navigation in index-list
   int currentIndex();
-  
+
   int markerIndex();
   int setMarkerIndex( int index );
 
@@ -181,6 +181,8 @@ class TTVideoStream : public TTAVStream
   int moveToPrevPFrame();
   int moveToNextPIFrame();
   int moveToPrevPIFrame();
+  int moveToNextFFrame();
+  int moveToPrevFFrame();
 
 protected:
   // List-objects

@@ -58,6 +58,8 @@ class TTCurrentFrame : public QWidget, Ui::TTCurrentFrameWidget
     void onNextPFrame();
     void onPrevBFrame();
     void onNextBFrame();
+    void onPrevFFrame();
+    void onNextFFrame();
     void onGotoMarker( int markerPos );
     void onSetCutIn( int cutInPos );
     void onSetCutOut( int cutOutPos );
@@ -80,4 +82,4 @@ signals:
     TTMpeg2VideoStream* mpeg2Stream;
 };
 
-#endif //TTCURRENTFRAME_H 
+#endif //TTCURRENTFRAME_H
